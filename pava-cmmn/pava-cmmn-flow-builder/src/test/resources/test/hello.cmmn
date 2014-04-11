@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cmmn:definitions xmlns:cmmn="http://www.omg.org/spec/CMMN/20121031/MODEL"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.omg.org/spec/CMMN/20121031/MODEL CMMN10CaseModel.xsd"
+	targetNamespace="http:///hello">
+	<cmmn:caseFileItemDefinition id="wallPlanDefinition"
+		definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass"
+		structureRef="model.uml#model/BuildPlan" />
+
+	<cmmn:caseFileItemDefinition id="wallDefinition"
+		definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass"
+		structureRef="model.uml#model/Wall">
+	</cmmn:caseFileItemDefinition>
+	<cmmn:case name="hello" id="hello">
+		<cmmn:caseRoles name="Painter" id="Painter" />
+		<cmmn:caseRoles name="Builder" id="Builder" />
+		<cmmn:caseFileModel>
+			<cmmn:caseFileItem name="WallPlan" id="wallplan"
+				multiplicity="OneOrMore" definitionRef="wallPlanDefinition">
+			</cmmn:caseFileItem>
+		</cmmn:caseFileModel>
+		<cmmn:casePlanModel name="BuildIt">
+			<cmmn:sentry id="wallplanCreated" name="WallplanCreated">
+				<cmmn:caseFileItemOnPart sourceRef="wallplan">
+					<cmmn:standardEvent>create</cmmn:standardEvent>
+				</cmmn:caseFileItemOnPart>
+			</cmmn:sentry>
+			<cmmn:sentry id="foundationLaid" name="FoundationLaid">
+				<cmmn:planItemOnPart sourceRef="layFoundation">
+					<cmmn:standardEvent>complete</cmmn:standardEvent>
+				</cmmn:planItemOnPart>
+			</cmmn:sentry>
+			<cmmn:humanTask id="layFoundation" name="LayFoundation"
+				performerRef="Builder" isBlocking="true">
+				<cmmn:inputs name="wallPlan" bindingRef="wallPlanDefinition"></cmmn:inputs>
+				<cmmn:outputs name="wall" bindingRef="wallDefinition"></cmmn:outputs>
+				<cmmn:defaultControl>
+				</cmmn:defaultControl>
+			</cmmn:humanTask>
+			<cmmn:humanTask id="layBricks" name="LayBricks"
+				performerRef="Builder" isBlocking="true">
+				<cmmn:inputs name="wallPlan" bindingRef="wallPlanDefinition"></cmmn:inputs>
+				<cmmn:outputs name="wall" bindingRef="wallDefinition"></cmmn:outputs>
+				<cmmn:defaultControl>
+				</cmmn:defaultControl>
+			</cmmn:humanTask>
+			<cmmn:planItem definitionRef="layFoundation" name="LayFoundation" id="layFoundPlanItem"
+				entryCriteriaRefs="wallplanCreated">
+			</cmmn:planItem>
+			<cmmn:planItem definitionRef="layBricks" name="LayBricks" id="layBricksPlanItem"
+				entryCriteriaRefs="foundationLaid">
+			</cmmn:planItem>
+		</cmmn:casePlanModel>
+	</cmmn:case>
+</cmmn:definitions>
+
+	   
