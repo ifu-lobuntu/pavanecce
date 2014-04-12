@@ -30,6 +30,7 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 		switch (nodeType) {
 		case SENTRY_INSTANCE:
 			SentryInstance sentryInstance = new SentryInstance();
+			nodeInstance=sentryInstance;
 			break;
 		default:
 			nodeInstance = super.readNodeInstanceContent(nodeType, stream, context, processInstance);

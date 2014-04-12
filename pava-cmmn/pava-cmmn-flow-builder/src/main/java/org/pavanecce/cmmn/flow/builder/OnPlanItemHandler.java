@@ -43,7 +43,7 @@ public class OnPlanItemHandler extends BaseAbstractHandler implements Handler {
 
 	@Override
 	public Class<?> generateNodeFor() {
-		return OnCaseFileItemPart.class;
+		return OnPlanItemPart.class;
 	}
 
 }

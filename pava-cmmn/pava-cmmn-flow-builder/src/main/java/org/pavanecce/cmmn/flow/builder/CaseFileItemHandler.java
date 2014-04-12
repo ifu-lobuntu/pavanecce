@@ -1,5 +1,6 @@
 package org.pavanecce.cmmn.flow.builder;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
@@ -12,19 +13,23 @@ import org.jbpm.process.core.Process;
 import org.jbpm.process.core.context.variable.Variable;
 import org.jbpm.process.core.context.variable.VariableScope;
 import org.jbpm.workflow.core.Node;
+import org.pavanecce.cmmn.flow.Case;
+import org.pavanecce.cmmn.flow.CaseFileItem;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-public class CaseFileItemHandler extends BaseAbstractHandler implements Handler{
+public class CaseFileItemHandler extends BaseAbstractHandler implements Handler {
 	public CaseFileItemHandler() {
 		initValidParents();
 		initValidPeers();
-		this.allowNesting = false;
+		this.allowNesting = true;
 	}
 
 	protected void initValidParents() {
 		this.validParents = new HashSet<Class<?>>();
-		this.validParents.add(Process.class);
+		this.validParents.add(Case.class);
+		this.validParents.add(CaseFileItem.class);
+		this.validParents.add(null);
 	}
 
 	protected void initValidPeers() {
@@ -33,40 +38,45 @@ public class CaseFileItemHandler extends BaseAbstractHandler implements Handler{
 		this.validPeers.add(Variable.class);
 		this.validPeers.add(Node.class);
 	}
+
 	@SuppressWarnings("unchecked")
-	public Object start(final String uri, final String localName,
-			            final Attributes attrs, final ExtensibleXmlParser parser)
-			throws SAXException {
+	public Object start(final String uri, final String localName, final Attributes attrs, final ExtensibleXmlParser parser) throws SAXException {
 		parser.startElementBuilder(localName, attrs);
 
 		final String name = attrs.getValue("name");
 
-		Object parent = parser.getParent();
-		if (parent instanceof ContextContainer) {
-		    ContextContainer contextContainer = (ContextContainer) parent;
-		    VariableScope variableScope = (VariableScope) 
-                contextContainer.getDefaultContext(VariableScope.VARIABLE_SCOPE);
-			List variables = variableScope.getVariables();
-			Variable variable = new Variable();
-			variable.setMetaData("DataObject", "true");
-			variable.setName(name);
-			//TODO map to possible java type
-			ObjectDataType dataType = new ObjectDataType("java.lang.String");
-			variable.setType(dataType);
-			variables.add(variable);
-			return variable;
+		CaseFileItem variable = new CaseFileItem();
+		variable.setMetaData("DataObject", "true");
+		variable.setElementId(attrs.getValue("id"));
+		variable.setName(name);
+		variable.setDefinitionRef(attrs.getValue("definitionRef"));
+		String targetRefs = attrs.getValue("targetRefs");
+		String multiplicity = attrs.getValue("multiplicity");
+		if(multiplicity!=null){
+			variable.setCollection(!multiplicity.endsWith("One"));
 		}
-
-		return new Variable();
+		if(targetRefs!=null){
+			variable.setTargetRefs(Arrays.asList(targetRefs.split("\\ ")));
+			
+		}
+		Case parent = (Case) parser.getParent(Case.class);
+		// All CaseFileItems are at the Case level - Stages do not have
+		// CaseFileItems
+		VariableScope variableScope = (VariableScope) parent.getDefaultContext(VariableScope.VARIABLE_SCOPE);
+		List variables = variableScope.getVariables();
+		variables.add(variable);
+		if(parser.getParent() instanceof CaseFileItem){
+			((CaseFileItem)parser.getParent()).addChild(variable);
+		}
+		return variable;
 	}
 
-	public Object end(final String uri, final String localName,
-			          final ExtensibleXmlParser parser) throws SAXException {
+	public Object end(final String uri, final String localName, final ExtensibleXmlParser parser) throws SAXException {
 		parser.endElementBuilder();
 		return parser.getCurrent();
 	}
 
 	public Class<?> generateNodeFor() {
-		return Variable.class;
+		return CaseFileItem.class;
 	}
 }

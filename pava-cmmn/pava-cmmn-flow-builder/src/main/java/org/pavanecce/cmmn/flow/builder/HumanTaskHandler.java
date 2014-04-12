@@ -2,6 +2,7 @@ package org.pavanecce.cmmn.flow.builder;
 
 import org.drools.core.xml.ExtensibleXmlParser;
 import org.drools.core.xml.Handler;
+import org.pavanecce.cmmn.flow.Case;
 import org.pavanecce.cmmn.flow.HumanTaskNode;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -23,7 +24,12 @@ public class HumanTaskHandler extends AbstractPlanModelElementHandler implements
 		node.setElementId(attrs.getValue("id"));
 		node.setBlocking(!"false".equals(attrs.getValue("isBlocking")));
 		node.setPerformerRef(attrs.getValue("performerRef"));
-		node.getWork().setName(attrs.getValue("name"));
+		node.setName(attrs.getValue("name"));
+		if(xmlPackageReader.getParent() instanceof Case){
+			((Case)xmlPackageReader.getParent()).addPlanItemDefinition(node);
+		}else{
+			//TODO stage
+		}
 		return node;
 	}
 

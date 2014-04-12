@@ -61,11 +61,7 @@ public class CaseFileItemDefinitionHandler extends BaseAbstractHandler implement
 
 		ProcessBuildData buildData = (ProcessBuildData) parser.getData();
 		Map<String, CaseFileItemDefinition> itemDefinitions = (Map<String, CaseFileItemDefinition>)
-            buildData.getMetaData("ItemDefinitions");
-        if (itemDefinitions == null) {
-            itemDefinitions = new HashMap<String, CaseFileItemDefinition>();
-            buildData.setMetaData("ItemDefinitions", itemDefinitions);
-        }
+            buildData.getMetaData(DefinitionsHandler.CASE_FILE_ITEM_DEFINITIONS);
         CaseFileItemDefinition caseFileItemDefinition = new CaseFileItemDefinition(id); 
         caseFileItemDefinition.setDefinitionType(CaseFileItemDefinitionType.resolveByUri(attrs.getValue("definitionType")));
         caseFileItemDefinition.setStructureRef(type);

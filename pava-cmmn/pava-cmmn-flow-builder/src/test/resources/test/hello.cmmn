@@ -3,54 +3,77 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.omg.org/spec/CMMN/20121031/MODEL CMMN10CaseModel.xsd"
 	targetNamespace="http:///hello">
-	<cmmn:caseFileItemDefinition id="wallPlanDefinition"
+	<cmmn:caseFileItemDefinition id="housePlanDefinition"
 		definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass"
-		structureRef="model.uml#model/BuildPlan" />
-
-	<cmmn:caseFileItemDefinition id="wallDefinition"
+		structureRef="file:///model.uml#org/pavanecce/cmmn/HousePlan" />
+	<cmmn:caseFileItemDefinition id="wallPlanDefinitionId"
 		definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass"
-		structureRef="model.uml#model/Wall">
+		structureRef="file:///model.uml#org/pavanecce/cmmn/WallPlan" />
+	<cmmn:caseFileItemDefinition id="wallQuoteDefinition"
+		definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass"
+		structureRef="file:///model.uml#org/pavanecce/cmmn/WallQuote" />
+	<cmmn:caseFileItemDefinition id="wallDefinitionId"
+		definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass"
+		structureRef="file:///model.uml#org/pavanecce/cmmn/Wall">
 	</cmmn:caseFileItemDefinition>
 	<cmmn:case name="hello" id="hello">
-		<cmmn:caseRoles name="Painter" id="Painter" />
-		<cmmn:caseRoles name="Builder" id="Builder" />
 		<cmmn:caseFileModel>
-			<cmmn:caseFileItem name="WallPlan" id="wallplan"
-				multiplicity="OneOrMore" definitionRef="wallPlanDefinition">
+			<cmmn:caseFileItem name="housePlan" id="housePlanFileItemId"
+				multiplicity="ExactlyOne" definitionRef="HousePlanDefinition">
+				<cmmn:children>
+					<cmmn:caseFileItem name="wallPlans" id="wallPlanFileItemId"
+						multiplicity="OneOrMore" definitionRef="wallPlanDefinitionId"
+						targetRefs="wallFileItemId">
+						<cmmn:children>
+							<cmmn:caseFileItem name="wallQuoteId"
+								definitionRef="wallQuoteDefinition" multiplicity="ExactlyOne"
+								id="wallQuoteItem"></cmmn:caseFileItem>
+						</cmmn:children>
+					</cmmn:caseFileItem>
+				</cmmn:children>
+			</cmmn:caseFileItem>
+			<cmmn:caseFileItem name="walls" id="wallFileItemId"
+				multiplicity="OneOrMore" definitionRef="wallDefinitionId">
 			</cmmn:caseFileItem>
 		</cmmn:caseFileModel>
 		<cmmn:casePlanModel name="BuildIt">
-			<cmmn:sentry id="wallplanCreated" name="WallplanCreated">
-				<cmmn:caseFileItemOnPart sourceRef="wallplan">
+			<cmmn:planItem definitionRef="layFoundationId" name="LayFoundationPlanItem"
+				id="layFoundationPlanItemId" entryCriteriaRefs="wallplanCreatedId">
+			</cmmn:planItem>
+			<cmmn:planItem definitionRef="layBricksId" name="LayBricks"
+				id="layBricksPlanItemId" entryCriteriaRefs="foundationLaidId">
+			</cmmn:planItem>
+			<cmmn:sentry id="wallplanCreatedId" name="WaitingForWallPlanCreated">
+				<cmmn:caseFileItemOnPart sourceRef="wallPlanFileItemId">
 					<cmmn:standardEvent>create</cmmn:standardEvent>
 				</cmmn:caseFileItemOnPart>
 			</cmmn:sentry>
-			<cmmn:sentry id="foundationLaid" name="FoundationLaid">
-				<cmmn:planItemOnPart sourceRef="layFoundation">
+			<cmmn:sentry id="foundationLaidId" name="WaitingForFoundationLaid">
+				<cmmn:planItemOnPart sourceRef="layFoundationPlanItemId">
 					<cmmn:standardEvent>complete</cmmn:standardEvent>
 				</cmmn:planItemOnPart>
 			</cmmn:sentry>
-			<cmmn:humanTask id="layFoundation" name="LayFoundation"
-				performerRef="Builder" isBlocking="true">
-				<cmmn:inputs name="wallPlan" bindingRef="wallPlanDefinition"></cmmn:inputs>
-				<cmmn:outputs name="wall" bindingRef="wallDefinition"></cmmn:outputs>
+			<cmmn:humanTask id="layFoundationId" name="LayFoundation"
+				performerRef="builderRoleId" isBlocking="true">
 				<cmmn:defaultControl>
 				</cmmn:defaultControl>
+				<cmmn:inputs name="wallPlan" bindingRef="wallPlanFileItemId"></cmmn:inputs>
+				<cmmn:outputs name="wall" bindingRef="wallFileItemId"></cmmn:outputs>
 			</cmmn:humanTask>
-			<cmmn:humanTask id="layBricks" name="LayBricks"
+			<cmmn:humanTask id="layBricksId" name="LayBricks"
 				performerRef="Builder" isBlocking="true">
-				<cmmn:inputs name="wallPlan" bindingRef="wallPlanDefinition"></cmmn:inputs>
-				<cmmn:outputs name="wall" bindingRef="wallDefinition"></cmmn:outputs>
 				<cmmn:defaultControl>
 				</cmmn:defaultControl>
+				<cmmn:inputs name="wallPlan" bindingRef="wallPlanDefinitionId"></cmmn:inputs>
+				<cmmn:outputs name="wall" bindingRef="wallDefinitionId"></cmmn:outputs>
 			</cmmn:humanTask>
-			<cmmn:planItem definitionRef="layFoundation" name="LayFoundation" id="layFoundPlanItem"
-				entryCriteriaRefs="wallplanCreated">
-			</cmmn:planItem>
-			<cmmn:planItem definitionRef="layBricks" name="LayBricks" id="layBricksPlanItem"
-				entryCriteriaRefs="foundationLaid">
-			</cmmn:planItem>
 		</cmmn:casePlanModel>
+		<cmmn:caseRoles name="Painter" id="painterRoleId" />
+		<cmmn:caseRoles name="Builder" id="builderRoleId" />
+		<cmmn:input bindingRef="housePlanFileItemId" id="housePlanInputId"
+			name="housePlan">
+		</cmmn:input>
+
 	</cmmn:case>
 </cmmn:definitions>
 

@@ -10,7 +10,7 @@ import org.drools.core.process.core.Work;
 import org.drools.core.process.core.impl.WorkImpl;
 import org.jbpm.workflow.core.node.WorkItemNode;
 
-public class PlanItem extends WorkItemNode {
+public class PlanItem extends WorkItemNode implements CMMNElement {
 	private static final Work NO_WORK = new WorkImpl();
 	static{
 		NO_WORK.setName("NoWork");

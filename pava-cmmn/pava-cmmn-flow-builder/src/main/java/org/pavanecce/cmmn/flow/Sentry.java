@@ -7,7 +7,7 @@ import java.util.List;
 import org.jbpm.process.core.event.EventFilter;
 import org.jbpm.workflow.core.node.EventNode;
 
-public class Sentry extends EventNode {
+public class Sentry extends EventNode implements CMMNElement{
 	private static final long serialVersionUID = -3568385090236274366L;
 	private List<OnPart> onParts = new ArrayList<OnPart>();
 	private String elementId;
@@ -16,6 +16,7 @@ public class Sentry extends EventNode {
 	}
 
 	public void addOnPart(OnPart onPart) {
+		super.addEventFilter(onPart);
 		this.onParts.add(onPart);
 	}
 

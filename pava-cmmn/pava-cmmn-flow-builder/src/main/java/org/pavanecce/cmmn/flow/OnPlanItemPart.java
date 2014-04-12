@@ -33,7 +33,7 @@ public class OnPlanItemPart extends OnPart implements Serializable {
 	}
 	@Override
 	public String getType() {
-		return sourceRef+standardEvent.name();
+		return getType(this.planItem.getName(),standardEvent);
 	}
-	
+
 }

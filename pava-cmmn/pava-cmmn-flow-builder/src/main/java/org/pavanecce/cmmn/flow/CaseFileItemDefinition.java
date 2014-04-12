@@ -2,7 +2,7 @@ package org.pavanecce.cmmn.flow;
 
 import java.io.Serializable;
 
-public class CaseFileItemDefinition implements Serializable {
+public class CaseFileItemDefinition implements Serializable ,CMMNElement{
 
 	private static final long serialVersionUID = -4667585177916762919L;
 	private CaseFileItemDefinitionType definitionType;
@@ -28,5 +28,9 @@ public class CaseFileItemDefinition implements Serializable {
 
 	public void setStructureRef(String structureRef) {
 		this.structureRef = structureRef;
+	}
+
+	public String getElementId() {
+		return id;
 	}
 }
