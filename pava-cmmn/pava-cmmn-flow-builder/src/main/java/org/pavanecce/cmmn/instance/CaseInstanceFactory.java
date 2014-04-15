@@ -37,7 +37,7 @@ import org.kie.api.event.process.ProcessEventManager;
 import org.kie.internal.process.CorrelationKey;
 import org.pavanecce.cmmn.flow.Case;
 import org.pavanecce.cmmn.flow.CaseParameter;
-import org.pavanecce.cmmn.flow.OnCaseFileItemPart;
+import org.pavanecce.cmmn.flow.CaseFileItemOnPart;
 
 public class CaseInstanceFactory extends AbstractProcessInstanceFactory implements Externalizable {
 	// Temporary HACK - find the right place to map caseKeys with
@@ -73,7 +73,7 @@ public class CaseInstanceFactory extends AbstractProcessInstanceFactory implemen
 		// set input parameters
 		if (parameters != null) {
 			if (variableScope != null) {
-				for (CaseParameter caseParameter : theCase.getCaseParameters()) {
+				for (CaseParameter caseParameter : theCase.getInputParameters()) {
 					Object var = parameters.get(caseParameter.getName());
 					variableScopeInstance.setVariable(caseParameter.getVariable().getName(), var);
 					SubscriptionManager subscriptionManager = (SubscriptionManager) kruntime.getEnvironment().get(SubscriptionManager.ENV_NAME);

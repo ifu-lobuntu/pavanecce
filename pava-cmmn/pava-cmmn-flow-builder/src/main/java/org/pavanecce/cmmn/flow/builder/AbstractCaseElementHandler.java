@@ -9,7 +9,7 @@ import org.jbpm.process.core.context.variable.Variable;
 import org.jbpm.ruleflow.core.RuleFlowProcess;
 import org.pavanecce.cmmn.flow.Case;
 import org.pavanecce.cmmn.flow.CaseParameter;
-import org.pavanecce.cmmn.flow.HumanTaskNode;
+import org.pavanecce.cmmn.flow.HumanTask;
 import org.pavanecce.cmmn.flow.PlanItem;
 import org.pavanecce.cmmn.flow.Role;
 import org.pavanecce.cmmn.flow.Sentry;
@@ -25,7 +25,7 @@ public abstract class AbstractCaseElementHandler extends BaseAbstractHandler imp
 		this.validPeers.add(null);
 		this.validPeers.add(Sentry.class);
 		this.validPeers.add(PlanItem.class);
-		this.validPeers.add(HumanTaskNode.class);
+		this.validPeers.add(HumanTask.class);
 		this.validPeers.add(Variable.class);
 		this.validPeers.add(Role.class);
 		this.validPeers.add(CaseParameter.class);

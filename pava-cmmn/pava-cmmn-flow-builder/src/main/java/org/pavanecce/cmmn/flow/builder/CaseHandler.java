@@ -23,10 +23,10 @@ import org.pavanecce.cmmn.flow.CaseFileItem;
 import org.pavanecce.cmmn.flow.CaseFileItemDefinition;
 import org.pavanecce.cmmn.flow.CaseParameter;
 import org.pavanecce.cmmn.flow.Definitions;
-import org.pavanecce.cmmn.flow.HumanTaskNode;
-import org.pavanecce.cmmn.flow.OnCaseFileItemPart;
+import org.pavanecce.cmmn.flow.HumanTask;
+import org.pavanecce.cmmn.flow.CaseFileItemOnPart;
 import org.pavanecce.cmmn.flow.OnPart;
-import org.pavanecce.cmmn.flow.OnPlanItemPart;
+import org.pavanecce.cmmn.flow.PlanItemOnPart;
 import org.pavanecce.cmmn.flow.PlanItem;
 import org.pavanecce.cmmn.flow.PlanItemDefinition;
 import org.pavanecce.cmmn.flow.Role;
@@ -109,6 +109,7 @@ public class CaseHandler extends BaseAbstractHandler implements Handler {
 		EndNode end = new EndNode();
 		end.setName("defaultEnd");
 		end.setId(2);
+		end.setTerminate(false);
 		process.addNode(end);
 		return process;
 	}
@@ -117,7 +118,7 @@ public class CaseHandler extends BaseAbstractHandler implements Handler {
 		parser.endElementBuilder();
 
 		Case process = (Case) parser.getCurrent();
-		Node defaultStart = process.getNode(1);
+		Split defaultSplit = (Split) process.getNode(1);
 		Node defaultEnd = process.getNode(2);
 		Join defaultJoin = null;
 
@@ -131,68 +132,87 @@ public class CaseHandler extends BaseAbstractHandler implements Handler {
 			new ConnectionImpl(defaultJoin, DEFAULT, defaultEnd, DEFAULT);
 		}
 		VariableScope variableScope = process.getVariableScope();
-		for (CaseParameter caseParameter : process.getCaseParameters()) {
-			caseParameter.setVariable(findCaseFileItemById(variableScope, caseParameter.getBindingRef()));
-		}
+		linkParametersToCaseFileITems(variableScope, process.getInputParameters());
+		linkParametersToCaseFileITems(variableScope, process.getOutputParameters());
 		List<Variable> variables = variableScope.getVariables();
 		for (Variable variable : variables) {
-			CaseFileItem c = (CaseFileItem) variable;
-			if (c.getTargetRefs() != null) {
-				for (String string : c.getTargetRefs()) {
-					c.addTarget(findCaseFileItemById(variableScope, string));
-				}
-			}
-		}
-		for (Node node : process.getNodes()) {
-			if (node instanceof PlanItem) {
-				PlanItem planItem = (PlanItem) node;
-				if (defaultJoin != null) {
-					new ConnectionImpl(planItem, DEFAULT, defaultJoin, DEFAULT);
-				}
-				planItem.setDefinition(findPlanItemDefinition(process, planItem.getDefinitionRef()));
-				for (String string : new ArrayList<String>(planItem.getEntryCriteria().keySet())) {
-					Sentry entry = findSentry(process, string);
-					planItem.putEntryCriterion(string, entry);
-					new ConnectionImpl(entry, DEFAULT, planItem, DEFAULT);
-				}
-				for (String string : new ArrayList<String>(planItem.getExitCriteria().keySet())) {
-					Sentry exit = findSentry(process, string);
-					planItem.putExitCriterion(string, exit);
-				}
-			} else if (node instanceof Sentry) {
-				new ConnectionImpl(defaultStart, DEFAULT, node, DEFAULT);
-				Sentry sentry = (Sentry) node;
-				for (OnPart onPart : sentry.getOnParts()) {
-					if (onPart instanceof OnPlanItemPart) {
-						OnPlanItemPart apip = (OnPlanItemPart) onPart;
-						apip.setPlanItem(findPlanItem(process, apip.getSourceRef()));
-					} else {
-						OnCaseFileItemPart ocfip = (OnCaseFileItemPart) onPart;
-						ocfip.setCaseFileItem(findCaseFileItemById(variableScope, ocfip.getSourceRef()));
+			if (variable instanceof CaseFileItem) {
+				CaseFileItem c = (CaseFileItem) variable;
+				if (c.getTargetRefs() != null) {
+					for (String string : c.getTargetRefs()) {
+						c.addTarget(findCaseFileItemById(variableScope, string));
 					}
 				}
 			}
 		}
 		for (PlanItemDefinition pi : process.getPlanItemDefinitions()) {
-			if (pi instanceof HumanTaskNode) {
+			if (pi instanceof HumanTask) {
+				HumanTask ht = (HumanTask) pi;
 				for (Role role : process.getRoles()) {
-					if (role.getElementId().equals(((HumanTaskNode) pi).getPerformerRef())) {
-						((HumanTaskNode) pi).setPerformer(role);
+					if (role.getElementId().equals(ht.getPerformerRef())) {
+						ht.setPerformer(role);
+						ht.getWork().setParameter("ActorId", role.getName());
 					}
-
 				}
+				linkParametersToCaseFileITems(variableScope, ht.getInputParameters());
+				linkParametersToCaseFileITems(variableScope, ht.getOutputParameters());
+			}
+		}
+		for (Node node : process.getNodes()) {
+			if (node instanceof PlanItem) {
+				linkPlanItemCriteria(process, defaultJoin, node);
+			} else if (node instanceof Sentry) {
+				linkSentryOnPart(process, defaultSplit, variableScope, (Sentry) node);
 			}
 		}
 		// 3. Link Parameter Mappings
 		return process;
 	}
 
+	private void linkParametersToCaseFileITems(VariableScope variableScope, List<CaseParameter> inputParameters) {
+		for (CaseParameter caseParameter : inputParameters) {
+			caseParameter.setVariable(findCaseFileItemById(variableScope, caseParameter.getBindingRef()));
+		}
+	}
+
+	private void linkPlanItemCriteria(Case process, Join defaultJoin, Node node) {
+		PlanItem planItem = (PlanItem) node;
+		if (defaultJoin != null) {
+			new ConnectionImpl(planItem, DEFAULT, defaultJoin, DEFAULT);
+		}
+		planItem.setDefinition(findPlanItemDefinition(process, planItem.getDefinitionRef()));
+		for (String string : new ArrayList<String>(planItem.getEntryCriteria().keySet())) {
+			Sentry entry = findSentry(process, string);
+			planItem.putEntryCriterion(string, entry);
+		}
+		for (String string : new ArrayList<String>(planItem.getExitCriteria().keySet())) {
+			Sentry exit = findSentry(process, string);
+			planItem.putExitCriterion(string, exit);
+		}
+	}
+
+	private void linkSentryOnPart(Case process, Split defaultSplit, VariableScope variableScope, Sentry sentry) {
+		for (OnPart onPart : sentry.getOnParts()) {
+			new ConnectionImpl(defaultSplit, DEFAULT, onPart, DEFAULT);
+			if (onPart instanceof PlanItemOnPart) {
+				PlanItemOnPart apip = (PlanItemOnPart) onPart;
+				apip.setPlanItem(findPlanItem(process, apip.getSourceRef()));
+			} else {
+				CaseFileItemOnPart ocfip = (CaseFileItemOnPart) onPart;
+				ocfip.setCaseFileItem(findCaseFileItemById(variableScope, ocfip.getSourceRef()));
+			}
+		}
+	}
+
 	private CaseFileItem findCaseFileItemById(VariableScope variableScope, String caseFileItemId) {
 		List<Variable> variables = variableScope.getVariables();
 		CaseFileItem binding = null;
 		for (Variable variable : variables) {
-			if (((CaseFileItem) variable).getElementId().equals(caseFileItemId)) {
-				binding = (CaseFileItem) variable;
+			if (variable instanceof CaseFileItem) {
+				if (((CaseFileItem) variable).getElementId().equals(caseFileItemId)) {
+					binding = (CaseFileItem) variable;
+					break;
+				}
 			}
 		}
 		return binding;

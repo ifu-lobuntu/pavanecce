@@ -3,7 +3,7 @@ package org.pavanecce.cmmn.flow.builder;
 import org.drools.core.xml.ExtensibleXmlParser;
 import org.drools.core.xml.Handler;
 import org.pavanecce.cmmn.flow.Case;
-import org.pavanecce.cmmn.flow.HumanTaskNode;
+import org.pavanecce.cmmn.flow.HumanTask;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -14,17 +14,18 @@ public class HumanTaskHandler extends AbstractPlanModelElementHandler implements
 
 	@Override
 	public Class<?> generateNodeFor() {
-		return HumanTaskNode.class;
+		return HumanTask.class;
 	}
 
 	@Override
 	public Object start(String uri, String localName, Attributes attrs, ExtensibleXmlParser xmlPackageReader) throws SAXException {
 		xmlPackageReader.startElementBuilder(localName, attrs);
-		HumanTaskNode node = new HumanTaskNode();
+		HumanTask node = new HumanTask();
 		node.setElementId(attrs.getValue("id"));
 		node.setBlocking(!"false".equals(attrs.getValue("isBlocking")));
 		node.setPerformerRef(attrs.getValue("performerRef"));
 		node.setName(attrs.getValue("name"));
+		node.setWaitForCompletion(node.isBlocking());
 		if(xmlPackageReader.getParent() instanceof Case){
 			((Case)xmlPackageReader.getParent()).addPlanItemDefinition(node);
 		}else{
@@ -35,7 +36,7 @@ public class HumanTaskHandler extends AbstractPlanModelElementHandler implements
 
 	@Override
 	public Object end(String uri, String localName, ExtensibleXmlParser xmlPackageReader) throws SAXException {
-		return xmlPackageReader.getCurrent();
+ 		return xmlPackageReader.getCurrent();
 	}
 
 }

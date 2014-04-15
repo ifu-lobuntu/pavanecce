@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Stack;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -40,7 +41,9 @@ public class CollectionPlaceHolderResolveStrategy extends JPAPlaceholderResolver
 	}
 
 	public void write(ObjectOutputStream os, Object collection) throws IOException {
-		if (collection instanceof List) {
+		if(collection instanceof Stack){
+			os.writeUTF(Stack.class.getName());
+		}else if (collection instanceof List) {
 			os.writeUTF(ArrayList.class.getName());
 		} else if (collection instanceof Set) {
 			os.writeUTF(HashSet.class.getName());

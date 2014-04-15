@@ -53,6 +53,8 @@
         <class>org.pavanecce.cmmn.jpa.CaseSubscriptionInfo</class>
         <!-- Customer entities -->
         <class>org.pavanecce.cmmn.HousePlan</class>
+        <class>org.pavanecce.cmmn.RoofPlan</class>
+        <class>org.pavanecce.cmmn.House</class>
         <class>org.pavanecce.cmmn.WallPlan</class>
         <class>org.pavanecce.cmmn.WallQuote</class>
         <class>org.pavanecce.cmmn.Wall</class>

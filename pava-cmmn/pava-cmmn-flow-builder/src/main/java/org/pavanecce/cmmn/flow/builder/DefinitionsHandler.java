@@ -39,10 +39,14 @@ import org.jbpm.ruleflow.core.RuleFlowProcess;
 import org.jbpm.workflow.core.NodeContainer;
 import org.kie.api.definition.process.Node;
 import org.kie.api.definition.process.Process;
+import org.pavanecce.cmmn.flow.Case;
 import org.pavanecce.cmmn.flow.CaseFileItem;
 import org.pavanecce.cmmn.flow.CaseFileItemDefinition;
 import org.pavanecce.cmmn.flow.CaseFileItemDefinitionType;
+import org.pavanecce.cmmn.flow.CaseFileItemOnPart;
 import org.pavanecce.cmmn.flow.Definitions;
+import org.pavanecce.cmmn.flow.OnPart;
+import org.pavanecce.cmmn.flow.PlanItemOnPart;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -82,9 +86,9 @@ public class DefinitionsHandler extends BaseAbstractHandler implements Handler {
 		Map<String, CaseFileItemDefinition> itemDefinitions = (Map<String, CaseFileItemDefinition>) ((ProcessBuildData) parser.getData())
 				.getMetaData(CASE_FILE_ITEM_DEFINITIONS);
 		for (Process process : processes) {
-			RuleFlowProcess ruleFlowProcess = (RuleFlowProcess) process;
-			ruleFlowProcess.setMetaData("TargetNamespace", namespace);
-			postProcessItemDefinitions(ruleFlowProcess, itemDefinitions);
+			Case cas = (Case) process;
+			cas.setMetaData("TargetNamespace", namespace);
+			setVariablesDataType(cas, itemDefinitions);
 		}
 		definitions.setTargetNamespace(namespace);
 		return definitions;
@@ -94,25 +98,22 @@ public class DefinitionsHandler extends BaseAbstractHandler implements Handler {
 		return Definitions.class;
 	}
 
-	private void postProcessItemDefinitions(NodeContainer nodeContainer, Map<String, CaseFileItemDefinition> itemDefinitions) {
-		if (nodeContainer instanceof ContextContainer) {
-			setVariablesDataType((ContextContainer) nodeContainer, itemDefinitions);
-		}
-		for (Node node : nodeContainer.getNodes()) {
-			if (node instanceof NodeContainer) {
-				postProcessItemDefinitions((NodeContainer) node, itemDefinitions);
-			}
-			if (node instanceof ContextContainer) {
-				setVariablesDataType((ContextContainer) node, itemDefinitions);
-			}
-		}
-	}
-
-	private void setVariablesDataType(ContextContainer container, Map<String, CaseFileItemDefinition> itemDefinitions) {
+	private void setVariablesDataType(Case container, Map<String, CaseFileItemDefinition> itemDefinitions) {
 		VariableScope variableScope = (VariableScope) container.getDefaultContext(VariableScope.VARIABLE_SCOPE);
 		if (variableScope != null) {
 			for (Variable variable : variableScope.getVariables()) {
-				setVariableDataType((CaseFileItem) variable, itemDefinitions);
+				if (variable instanceof CaseFileItem) {
+					setVariableDataType((CaseFileItem) variable, itemDefinitions);
+				}
+			}
+		}
+		for (Node node : container.getNodes()) {
+			if(node instanceof CaseFileItemOnPart){
+				CaseFileItemOnPart i=(CaseFileItemOnPart) node;
+				i.getVariable().setType(i.getCaseFileItem().getType());
+			}else if(node instanceof PlanItemOnPart){
+				((PlanItemOnPart) node).getVariable().setType(new ObjectDataType("org.jbpm.services.task.impl.model.TaskImpl"));
+
 			}
 		}
 	}
@@ -143,7 +144,7 @@ public class DefinitionsHandler extends BaseAbstractHandler implements Handler {
 			if (variable.isCollection()) {
 				CollectionDataType c = new CollectionDataType();
 				c.setClassName(dataType.getStringType());
-				dataType=c;
+				dataType = c;
 			}
 			variable.setType(dataType);
 		}

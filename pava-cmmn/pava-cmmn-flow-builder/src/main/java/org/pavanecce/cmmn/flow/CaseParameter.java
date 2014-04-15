@@ -10,6 +10,7 @@ public class CaseParameter implements Serializable,CMMNElement{
 	private String bindingRef;
 	private String name;
 	private CaseFileItem variable;
+	private String bindingRefinement;
 	public String getElementId() {
 		return id;
 	}
@@ -33,6 +34,12 @@ public class CaseParameter implements Serializable,CMMNElement{
 	}
 	public void setVariable(CaseFileItem variable) {
 		this.variable = variable;
+	}
+	public String getBindingRefinement() {
+		return bindingRefinement;
+	}
+	public void setBindingRefinement(String bindingRefinement) {
+		this.bindingRefinement = bindingRefinement;
 	}
 	
 	

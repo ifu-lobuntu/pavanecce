@@ -1,6 +1,7 @@
 package org.pavanecce.cmmn.jpa;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,7 +14,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
 import org.drools.core.common.InternalKnowledgeRuntime;
+import org.drools.persistence.PersistenceContext;
 import org.drools.persistence.PersistenceContextManager;
+import org.drools.persistence.jpa.JpaPersistenceContextManager;
 import org.hibernate.collection.spi.PersistentCollection;
 import org.hibernate.event.spi.PostUpdateEvent;
 import org.hibernate.event.spi.PostUpdateEventListener;
@@ -24,7 +27,7 @@ import org.kie.api.runtime.EnvironmentName;
 import org.pavanecce.cmmn.flow.Case;
 import org.pavanecce.cmmn.flow.CaseFileItem;
 import org.pavanecce.cmmn.flow.CaseFileItemTransition;
-import org.pavanecce.cmmn.flow.OnCaseFileItemPart;
+import org.pavanecce.cmmn.flow.CaseFileItemOnPart;
 import org.pavanecce.cmmn.instance.CaseFileItemEvent;
 import org.pavanecce.cmmn.instance.CaseInstance;
 import org.pavanecce.cmmn.instance.CaseInstanceFactory;
@@ -60,8 +63,8 @@ public class HibernateSubscriptionManager implements SubscriptionManager, PostUp
 		}
 		Case theCase = (Case) process.getProcess();
 		storeVariable(process, caseFileItem, currentInstance);
-		Set<OnCaseFileItemPart> onCaseFileItemParts = theCase.findCaseFileItemOnPartsFor(caseFileItem);
-		for (OnCaseFileItemPart part : onCaseFileItemParts) {
+		Set<CaseFileItemOnPart> onCaseFileItemParts = theCase.findCaseFileItemOnPartsFor(caseFileItem);
+		for (CaseFileItemOnPart part : onCaseFileItemParts) {
 			switch (part.getStandardEvent()) {
 			case ADD_CHILD:
 			case ADD_REFERENCE:
@@ -80,8 +83,8 @@ public class HibernateSubscriptionManager implements SubscriptionManager, PostUp
 			}
 		}
 		for (CaseFileItem childItem : caseFileItem.getChildren()) {
-			Set<OnCaseFileItemPart> on = theCase.findCaseFileItemOnPartsFor(childItem);
-			for (OnCaseFileItemPart part : on) {
+			Set<CaseFileItemOnPart> on = theCase.findCaseFileItemOnPartsFor(childItem);
+			for (CaseFileItemOnPart part : on) {
 				if (part.getStandardEvent() == CaseFileItemTransition.CREATE) {
 					// Only the parent object will know if this child has been
 					// created
@@ -204,11 +207,21 @@ public class HibernateSubscriptionManager implements SubscriptionManager, PostUp
 
 	private void fireEvent(CaseFileItemSubscriptionInfo is, Object value) {
 		InternalKnowledgeRuntime eventManager = CaseInstanceFactory.getEventManager(is.getCaseKey());
-		String eventType = OnCaseFileItemPart.getType(is.getItemName(), is.getTransition());
-		PersistenceContextManager em =  (PersistenceContextManager) eventManager.getEnvironment().get(EnvironmentName.PERSISTENCE_CONTEXT_MANAGER);
-		em.beginCommandScopedEntityManager();
+		String eventType = CaseFileItemOnPart.getType(is.getItemName(), is.getTransition());
+		PersistenceContextManager pcm =  (PersistenceContextManager) eventManager.getEnvironment().get(EnvironmentName.PERSISTENCE_CONTEXT_MANAGER);
+		pcm.beginCommandScopedEntityManager();
+		PersistenceContext pc = pcm.getCommandScopedPersistenceContext();
+		pc.joinTransaction();
 		eventManager.signalEvent(eventType, new CaseFileItemEvent(is.getItemName(), is.getTransition(), value), is.getProcessId());
-		em.endCommandScopedEntityManager();
+		try {
+			Method m = JpaPersistenceContextManager.class.getDeclaredMethod("getInternalCommandScopedEntityManager");
+			m.setAccessible(true);
+			EntityManager em = (EntityManager) m.invoke(pcm);
+			em.flush();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		pcm.endCommandScopedEntityManager();
 	}
 
 	public void onPreUpdateCollection(PreCollectionUpdateEvent event) {

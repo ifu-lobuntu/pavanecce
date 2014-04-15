@@ -1,6 +1,8 @@
 package org.pavanecce.cmmn.flow;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.drools.core.process.core.ParameterDefinition;
@@ -9,12 +11,13 @@ import org.drools.core.process.core.datatype.impl.type.StringDataType;
 import org.drools.core.process.core.impl.ParameterDefinitionImpl;
 import org.drools.core.process.core.impl.WorkImpl;
 
-public class HumanTaskNode extends TaskNode {
+public class HumanTask extends TaskNode {
 	private String performerRef;
 	private Role performer;
 	private boolean isBlocking;
 
-	public HumanTaskNode() {
+
+	public HumanTask() {
 		Work work = new WorkImpl();
 		work.setName("Human Task");
 		Set<ParameterDefinition> parameterDefinitions = new HashSet<ParameterDefinition>();
@@ -57,4 +60,6 @@ public class HumanTaskNode extends TaskNode {
 	public void setPerformer(Role performer) {
 		this.performer = performer;
 	}
+
+
 }

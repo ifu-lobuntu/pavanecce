@@ -1,44 +1,21 @@
 package org.pavanecce.cmmn.flow;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.Collection;
+import java.util.Set;
 
-import org.jbpm.process.core.event.EventFilter;
-import org.jbpm.workflow.core.node.EventNode;
+import org.jbpm.workflow.core.Node;
 
-public class Sentry extends EventNode implements CMMNElement{
-	private static final long serialVersionUID = -3568385090236274366L;
-	private List<OnPart> onParts = new ArrayList<OnPart>();
-	private String elementId;
+public interface Sentry extends Node,CMMNElement{
 
-	public Sentry() {
-	}
+	void addPlanItemExiting(PlanItem planItem);
 
-	public void addOnPart(OnPart onPart) {
-		super.addEventFilter(onPart);
-		this.onParts.add(onPart);
-	}
+	Collection<? extends OnPart> getOnParts();
 
-	@Override
-	public String getType() {
-		return "too-many-events";
-	}
+	void addOnPart(OnPart part);
 
-	public List<OnPart> getOnParts() {
-		return onParts;
-	}
+	Set<PlanItem> getPlanItemsExiting();
 
-	public String getElementId() {
-		return elementId;
-	}
+	void setElementId(String value);
 
-	public void setElementId(String elementId) {
-		this.elementId = elementId;
-	}
-	@Override
-	public List<EventFilter> getEventFilters() {
-		return Collections.<EventFilter>unmodifiableList(onParts);
-	};
 
 }

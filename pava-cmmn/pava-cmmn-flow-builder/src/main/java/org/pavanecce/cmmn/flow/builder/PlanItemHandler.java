@@ -1,6 +1,5 @@
 package org.pavanecce.cmmn.flow.builder;
 
-import org.drools.core.xml.BaseAbstractHandler;
 import org.drools.core.xml.ExtensibleXmlParser;
 import org.drools.core.xml.Handler;
 import org.jbpm.workflow.core.NodeContainer;
@@ -27,7 +26,7 @@ public class PlanItemHandler extends AbstractPlanModelElementHandler implements 
 		planItem.setDefinitionRef(attrs.getValue("definitionRef"));
 		String exit = attrs.getValue("exitCriteriaRefs");
 		if(exit!=null){
-			for (String string : entry.split("\\ ")) {
+			for (String string : exit.split("\\ ")) {
 				planItem.putExitCriterion(string, null);
 			}
 		}

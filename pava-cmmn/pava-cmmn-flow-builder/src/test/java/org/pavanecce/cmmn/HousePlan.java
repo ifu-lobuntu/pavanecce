@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 @Entity
 public class HousePlan {
@@ -16,7 +17,8 @@ public class HousePlan {
 	private Long id;
 	@OneToMany(cascade=CascadeType.ALL)
 	private Set<WallPlan> wallPlans = new HashSet<WallPlan>();
-
+	@OneToOne(cascade=CascadeType.ALL)
+	private RoofPlan roofPlan;
 	public Long getId() {
 		return id;
 	}
@@ -32,4 +34,13 @@ public class HousePlan {
 	public void setWallPlans(Set<WallPlan> wallPlans) {
 		this.wallPlans = wallPlans;
 	}
+
+	public RoofPlan getRoofPlan() {
+		return roofPlan;
+	}
+
+	public void setRoofPlan(RoofPlan roofPlan) {
+		this.roofPlan = roofPlan;
+	}
+	
 }

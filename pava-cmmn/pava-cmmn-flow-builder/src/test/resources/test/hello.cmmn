@@ -40,16 +40,16 @@
 			<cmmn:planItem definitionRef="layFoundationId" name="LayFoundationPlanItem"
 				id="layFoundationPlanItemId" entryCriteriaRefs="wallplanCreatedId">
 			</cmmn:planItem>
-			<cmmn:planItem definitionRef="layBricksId" name="LayBricks"
+			<cmmn:planItem definitionRef="layBricksId" name="LayBricksPlanItem"
 				id="layBricksPlanItemId" entryCriteriaRefs="foundationLaidId">
 			</cmmn:planItem>
-			<cmmn:sentry id="wallplanCreatedId" name="WaitingForWallPlanCreated">
-				<cmmn:caseFileItemOnPart sourceRef="wallPlanFileItemId">
+			<cmmn:sentry id="wallplanCreatedId" name="WaitingForWallPlanCreatedSentry">
+				<cmmn:caseFileItemOnPart sourceRef="wallPlanFileItemId" id="WaitingForWallPlanCreated">
 					<cmmn:standardEvent>create</cmmn:standardEvent>
 				</cmmn:caseFileItemOnPart>
 			</cmmn:sentry>
-			<cmmn:sentry id="foundationLaidId" name="WaitingForFoundationLaid">
-				<cmmn:planItemOnPart sourceRef="layFoundationPlanItemId">
+			<cmmn:sentry id="foundationLaidId" name="WaitingForFoundationLaidSentry">
+				<cmmn:planItemOnPart sourceRef="layFoundationPlanItemId" id="WaitingForFoundationLaid">
 					<cmmn:standardEvent>complete</cmmn:standardEvent>
 				</cmmn:planItemOnPart>
 			</cmmn:sentry>
@@ -61,7 +61,7 @@
 				<cmmn:outputs name="wall" bindingRef="wallFileItemId"></cmmn:outputs>
 			</cmmn:humanTask>
 			<cmmn:humanTask id="layBricksId" name="LayBricks"
-				performerRef="Builder" isBlocking="true">
+				performerRef="builderRoleId" isBlocking="true">
 				<cmmn:defaultControl>
 				</cmmn:defaultControl>
 				<cmmn:inputs name="wallPlan" bindingRef="wallPlanDefinitionId"></cmmn:inputs>
