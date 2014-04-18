@@ -49,15 +49,15 @@
         <!--BAM for task service -->
         <class>org.jbpm.services.task.impl.model.BAMTaskSummaryImpl</class>
         <!-- CMMN EVent managment -->
-        <class>org.pavanecce.cmmn.jpa.CaseFileItemSubscriptionInfo</class>
-        <class>org.pavanecce.cmmn.jpa.CaseSubscriptionInfo</class>
+        <class>org.pavanecce.cmmn.jpa.JpaCaseFileItemSubscriptionInfo</class>
+        <class>org.pavanecce.cmmn.jpa.JpaCaseSubscriptionInfo</class>
         <!-- Customer entities -->
-        <class>org.pavanecce.cmmn.HousePlan</class>
-        <class>org.pavanecce.cmmn.RoofPlan</class>
-        <class>org.pavanecce.cmmn.House</class>
-        <class>org.pavanecce.cmmn.WallPlan</class>
-        <class>org.pavanecce.cmmn.WallQuote</class>
-        <class>org.pavanecce.cmmn.Wall</class>
+        <class>org.pavanecce.cmmn.test.domain.HousePlan</class>
+        <class>org.pavanecce.cmmn.test.domain.RoofPlan</class>
+        <class>org.pavanecce.cmmn.test.domain.House</class>
+        <class>org.pavanecce.cmmn.test.domain.WallPlan</class>
+        <class>org.pavanecce.cmmn.test.domain.WallQuote</class>
+        <class>org.pavanecce.cmmn.test.domain.Wall</class>
         
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
 

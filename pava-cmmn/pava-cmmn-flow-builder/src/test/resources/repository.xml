@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Copyright 2010 Anyware Services
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   -->
+<!DOCTYPE Repository PUBLIC "-//The Apache Software Foundation//DTD Jackrabbit 1.5//EN"
+                            "http://jackrabbit.apache.org/dtd/repository-1.5.dtd">
+<Repository>
+    <FileSystem class="org.apache.jackrabbit.core.fs.local.LocalFileSystem">
+        <param name="path" value="${rep.home}/repository"/>
+    </FileSystem>
+    <Security appName="Jackrabbit">
+        <AccessManager class="org.apache.jackrabbit.core.security.SimpleAccessManager"/>
+        <LoginModule class="org.apache.jackrabbit.core.security.SimpleLoginModule">
+           <!-- anonymous user name ('anonymous' is the default value) -->
+           <param name="anonymousId" value="guest"/>
+        </LoginModule>
+    </Security>
+    <DataStore class="org.apache.jackrabbit.core.data.FileDataStore">
+        <param name="path" value="${rep.home}/repository/datastore"/>
+        <param name="minRecordLength" value="4096"/>
+    </DataStore>
+    <Workspaces rootPath="${rep.home}/workspaces" defaultWorkspace="default" />
+    <Workspace name="${wsp.name}">
+        <FileSystem class="org.apache.jackrabbit.core.fs.local.LocalFileSystem">
+            <param name="path" value="${wsp.home}"/>
+        </FileSystem>
+        <PersistenceManager class="org.apache.jackrabbit.core.persistence.pool.DerbyPersistenceManager">
+                <param name="driver" value="org.apache.derby.jdbc.Driver42"/>
+                <param name="url" value="jdbc:derby:memory:myDB;create=true"/>
+                <param name="user" value=""/>
+                <param name="password" value=""/>
+                <param name="databaseType" value="derby"/>
+                <param name="schemaObjectPrefix" value="TEST_DEFAULT_"/>
+                <param name="schemaCheckEnabled" value="true"/>
+                <param name="externalBLOBs" value="true"/>
+        </PersistenceManager>
+        <SearchIndex class="org.apache.jackrabbit.core.query.lucene.SearchIndex">
+            <param name="path" value="${wsp.home}/index"/>
+            <!-- Keep a cache of uuid to doc number with 16k for each segment -->
+            <param name="cacheSize" value="16384"/>
+        </SearchIndex>
+    </Workspace>
+    <Versioning rootPath="${rep.home}/versions">
+        <FileSystem class="org.apache.jackrabbit.core.fs.local.LocalFileSystem">
+            <param name="path" value="${rep.home}/versions"/>
+        </FileSystem>
+        <PersistenceManager class="org.apache.jackrabbit.core.persistence.pool.DerbyPersistenceManager">
+          <param name="driver" value="org.apache.derby.jdbc.Driver42"/>
+          <param name="url" value="jdbc:derby:memory:myDB;create=true"/>
+          <param name="user" value=""/>
+          <param name="password" value=""/>
+          <param name="databaseType" value="derby"/>
+          <param name="schemaObjectPrefix" value="TEST_V_"/>
+          <param name="schemaCheckEnabled" value="true"/>
+          <param name="externalBLOBs" value="true"/>
+        </PersistenceManager>
+    </Versioning>
+    <!-- Search index for content that is shared repository wide (/jcr:system tree, contains mainly versions) -->
+    <SearchIndex class="org.apache.jackrabbit.core.query.lucene.SearchIndex">
+        <param name="path" value="${rep.home}/repository/index"/>
+        <!-- Keep a cache of uuid to doc number with 16k for each segment -->
+        <param name="cacheSize" value="16384"/>
+    </SearchIndex>
+</Repository>

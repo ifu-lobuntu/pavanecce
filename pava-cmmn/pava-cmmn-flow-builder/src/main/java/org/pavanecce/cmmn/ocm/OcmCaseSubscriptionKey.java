@@ -1,4 +1,4 @@
-package org.pavanecce.cmmn.jpa;
+package org.pavanecce.cmmn.ocm;
 
 import java.io.Serializable;
 import java.lang.reflect.AnnotatedElement;
@@ -7,48 +7,39 @@ import java.lang.reflect.Member;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import javax.persistence.Embeddable;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
+import org.pavanecce.cmmn.instance.CaseSubscriptionKey;
 
-@Embeddable
-public class CaseSubscriptionKey implements Serializable {
+public class OcmCaseSubscriptionKey implements Serializable, CaseSubscriptionKey {
 	private String className;
 	private String id;
-	@Transient
 	private Class<?> entityClass;
-	public CaseSubscriptionKey() {
+
+	public OcmCaseSubscriptionKey() {
 
 	}
 
-	public CaseSubscriptionKey(Object object) {
-		Member idMember = JpaIdUtil.findIdMember(object.getClass());
+	public OcmCaseSubscriptionKey(Object object) {
+		Member idMember = OcmIdUtil.INSTANCE.findIdMember(object.getClass());
 		String idAsString = toIdString(object, idMember);
 		this.id = idAsString;
-		this.entityClass= JpaIdUtil.findEntityClass(object.getClass());
-		this.className=entityClass.getName();
+		this.entityClass = OcmIdUtil.INSTANCE.findEntityClass(object.getClass());
+		this.className = entityClass.getName();
 	}
 
 	private String toIdString(Object object, Member idMember) {
-		Object id = JpaIdUtil.getId(idMember, object);
+		Object id = OcmIdUtil.INSTANCE.getId(idMember, object);
 		String idAsString = null;
 		if (id instanceof Number) {
 			idAsString = id.toString();
 		} else if (id instanceof String) {
 			idAsString = (String) id;
-		} else if (((AnnotatedElement) idMember).isAnnotationPresent(Temporal.class)) {
-			Temporal annotation = ((AnnotatedElement) idMember).getAnnotation(Temporal.class);
+		} else if (((AnnotatedElement) idMember).isAnnotationPresent(org.apache.jackrabbit.ocm.mapper.impl.annotation.Field.class)) {
+			org.apache.jackrabbit.ocm.mapper.impl.annotation.Field annotation = ((AnnotatedElement) idMember)
+					.getAnnotation(org.apache.jackrabbit.ocm.mapper.impl.annotation.Field.class);
 			if (id instanceof Calendar) {
 				id = ((Calendar) id).getTime();
 			}
-			if (TemporalType.TIMESTAMP == annotation.value()) {
-				idAsString = new SimpleDateFormat("yyyyMMddHHmmss").format(id);
-			} else if (TemporalType.TIMESTAMP == annotation.value()) {
-				idAsString = new SimpleDateFormat("HHmmss").format(id);
-			} else {
-				idAsString = new SimpleDateFormat("yyyyMMdd").format(id);
-			}
+			idAsString = new SimpleDateFormat("yyyyMMddHHmmss").format(id);
 		} else if (id.getClass().getName().startsWith("java.")) {
 			idAsString = id.toString();
 		} else {

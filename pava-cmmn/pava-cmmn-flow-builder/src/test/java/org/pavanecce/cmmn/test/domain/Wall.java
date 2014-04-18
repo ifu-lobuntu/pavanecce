@@ -1,20 +1,21 @@
-package org.pavanecce.cmmn;
+package org.pavanecce.cmmn.test.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
-public class WallQuote {
+public class Wall {
 	@Id
 	@GeneratedValue
-	Long id;
+	private String id;
 
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
+	
 }

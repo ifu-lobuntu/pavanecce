@@ -1,4 +1,4 @@
-package org.pavanecce.cmmn;
+package org.pavanecce.cmmn.test.domain;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -14,16 +14,16 @@ import javax.persistence.OneToOne;
 public class HousePlan {
 	@Id
 	@GeneratedValue
-	private Long id;
+	private String id;
 	@OneToMany(cascade=CascadeType.ALL)
 	private Set<WallPlan> wallPlans = new HashSet<WallPlan>();
 	@OneToOne(cascade=CascadeType.ALL)
 	private RoofPlan roofPlan;
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

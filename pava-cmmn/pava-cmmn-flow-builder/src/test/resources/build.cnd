@@ -1,0 +1,11 @@
+
+<t='http://www.ifu-lobuntu.org/testing'>
+
+[t:housePlan]
+
+[t:constructionCase] 
+	+ t:housePlans (t:housePlan) VERSION multiple
+
+
+
+

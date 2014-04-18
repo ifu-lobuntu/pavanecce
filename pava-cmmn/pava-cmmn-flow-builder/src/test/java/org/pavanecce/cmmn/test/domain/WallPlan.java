@@ -1,4 +1,4 @@
-package org.pavanecce.cmmn;
+package org.pavanecce.cmmn.test.domain;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -10,17 +10,17 @@ import javax.persistence.OneToOne;
 public class WallPlan {
 	@Id
 	@GeneratedValue
-	private Long id;
+	private String id;
 	@OneToOne(cascade=CascadeType.ALL)
 	private WallQuote wallQuote;
 	@OneToOne()
 	private Wall wall;
 
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

@@ -5,15 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.naming.InitialContext;
-import javax.persistence.EntityManager;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
-import javax.transaction.UserTransaction;
-
+import org.apache.jackrabbit.core.TransientRepository;
 import org.junit.Test;
 import org.kie.api.io.ResourceType;
 import org.kie.api.runtime.KieSession;
@@ -26,18 +18,40 @@ import org.kie.internal.task.api.EventService;
 import org.pavanecce.cmmn.flow.builder.CMMNBuilder;
 import org.pavanecce.cmmn.instance.CaseInstance;
 import org.pavanecce.cmmn.instance.CaseTaskLifecycleListener;
+import org.pavanecce.cmmn.instance.ObjectPersistence;
+import org.pavanecce.cmmn.jpa.JpaObjectPersistence;
+import org.pavanecce.cmmn.ocm.OcmObjectPersistence;
+import org.pavanecce.cmmn.test.domain.House;
+import org.pavanecce.cmmn.test.domain.HousePlan;
+import org.pavanecce.cmmn.test.domain.RoofPlan;
+import org.pavanecce.cmmn.test.domain.Wall;
+import org.pavanecce.cmmn.test.domain.WallPlan;
+import org.pavanecce.cmmn.test.domain.WallQuote;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class BuilderTest extends AbstrasctJbpmCaseBaseTestCase {
 	private static final Logger logger = LoggerFactory.getLogger(BuilderTest.class);
+	ObjectPersistence persistence;
+	private boolean isJpa=true;
 
 	public BuilderTest() {
 		super(true, true, "org.jbpm.persistence.jpa");
 	}
 
+	public ObjectPersistence getPersistence() {
+		if (persistence == null) {
+			if(isJpa){
+			persistence = new JpaObjectPersistence(getEmf());
+			}else{
+				persistence=new OcmObjectPersistence(new TransientRepository(), HousePlan.class, House.class, Wall.class, WallPlan.class,RoofPlan.class, WallQuote.class);
+			}
+		}
+		return persistence;
+	}
+
 	@Test
-	public void testBuild() throws Exception {
+	public void testSimpleEntryCriteria() throws Exception {
 		createRuntimeManager("test/hello.cmmn");
 		RuntimeEngine runtimeEngine = getRuntimeEngine();
 		KieSession ksession = runtimeEngine.getKieSession();
@@ -45,43 +59,40 @@ public class BuilderTest extends AbstrasctJbpmCaseBaseTestCase {
 		eventService.registerTaskLifecycleEventListener(new CaseTaskLifecycleListener(ksession));
 		TaskService taskService = runtimeEngine.getTaskService();
 		Map<String, Object> params = new HashMap<String, Object>();
-		UserTransaction ut = (UserTransaction) new InitialContext().lookup("java:comp/UserTransaction");
-		ut.begin();
-		EntityManager em = getEmf().createEntityManager();
+		getPersistence().start();
 
 		HousePlan housePlan = new HousePlan();
-		em.persist(housePlan);
-		em.flush();
-		ut.commit();
+		getPersistence().persist(housePlan);
+		getPersistence().commit();
 		params.put("housePlan", Arrays.asList(housePlan));
-		ut.begin();
+		getPersistence().start();
 		CaseInstance processInstance = (CaseInstance) ksession.startProcess("hello", params);
-		ut.commit();
+		getPersistence().commit();
 		assertProcessInstanceActive(processInstance.getId(), ksession);
 		assertNodeTriggered(processInstance.getId(), "defaultSplit");
 		// Sentries:
 		assertNodeTriggered(processInstance.getId(), "WaitingForWallPlanCreated");
 		assertNodeTriggered(processInstance.getId(), "WaitingForFoundationLaid");
-		addWallPlan(ut, housePlan);
-		addWallPlan(ut, housePlan);
+		addWallPlan(housePlan);
+		addWallPlan(housePlan);
 		assertNodeTriggered(processInstance.getId(), "LayFoundationPlanItem");
 		// // let Builder execute LayFoundationPlanItem
 		List<TaskSummary> list = taskService.getTasksAssignedAsPotentialOwner("Builder", "en-UK");
 		assertEquals(2, list.size());
 		assertEquals("LayFoundationPlanItem", list.get(0).getName());
 		assertEquals("LayFoundationPlanItem", list.get(1).getName());
-		ut.begin();
+		getPersistence().start();
 		processInstance = (CaseInstance) ksession.getProcessInstance(processInstance.getId());
 		assertNodeActive(processInstance.getId(), ksession, "WaitingForWallPlanCreated");
 		assertNodeActive(processInstance.getId(), ksession, "WaitingForFoundationLaid");
 		assertNodeActive(processInstance.getId(), ksession, "LayFoundationPlanItem");
-		ut.commit();
+		getPersistence().commit();
 		taskService.start(list.get(0).getId(), "Builder");
 		taskService.complete(list.get(0).getId(), "Builder", new HashMap<String, Object>());
-		ut.begin();
+		getPersistence().start();
 		assertNodeActive(processInstance.getId(), ksession, "LayBricksPlanItem");
 		assertNodeActive(processInstance.getId(), ksession, "LayFoundationPlanItem");
-		ut.commit();
+		getPersistence().commit();
 		taskService.start(list.get(1).getId(), "Builder");
 		taskService.complete(list.get(1).getId(), "Builder", new HashMap<String, Object>());
 
@@ -118,38 +129,33 @@ public class BuilderTest extends AbstrasctJbpmCaseBaseTestCase {
 		eventService.registerTaskLifecycleEventListener(new CaseTaskLifecycleListener(ksession));
 		TaskService taskService = runtimeEngine.getTaskService();
 		Map<String, Object> params = new HashMap<String, Object>();
-		UserTransaction ut = (UserTransaction) new InitialContext().lookup("java:comp/UserTransaction");
-		ut.begin();
-		EntityManager em = getEmf().createEntityManager();
+		getPersistence().start();
 
 		HousePlan housePlan = new HousePlan();
-		em.persist(housePlan);
-
 		House house = new House();
-		em.persist(house);
-		em.flush();
-		ut.commit();
+		getPersistence().persist(house);
+		getPersistence().persist(housePlan);
+		getPersistence().commit();
 		params.put("housePlan", Arrays.asList(housePlan));
 		params.put("house", Arrays.asList(house));
-		ut.begin();
+		getPersistence().start();
 		CaseInstance processInstance = (CaseInstance) ksession.startProcess("bye", params);
-		ut.commit();
+		getPersistence().commit();
 		assertProcessInstanceActive(processInstance.getId(), ksession);
 		assertNodeTriggered(processInstance.getId(), "defaultSplit");
 		// Sentries:
 		assertNodeTriggered(processInstance.getId(), "OnWallCreatePart");
 		assertNodeTriggered(processInstance.getId(), "OnWallPlanCreatePart");
 		assertNodeTriggered(processInstance.getId(), "OnRoofPlanCreatePart");
-		addWallPlan(ut, housePlan);
+		addWallPlan( housePlan);
 		assertNodeTriggered(processInstance.getId(), "BuildWallPlanItem");
 		// // let Builder execute LayFoundationPlanItem
 		List<TaskSummary> list = taskService.getTasksAssignedAsPotentialOwner("Builder", "en-UK");
 		assertEquals(1, list.size());
 		assertEquals("BuildWallPlanItem", list.get(0).getName());
 
-		
-		//exit criterion
-		addWall(ut, house);
+		// exit criterion
+		addWall(house);
 		list = taskService.getTasksAssignedAsPotentialOwner("Builder", "en-UK");
 		assertEquals(0, list.size());
 		// TODO:l
@@ -163,26 +169,16 @@ public class BuilderTest extends AbstrasctJbpmCaseBaseTestCase {
 		// assertProcessInstanceCompleted(processInstance.getId(), ksession);
 	}
 
-	private void addWallPlan(UserTransaction ut, HousePlan housePlan) throws NotSupportedException, SystemException, RollbackException,
-			HeuristicMixedException, HeuristicRollbackException {
-		EntityManager em;
-		ut.begin();
-		em = getEmf().createEntityManager();
-		housePlan = em.find(HousePlan.class, housePlan.getId());
+	private void addWallPlan(HousePlan housePlan) {
+		housePlan = getPersistence().find(HousePlan.class, housePlan.getId());
 		housePlan.getWallPlans().add(new WallPlan());
-		em.flush();
-		ut.commit();
+		getPersistence().commit();
 	}
 
-	private void addWall(UserTransaction ut, House house) throws NotSupportedException, SystemException, RollbackException,
-			HeuristicMixedException, HeuristicRollbackException {
-		EntityManager em;
-		ut.begin();
-		em = getEmf().createEntityManager();
-		house= em.find(House.class, house.getId());
+	private void addWall(House house) {
+		house = getPersistence().find(House.class, house.getId());
 		house.getWalls().add(new Wall());
-		em.flush();
-		ut.commit();
+		getPersistence().commit();
 	}
 
 	protected RuntimeManager createRuntimeManager(Strategy strategy, String identifier, String... process) {

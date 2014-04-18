@@ -55,7 +55,7 @@ public class CollectionPlaceHolderResolveStrategy extends JPAPlaceholderResolver
 		if (coll.size() > 0) {
 			Class<?> commonSuperclass = findCommonSuperclass(coll);
 			os.writeUTF(commonSuperclass.getName());
-			Member idMember = JpaIdUtil.findIdMember(commonSuperclass);
+			Member idMember = JpaIdUtil.INSTANCE.findIdMember(commonSuperclass);
 			((AccessibleObject) idMember).setAccessible(true);
 			String idName = idMember.getName();
 			if(idMember instanceof Method){
@@ -63,7 +63,7 @@ public class CollectionPlaceHolderResolveStrategy extends JPAPlaceholderResolver
 			}
 			os.writeUTF(idName);
 			for (Object object2 : coll) {
-				Object id = JpaIdUtil.getId(idMember, object2);
+				Object id = JpaIdUtil.INSTANCE.getId(idMember, object2);
 				if(id==null){
 					throw new IllegalStateException("Id must be set before being stored in a process: " + commonSuperclass.getName() +"."+ idMember.getName());
 				}
