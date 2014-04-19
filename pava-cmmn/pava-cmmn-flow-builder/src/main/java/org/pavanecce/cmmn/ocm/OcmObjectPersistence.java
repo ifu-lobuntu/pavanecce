@@ -1,5 +1,12 @@
 package org.pavanecce.cmmn.ocm;
 
+import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Member;
+import java.lang.reflect.Method;
+
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -10,6 +17,8 @@ import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
+import org.apache.jackrabbit.ocm.exception.JcrMappingException;
+import org.apache.jackrabbit.ocm.exception.ObjectContentManagerException;
 import org.apache.jackrabbit.ocm.manager.ObjectContentManager;
 import org.pavanecce.cmmn.instance.ObjectPersistence;
 
@@ -48,7 +57,7 @@ public class OcmObjectPersistence implements ObjectPersistence {
 			if (startedTransaction) {
 				getTransaction().commit();
 			}
-			startedTransaction=false;
+			startedTransaction = false;
 		} catch (Exception e) {
 			throw convertException(e);
 		}

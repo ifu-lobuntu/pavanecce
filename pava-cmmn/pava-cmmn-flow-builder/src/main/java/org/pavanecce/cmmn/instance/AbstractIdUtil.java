@@ -7,13 +7,14 @@ import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 
 
-public abstract class AbstractIdUtil {
+public abstract class AbstractIdUtil<T> {
 
 	public AbstractIdUtil() {
 		super();
 	}
 
-	public Object getId(Member idMember, Object object2) {
+	@SuppressWarnings("unchecked")
+	public T getId(Member idMember, Object object2) {
 		Object id = null;
 		try {
 			Method getter;
@@ -33,7 +34,7 @@ public abstract class AbstractIdUtil {
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
 		}
-		return id;
+		return (T)id;
 	}
 	public boolean isEntityObject(Object o){
 		if(o ==null){

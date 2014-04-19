@@ -5,8 +5,8 @@ import java.lang.reflect.AnnotatedElement;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
 import org.pavanecce.cmmn.instance.AbstractIdUtil;
 
-public class OcmIdUtil extends AbstractIdUtil<String>{
-	public static OcmIdUtil INSTANCE= new OcmIdUtil();
+public class OcmPathUtil extends AbstractIdUtil<String>{
+	public static OcmPathUtil INSTANCE= new OcmPathUtil();
 	
 
 
@@ -14,8 +14,8 @@ public class OcmIdUtil extends AbstractIdUtil<String>{
 		boolean isId=false;
 		if(field.isAnnotationPresent(org.apache.jackrabbit.ocm.mapper.impl.annotation.Field.class)){
 			org.apache.jackrabbit.ocm.mapper.impl.annotation.Field ann = field.getAnnotation(org.apache.jackrabbit.ocm.mapper.impl.annotation.Field.class);
-			if(ann.id() || ann.uuid()){
-				isId=true;;
+			if(ann.path()){
+				isId=true;
 			}
 		}
 		return isId;

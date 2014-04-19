@@ -79,7 +79,6 @@ public class OcmSubscriptionManager extends AbstractSubscriptionManager<OcmCaseS
 				propertyName = newNode.getParent().getDefinition().getName();
 				o = getPersistence().find(parentNode.getParent().getIdentifier());
 			}else{
-				System.out.println();
 			}
 			if (o != null) {
 				String[] split = propertyName.split("\\:");

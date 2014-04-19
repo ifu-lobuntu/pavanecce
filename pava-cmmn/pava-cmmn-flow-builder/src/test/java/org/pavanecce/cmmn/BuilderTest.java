@@ -156,14 +156,14 @@ public class BuilderTest extends AbstrasctJbpmCaseBaseTestCase {
 	private void addWallPlan(HousePlan housePlan) throws Exception{
 		housePlan = getPersistence().find(HousePlan.class, housePlan.getId());
 		new WallPlan(housePlan);
-		getPersistence().update(housePlan.getConstructionCase());
+		getPersistence().update(housePlan);
 		getPersistence().commit();
 	}
 
 	private void addWall(House house) throws Exception{
 		house = getPersistence().find(House.class, house.getId());
 		new Wall(house);
-		getPersistence().update(house.getConstructionCase());
+		getPersistence().update(house);
 		getPersistence().commit();
 	}
 

@@ -1,5 +1,6 @@
 package org.pavanecce.cmmn.jpa;
 
+import java.io.Serializable;
 import java.lang.reflect.AnnotatedElement;
 
 import javax.persistence.EmbeddedId;
@@ -8,7 +9,7 @@ import javax.persistence.Id;
 
 import org.pavanecce.cmmn.instance.AbstractIdUtil;
 
-public class JpaIdUtil extends AbstractIdUtil {
+public class JpaIdUtil extends AbstractIdUtil<Serializable> {
 	public static JpaIdUtil INSTANCE =new JpaIdUtil();
 	@Override
 	protected boolean isId(AnnotatedElement field) {

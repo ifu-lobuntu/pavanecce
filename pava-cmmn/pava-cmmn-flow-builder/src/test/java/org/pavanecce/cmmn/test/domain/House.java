@@ -23,22 +23,26 @@ public class House {
 	@GeneratedValue()
 	@Field(uuid = true)
 	private String id;
-	@OneToMany(cascade = CascadeType.ALL, mappedBy="house")
-	@Collection(jcrName = "t:walls",jcrElementName="t:wall")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "house")
+	@Collection(jcrName = "t:walls", jcrElementName = "t:wall")
 	private Set<Wall> walls = new HashSet<Wall>();
 	@Field(jcrName = "t:description")
 	private String description;
 	@Bean(converter = ParentBeanConverterImpl.class)
-	@OneToOne(mappedBy="house")
+	@OneToOne(mappedBy = "house")
 	private ConstructionCase constructionCase;
-	public House(){
-		
+	@Field(path = true)
+	String path;
+
+	public House() {
+
 	}
-	
-	public House(ConstructionCase c){
-		constructionCase=c;
+
+	public House(ConstructionCase c) {
+		constructionCase = c;
 		c.setHouse(this);
 	}
+
 	public ConstructionCase getConstructionCase() {
 		return constructionCase;
 	}
@@ -69,6 +73,14 @@ public class House {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public String getPath() {
+		return path;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
 	}
 
 }
