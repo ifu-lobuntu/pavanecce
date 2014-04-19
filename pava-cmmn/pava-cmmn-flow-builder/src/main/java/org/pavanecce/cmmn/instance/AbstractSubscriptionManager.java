@@ -93,10 +93,12 @@ public abstract class AbstractSubscriptionManager <T extends CaseSubscriptionInf
 				}
 			}
 		}
+		em.update(info);
 		cascadeSubscribe(process, currentInstance, caseFileItem.getChildren(), em);
 		cascadeSubscribe(process, currentInstance, caseFileItem.getTargets(), em);
 	}
 
+	@SuppressWarnings("unchecked")
 	protected Class<T> caseSubscriptionInfoClass() {
 		ParameterizedType genericSuperclass = (ParameterizedType) this.getClass().getGenericSuperclass();
 		Type result = genericSuperclass.getActualTypeArguments()[0];
@@ -120,6 +122,7 @@ public abstract class AbstractSubscriptionManager <T extends CaseSubscriptionInf
 
 	protected abstract CaseSubscriptionKey createCaseSubscriptionKey(Object currentInstance);
 
+	@SuppressWarnings("unchecked")
 	private void storeVariable(CaseInstance process, CaseFileItem caseFileItem, Object target) {
 		if (caseFileItem.isCollection()) {
 			Collection<Object> variable = (Collection<Object>) process.getVariable(caseFileItem.getName());
@@ -174,7 +177,7 @@ public abstract class AbstractSubscriptionManager <T extends CaseSubscriptionInf
 
 	private void unsubscribe(CaseInstance process, CaseFileItem caseFileItem, Object target, ObjectPersistence em) {
 		CaseSubscriptionKey key = createCaseSubscriptionKey(target);
-		CaseSubscriptionInfo info = em.find(caseSubscriptionInfoClass(), key);
+		T info = em.find(caseSubscriptionInfoClass(), key);
 		if (info != null) {
 			for (CaseFileItemSubscriptionInfo s : new ArrayList<CaseFileItemSubscriptionInfo>(info.getCaseFileItemSubscriptions())) {
 				if (s.getProcessId() == process.getId()) {

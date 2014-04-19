@@ -32,11 +32,8 @@ import org.drools.core.xml.BaseAbstractHandler;
 import org.drools.core.xml.ExtensibleXmlParser;
 import org.drools.core.xml.Handler;
 import org.jbpm.compiler.xml.ProcessBuildData;
-import org.jbpm.process.core.ContextContainer;
 import org.jbpm.process.core.context.variable.Variable;
 import org.jbpm.process.core.context.variable.VariableScope;
-import org.jbpm.ruleflow.core.RuleFlowProcess;
-import org.jbpm.workflow.core.NodeContainer;
 import org.kie.api.definition.process.Node;
 import org.kie.api.definition.process.Process;
 import org.pavanecce.cmmn.flow.Case;
@@ -45,7 +42,6 @@ import org.pavanecce.cmmn.flow.CaseFileItemDefinition;
 import org.pavanecce.cmmn.flow.CaseFileItemDefinitionType;
 import org.pavanecce.cmmn.flow.CaseFileItemOnPart;
 import org.pavanecce.cmmn.flow.Definitions;
-import org.pavanecce.cmmn.flow.OnPart;
 import org.pavanecce.cmmn.flow.PlanItemOnPart;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
@@ -59,7 +55,6 @@ public class DefinitionsHandler extends BaseAbstractHandler implements Handler {
 		TYPE_MAP_REGISTRY.put(typeSystem, map);
 	}
 
-	@SuppressWarnings("unchecked")
 	public DefinitionsHandler() {
 		if ((this.validParents == null) && (this.validPeers == null)) {
 			this.validParents = new HashSet<Class<?>>();
@@ -78,6 +73,7 @@ public class DefinitionsHandler extends BaseAbstractHandler implements Handler {
 		return new Definitions();
 	}
 
+	@SuppressWarnings("unchecked")
 	public Object end(final String uri, final String localName, final ExtensibleXmlParser parser) throws SAXException {
 		final Element element = parser.endElementBuilder();
 		Definitions definitions = (Definitions) parser.getCurrent();

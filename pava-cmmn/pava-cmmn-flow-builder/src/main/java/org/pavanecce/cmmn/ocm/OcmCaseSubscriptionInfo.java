@@ -3,10 +3,17 @@ package org.pavanecce.cmmn.ocm;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Collection;
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
 import org.pavanecce.cmmn.instance.CaseSubscriptionInfo;
 
+@Node(discriminator=false,jcrType="i:caseSubscriptionInfo")
 public class OcmCaseSubscriptionInfo implements CaseSubscriptionInfo<OcmCaseFileItemSubscriptionInfo> {
 	private OcmCaseSubscriptionKey id;
+	@Field(path=true)
+	private String path;
+	@Collection(jcrName="i:caseFileItemSubscriptions",jcrElementName="i:caseFileItemSubscriptions")
 	private Set<OcmCaseFileItemSubscriptionInfo> caseFileItemSubscriptions = new HashSet<OcmCaseFileItemSubscriptionInfo>();
 
 	public OcmCaseSubscriptionKey getId() {
@@ -18,6 +25,23 @@ public class OcmCaseSubscriptionInfo implements CaseSubscriptionInfo<OcmCaseFile
 
 	public OcmCaseSubscriptionInfo(Object o) {
 		this.id = new OcmCaseSubscriptionKey(o);
+		path="/subscriptions/"+id.getId();
+	}
+
+	public String getPath() {
+		return path;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
+	}
+
+	public void setId(OcmCaseSubscriptionKey id) {
+		this.id = id;
+	}
+
+	public void setCaseFileItemSubscriptions(Set<OcmCaseFileItemSubscriptionInfo> caseFileItemSubscriptions) {
+		this.caseFileItemSubscriptions = caseFileItemSubscriptions;
 	}
 
 	public Set<? extends OcmCaseFileItemSubscriptionInfo> getCaseFileItemSubscriptions() {

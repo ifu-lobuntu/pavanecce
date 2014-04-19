@@ -1,14 +1,13 @@
 package org.pavanecce.cmmn.instance;
 
-import java.util.Collection;
-
-import org.drools.core.process.instance.WorkItem;
-import org.jbpm.workflow.instance.WorkflowProcessInstance;
 import org.jbpm.workflow.instance.node.WorkItemNodeInstance;
-import org.pavanecce.cmmn.flow.PlanItem;
-import org.pavanecce.cmmn.flow.Sentry;
 
 public class PlanItemInstance extends WorkItemNodeInstance {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3200294767777991641L;
 //	@Override
 //	public void addEventListeners() {
 //		PlanItem planItem=(PlanItem) getNode();

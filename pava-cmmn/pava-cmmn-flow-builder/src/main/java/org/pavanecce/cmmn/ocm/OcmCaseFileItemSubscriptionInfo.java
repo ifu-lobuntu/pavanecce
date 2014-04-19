@@ -1,40 +1,60 @@
 package org.pavanecce.cmmn.ocm;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Bean;
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
 import org.pavanecce.cmmn.flow.CaseFileItemTransition;
 import org.pavanecce.cmmn.instance.CaseFileItemSubscriptionInfo;
 import org.pavanecce.cmmn.instance.CaseSubscriptionInfo;
 
-@Entity
-public class OcmCaseFileItemSubscriptionInfo implements CaseFileItemSubscriptionInfo{
-	@Id
-	@GeneratedValue
-	private Long id;
-	@ManyToOne
+@Node(discriminator = false, jcrType = "i:caseFileItemSubscription")
+public class OcmCaseFileItemSubscriptionInfo implements CaseFileItemSubscriptionInfo {
+	@Field(uuid = true)
+	private String id;
+	@Bean(converter=GrandParentBeanConverterImpl.class)
 	private OcmCaseSubscriptionInfo caseSubscription;
+	@Field(jcrName = "i:itemName")
 	private String itemName;
+	@Field(jcrName = "i:transition",converter=EnumConverter.class)
 	private CaseFileItemTransition transition;
+	@Field(jcrName = "i:processId")
 	private long processId;
+	@Field(jcrName = "i:caseKey")
 	private String caseKey;
+	private String path;
+
+	public OcmCaseFileItemSubscriptionInfo(OcmCaseSubscriptionInfo caseSubscription) {
+		super();
+		this.caseSubscription=caseSubscription;
+	}
 
 	public OcmCaseFileItemSubscriptionInfo() {
 		super();
 	}
-
-
-
 	@Override
 	public OcmCaseSubscriptionInfo getCaseSubscription() {
 		return caseSubscription;
 	}
 
+	public String getPath() {
+		if(path==null){
+			path=caseSubscription.getPath() + "/caseFileItemSubscriptions/" +processId+itemName+transition.name();
+		}
+		return path;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
+	}
+
 	@Override
 	public void setCaseSubscription(CaseSubscriptionInfo<?> caseSubscription) {
 		this.caseSubscription = (OcmCaseSubscriptionInfo) caseSubscription;
+	}
+	
+
+	public void setCaseSubscription(OcmCaseSubscriptionInfo caseSubscription) {
+		this.caseSubscription = caseSubscription;
 	}
 
 	@Override
@@ -57,8 +77,7 @@ public class OcmCaseFileItemSubscriptionInfo implements CaseFileItemSubscription
 		this.caseKey = caseKey;
 	}
 
-	@Override
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 
@@ -67,8 +86,7 @@ public class OcmCaseFileItemSubscriptionInfo implements CaseFileItemSubscription
 		return caseKey;
 	}
 
-	@Override
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

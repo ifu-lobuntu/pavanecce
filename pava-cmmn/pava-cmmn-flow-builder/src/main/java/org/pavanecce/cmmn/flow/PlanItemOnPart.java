@@ -2,8 +2,6 @@ package org.pavanecce.cmmn.flow;
 
 import java.io.Serializable;
 
-import org.jbpm.process.core.context.variable.Variable;
-
 public class PlanItemOnPart extends OnPart implements Serializable {
 	private static final long serialVersionUID = -9167236068103073693L;
 	private PlanItemTransition standardEvent;

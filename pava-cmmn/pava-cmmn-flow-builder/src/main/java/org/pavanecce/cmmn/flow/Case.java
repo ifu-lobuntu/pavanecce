@@ -11,6 +11,10 @@ import org.jbpm.workflow.core.node.CompositeNode;
 import org.kie.api.definition.process.Node;
 
 public class Case extends RuleFlowProcess {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2253866933695827108L;
 	private List<CaseParameter> inputParameters=new ArrayList<CaseParameter>();
 	private List<CaseParameter> outputParameters=new ArrayList<CaseParameter>();
 	private Collection<PlanItemDefinition> planItemDefinitions=new ArrayList<PlanItemDefinition>();

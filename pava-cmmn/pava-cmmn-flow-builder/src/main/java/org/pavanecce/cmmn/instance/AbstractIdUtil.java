@@ -35,7 +35,19 @@ public abstract class AbstractIdUtil {
 		}
 		return id;
 	}
+	public boolean isEntityObject(Object o){
+		if(o ==null){
+			return false;
+		}
+		if (isEntity(o.getClass())) {
+			return true;
+		} else if (Object.class == o.getClass().getSuperclass()) {
+			return false;
+		} else {
+			return isEntityObject(o.getClass().getSuperclass());
+		}
 
+	}
 	public Member findIdMember(Class<?> commonSuperclass) {
 		Field[] declaredFields = commonSuperclass.getDeclaredFields();
 		for (Field field : declaredFields) {

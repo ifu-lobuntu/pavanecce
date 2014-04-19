@@ -10,6 +10,10 @@ import java.util.Calendar;
 import org.pavanecce.cmmn.instance.CaseSubscriptionKey;
 
 public class OcmCaseSubscriptionKey implements Serializable, CaseSubscriptionKey {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2689025545130505083L;
 	private String className;
 	private String id;
 	private Class<?> entityClass;

@@ -1,8 +1,6 @@
 package org.pavanecce.cmmn.flow;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.drools.core.process.core.ParameterDefinition;
@@ -12,6 +10,10 @@ import org.drools.core.process.core.impl.ParameterDefinitionImpl;
 import org.drools.core.process.core.impl.WorkImpl;
 
 public class HumanTask extends TaskNode {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 705559982079220394L;
 	private String performerRef;
 	private Role performer;
 	private boolean isBlocking;

@@ -10,6 +10,11 @@ import org.pavanecce.cmmn.flow.OnPart;
 import org.pavanecce.cmmn.flow.PlanItemOnPart;
 
 public class OnPartInstance extends EventNodeInstance {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 377496036154216192L;
+
 	public OnPart getOnPart() {
 		return (OnPart) getEventNode();
 	}
@@ -36,6 +41,7 @@ public class OnPartInstance extends EventNodeInstance {
 		return getEventStack().pop();
 	}
 
+	@SuppressWarnings("unchecked")
 	private Stack<Object> getEventStack() {
 		String variableName = getOnPart().getVariableName();
 		VariableScopeInstance variableScopeInstance = (VariableScopeInstance) resolveContextInstance(VariableScope.VARIABLE_SCOPE, getOnPart()

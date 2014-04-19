@@ -1,14 +1,11 @@
-package org.pavanecce.cmmn.jpa;
+package org.pavanecce.cmmn.ocm;
 
-import java.beans.Introspector;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Member;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -16,21 +13,17 @@ import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Query;
-
+import org.apache.jackrabbit.ocm.manager.ObjectContentManager;
 import org.drools.core.common.DroolsObjectInputStream;
 import org.drools.persistence.jpa.marshaller.JPAPlaceholderResolverStrategy;
 import org.kie.api.runtime.Environment;
-import org.kie.api.runtime.EnvironmentName;
 
-public class CollectionPlaceHolderResolveStrategy extends JPAPlaceholderResolverStrategy {
+public class OcmCollectionPlaceHolderResolveStrategy extends JPAPlaceholderResolverStrategy {
 	private Environment env;
 
-	public CollectionPlaceHolderResolveStrategy(Environment env) {
+	public OcmCollectionPlaceHolderResolveStrategy(Environment env) {
 		super(env);
-		this.env=env;
+		this.env = env;
 	}
 
 	public boolean accept(Object object) {
@@ -38,9 +31,9 @@ public class CollectionPlaceHolderResolveStrategy extends JPAPlaceholderResolver
 	}
 
 	public void write(ObjectOutputStream os, Object collection) throws IOException {
-		if(collection instanceof Stack){
+		if (collection instanceof Stack) {
 			os.writeUTF(Stack.class.getName());
-		}else if (collection instanceof List) {
+		} else if (collection instanceof List) {
 			os.writeUTF(ArrayList.class.getName());
 		} else if (collection instanceof Set) {
 			os.writeUTF(HashSet.class.getName());
@@ -50,34 +43,17 @@ public class CollectionPlaceHolderResolveStrategy extends JPAPlaceholderResolver
 		Collection<?> coll = (Collection<?>) collection;
 		os.writeInt(coll.size());
 		if (coll.size() > 0) {
-			Class<?> commonSuperclass = findCommonSuperclass(coll);
-			os.writeUTF(commonSuperclass.getName());
-			Member idMember = JpaIdUtil.INSTANCE.findIdMember(commonSuperclass);
-			((AccessibleObject) idMember).setAccessible(true);
-			String idName = idMember.getName();
-			if(idMember instanceof Method){
-				idName=Introspector.decapitalize(idName.substring(3));
-			}
-			os.writeUTF(idName);
 			for (Object object2 : coll) {
-				Object id = JpaIdUtil.INSTANCE.getId(idMember, object2);
-				if(id==null){
-					throw new IllegalStateException("Id must be set before being stored in a process: " + commonSuperclass.getName() +"."+ idMember.getName());
+				Member idMember = OcmIdUtil.INSTANCE.findIdMember(object2.getClass());
+				Object id = OcmIdUtil.INSTANCE.getId(idMember, object2);
+				if (id == null) {
+					throw new IllegalStateException("Id must be set before being stored in a process: " + object2.getClass().getName() + "." + idMember.getName());
 				}
-				os.writeObject(id);
+				os.writeUTF((String)id);
 			}
 		}
 	}
 
-	Class<?> findCommonSuperclass(Collection<?> c) {
-		Class<?> result = c.iterator().next().getClass();
-		for (Object object : c) {
-			while (!result.isInstance(object)) {
-				result = result.getSuperclass();
-			}
-		}
-		return result;
-	}
 
 	@SuppressWarnings("unchecked")
 	public Object read(ObjectInputStream is) throws IOException, ClassNotFoundException {
@@ -92,17 +68,15 @@ public class CollectionPlaceHolderResolveStrategy extends JPAPlaceholderResolver
 		}
 		int size = is.readInt();
 		if (size > 0) {
-			Class<?> superClass = Class.forName(is.readUTF());
-			String idName=is.readUTF();
-			Collection<Object> ids = new ArrayList<Object>();
+			Collection<String> ids = new ArrayList<String>();
 			for (int i = 0; i < size; i++) {
-				ids.add(is.readObject());
+				ids.add(is.readUTF());
 			}
-			EntityManagerFactory emf = (EntityManagerFactory) env.get(EnvironmentName.ENTITY_MANAGER_FACTORY);
-			EntityManager em = emf.createEntityManager();
-			Query q = em.createQuery("select o from " + superClass.getName() + " o where o." + idName +" in (:ids)");
-			q.setParameter("ids", ids);
-			coll.addAll(q.getResultList());
+			OcmFactory emf = (OcmFactory) env.get(OcmFactory.OBJECT_CONTENT_MANAGER_FACTORY);
+			ObjectContentManager em = emf.getCurrentObjectContentManager();
+			for (String uuid : ids) {
+				coll.add(em.getObjectByUuid( uuid));
+			}
 		}
 		return coll;
 	}
@@ -119,6 +93,7 @@ public class CollectionPlaceHolderResolveStrategy extends JPAPlaceholderResolver
 		DroolsObjectInputStream is = new DroolsObjectInputStream(new ByteArrayInputStream(object), classloader);
 		return read(is);
 	}
+
 	public Context createContext() {
 		// no need for context
 		return null;

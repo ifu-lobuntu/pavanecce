@@ -23,6 +23,11 @@ import org.pavanecce.cmmn.instance.SubscriptionManager;
 public class HibernateSubscriptionManager extends AbstractSubscriptionManager<JpaCaseSubscriptionInfo, JpaCaseFileItemSubscriptionInfo> implements
 		SubscriptionManager, PostUpdateEventListener, PreCollectionUpdateEventListener {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -9103789384930931973L;
+
 	@Override
 	public void subscribe(CaseInstance process, CaseFileItem item, Object target) {
 		Environment env = process.getKnowledgeRuntime().getEnvironment();
@@ -91,7 +96,7 @@ public class HibernateSubscriptionManager extends AbstractSubscriptionManager<Jp
 					Serializable storedSnapshot = event.getCollection().getStoredSnapshot();
 					Collection<?> oldState;
 					if (storedSnapshot instanceof Map) {// ???
-						oldState = ((Map) storedSnapshot).values();
+						oldState = ((Map<?,?>) storedSnapshot).values();
 					} else {
 						oldState = (Collection<?>) storedSnapshot;
 					}

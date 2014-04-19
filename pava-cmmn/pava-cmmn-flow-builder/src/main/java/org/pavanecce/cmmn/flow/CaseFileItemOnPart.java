@@ -2,12 +2,6 @@ package org.pavanecce.cmmn.flow;
 
 import java.io.Serializable;
 
-import org.drools.core.process.core.datatype.impl.type.ObjectDataType;
-import org.jbpm.process.core.ContextContainer;
-import org.jbpm.process.core.context.variable.Variable;
-import org.jbpm.process.core.context.variable.VariableScope;
-import org.kie.internal.fluent.VariableContext;
-
 public class CaseFileItemOnPart extends OnPart implements Serializable {
 	private static final long serialVersionUID = -9167236068103073693L;
 	private CaseFileItemTransition standardEvent;

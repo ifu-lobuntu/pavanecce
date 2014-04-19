@@ -6,6 +6,10 @@ import java.util.List;
 import org.jbpm.process.core.context.variable.Variable;
 
 public class CaseFileItem extends Variable implements CMMNElement {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8248796967737773161L;
 	private String id;
 	private String definitionRef;
 	private CaseFileItemDefinition definition;

@@ -21,9 +21,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.drools.core.common.InternalKnowledgeRuntime;
 import org.jbpm.process.core.ContextContainer;
@@ -33,11 +31,9 @@ import org.jbpm.process.instance.InternalProcessRuntime;
 import org.jbpm.process.instance.ProcessInstance;
 import org.jbpm.process.instance.context.variable.VariableScopeInstance;
 import org.kie.api.definition.process.Process;
-import org.kie.api.event.process.ProcessEventManager;
 import org.kie.internal.process.CorrelationKey;
 import org.pavanecce.cmmn.flow.Case;
 import org.pavanecce.cmmn.flow.CaseParameter;
-import org.pavanecce.cmmn.flow.CaseFileItemOnPart;
 
 public class CaseInstanceFactory extends AbstractProcessInstanceFactory implements Externalizable {
 	// Temporary HACK - find the right place to map caseKeys with

@@ -2,14 +2,12 @@ package org.pavanecce.cmmn.flow.builder;
 
 import java.util.HashSet;
 
-import org.drools.core.process.core.datatype.impl.type.ObjectDataType;
 import org.drools.core.xml.BaseAbstractHandler;
 import org.drools.core.xml.ExtensibleXmlParser;
 import org.drools.core.xml.Handler;
 import org.pavanecce.cmmn.flow.CaseFileItemOnPart;
 import org.pavanecce.cmmn.flow.JoiningSentry;
 import org.pavanecce.cmmn.flow.PlanItemOnPart;
-import org.pavanecce.cmmn.flow.PlanItem;
 import org.pavanecce.cmmn.flow.PlanItemTransition;
 import org.pavanecce.cmmn.flow.Sentry;
 import org.pavanecce.cmmn.flow.SimpleSentry;
@@ -44,7 +42,7 @@ public class PlanItemOnPartHandler extends BaseAbstractHandler implements Handle
 	public Object end(String uri, String localName, ExtensibleXmlParser xmlPackageReader) throws SAXException {
 		PlanItemOnPart part =(PlanItemOnPart) xmlPackageReader.getCurrent();
 		NodeList elementsByTagName = xmlPackageReader.endElementBuilder().getElementsByTagName("standardEvent");
-		part.setStandardEvent(PlanItemTransition.resolveByName(elementsByTagName.item(0).getTextContent()));
+		part.setStandardEvent(PlanItemTransition.resolveByName(elementsByTagName.item(0).getFirstChild().getNodeValue()));
 		return xmlPackageReader.getCurrent();
 	}
 

@@ -5,16 +5,12 @@ import java.util.HashSet;
 import org.drools.core.xml.BaseAbstractHandler;
 import org.drools.core.xml.ExtensibleXmlParser;
 import org.drools.core.xml.Handler;
-import org.jbpm.process.core.context.variable.Variable;
-import org.jbpm.process.core.context.variable.VariableScope;
+import org.pavanecce.cmmn.flow.CaseFileItemOnPart;
 import org.pavanecce.cmmn.flow.CaseFileItemTransition;
-import org.pavanecce.cmmn.flow.CaseFileItemOnPart;
-import org.pavanecce.cmmn.flow.CaseFileItemOnPart;
 import org.pavanecce.cmmn.flow.JoiningSentry;
-import org.pavanecce.cmmn.flow.PlanItem;
-import org.pavanecce.cmmn.flow.PlanItemTransition;
 import org.pavanecce.cmmn.flow.Sentry;
 import org.pavanecce.cmmn.flow.SimpleSentry;
+import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -47,7 +43,7 @@ public class CaseFileItemOnPartHandler extends BaseAbstractHandler implements Ha
 	public Object end(String uri, String localName, ExtensibleXmlParser xmlPackageReader) throws SAXException {
 		CaseFileItemOnPart part =(CaseFileItemOnPart) xmlPackageReader.getCurrent();
 		NodeList elementsByTagName = xmlPackageReader.endElementBuilder().getElementsByTagName("standardEvent");
-		part.setStandardEvent(CaseFileItemTransition.resolveByName(elementsByTagName.item(0).getTextContent()));
+		part.setStandardEvent(CaseFileItemTransition.resolveByName(elementsByTagName.item(0).getFirstChild().getNodeValue()));
 		return xmlPackageReader.getCurrent();
 	}
 

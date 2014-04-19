@@ -10,15 +10,47 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import org.apache.jackrabbit.ocm.manager.beanconverter.impl.DefaultBeanConverterImpl;
+import org.apache.jackrabbit.ocm.manager.beanconverter.impl.ParentBeanConverterImpl;
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Bean;
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Collection;
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
+
 @Entity
+@Node(jcrType="t:housePlan",discriminator=false)
 public class HousePlan {
 	@Id
 	@GeneratedValue
+	@Field(uuid=true)
 	private String id;
-	@OneToMany(cascade=CascadeType.ALL)
+	@OneToMany(cascade=CascadeType.ALL, mappedBy="housePlan")
+	@Collection(jcrName="t:wallPlans",jcrElementName="t:wallPlan")
 	private Set<WallPlan> wallPlans = new HashSet<WallPlan>();
 	@OneToOne(cascade=CascadeType.ALL)
+	@Bean(jcrName="t:roofPlan",jcrType="t:roofPlan",converter=DefaultBeanConverterImpl.class)
 	private RoofPlan roofPlan;
+	@Bean(converter=ParentBeanConverterImpl.class)
+	@OneToOne(mappedBy="housePlan")
+	private ConstructionCase constructionCase;
+	@Field(path=true)
+	String path;
+	
+	public HousePlan(){
+		
+	}
+	public HousePlan(ConstructionCase  c){
+		this.constructionCase=c;
+		c.setHousePlan(this);
+	}
+	public ConstructionCase getConstructionCase() {
+		return constructionCase;
+	}
+
+	public void setConstructionCase(ConstructionCase constructionCase) {
+		this.constructionCase = constructionCase;
+	}
+
 	public String getId() {
 		return id;
 	}
@@ -41,6 +73,12 @@ public class HousePlan {
 
 	public void setRoofPlan(RoofPlan roofPlan) {
 		this.roofPlan = roofPlan;
+	}
+	public String getPath() {
+		return path;
+	}
+	public void setPath(String path) {
+		this.path = path;
 	}
 	
 }

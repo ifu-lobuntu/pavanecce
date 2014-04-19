@@ -2,9 +2,6 @@ package org.pavanecce.cmmn.flow.builder;
 
 import org.drools.core.xml.ExtensibleXmlParser;
 import org.drools.core.xml.Handler;
-import org.jbpm.process.core.ContextContainer;
-import org.jbpm.process.core.context.variable.VariableScope;
-import org.jbpm.ruleflow.core.RuleFlowProcess;
 import org.pavanecce.cmmn.flow.Case;
 import org.pavanecce.cmmn.flow.CaseParameter;
 import org.pavanecce.cmmn.flow.HumanTask;

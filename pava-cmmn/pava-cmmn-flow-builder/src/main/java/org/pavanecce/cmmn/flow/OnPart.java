@@ -12,6 +12,7 @@ import org.jbpm.process.core.event.EventTypeFilter;
 import org.jbpm.workflow.core.node.EventNode;
 
 public abstract class OnPart extends EventNode implements Serializable,CMMNElement {
+	private static final long serialVersionUID = 1403604027414552700L;
 	@Override
 	public abstract String getType();
 	@Override

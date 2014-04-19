@@ -1,7 +1,6 @@
 package org.pavanecce.cmmn.flow.builder;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
@@ -21,25 +20,21 @@ import org.kie.api.definition.process.Node;
 import org.pavanecce.cmmn.flow.Case;
 import org.pavanecce.cmmn.flow.CaseFileItem;
 import org.pavanecce.cmmn.flow.CaseFileItemDefinition;
+import org.pavanecce.cmmn.flow.CaseFileItemOnPart;
 import org.pavanecce.cmmn.flow.CaseParameter;
 import org.pavanecce.cmmn.flow.Definitions;
 import org.pavanecce.cmmn.flow.HumanTask;
-import org.pavanecce.cmmn.flow.CaseFileItemOnPart;
 import org.pavanecce.cmmn.flow.OnPart;
-import org.pavanecce.cmmn.flow.PlanItemOnPart;
 import org.pavanecce.cmmn.flow.PlanItem;
 import org.pavanecce.cmmn.flow.PlanItemDefinition;
+import org.pavanecce.cmmn.flow.PlanItemOnPart;
 import org.pavanecce.cmmn.flow.Role;
 import org.pavanecce.cmmn.flow.Sentry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 public class CaseHandler extends BaseAbstractHandler implements Handler {
 	private static String DEFAULT = org.jbpm.workflow.core.Node.CONNECTION_DEFAULT_TYPE;
-
-	private static final Logger logger = LoggerFactory.getLogger(CaseHandler.class);
 
 	public static final String CONNECTIONS = "BPMN.Connections";
 	public static final String LINKS = "BPMN.ThrowLinks";

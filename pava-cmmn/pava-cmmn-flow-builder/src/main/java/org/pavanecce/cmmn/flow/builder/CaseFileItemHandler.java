@@ -4,12 +4,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
-import org.drools.core.process.core.datatype.impl.type.ObjectDataType;
 import org.drools.core.xml.BaseAbstractHandler;
 import org.drools.core.xml.ExtensibleXmlParser;
 import org.drools.core.xml.Handler;
-import org.jbpm.process.core.ContextContainer;
-import org.jbpm.process.core.Process;
 import org.jbpm.process.core.context.variable.Variable;
 import org.jbpm.process.core.context.variable.VariableScope;
 import org.jbpm.workflow.core.Node;
@@ -39,7 +36,6 @@ public class CaseFileItemHandler extends BaseAbstractHandler implements Handler 
 		this.validPeers.add(Node.class);
 	}
 
-	@SuppressWarnings("unchecked")
 	public Object start(final String uri, final String localName, final Attributes attrs, final ExtensibleXmlParser parser) throws SAXException {
 		parser.startElementBuilder(localName, attrs);
 
@@ -63,7 +59,7 @@ public class CaseFileItemHandler extends BaseAbstractHandler implements Handler 
 		// All CaseFileItems are at the Case level - Stages do not have
 		// CaseFileItems
 		VariableScope variableScope = (VariableScope) parent.getDefaultContext(VariableScope.VARIABLE_SCOPE);
-		List variables = variableScope.getVariables();
+		List<Variable> variables = variableScope.getVariables();
 		variables.add(variable);
 		if(parser.getParent() instanceof CaseFileItem){
 			((CaseFileItem)parser.getParent()).addChild(variable);

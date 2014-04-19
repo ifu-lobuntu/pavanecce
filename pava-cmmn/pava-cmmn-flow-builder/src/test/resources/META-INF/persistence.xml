@@ -58,6 +58,7 @@
         <class>org.pavanecce.cmmn.test.domain.WallPlan</class>
         <class>org.pavanecce.cmmn.test.domain.WallQuote</class>
         <class>org.pavanecce.cmmn.test.domain.Wall</class>
+        <class>org.pavanecce.cmmn.test.domain.ConstructionCase</class>
         
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
 

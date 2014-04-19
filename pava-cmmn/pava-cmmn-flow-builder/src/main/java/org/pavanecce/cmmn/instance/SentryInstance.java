@@ -1,8 +1,5 @@
 package org.pavanecce.cmmn.instance;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.drools.core.process.instance.WorkItem;
@@ -15,9 +12,13 @@ import org.kie.api.runtime.process.NodeInstance;
 import org.pavanecce.cmmn.flow.JoiningSentry;
 import org.pavanecce.cmmn.flow.PlanItem;
 import org.pavanecce.cmmn.flow.Sentry;
-import org.pavanecce.cmmn.flow.SimpleSentry;
 
 public class SentryInstance extends JoinInstance {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4302504131617050844L;
 
 	@Override
 	public void internalTrigger(NodeInstance from, String type) {

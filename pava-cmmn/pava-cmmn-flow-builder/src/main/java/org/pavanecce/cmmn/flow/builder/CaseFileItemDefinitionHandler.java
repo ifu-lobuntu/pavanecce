@@ -16,7 +16,6 @@
 
 package org.pavanecce.cmmn.flow.builder;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
@@ -33,13 +32,12 @@ import org.xml.sax.SAXException;
 
 public class CaseFileItemDefinitionHandler extends BaseAbstractHandler implements Handler {
 	
-	@SuppressWarnings("unchecked")
 	public CaseFileItemDefinitionHandler() {
 		if ((this.validParents == null) && (this.validPeers == null)) {
-			this.validParents = new HashSet();
+			this.validParents = new HashSet<Class<?>>();
 			this.validParents.add(Definitions.class);
 
-			this.validPeers = new HashSet();
+			this.validPeers = new HashSet<Class<?>>();
 			this.validPeers.add(null);
 			this.validPeers.add(CaseFileItemDefinition.class);
 			this.validPeers.add(RuleFlowProcess.class);

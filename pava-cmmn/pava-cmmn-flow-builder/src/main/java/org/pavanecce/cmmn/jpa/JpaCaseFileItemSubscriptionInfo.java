@@ -62,7 +62,6 @@ public class JpaCaseFileItemSubscriptionInfo implements CaseFileItemSubscription
 		this.caseKey = caseKey;
 	}
 
-	@Override
 	public Long getId() {
 		return id;
 	}
@@ -72,7 +71,6 @@ public class JpaCaseFileItemSubscriptionInfo implements CaseFileItemSubscription
 		return caseKey;
 	}
 
-	@Override
 	public void setId(Long id) {
 		this.id = id;
 	}

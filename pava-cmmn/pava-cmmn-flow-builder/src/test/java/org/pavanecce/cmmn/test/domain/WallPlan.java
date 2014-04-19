@@ -4,17 +4,37 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
+import org.apache.jackrabbit.ocm.manager.beanconverter.impl.ReferenceBeanConverterImpl;
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Bean;
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
+import org.pavanecce.cmmn.ocm.GrandParentBeanConverterImpl;
+
 @Entity
+@Node(jcrType="t:wallPlan",discriminator=false)
 public class WallPlan {
 	@Id
 	@GeneratedValue
+	@Field(uuid=true)
 	private String id;
 	@OneToOne(cascade=CascadeType.ALL)
 	private WallQuote wallQuote;
 	@OneToOne()
+	@Bean(jcrName="t:wall", converter=ReferenceBeanConverterImpl.class)
 	private Wall wall;
+	@ManyToOne
+	@Bean(converter=GrandParentBeanConverterImpl.class)
+	public HousePlan housePlan;
+	@Field(path=true)
+	String path;
+	public WallPlan(HousePlan housePlan) {
+		housePlan.getWallPlans().add(this);
+	}
+	public WallPlan() {
+	}
 
 	public String getId() {
 		return id;
@@ -39,5 +59,18 @@ public class WallPlan {
 	public void setWall(Wall wall) {
 		this.wall = wall;
 	}
+	public HousePlan getHousePlan() {
+		return housePlan;
+	}
+	public void setHousePlan(HousePlan housePlan) {
+		this.housePlan = housePlan;
+	}
+	public String getPath() {
+		return path;
+	}
+	public void setPath(String path) {
+		this.path = path;
+	}
+	
 	
 }

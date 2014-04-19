@@ -2,8 +2,6 @@ package org.pavanecce.cmmn.flow;
 
 import java.io.Serializable;
 
-import org.jbpm.process.core.context.variable.Variable;
-
 public class CaseParameter implements Serializable,CMMNElement{
 	private static final long serialVersionUID = -2726481569205195638L;
 	private String id;

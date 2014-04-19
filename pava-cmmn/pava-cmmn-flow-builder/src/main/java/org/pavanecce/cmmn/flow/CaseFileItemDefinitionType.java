@@ -1,7 +1,5 @@
 package org.pavanecce.cmmn.flow;
 
-import java.io.Serializable;
-import java.util.Iterator;
 
 public enum CaseFileItemDefinitionType {
     CMIS_FOLDER("http://www.omg.org/spec/CMMN/DefinitionType/CMISFolder"),

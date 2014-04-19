@@ -11,7 +11,6 @@ import org.pavanecce.cmmn.flow.JoiningSentry;
 import org.pavanecce.cmmn.flow.OnPart;
 import org.pavanecce.cmmn.flow.Sentry;
 import org.pavanecce.cmmn.flow.SimpleSentry;
-import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -25,13 +24,12 @@ public class SentryHandler extends AbstractPlanModelElementHandler implements Ha
 
 	public Object start(final String uri, final String localName, final Attributes attrs, final ExtensibleXmlParser parser) throws SAXException {
 		parser.startElementBuilder(localName, attrs);
-		NodeContainer nodeContainer = (NodeContainer) parser.getParent();
 		SimpleSentry node = new SimpleSentry();
 		node.setElementId(attrs.getValue("id"));
 		return node;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Class generateNodeFor() {
 		return Sentry.class;
 	}

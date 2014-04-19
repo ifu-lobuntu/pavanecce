@@ -13,4 +13,8 @@ public interface ObjectPersistence {
 
 	public abstract void remove(Object s);
 
+	public abstract void close();
+
+	void update(Object o);
+
 }

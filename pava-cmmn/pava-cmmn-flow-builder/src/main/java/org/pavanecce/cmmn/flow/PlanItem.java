@@ -1,24 +1,24 @@
 package org.pavanecce.cmmn.flow;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.drools.core.process.core.ParameterDefinition;
 import org.drools.core.process.core.Work;
 import org.drools.core.process.core.impl.ParameterDefinitionImpl;
 import org.drools.core.process.core.impl.WorkImpl;
 import org.jbpm.workflow.core.impl.ConnectionImpl;
-import org.jbpm.workflow.core.node.EventNodeInterface;
 import org.jbpm.workflow.core.node.WorkItemNode;
 import org.kie.api.definition.process.Connection;
 
 public class PlanItem extends WorkItemNode implements CMMNElement {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7613141769339402877L;
 	private static final Work NO_WORK = new WorkImpl();
 	private static final String DEFAULT = CONNECTION_DEFAULT_TYPE;
 	static {

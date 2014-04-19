@@ -1,16 +1,11 @@
 package org.pavanecce.cmmn.flow;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.jbpm.workflow.core.Constraint;
-import org.jbpm.workflow.core.Node;
-import org.jbpm.workflow.core.NodeContainer;
-import org.jbpm.workflow.core.impl.ConnectionImpl;
-import org.jbpm.workflow.core.impl.NodeImpl;
 import org.jbpm.workflow.core.node.CatchLinkNode;
 import org.kie.api.definition.process.Connection;
 

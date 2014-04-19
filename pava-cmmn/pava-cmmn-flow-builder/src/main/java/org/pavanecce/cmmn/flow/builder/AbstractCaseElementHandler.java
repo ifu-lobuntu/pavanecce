@@ -6,7 +6,6 @@ import org.drools.core.xml.BaseAbstractHandler;
 import org.drools.core.xml.ExtensibleXmlParser;
 import org.drools.core.xml.Handler;
 import org.jbpm.process.core.context.variable.Variable;
-import org.jbpm.ruleflow.core.RuleFlowProcess;
 import org.pavanecce.cmmn.flow.Case;
 import org.pavanecce.cmmn.flow.CaseParameter;
 import org.pavanecce.cmmn.flow.HumanTask;
@@ -18,10 +17,10 @@ import org.xml.sax.SAXException;
 public abstract class AbstractCaseElementHandler extends BaseAbstractHandler implements Handler{
 
 	public AbstractCaseElementHandler() {
-		this.validParents = new HashSet();
+		this.validParents = new HashSet<Class<?>>();
 		this.validParents.add(Case.class);
 
-		this.validPeers = new HashSet();
+		this.validPeers = new HashSet<Class<?>>();
 		this.validPeers.add(null);
 		this.validPeers.add(Sentry.class);
 		this.validPeers.add(PlanItem.class);

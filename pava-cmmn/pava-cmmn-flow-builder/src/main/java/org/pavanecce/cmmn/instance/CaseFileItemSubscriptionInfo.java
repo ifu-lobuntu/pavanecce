@@ -10,11 +10,7 @@ public interface CaseFileItemSubscriptionInfo {
 
 	public abstract String getItemName();
 
-	public abstract void setId(Long id);
-
 	public abstract String getCaseKey();
-
-	public abstract Long getId();
 
 	public abstract void setCaseKey(String caseKey);
 

@@ -6,9 +6,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.jbpm.workflow.core.Constraint;
-import org.jbpm.workflow.core.Node;
-import org.jbpm.workflow.core.NodeContainer;
-import org.jbpm.workflow.core.impl.ConnectionImpl;
 import org.jbpm.workflow.core.node.Join;
 import org.kie.api.definition.process.Connection;
 

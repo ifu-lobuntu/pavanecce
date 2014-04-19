@@ -16,6 +16,10 @@ import org.pavanecce.cmmn.instance.CaseSubscriptionKey;
 
 @Embeddable
 public class JpaCaseSubscriptionKey implements Serializable,CaseSubscriptionKey {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4777697576303219665L;
 	private String className;
 	private String id;
 	@Transient

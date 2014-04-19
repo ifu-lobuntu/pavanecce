@@ -1,64 +1,54 @@
 package org.pavanecce.cmmn.ocm;
 
-import java.util.Arrays;
-import java.util.List;
-
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
-import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
-import javax.jcr.SimpleCredentials;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.transaction.NotSupportedException;
 import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
 import org.apache.jackrabbit.ocm.manager.ObjectContentManager;
-import org.apache.jackrabbit.ocm.manager.impl.ObjectContentManagerImpl;
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.AnnotationMapperImpl;
 import org.pavanecce.cmmn.instance.ObjectPersistence;
 
 public class OcmObjectPersistence implements ObjectPersistence {
 	private UserTransaction transaction;
-	ObjectContentManager session;
-	Repository repository;
-	private AnnotationMapperImpl mapperImpl;
+	private OcmFactory factory;
+	private boolean startedTransaction = false;
 
-
-	public OcmObjectPersistence(Repository repository, Class<?> ... classes2) {
-		this.repository = repository;
-		List<Class> classes = Arrays.<Class>asList(classes2);
-		mapperImpl = new AnnotationMapperImpl(classes);
+	public OcmObjectPersistence(OcmFactory factory) {
+		this.factory = factory;
 	}
-
-
-	public OcmObjectPersistence(ObjectContentManager p) {
-		this.session=p;
-	}
-
 
 	@Override
 	public void start() {
 		try {
-			if (session != null) {
-				session.logout();
-			}
-			session = new ObjectContentManagerImpl(repository.login(new SimpleCredentials("admin", "admin".toCharArray())),mapperImpl);
-//			getTransaction().begin();
+
+			startTransaction();
+
 		} catch (Exception e) {
 			throw convertException(e);
+		}
+	}
+
+	protected void startTransaction() throws SystemException, NamingException, NotSupportedException {
+		if (!isTransactionActive()) {
+			getTransaction().begin();
+			this.startedTransaction = true;
 		}
 	}
 
 	@Override
 	public void commit() {
 		try {
-			if (!isTransactionActive()) {
-				getTransaction().begin();
+			startTransaction();
+			getSession().save();
+			if (startedTransaction) {
+				getTransaction().commit();
 			}
-			session.save();
-//			getTransaction().commit();
+			startedTransaction=false;
 		} catch (Exception e) {
 			throw convertException(e);
 		}
@@ -76,10 +66,18 @@ public class OcmObjectPersistence implements ObjectPersistence {
 		}
 	}
 
-
 	@Override
 	public void persist(Object o) {
-		session.insert(o);
+		getSession().insert(o);
+	}
+
+	@Override
+	public void update(Object o) {
+		getSession().update(o);
+	}
+
+	public ObjectContentManager getSession() {
+		return factory.getCurrentObjectContentManager();
 	}
 
 	UserTransaction getTransaction() throws NamingException {
@@ -96,28 +94,36 @@ public class OcmObjectPersistence implements ObjectPersistence {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T find(Class<T> class1, Object id) {
-		return (T) session.getObjectByUuid((String) id);
+		if (id instanceof OcmCaseSubscriptionKey) {
+			id = ((OcmCaseSubscriptionKey) id).getId();
+			return (T) getSession().getObject("/subscriptions/" + id);
+		}
+		return (T) getSession().getObjectByUuid((String) id);
 	}
-
 
 	@Override
 	public void remove(Object s) {
-		session.remove(s);
+		getSession().remove(s);
 	}
-
 
 	public Object find(String identifier) {
-		return session.getObjectByUuid((String) identifier);
+		return getSession().getObjectByUuid((String) identifier);
 	}
+
 	public Node findNode(String identifier) {
 		try {
-			return session.getSession().getNodeByIdentifier(identifier);
+			return getSession().getSession().getNodeByIdentifier(identifier);
 		} catch (ItemNotFoundException e) {
 			e.printStackTrace();
 		} catch (RepositoryException e) {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	@Override
+	public void close() {
+		factory.close(getSession());
 	}
 
 }

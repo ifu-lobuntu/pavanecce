@@ -16,10 +16,10 @@ import org.xml.sax.SAXException;
 public abstract class AbstractPlanModelElementHandler extends BaseAbstractHandler implements Handler{
 
 	public AbstractPlanModelElementHandler() {
-		this.validParents = new HashSet();
+		this.validParents = new HashSet<Class<?>>();
 		this.validParents.add(RuleFlowProcess.class);
 
-		this.validPeers = new HashSet();
+		this.validPeers = new HashSet<Class<?>>();
 		this.validPeers.add(null);
 		this.validPeers.add(Sentry.class);
 		this.validPeers.add(PlanItem.class);
