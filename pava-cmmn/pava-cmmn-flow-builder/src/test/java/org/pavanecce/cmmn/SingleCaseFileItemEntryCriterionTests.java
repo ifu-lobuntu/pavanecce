@@ -131,10 +131,7 @@ public class SingleCaseFileItemEntryCriterionTests extends AbstrasctJbpmCaseBase
 		addWallPlanAsChildToHousePlan();
 		
 		// *****WHEN
-		housePlan=getPersistence().find(HousePlan.class, housePlan.getId());
-		housePlan.getWallPlans().clear();
-		getPersistence().update(housePlan);
-		getPersistence().commit();
+		removeWallPlansFromHousePlan();
 		// *****THEN
 		/*
 		 * Verify Sentry Triggered: Sentries with a single OnPart are
@@ -144,81 +141,108 @@ public class SingleCaseFileItemEntryCriterionTests extends AbstrasctJbpmCaseBase
 		assertNodeTriggered(caseInstance.getId(), "WaitingForWallPlanDeletedSentry");
 	}
 
-//	@Test
-//	public void testCreationOfObjectInSingletonFileItem() throws Exception {
-//		// *****GIVEN
-//		givenThatTheTestCaseIsStarted();
-//		// *****WHEN
-//		addRoofPlanAsChildToHousePlan();
-//		// *****THEN
-//		/*
-//		 * Verify Sentry Triggered: Sentries with a single OnPart are
-//		 * implemented merely as CatchLinkNodes
-//		 */
-//		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenRoofPlanCreated");
-//		assertNodeTriggered(caseInstance.getId(), "WaitingForRoofPlanCreatedSentry");
-//	}
-//
-//	@Test
-//	public void testAddChildOfObjectInCollectionFileItem() throws Exception {
-//		// *****GIVEN
-//		givenThatTheTestCaseIsStarted();
-//		// *****WHEN
-//		addWallPlanAsChildToHousePlan();
-//		// *****THEN
-//		/*
-//		 * Verify Sentry Triggered: Sentries with a single OnPart are
-//		 * implemented merely as CatchLinkNodes
-//		 */
-//		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenWallPlanAddedAsChild");
-//		assertNodeTriggered(caseInstance.getId(), "WaitingForWallPlanAddedAsChildSentry");
-//	}
-//
-//	@Test
-//	public void testAddChildOfObjectInSingletonFileItem() throws Exception {
-//		// *****GIVEN
-//		givenThatTheTestCaseIsStarted();
-//		// *****WHEN
-//		addRoofPlanAsChildToHousePlan();
-//		// *****THEN
-//		/*
-//		 * Verify Sentry Triggered: Sentries with a single OnPart are
-//		 * implemented merely as CatchLinkNodes
-//		 */
-//		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenRoofPlanAddedAsChild");
-//		assertNodeTriggered(caseInstance.getId(), "WaitingForRoofPlanAddedAsChildSentry");
-//	}
-//
-//	@Test
-//	public void testAddReferenceOfObjectInCollectionFileItem() throws Exception {
-//		// *****GIVEN
-//		givenThatTheTestCaseIsStarted();
-//		// *****WHEN
-//		addWallPlanAsReferenceToHouse();
-//		// *****THEN
-//		/*
-//		 * Verify Sentry Triggered: Sentries with a single OnPart are
-//		 * implemented merely as CatchLinkNodes
-//		 */
-//		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenWallPlanAddedAsReference");
-//		assertNodeTriggered(caseInstance.getId(), "WaitingForWallPlanAddedAsReferenceSentry");
-//	}
-//
-//	@Test
-//	public void testAddReferenceOfObjectInSingletonFileItem() throws Exception {
-//		// *****GIVEN
-//		givenThatTheTestCaseIsStarted();
-//		// *****WHEN
-//		addRoofPlanAsReferenceToHouse();
-//		// *****THEN
-//		/*
-//		 * Verify Sentry Triggered: Sentries with a single OnPart are
-//		 * implemented merely as CatchLinkNodes
-//		 */
-//		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenRoofPlanAddedAsReference");
-//		assertNodeTriggered(caseInstance.getId(), "WaitingForRoofPlanAddedAsReferenceSentry");
-//	}
-//
+	protected void removeWallPlansFromHousePlan() {
+		housePlan=getPersistence().find(HousePlan.class, housePlan.getId());
+		housePlan.getWallPlans().clear();
+		getPersistence().update(housePlan);
+		getPersistence().commit();
+	}
+
+	@Test
+	public void testDeletionOfObjectInSingletonFileItem() throws Exception {
+		// *****GIVEN
+		givenThatTheTestCaseIsStarted();
+		// *****WHEN
+		addRoofPlanAsChildToHousePlan();
+		removeRoofPlanAsChildFromHousePlan();
+		// *****THEN
+		/*
+		 * Verify Sentry Triggered: Sentries with a single OnPart are
+		 * implemented merely as CatchLinkNodes
+		 */
+		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenRoofPlanDeleted");
+		assertNodeTriggered(caseInstance.getId(), "WaitingForRoofPlanDeletedSentry");
+	}
+
+
+	@Test
+	public void testRemoveChildOfObjectInCollectionFileItem() throws Exception {
+		// *****GIVEN
+		givenThatTheTestCaseIsStarted();
+		addWallPlanAsChildToHousePlan();
+		// *****WHEN
+		removeWallPlansFromHousePlan();
+		// *****THEN
+		/*
+		 * Verify Sentry Triggered: Sentries with a single OnPart are
+		 * implemented merely as CatchLinkNodes
+		 */
+		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenWallPlanRemovedAsChild");
+		assertNodeTriggered(caseInstance.getId(), "WaitingForWallPlanRemovedAsChildSentry");
+	}
+
+	@Test
+	public void testRemoveChildOfObjectInSingletonFileItem() throws Exception {
+		// *****GIVEN
+		givenThatTheTestCaseIsStarted();
+		addRoofPlanAsChildToHousePlan();
+		// *****WHEN
+		removeRoofPlanAsChildFromHousePlan();
+		// *****THEN
+		/*
+		 * Verify Sentry Triggered: Sentries with a single OnPart are
+		 * implemented merely as CatchLinkNodes
+		 */
+		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenRoofPlanRemovedAsChild");
+		assertNodeTriggered(caseInstance.getId(), "WaitingForRoofPlanRemovedAsChildSentry");
+	}
+
+	@Test
+	public void testRemoveReferenceOfObjectInCollectionFileItem() throws Exception {
+		// *****GIVEN
+		givenThatTheTestCaseIsStarted();
+		addWallPlanAsReferenceToHouse();
+		// *****WHEN
+		removeWallPlansAsReferenceFromHouse();
+		// *****THEN
+		/*
+		 * Verify Sentry Triggered: Sentries with a single OnPart are
+		 * implemented merely as CatchLinkNodes
+		 */
+		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenWallPlanRemovedAsReference");
+		assertNodeTriggered(caseInstance.getId(), "WaitingForWallPlanRemovedAsReferenceSentry");
+	}
+
+
+	@Test
+	public void testRemoveReferenceOfObjectInSingletonFileItem() throws Exception {
+		// *****GIVEN
+		givenThatTheTestCaseIsStarted();
+		addRoofPlanAsReferenceToHouse();
+		// *****WHEN
+		removeRoofPlanAsReferenceFromHouse();
+		// *****THEN
+		/*
+		 * Verify Sentry Triggered: Sentries with a single OnPart are
+		 * implemented merely as CatchLinkNodes
+		 */
+		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenRoofPlanRemovedAsReference");
+		assertNodeTriggered(caseInstance.getId(), "WaitingForRoofPlanRemovedAsReferenceSentry");
+	}
+
+	protected void removeRoofPlanAsReferenceFromHouse() {
+		house= getPersistence().find(House.class, house.getId());
+		house.setRoofPlan(null);
+		getPersistence().update(house);
+		getPersistence().commit();
+	}
+
+	private void removeRoofPlanAsChildFromHousePlan() {
+		housePlan = getPersistence().find(HousePlan.class, housePlan.getId());
+		housePlan.setRoofPlan(null);
+		getPersistence().update(housePlan);
+		getPersistence().commit();
+	}
 	private void addWallPlanAsReferenceToHouse() throws Exception{
 		addWallPlanAsChildToHousePlan();
 		addWallPlanAsChildToHousePlan();
@@ -274,6 +298,12 @@ public class SingleCaseFileItemEntryCriterionTests extends AbstrasctJbpmCaseBase
 		assertNodeActive(caseInstance.getId(), getRuntimeEngine().getKieSession(), "OnRoofPlanAddedAsReferencePart");
 		getPersistence().commit();
 
+	}
+	private void removeWallPlansAsReferenceFromHouse() {
+		house= getPersistence().find(House.class, house.getId());
+		house.getWalls().clear();
+		getPersistence().update(house);
+		getPersistence().commit();
 	}
 
 	private void addWallPlanAsChildToHousePlan() throws Exception {

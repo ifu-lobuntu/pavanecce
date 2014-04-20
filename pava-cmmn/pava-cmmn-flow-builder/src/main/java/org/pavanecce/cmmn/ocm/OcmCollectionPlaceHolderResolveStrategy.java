@@ -15,10 +15,10 @@ import java.util.Stack;
 
 import org.apache.jackrabbit.ocm.manager.ObjectContentManager;
 import org.drools.core.common.DroolsObjectInputStream;
-import org.drools.persistence.jpa.marshaller.JPAPlaceholderResolverStrategy;
 import org.kie.api.runtime.Environment;
+import org.pavanecce.cmmn.jpa.CollectionPlaceHolderResolveStrategy;
 
-public class OcmCollectionPlaceHolderResolveStrategy extends JPAPlaceholderResolverStrategy {
+public class OcmCollectionPlaceHolderResolveStrategy extends CollectionPlaceHolderResolveStrategy {
 	private Environment env;
 
 	public OcmCollectionPlaceHolderResolveStrategy(Environment env) {
@@ -27,7 +27,15 @@ public class OcmCollectionPlaceHolderResolveStrategy extends JPAPlaceholderResol
 	}
 
 	public boolean accept(Object object) {
-		return (object instanceof Collection);
+		if(object instanceof Collection){
+			Collection<?> c = (Collection<?>) object;
+			if(c.size()>0){
+				if(OcmIdUtil.INSTANCE.isEntityObject(c.iterator().next())){
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	public void write(ObjectOutputStream os, Object collection) throws IOException {

@@ -70,7 +70,7 @@ public class CollectionPlaceHolderResolveStrategy extends JPAPlaceholderResolver
 		}
 	}
 
-	Class<?> findCommonSuperclass(Collection<?> c) {
+	public Class<?> findCommonSuperclass(Collection<?> c) {
 		Iterator<?> iterator = c.iterator();
 		Object next = iterator.next();
 		if(next==null){

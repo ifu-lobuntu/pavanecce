@@ -162,8 +162,8 @@ public abstract class AbstrasctJbpmCaseBaseTestCase extends JbpmJUnitBaseTestCas
 			return new ObjectMarshallingStrategy[] { new ProcessInstanceResolverStrategy(), new JPAPlaceholderResolverStrategy(env),
 					new CollectionPlaceHolderResolveStrategy(env), new SerializablePlaceholderResolverStrategy(ClassObjectMarshallingStrategyAcceptor.DEFAULT) };
 		} else {
-			return new ObjectMarshallingStrategy[] { new ProcessInstanceResolverStrategy(), new JPAPlaceholderResolverStrategy(env),
-					new CollectionPlaceHolderResolveStrategy(env), new OcmPlaceHolderResolveStrategy(env), new OcmCollectionPlaceHolderResolveStrategy(env),
+			return new ObjectMarshallingStrategy[] { new ProcessInstanceResolverStrategy(), new OcmPlaceHolderResolveStrategy(env),
+					new JPAPlaceholderResolverStrategy(env), new CollectionPlaceHolderResolveStrategy(env),new OcmCollectionPlaceHolderResolveStrategy(env), 
 					new SerializablePlaceholderResolverStrategy(ClassObjectMarshallingStrategyAcceptor.DEFAULT) };
 
 		}

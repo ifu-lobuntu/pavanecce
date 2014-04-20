@@ -1,19 +1,26 @@
 package org.pavanecce.cmmn.ocm;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Member;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
+import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 
 import org.apache.jackrabbit.core.observation.SynchronousEventListener;
+import org.apache.jackrabbit.ocm.mapper.model.ClassDescriptor;
 import org.pavanecce.cmmn.flow.CaseFileItem;
 import org.pavanecce.cmmn.flow.CaseFileItemTransition;
 import org.pavanecce.cmmn.instance.AbstractSubscriptionManager;
@@ -149,22 +156,29 @@ public class OcmSubscriptionManager extends AbstractSubscriptionManager<OcmCaseS
 
 	protected void fireNodeRemoved(Event event) {
 		try {
-			String parentPath=event.getPath().substring(0,event.getPath().lastIndexOf("/"));
-			String propertyName=event.getPath().substring(event.getPath().lastIndexOf("/"));
+			String parentPath = event.getPath().substring(0, event.getPath().lastIndexOf("/"));
+			String jcrPropertyName = event.getPath().substring(event.getPath().lastIndexOf("/"));
 			Node parentNode = getPersistence().getSession().getSession().getNode(parentPath);
+			String propertyName = getJavaPropertyName(jcrPropertyName);
+			String className = null;
 			if (parentNode.getPrimaryNodeType().isNodeType("mix:referenceable")) {
 				// Collections aren't (should not be) implemented as
 				// referenceables
 				// TODO look for a more generic mechanism
-//				propertyName = newNode.getDefinition().getName();
+				// propertyName = newNode.getDefinition().getName();
+				ClassDescriptor cd = getPersistence().getClassDescriptor(parentNode.getDefinition().getRequiredPrimaryTypeNames()[0]);
+				className = cd.getBeanDescriptor(propertyName).getClassDescriptor().getClassName();
 			} else if (!parentNode.getParent().getPath().equals("/") && parentNode.getParent().getPrimaryNodeType().isNodeType("mix:referenceable")) {
 				// This parentNode is only a holder for the newly
 				// added node
-				propertyName = parentNode.getDefinition().getName();
+				propertyName = getJavaPropertyName(parentNode.getDefinition().getName());
 				parentNode = parentNode.getParent();
+				ClassDescriptor cd = getPersistence().getClassDescriptor(parentNode.getDefinition().getRequiredPrimaryTypeNames()[0]);
+				className = cd.getCollectionDescriptor(propertyName).getElementClassName();
 			} else {
+				parentNode = null;
 			}
-			if (parentNode.getPrimaryNodeType().isNodeType("mix:referenceable")) {
+			if (parentNode != null && parentNode.getPrimaryNodeType().isNodeType("mix:referenceable")) {
 				// We only support creation of objects that can be
 				// referenced,
 				// and ignore the rest (e.g. holder nodes for collection
@@ -172,14 +186,23 @@ public class OcmSubscriptionManager extends AbstractSubscriptionManager<OcmCaseS
 				// children)
 				Object parentObject = getPersistence().find(parentNode.getIdentifier());
 				if (parentObject != null) {
-					String[] split = propertyName.split("\\:");
-					propertyName = split[split.length - 1];
 					if (!(parentObject instanceof OcmCaseSubscriptionInfo)) {
 						OcmCaseSubscriptionInfo i = getSubscription(parentNode);
 						if (i != null) {
+							Object empty = Class.forName(className).newInstance();
+							Member idMember = OcmIdUtil.INSTANCE.findIdMember(empty.getClass());
+							if (idMember instanceof Field) {
+								((Field) idMember).setAccessible(true);
+								((Field) idMember).set(empty, event.getIdentifier());
+							} else {
+								((Method) idMember).setAccessible(true);
+								((Method) idMember).invoke(empty, event.getIdentifier());
+							}
 							for (OcmCaseFileItemSubscriptionInfo si : i.getCaseFileItemSubscriptions()) {
-								if(si.getTransition()==CaseFileItemTransition.DELETE && si.getItemName().equals(propertyName)){
-									fireEvent(si, parentObject, event.getIdentifier());
+								if ((si.getTransition() == CaseFileItemTransition.DELETE && si.getItemName().equals(propertyName))
+										|| (si.getTransition() == CaseFileItemTransition.REMOVE_CHILD && si.getRelatedItemName() != null && si
+												.getRelatedItemName().equals(propertyName))) {
+									fireEvent(si, parentObject, empty);
 								}
 							}
 						}
@@ -192,6 +215,12 @@ public class OcmSubscriptionManager extends AbstractSubscriptionManager<OcmCaseS
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	protected String getJavaPropertyName(String jcrPropertyName) {
+		String[] split = jcrPropertyName.split("\\:");
+		String propertyName = split[split.length - 1];
+		return propertyName;
 	}
 
 	protected void fireUpdateEvents() {
@@ -221,8 +250,8 @@ public class OcmSubscriptionManager extends AbstractSubscriptionManager<OcmCaseS
 			String[] split = path.split("\\/");
 			String jcrPropertyName = split[split.length - 1];
 			Node currentNode = getPersistence().getSession().getSession().getNodeByIdentifier(event.getIdentifier());
-			Property property = currentNode.getProperty(jcrPropertyName);
-			if (property.getType() == PropertyType.REFERENCE) {
+			int propertyType = getPropertyType(jcrPropertyName, currentNode);
+			if (propertyType == PropertyType.REFERENCE) {
 				switch (event.getType()) {
 				case Event.PROPERTY_ADDED:
 					fireReferenceUpdated(event, currentNode, CaseFileItemTransition.ADD_REFERENCE, jcrPropertyName);
@@ -243,6 +272,22 @@ public class OcmSubscriptionManager extends AbstractSubscriptionManager<OcmCaseS
 		}
 	}
 
+	protected int getPropertyType(String jcrPropertyName, Node currentNode) throws PathNotFoundException, RepositoryException {
+		if (currentNode.hasProperty(jcrPropertyName)) {
+			Property property = currentNode.getProperty(jcrPropertyName);
+			int propertyType = property.getType();
+			return propertyType;
+		} else {
+			NodeType def = currentNode.getDefinition().getRequiredPrimaryTypes()[0];
+			for (PropertyDefinition pd : def.getDeclaredPropertyDefinitions()) {
+				if (pd.getName().equals(jcrPropertyName)) {
+					return pd.getRequiredType();
+				}
+			}
+			return PropertyType.STRING;
+		}
+	}
+
 	private RuntimeException convertExcept(Exception e) {
 		return (RuntimeException) (e instanceof RuntimeException ? e : new RuntimeException(e));
 	}
@@ -258,23 +303,35 @@ public class OcmSubscriptionManager extends AbstractSubscriptionManager<OcmCaseS
 					if (!(currentObject instanceof OcmCaseSubscriptionInfo)) {
 						OcmCaseSubscriptionInfo i = getSubscription(currentNode);
 						if (i != null) {
-							String[] split = jcrPropertyName.split("\\:");
-							String propertyName = split[split.length - 1];
+							String propertyName = getJavaPropertyName(jcrPropertyName);
 
 							for (OcmCaseFileItemSubscriptionInfo si : i.getCaseFileItemSubscriptions()) {
 								if (si.getTransition() == standardEvent && si.getRelatedItemName() != null && si.getRelatedItemName().equals(propertyName)) {
-									Property prop = currentNode.getProperty(jcrPropertyName);
-									if (prop.isMultiple()) {
-										// TODO figure out which values are NEW
-										// and which are OLD
-										Value[] values = prop.getValues();
-										for (Value value : values) {
-											if (value.getType() == PropertyType.REFERENCE) {
-												fireEvent(si, currentObject, getPersistence().getSession().getObjectByUuid(value.getString()));
+									if (currentNode.hasProperty(jcrPropertyName)) {
+										Property prop = currentNode.getProperty(jcrPropertyName);
+										if (isPropertyMultiple(currentNode, jcrPropertyName)) {
+											// TODO figure out which values are
+											// NEW
+											// and which are OLD
+											Value[] values = prop.getValues();
+											for (Value value : values) {
+												if (value.getType() == PropertyType.REFERENCE) {
+													fireEvent(si, currentObject, getPersistence().getSession().getObjectByUuid(value.getString()));
+												}
 											}
+										} else {
+											fireEvent(si, currentObject, getPersistence().getSession().getObjectByUuid(prop.getString()));
 										}
 									} else {
-										fireEvent(si, currentObject, getPersistence().getSession().getObjectByUuid(prop.getString()));
+										ClassDescriptor cd = getPersistence().getClassDescriptor(currentNode.getDefinition().getRequiredPrimaryTypeNames()[0]);
+										String className = null;
+										if (isPropertyMultiple(currentNode, jcrPropertyName)) {
+											className = cd.getCollectionDescriptor(propertyName).getElementClassName();
+										} else {
+											className = cd.getBeanDescriptor(propertyName).getClassDescriptor().getClassName();
+										}
+										//TODO This is not good enough.  Still need to get the old value from somewhere
+										fireEvent(si, currentObject, Class.forName(className).newInstance());
 									}
 								}
 							}
@@ -287,6 +344,21 @@ public class OcmSubscriptionManager extends AbstractSubscriptionManager<OcmCaseS
 			throw e;
 		} catch (Exception e) {
 			throw new RuntimeException(e);
+		}
+	}
+
+	private boolean isPropertyMultiple(Node currentNode, String jcrPropertyName) throws PathNotFoundException, RepositoryException {
+		if (currentNode.hasProperty(jcrPropertyName)) {
+			Property property = currentNode.getProperty(jcrPropertyName);
+			return property.isMultiple();
+		} else {
+			NodeType def = currentNode.getDefinition().getRequiredPrimaryTypes()[0];
+			for (PropertyDefinition pd : def.getDeclaredPropertyDefinitions()) {
+				if (pd.getName().equals(jcrPropertyName)) {
+					return pd.isMultiple();
+				}
+			}
+			return false;
 		}
 	}
 
