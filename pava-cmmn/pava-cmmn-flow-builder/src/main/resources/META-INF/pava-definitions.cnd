@@ -3,6 +3,7 @@
 
 [i:caseFileItemSubscription] > mix:lifecycle, mix:referenceable
 	- i:itemName (string)
+	- i:relatedItemName (string)
 	- i:caseKey (string)
 	- i:processId (long)
 	- i:transition (string)

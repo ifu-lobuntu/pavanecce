@@ -12,6 +12,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
@@ -70,7 +71,12 @@ public class CollectionPlaceHolderResolveStrategy extends JPAPlaceholderResolver
 	}
 
 	Class<?> findCommonSuperclass(Collection<?> c) {
-		Class<?> result = c.iterator().next().getClass();
+		Iterator<?> iterator = c.iterator();
+		Object next = iterator.next();
+		if(next==null){
+			System.out.println();
+		}
+		Class<?> result = next.getClass();
 		for (Object object : c) {
 			while (!result.isInstance(object)) {
 				result = result.getSuperclass();

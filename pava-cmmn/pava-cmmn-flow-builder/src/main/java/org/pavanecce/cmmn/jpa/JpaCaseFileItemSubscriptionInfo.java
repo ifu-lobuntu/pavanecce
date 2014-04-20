@@ -18,6 +18,7 @@ public class JpaCaseFileItemSubscriptionInfo implements CaseFileItemSubscription
 	@ManyToOne
 	private JpaCaseSubscriptionInfo caseSubscription;
 	private String itemName;
+	private String relatedItemName;
 	private CaseFileItemTransition transition;
 	private long processId;
 	private String caseKey;
@@ -29,6 +30,15 @@ public class JpaCaseFileItemSubscriptionInfo implements CaseFileItemSubscription
 	public JpaCaseFileItemSubscriptionInfo(JpaCaseSubscriptionInfo caseSubscription, String itemName, CaseFileItemTransition transition, CaseInstance instance) {
 		super();
 
+	}
+
+
+	public String getRelatedItemName() {
+		return relatedItemName;
+	}
+
+	public void setRelatedItemName(String relatedItemName) {
+		this.relatedItemName = relatedItemName;
 	}
 
 

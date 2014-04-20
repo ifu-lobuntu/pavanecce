@@ -4,24 +4,28 @@ import org.pavanecce.cmmn.flow.CaseFileItemTransition;
 
 public interface CaseFileItemSubscriptionInfo {
 
-	public abstract long getProcessId();
+	long getProcessId();
 
-	public abstract CaseFileItemTransition getTransition();
+	CaseFileItemTransition getTransition();
 
-	public abstract String getItemName();
+	String getItemName();
 
-	public abstract String getCaseKey();
+	String getCaseKey();
 
-	public abstract void setCaseKey(String caseKey);
+	void setCaseKey(String caseKey);
 
-	public abstract void setProcessId(long processId);
+	void setProcessId(long processId);
 
-	public abstract void setTransition(CaseFileItemTransition transition);
+	void setTransition(CaseFileItemTransition transition);
 
-	public abstract void setItemName(String itemName);
+	void setItemName(String itemName);
 
-	public abstract void setCaseSubscription(CaseSubscriptionInfo<?> caseSubscription);
+	String getRelatedItemName();
 
-	public abstract CaseSubscriptionInfo<?> getCaseSubscription();
+	void setRelatedItemName(String itemName);
+
+	void setCaseSubscription(CaseSubscriptionInfo<?> caseSubscription);
+
+	CaseSubscriptionInfo<?> getCaseSubscription();
 
 }

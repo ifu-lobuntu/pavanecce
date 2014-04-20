@@ -21,8 +21,10 @@ public class OcmCaseFileItemSubscriptionInfo implements CaseFileItemSubscription
 	private long processId;
 	@Field(jcrName = "i:caseKey")
 	private String caseKey;
+	@Field(path=true)
 	private String path;
-
+	@Field(jcrName = "i:relatedItemName")
+	private String relatedItemName;
 	public OcmCaseFileItemSubscriptionInfo(OcmCaseSubscriptionInfo caseSubscription) {
 		super();
 		this.caseSubscription=caseSubscription;
@@ -104,5 +106,14 @@ public class OcmCaseFileItemSubscriptionInfo implements CaseFileItemSubscription
 	public long getProcessId() {
 		return processId;
 	}
+
+	public String getRelatedItemName() {
+		return relatedItemName;
+	}
+
+	public void setRelatedItemName(String relatedItemName) {
+		this.relatedItemName = relatedItemName;
+	}
+
 
 }

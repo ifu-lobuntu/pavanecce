@@ -5,8 +5,10 @@ import java.io.Serializable;
 public class CaseFileItemOnPart extends OnPart implements Serializable {
 	private static final long serialVersionUID = -9167236068103073693L;
 	private CaseFileItemTransition standardEvent;
-	private CaseFileItem caseFileItem;
+	private CaseFileItem sourceCaseFileItem;
+	private CaseFileItem relatedCaseFileItem;
 	private String sourceRef;
+	private String relationRef;
 
 
 	public CaseFileItemTransition getStandardEvent() {
@@ -18,12 +20,12 @@ public class CaseFileItemOnPart extends OnPart implements Serializable {
 	}
 
 
-	public CaseFileItem getCaseFileItem() {
-		return caseFileItem;
+	public CaseFileItem getSourceCaseFileItem() {
+		return sourceCaseFileItem;
 	}
 
-	public void setCaseFileItem(CaseFileItem caseFileItem) {
-		this.caseFileItem = caseFileItem;
+	public void setSourceCaseFileItem(CaseFileItem caseFileItem) {
+		this.sourceCaseFileItem = caseFileItem;
 	}
 
 
@@ -33,11 +35,27 @@ public class CaseFileItemOnPart extends OnPart implements Serializable {
 
 	@Override
 	public String getType() {
-		return getType(this.caseFileItem.getName(), standardEvent);
+		return getType(this.sourceCaseFileItem.getName(), standardEvent);
 	}
 
 	public String getSourceRef() {
 		return sourceRef;
+	}
+
+	public String getRelationRef() {
+		return relationRef;
+	}
+
+	public void setRelationRef(String relationRef) {
+		this.relationRef = relationRef;
+	}
+
+	public CaseFileItem getRelatedCaseFileItem() {
+		return relatedCaseFileItem;
+	}
+
+	public void setRelatedCaseFileItem(CaseFileItem relatedCaseFileItem) {
+		this.relatedCaseFileItem = relatedCaseFileItem;
 	}
 
 }

@@ -50,7 +50,6 @@ public class CaseFileItemDefinitionHandler extends BaseAbstractHandler implement
 			            final Attributes attrs, final ExtensibleXmlParser parser)
 			throws SAXException {
 		parser.startElementBuilder(localName, attrs);
-
 		String id = attrs.getValue("id");
 		String type = attrs.getValue("structureRef");
 		if (type == null || type.trim().length() == 0) {

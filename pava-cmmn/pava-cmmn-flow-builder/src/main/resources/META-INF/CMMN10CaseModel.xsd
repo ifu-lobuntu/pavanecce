@@ -376,7 +376,7 @@
 
   
   <xsd:element name="expression" type="tExpression"/>
-  <xsd:complexType name="tExpression">
+  <xsd:complexType name="tExpression" mixed="true">
     <xsd:complexContent>
       <xsd:extension base="tCmmnElementWithMixedContent">
         <xsd:sequence>
@@ -732,6 +732,13 @@
             </xsd:documentation>
           </xsd:annotation>
         </xsd:attribute>
+        <xsd:attribute name="relationRef" type="xsd:IDREF">
+          <xsd:annotation>
+            <xsd:documentation>
+              relationRef refers to a "caseFileItem" element which participates with the source "caseFileItem" in either a "targetRefs" or "children" relationship
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
@@ -778,7 +785,7 @@
         Enumeration of CaseFileItem transitions.
       </xsd:documentation>
     </xsd:annotation>
-    <xsd:restriction>
+    <xsd:restriction base="xsd:string">
       <xsd:enumeration value="addChild"/>
       <xsd:enumeration value="addReference"/>
       <xsd:enumeration value="create"/>
@@ -982,52 +989,5 @@
         </xsd:attribute>
       </xsd:extension>
     </xsd:complexContent>
-  </xsd:complexType>
-  <!--
-    CMMN Definitions
-  -->
-  <xsd:element name="definitions" type="tDefinitions">
-    <xsd:annotation>
-      <xsd:documentation>
-        definitions is the root element of ALL CMMN elements. It is used as a container
-        for CMMN elements that might be re-used.
-      </xsd:documentation>
-    </xsd:annotation>
-  </xsd:element>
-  
-  <xsd:complexType name="tDefinitions">
-    <xsd:annotation>
-      <xsd:documentation>
-        tDefinitions defines the type of element "definitions". 
-      </xsd:documentation>
-    </xsd:annotation>
-    <xsd:sequence>
-      <xsd:element ref="import" minOccurs="0" maxOccurs="unbounded"/>
-      <xsd:element ref="caseFileItemDefinition" minOccurs="0" maxOccurs="unbounded"/>
-      <xsd:element ref="case" minOccurs="0" maxOccurs="unbounded"/>
-      <xsd:element ref="process" minOccurs="0" maxOccurs="unbounded"/>
-    </xsd:sequence>
-    <xsd:attribute name="id" type="xsd:IDREF"/>
-    <xsd:attribute name="name" type="xsd:string"/>
-    <xsd:attribute name="targetNamespace" type="xsd:anyURI" use="required"/>
-    <xsd:attribute name="expressionLanguage" type="xsd:anyURI" 
-                   use="optional" default="http://www.w3.org/1999/XPath"/>
-    <xsd:attribute name="exporter" type="xsd:string"/>
-    <xsd:attribute name="exporterVersion" type="xsd:string"/>
-    <xsd:attribute name="author" type="xsd:string"/>
-    <xsd:attribute name="creationDate" type="xsd:dateTime"/>
-    <xsd:anyAttribute namespace="##other" processContents="lax"/>
-  </xsd:complexType>
-
-  <xsd:element name="import" type="tImport"/>
-  <xsd:annotation>
-    <xsd:documentation>
-      import is the root element for all imports in CMMN definitions.
-    </xsd:documentation>
-  </xsd:annotation>
-  <xsd:complexType name="tImport">
-    <xsd:attribute name="location" type="xsd:string" use="required"/>
-    <xsd:attribute name="namespace" type="xsd:anyURI"/>
-    <xsd:attribute name="importType" type="xsd:anyURI" use="required"/>
   </xsd:complexType>
 </xsd:schema>

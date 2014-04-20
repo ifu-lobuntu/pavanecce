@@ -58,20 +58,16 @@ public class HibernateSubscriptionManager extends AbstractSubscriptionManager<Jp
 					if (propertyNames[i].equals(is.getItemName())) {
 						if (!(event.getState()[i] instanceof Collection)) {
 							if (event.getState()[i] != null) {
-								if (is.getTransition() == CaseFileItemTransition.CREATE) {
-									fireEvent(is, event.getState()[i]);
-								} else if (is.getTransition() == CaseFileItemTransition.ADD_CHILD || is.getTransition() == CaseFileItemTransition.ADD_REFERENCE) {
-									fireEvent(is, event.getEntity());
+								if (is.getTransition() == CaseFileItemTransition.CREATE || is.getTransition() == CaseFileItemTransition.ADD_CHILD
+										|| is.getTransition() == CaseFileItemTransition.ADD_REFERENCE) {
+									fireEvent(is, event.getEntity(), event.getState()[i]);
 								}
 							}
 						}
 						if (!(event.getOldState()[i] instanceof Collection)) {
 							if (event.getOldState()[i] != null) {
-								if (is.getTransition() == CaseFileItemTransition.DELETE) {
-									fireEvent(is, event.getState()[i]);
-								} else if (is.getTransition() == CaseFileItemTransition.REMOVE_CHILD
-										|| is.getTransition() == CaseFileItemTransition.REMOVE_REFERENCE) {
-									fireEvent(is, event.getEntity());
+								if (is.getTransition() == CaseFileItemTransition.REMOVE_CHILD || is.getTransition() == CaseFileItemTransition.REMOVE_REFERENCE) {
+									fireEvent(is, event.getEntity(),event.getOldState()[i]);
 								}
 							}
 						}
@@ -96,7 +92,7 @@ public class HibernateSubscriptionManager extends AbstractSubscriptionManager<Jp
 					Serializable storedSnapshot = event.getCollection().getStoredSnapshot();
 					Collection<?> oldState;
 					if (storedSnapshot instanceof Map) {// ???
-						oldState = ((Map<?,?>) storedSnapshot).values();
+						oldState = ((Map<?, ?>) storedSnapshot).values();
 					} else {
 						oldState = (Collection<?>) storedSnapshot;
 					}
@@ -106,9 +102,9 @@ public class HibernateSubscriptionManager extends AbstractSubscriptionManager<Jp
 								// In the case of CREATE itemName is actually
 								// the name
 								// of the property on the parent to the child
-								fireEvent(is, newObject);
+								fireEvent(is, owner, newObject);
 							} else if (is.getTransition() == CaseFileItemTransition.ADD_CHILD || is.getTransition() == CaseFileItemTransition.ADD_REFERENCE) {
-								fireEvent(is, owner);
+								fireEvent(is, owner,newObject);
 							}
 						}
 					}
@@ -118,10 +114,10 @@ public class HibernateSubscriptionManager extends AbstractSubscriptionManager<Jp
 								// In the case of DELETE itemName is actually
 								// the name
 								// of the property on the parent to the child
-								fireEvent(is, oldObject);
+								fireEvent(is, owner, oldObject);
 							} else if (is.getTransition() == CaseFileItemTransition.REMOVE_CHILD
 									|| is.getTransition() == CaseFileItemTransition.REMOVE_REFERENCE) {
-								fireEvent(is, owner);
+								fireEvent(is, owner, owner);
 							}
 						}
 					}

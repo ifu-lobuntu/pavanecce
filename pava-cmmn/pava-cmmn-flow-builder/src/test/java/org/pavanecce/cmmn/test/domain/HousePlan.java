@@ -27,7 +27,7 @@ public class HousePlan {
 	@OneToMany(cascade=CascadeType.ALL, mappedBy="housePlan")
 	@Collection(jcrName="t:wallPlans",jcrElementName="t:wallPlan")
 	private Set<WallPlan> wallPlans = new HashSet<WallPlan>();
-	@OneToOne(cascade=CascadeType.ALL)
+	@OneToOne(cascade=CascadeType.ALL, mappedBy="housePlan")
 	@Bean(jcrName="t:roofPlan",jcrType="t:roofPlan",converter=DefaultBeanConverterImpl.class)
 	private RoofPlan roofPlan;
 	@Bean(converter=ParentBeanConverterImpl.class)

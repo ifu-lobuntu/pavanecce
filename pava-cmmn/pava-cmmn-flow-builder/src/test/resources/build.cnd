@@ -11,11 +11,12 @@
 
 [t:house] > mix:lifecycle, mix:referenceable
 	- t:description (string)
+	- t:wallPlans (reference) multiple < t:wallPlan
+	- t:roofPlan (reference) < t:roofPlan
 	+ t:walls (t:walls) = t:walls
 
 [t:wallPlan] > mix:lifecycle, mix:referenceable
-	- t:wall (reference)
-		< t:wall
+	- t:wall (reference) < t:wall
 
 [t:wallPlans] 
 	+ t:wallPlan (t:wallPlan) = t:wallPlan multiple
@@ -29,7 +30,3 @@
 	- t:startDate (date)
 	+ t:housePlan (t:housePlan)
 	+ t:house (t:house) 
-
-
-
-

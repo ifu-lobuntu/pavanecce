@@ -21,7 +21,7 @@ import org.pavanecce.cmmn.flow.CaseFileItem;
 import org.pavanecce.cmmn.flow.CaseFileItemOnPart;
 import org.pavanecce.cmmn.flow.CaseFileItemTransition;
 
-public abstract class AbstractSubscriptionManager <T extends CaseSubscriptionInfo<X>, X extends CaseFileItemSubscriptionInfo>{
+public abstract class AbstractSubscriptionManager<T extends CaseSubscriptionInfo<X>, X extends CaseFileItemSubscriptionInfo> {
 
 	public AbstractSubscriptionManager() {
 		super();
@@ -38,15 +38,16 @@ public abstract class AbstractSubscriptionManager <T extends CaseSubscriptionInf
 		}
 	}
 
-	protected void fireEvent(CaseFileItemSubscriptionInfo is, Object value) {
+	protected void fireEvent(CaseFileItemSubscriptionInfo is, Object parentObject, Object value) {
 		InternalKnowledgeRuntime eventManager = CaseInstanceFactory.getEventManager(is.getCaseKey());
 		String eventType = CaseFileItemOnPart.getType(is.getItemName(), is.getTransition());
 		PersistenceContextManager pcm = (PersistenceContextManager) eventManager.getEnvironment().get(EnvironmentName.PERSISTENCE_CONTEXT_MANAGER);
 		pcm.beginCommandScopedEntityManager();
 		PersistenceContext pc = pcm.getCommandScopedPersistenceContext();
 		pc.joinTransaction();
-		eventManager.signalEvent(eventType, new CaseFileItemEvent(is.getItemName(), is.getTransition(), value), is.getProcessId());
+		eventManager.signalEvent(eventType, new CaseFileItemEvent(is.getItemName(), is.getTransition(), parentObject, value), is.getProcessId());
 		try {
+			// mmm.... desperate measures
 			Method m = JpaPersistenceContextManager.class.getDeclaredMethod("getInternalCommandScopedEntityManager");
 			m.setAccessible(true);
 			EntityManager em = (EntityManager) m.invoke(pcm);
@@ -59,7 +60,7 @@ public abstract class AbstractSubscriptionManager <T extends CaseSubscriptionInf
 
 	private void subscribeToSingleObject(CaseInstance process, CaseFileItem caseFileItem, Object currentInstance, ObjectPersistence em) {
 		CaseSubscriptionKey key = createCaseSubscriptionKey(currentInstance);
-		T info = (T)em.find(caseSubscriptionInfoClass(), key);
+		T info = (T) em.find(caseSubscriptionInfoClass(), key);
 		if (info == null) {
 			info = createCaseSubscriptionInfo(currentInstance);
 			em.persist(info);
@@ -75,27 +76,31 @@ public abstract class AbstractSubscriptionManager <T extends CaseSubscriptionInf
 			case REMOVE_REFERENCE:
 			case REPLACE:
 			case UPDATE:
-				// These are actually pretty useless until CMMN finds a way to
-				// make the affected property available in the event
-				// subscription
-			case DELETE:
 				buildCaseFileItemSubscriptionInfo(process, caseFileItem, info, part);
 				break;
 			default:
 				break;
 			}
 		}
+		addSubscriptionsForCreationOrDeletionOfChildren(process, caseFileItem, info, theCase);
+		em.update(info);
+		cascadeSubscribe(process, currentInstance, caseFileItem.getChildren(), em);
+		cascadeSubscribe(process, currentInstance, caseFileItem.getTargets(), em);
+	}
+
+	protected void addSubscriptionsForCreationOrDeletionOfChildren(CaseInstance process, CaseFileItem caseFileItem, T info, Case theCase) {
+		/*
+		 * CREATE events are only relevant if the object created is added as a child to a parent object that is already involved in the case
+		 * We therefore need to listen for that event too
+		 */
 		for (CaseFileItem childItem : caseFileItem.getChildren()) {
 			Set<CaseFileItemOnPart> on = theCase.findCaseFileItemOnPartsFor(childItem);
 			for (CaseFileItemOnPart part : on) {
-				if (part.getStandardEvent() == CaseFileItemTransition.CREATE) {
+				if (part.getStandardEvent() == CaseFileItemTransition.CREATE || part.getStandardEvent() == CaseFileItemTransition.DELETE) {
 					buildCaseFileItemSubscriptionInfo(process, childItem, info, part);
 				}
 			}
 		}
-		em.update(info);
-		cascadeSubscribe(process, currentInstance, caseFileItem.getChildren(), em);
-		cascadeSubscribe(process, currentInstance, caseFileItem.getTargets(), em);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -113,12 +118,15 @@ public abstract class AbstractSubscriptionManager <T extends CaseSubscriptionInf
 		result.setTransition(part.getStandardEvent());
 		result.setProcessId(process.getId());
 		result.setCaseKey(((Case) process.getProcess()).getCaseKey());
+		if (part.getRelatedCaseFileItem() != null) {
+			result.setRelatedItemName(part.getRelatedCaseFileItem().getName());
+		}
 		return result;
 	}
 
-	protected abstract X createCaseFileItemSubscriptionInfo() ;
+	protected abstract X createCaseFileItemSubscriptionInfo();
 
-	protected abstract T createCaseSubscriptionInfo(Object currentInstance) ;
+	protected abstract T createCaseSubscriptionInfo(Object currentInstance);
 
 	protected abstract CaseSubscriptionKey createCaseSubscriptionKey(Object currentInstance);
 
@@ -138,8 +146,8 @@ public abstract class AbstractSubscriptionManager <T extends CaseSubscriptionInf
 		}
 	}
 
-	private void cascadeSubscribe(CaseInstance process, Object target, List<CaseFileItem> associatied, ObjectPersistence em) {
-		for (CaseFileItem caseFileItem : associatied) {
+	private void cascadeSubscribe(CaseInstance process, Object target, List<CaseFileItem> related, ObjectPersistence em) {
+		for (CaseFileItem caseFileItem : related) {
 			String propName = caseFileItem.getName();
 			try {
 				Method getter = target.getClass().getMethod("get" + Character.toUpperCase(propName.charAt(0)) + propName.substring(1));

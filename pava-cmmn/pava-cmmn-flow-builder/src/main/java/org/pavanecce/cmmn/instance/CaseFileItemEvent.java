@@ -6,14 +6,19 @@ public class CaseFileItemEvent {
 	String caseFileItemName;
 	CaseFileItemTransition transition;
 	Object value;
-	public CaseFileItemEvent(String caseFileItemName, CaseFileItemTransition transition, Object value) {
+	Object parentObject;
+	public CaseFileItemEvent(String caseFileItemName, CaseFileItemTransition transition, Object parentObject, Object value) {
 		super();
+		this.parentObject=parentObject;
 		this.caseFileItemName = caseFileItemName;
 		this.transition = transition;
 		this.value = value;
 	}
 	public String getCaseFileItemName() {
 		return caseFileItemName;
+	}
+	public Object getParentObject() {
+		return parentObject;
 	}
 	public CaseFileItemTransition getTransition() {
 		return transition;

@@ -186,7 +186,7 @@ public abstract class AbstrasctJbpmCaseBaseTestCase extends JbpmJUnitBaseTestCas
 				session = tr.login(new SimpleCredentials("admin", "admin".toCharArray()));
 				session.getRootNode().addNode("cases");
 				session.getRootNode().addNode("subscriptions");
-				CndImporter.registerNodeTypes(new InputStreamReader(JcrTestCase.class.getResourceAsStream("/pava-definitions.cnd")), session);
+				CndImporter.registerNodeTypes(new InputStreamReader(JcrTestCase.class.getResourceAsStream("/META-INF/pava-definitions.cnd")), session);
 				CndImporter.registerNodeTypes(new InputStreamReader(JcrTestCase.class.getResourceAsStream("/build.cnd")), session);
 				session.save();
 				session.logout();

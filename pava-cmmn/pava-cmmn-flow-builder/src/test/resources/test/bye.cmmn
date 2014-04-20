@@ -1,39 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<cmmn:definitions xmlns:cmmn="http://www.omg.org/spec/CMMN/20121031/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.omg.org/spec/CMMN/20121031/MODEL CMMN10CaseModel.xsd" targetNamespace="http:///hello">
-	<cmmn:caseFileItemDefinition id="housePlanDefinition" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass"
-		structureRef="file:///model.uml#org/pavanecce/cmmn/HousePlan" />
-	<cmmn:caseFileItemDefinition id="roofPlanDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass"
-		structureRef="file:///model.uml#org/pavanecce/cmmn/WallPlan" />
-	<cmmn:caseFileItemDefinition id="wallPlanDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass"
-		structureRef="file:///model.uml#org/pavanecce/cmmn/RoofPlan" />
-	<cmmn:caseFileItemDefinition id="wallQuoteDefinition" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass"
-		structureRef="file:///model.uml#org/pavanecce/cmmn/WallQuote" />
-	<cmmn:caseFileItemDefinition id="wallDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass"
-		structureRef="file:///model.uml#org/pavanecce/cmmn/Wall">
-	</cmmn:caseFileItemDefinition>
-	<cmmn:caseFileItemDefinition id="houseDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass"
-		structureRef="file:///model.uml#org/pavanecce/cmmn/House">
-	</cmmn:caseFileItemDefinition>
+<!DOCTYPE doc [
+<!ENTITY structureDefs SYSTEM "src/test/resources/test/structureDefs.xmlFragment">
+<!ENTITY caseFileModel SYSTEM "src/test/resources/test/caseFileModel.xmlFragment">
+]>
+<cmmn:definitions xmlns:cmmn="http://www.omg.org/spec/CMMN/20121031/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:test="http://ifu-lobuntu.org/test"
+	targetNamespace="http://ifu-lobuntu.org/test">
+	&structureDefs;
 	<cmmn:case name="bye" id="bye">
-		<cmmn:caseFileModel>
-			<cmmn:caseFileItem name="housePlan" id="housePlanFileItemId" multiplicity="ExactlyOne" definitionRef="housePlanDefinition">
-				<cmmn:children>
-					<cmmn:caseFileItem name="wallPlans" id="wallPlanFileItemId" multiplicity="OneOrMore" definitionRef="wallPlanDefinitionId" targetRefs="wallFileItemId">
-						<cmmn:children>
-							<cmmn:caseFileItem name="wallQuoteId" definitionRef="wallQuoteDefinition" multiplicity="ExactlyOne" id="wallQuoteItem"></cmmn:caseFileItem>
-						</cmmn:children>
-					</cmmn:caseFileItem>
-					<cmmn:caseFileItem name="roofPlan" id="roofPlanFileItemId" multiplicity="ZeroOrOne" definitionRef="roofPlanDefinitionId">
-					</cmmn:caseFileItem>
-				</cmmn:children>
-			</cmmn:caseFileItem>
-			<cmmn:caseFileItem name="house" id="houseFileItemId" multiplicity="ExactlyOne" definitionRef="houseDefinitionId">
-				<cmmn:children>
-					<cmmn:caseFileItem name="walls" id="wallFileItemId" multiplicity="OneOrMore" definitionRef="wallDefinitionId" />
-				</cmmn:children>
-			</cmmn:caseFileItem>
-		</cmmn:caseFileModel>
+		&caseFileModel;
 		<cmmn:casePlanModel name="BuildIt">
 			<cmmn:planItem definitionRef="buildWallId" name="BuildWallPlanItem" id="buildWallPlanItemId" entryCriteriaRefs="wallplanCreatedSentryId"
 				exitCriteriaRefs="waitingForWallSentryId">
@@ -49,7 +23,7 @@
 				</cmmn:caseFileItemOnPart>
 			</cmmn:sentry>
 			<cmmn:sentry id="waitingForWallSentryId" name="WaitingForWallSentry">
-				<cmmn:caseFileItemOnPart sourceRef="wallFileItemId" id="OnWallCreatePart">
+				<cmmn:caseFileItemOnPart sourceRef="wallFileItemId" id="OnWallCreateOnlyPart">
 					<cmmn:standardEvent>create</cmmn:standardEvent>
 				</cmmn:caseFileItemOnPart>
 			</cmmn:sentry>

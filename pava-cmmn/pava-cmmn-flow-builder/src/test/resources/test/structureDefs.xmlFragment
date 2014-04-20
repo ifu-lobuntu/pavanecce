@@ -1,0 +1,14 @@
+	<cmmn:caseFileItemDefinition id="housePlanDefinition" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass"
+		structureRef="test:HousePlan" />
+	<cmmn:caseFileItemDefinition id="roofPlanDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass"
+		structureRef="test:WallPlan" />
+	<cmmn:caseFileItemDefinition id="wallPlanDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass"
+		structureRef="test:RoofPlan" />
+	<cmmn:caseFileItemDefinition id="wallQuoteDefinition" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass"
+		structureRef="test:WallQuote" />
+	<cmmn:caseFileItemDefinition id="wallDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass"
+		structureRef="test:Wall">
+	</cmmn:caseFileItemDefinition>
+	<cmmn:caseFileItemDefinition id="houseDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass"
+		structureRef="test:House">
+	</cmmn:caseFileItemDefinition>

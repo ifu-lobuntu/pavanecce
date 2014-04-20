@@ -128,7 +128,7 @@ public class BuilderTest extends AbstrasctJbpmCaseBaseTestCase {
 		assertProcessInstanceActive(processInstance.getId(), ksession);
 		assertNodeTriggered(processInstance.getId(), "defaultSplit");
 		// Sentries:
-		assertNodeTriggered(processInstance.getId(), "OnWallCreatePart");
+		assertNodeTriggered(processInstance.getId(), "OnWallCreateOnlyPart");
 		assertNodeTriggered(processInstance.getId(), "OnWallPlanCreatePart");
 		assertNodeTriggered(processInstance.getId(), "OnRoofPlanCreatePart");
 		addWallPlan( housePlan);

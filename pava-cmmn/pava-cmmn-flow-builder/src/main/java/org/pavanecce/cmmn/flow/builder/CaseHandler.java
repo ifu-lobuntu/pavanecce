@@ -194,19 +194,22 @@ public class CaseHandler extends BaseAbstractHandler implements Handler {
 				apip.setPlanItem(findPlanItem(process, apip.getSourceRef()));
 			} else {
 				CaseFileItemOnPart ocfip = (CaseFileItemOnPart) onPart;
-				ocfip.setCaseFileItem(findCaseFileItemById(variableScope, ocfip.getSourceRef()));
+				ocfip.setSourceCaseFileItem(findCaseFileItemById(variableScope, ocfip.getSourceRef()));
+				ocfip.setRelatedCaseFileItem(findCaseFileItemById(variableScope, ocfip.getRelationRef()));
 			}
 		}
 	}
 
 	private CaseFileItem findCaseFileItemById(VariableScope variableScope, String caseFileItemId) {
-		List<Variable> variables = variableScope.getVariables();
 		CaseFileItem binding = null;
-		for (Variable variable : variables) {
-			if (variable instanceof CaseFileItem) {
-				if (((CaseFileItem) variable).getElementId().equals(caseFileItemId)) {
-					binding = (CaseFileItem) variable;
-					break;
+		if (caseFileItemId != null) {
+			List<Variable> variables = variableScope.getVariables();
+			for (Variable variable : variables) {
+				if (variable instanceof CaseFileItem) {
+					if (((CaseFileItem) variable).getElementId().equals(caseFileItemId)) {
+						binding = (CaseFileItem) variable;
+						break;
+					}
 				}
 			}
 		}

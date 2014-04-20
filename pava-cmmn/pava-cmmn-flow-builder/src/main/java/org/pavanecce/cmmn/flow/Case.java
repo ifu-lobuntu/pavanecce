@@ -46,7 +46,7 @@ public class Case extends RuleFlowProcess {
 				for (OnPart onPart : sentry.getOnParts()) {
 					if (onPart instanceof CaseFileItemOnPart) {
 						CaseFileItemOnPart part = (CaseFileItemOnPart) onPart;
-						if (part.getCaseFileItem().getElementId().equals(item.getElementId())) {
+						if (part.getSourceCaseFileItem().getElementId().equals(item.getElementId())) {
 							onCaseFileItemParts.add(part);
 						}
 					}

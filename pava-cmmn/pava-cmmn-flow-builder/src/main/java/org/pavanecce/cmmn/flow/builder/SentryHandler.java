@@ -26,6 +26,7 @@ public class SentryHandler extends AbstractPlanModelElementHandler implements Ha
 		parser.startElementBuilder(localName, attrs);
 		SimpleSentry node = new SimpleSentry();
 		node.setElementId(attrs.getValue("id"));
+		node.setName(attrs.getValue("name"));
 		return node;
 	}
 
@@ -41,6 +42,7 @@ public class SentryHandler extends AbstractPlanModelElementHandler implements Ha
 		if(onParts.size()>1){
 			JoiningSentry js=new JoiningSentry();
 			js.setElementId(node.getElementId());
+			js.setName(node.getName());
 			for (OnPart onPart : onParts) {
 				js.addOnPart(onPart);
 			}

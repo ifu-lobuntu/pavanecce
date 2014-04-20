@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<cmmn:definitions xmlns:cmmn="http://www.omg.org/spec/CMMN/20121031/MODEL"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.omg.org/spec/CMMN/20121031/MODEL CMMN10CaseModel.xsd"
-	targetNamespace="http:///hello">
-	<cmmn:caseFileItemDefinition id="housePlanDefinition"
-		definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass"
-		structureRef="file:///model.uml#org/pavanecce/cmmn/HousePlan" />
-	<cmmn:caseFileItemDefinition id="wallPlanDefinitionId"
-		definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass"
-		structureRef="file:///model.uml#org/pavanecce/cmmn/WallPlan" />
-	<cmmn:caseFileItemDefinition id="wallQuoteDefinition"
-		definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass"
-		structureRef="file:///model.uml#org/pavanecce/cmmn/WallQuote" />
-	<cmmn:caseFileItemDefinition id="wallDefinitionId"
-		definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass"
-		structureRef="file:///model.uml#org/pavanecce/cmmn/Wall">
+<cmmn:definitions xmlns:cmmn="http://www.omg.org/spec/CMMN/20121031/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:test="http://ifu-lobuntu.org/test"
+	targetNamespace="http://ifu-lobuntu.org/test">
+	<cmmn:caseFileItemDefinition id="housePlanDefinition" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass"
+		structureRef="test:HousePlan" />
+	<cmmn:caseFileItemDefinition id="roofPlanDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass"
+		structureRef="test:WallPlan" />
+	<cmmn:caseFileItemDefinition id="wallPlanDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass"
+		structureRef="test:RoofPlan" />
+	<cmmn:caseFileItemDefinition id="wallQuoteDefinition" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass"
+		structureRef="test:WallQuote" />
+	<cmmn:caseFileItemDefinition id="wallDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass"
+		structureRef="test:Wall">
+	</cmmn:caseFileItemDefinition>
+	<cmmn:caseFileItemDefinition id="houseDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass"
+		structureRef="test:House">
 	</cmmn:caseFileItemDefinition>
 	<cmmn:case name="hello" id="hello">
 		<cmmn:caseFileModel>

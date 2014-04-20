@@ -23,7 +23,7 @@ public class OnPartInstance extends EventNodeInstance {
 		if (event instanceof CaseFileItemEvent && getOnPart() instanceof CaseFileItemOnPart) {
 			CaseFileItemOnPart onPart = (CaseFileItemOnPart) getOnPart();
 			CaseFileItemEvent e = (CaseFileItemEvent) event;
-			if (onPart.getCaseFileItem().getName().equals(e.getCaseFileItemName()) && e.getTransition()==onPart.getStandardEvent()) {
+			if (onPart.getSourceCaseFileItem().getName().equals(e.getCaseFileItemName()) && e.getTransition()==onPart.getStandardEvent()) {
 				getEventStack().push(((CaseFileItemEvent) event).getValue());
 				triggerCompleted();
 			}

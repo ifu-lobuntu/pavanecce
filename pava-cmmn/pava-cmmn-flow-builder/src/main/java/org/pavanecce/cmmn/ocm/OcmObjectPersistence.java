@@ -1,11 +1,6 @@
 package org.pavanecce.cmmn.ocm;
 
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Member;
-import java.lang.reflect.Method;
+import java.util.Map;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -17,9 +12,8 @@ import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
-import org.apache.jackrabbit.ocm.exception.JcrMappingException;
-import org.apache.jackrabbit.ocm.exception.ObjectContentManagerException;
 import org.apache.jackrabbit.ocm.manager.ObjectContentManager;
+import org.apache.jackrabbit.ocm.mapper.model.ClassDescriptor;
 import org.pavanecce.cmmn.instance.ObjectPersistence;
 
 public class OcmObjectPersistence implements ObjectPersistence {
@@ -40,6 +34,9 @@ public class OcmObjectPersistence implements ObjectPersistence {
 		} catch (Exception e) {
 			throw convertException(e);
 		}
+	}
+	public ClassDescriptor getClassDescriptor(String jcrNodeType){
+		return factory.getMapper().getClassDescriptorByNodeType(jcrNodeType);
 	}
 
 	protected void startTransaction() throws SystemException, NamingException, NotSupportedException {
@@ -104,10 +101,13 @@ public class OcmObjectPersistence implements ObjectPersistence {
 	@Override
 	public <T> T find(Class<T> class1, Object id) {
 		if (id instanceof OcmCaseSubscriptionKey) {
-			id = ((OcmCaseSubscriptionKey) id).getId();
-			return (T) getSession().getObject("/subscriptions/" + id);
+			return (T) getSubscription(((OcmCaseSubscriptionKey) id).getId());
 		}
 		return (T) getSession().getObjectByUuid((String) id);
+	}
+
+	public OcmCaseSubscriptionInfo getSubscription(String id) {
+		return (OcmCaseSubscriptionInfo) getSession().getObject("/subscriptions/" + id);
 	}
 
 	@Override
