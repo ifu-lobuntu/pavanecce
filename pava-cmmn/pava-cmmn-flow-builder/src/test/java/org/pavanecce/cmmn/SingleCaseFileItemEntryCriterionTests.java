@@ -229,6 +229,23 @@ public class SingleCaseFileItemEntryCriterionTests extends AbstrasctJbpmCaseBase
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenRoofPlanRemovedAsReference");
 		assertNodeTriggered(caseInstance.getId(), "WaitingForRoofPlanRemovedAsReferenceSentry");
 	}
+	@Test
+	public void testObjectUpdated() throws Exception {
+		// *****GIVEN
+		givenThatTheTestCaseIsStarted();
+		// *****WHEN
+		house= getPersistence().find(House.class, house.getId());
+		house.setDescription("newDescription");
+		getPersistence().update(house);
+		getPersistence().commit();
+		// *****THEN
+		/*
+		 * Verify Sentry Triggered: Sentries with a single OnPart are
+		 * implemented merely as CatchLinkNodes
+		 */
+		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenHouseUpdated");
+		assertNodeTriggered(caseInstance.getId(), "WaitingForHouseUpdatedSentry");
+	}
 
 	protected void removeRoofPlanAsReferenceFromHouse() {
 		house= getPersistence().find(House.class, house.getId());
@@ -263,7 +280,7 @@ public class SingleCaseFileItemEntryCriterionTests extends AbstrasctJbpmCaseBase
 
 	private void addRoofPlanAsChildToHousePlan() {
 		housePlan = getPersistence().find(HousePlan.class, housePlan.getId());
-		new RoofPlan(housePlan);
+		getPersistence().persist(new RoofPlan(housePlan));
 		getPersistence().update(housePlan);
 		getPersistence().commit();
 

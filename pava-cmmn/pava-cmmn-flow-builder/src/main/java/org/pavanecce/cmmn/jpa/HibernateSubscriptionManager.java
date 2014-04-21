@@ -55,7 +55,9 @@ public class HibernateSubscriptionManager extends AbstractSubscriptionManager<Jp
 				for (int i : dirtyProperties) {
 					// In the case of CREATE itemName is actually the name
 					// of the property on the parent to the child
-					if (propertyNames[i].equals(is.getItemName())) {
+					boolean isCreateOrDelete = propertyNames[i].equals(is.getItemName()) && (is.getTransition() == CaseFileItemTransition.CREATE ||is.getTransition() == CaseFileItemTransition.DELETE);
+					boolean isAddOrRemove = is.getRelatedItemName()!=null &&  propertyNames[i].equals(is.getRelatedItemName()) && (is.getTransition() == CaseFileItemTransition.ADD_CHILD ||is.getTransition() == CaseFileItemTransition.REMOVE_CHILD||is.getTransition() == CaseFileItemTransition.ADD_REFERENCE ||is.getTransition() == CaseFileItemTransition.REMOVE_REFERENCE);
+					if (isCreateOrDelete || isAddOrRemove ) {
 						if (!(event.getState()[i] instanceof Collection)) {
 							if (event.getState()[i] != null) {
 								if (is.getTransition() == CaseFileItemTransition.CREATE || is.getTransition() == CaseFileItemTransition.ADD_CHILD
@@ -66,12 +68,15 @@ public class HibernateSubscriptionManager extends AbstractSubscriptionManager<Jp
 						}
 						if (!(event.getOldState()[i] instanceof Collection)) {
 							if (event.getOldState()[i] != null) {
-								if (is.getTransition() == CaseFileItemTransition.REMOVE_CHILD || is.getTransition() == CaseFileItemTransition.REMOVE_REFERENCE) {
+								if (is.getTransition() == CaseFileItemTransition.DELETE || is.getTransition() == CaseFileItemTransition.REMOVE_CHILD || is.getTransition() == CaseFileItemTransition.REMOVE_REFERENCE) {
 									fireEvent(is, event.getEntity(),event.getOldState()[i]);
 								}
 							}
 						}
 					}
+				}
+				if(is.getTransition()==CaseFileItemTransition.UPDATE){
+					fireEvent(is, event.getEntity(), event.getEntity());
 				}
 			}
 			// TODO modification of children and references. It is problematic
@@ -87,7 +92,10 @@ public class HibernateSubscriptionManager extends AbstractSubscriptionManager<Jp
 		if (inf != null) {
 			for (CaseFileItemSubscriptionInfo is : inf.getCaseFileItemSubscriptions()) {
 				String[] role = event.getCollection().getRole().split("\\.");
-				if (role[role.length - 1].equals(is.getItemName())) {
+				String roleName = role[role.length - 1];
+				boolean isCreateOrDelete = roleName.equals(is.getItemName()) && (is.getTransition() == CaseFileItemTransition.CREATE ||is.getTransition() == CaseFileItemTransition.DELETE);
+				boolean isAddOrRemove = is.getRelatedItemName()!=null &&  roleName.equals(is.getRelatedItemName()) && (is.getTransition() == CaseFileItemTransition.ADD_CHILD ||is.getTransition() == CaseFileItemTransition.REMOVE_CHILD||is.getTransition() == CaseFileItemTransition.ADD_REFERENCE ||is.getTransition() == CaseFileItemTransition.REMOVE_REFERENCE);
+				if (isCreateOrDelete || isAddOrRemove ) {
 					Collection<?> newState = (Collection<?>) event.getCollection();
 					Serializable storedSnapshot = event.getCollection().getStoredSnapshot();
 					Collection<?> oldState;

@@ -323,15 +323,9 @@ public class OcmSubscriptionManager extends AbstractSubscriptionManager<OcmCaseS
 											fireEvent(si, currentObject, getPersistence().getSession().getObjectByUuid(prop.getString()));
 										}
 									} else {
-										ClassDescriptor cd = getPersistence().getClassDescriptor(currentNode.getDefinition().getRequiredPrimaryTypeNames()[0]);
-										String className = null;
-										if (isPropertyMultiple(currentNode, jcrPropertyName)) {
-											className = cd.getCollectionDescriptor(propertyName).getElementClassName();
-										} else {
-											className = cd.getBeanDescriptor(propertyName).getClassDescriptor().getClassName();
-										}
 										//TODO This is not good enough.  Still need to get the old value from somewhere
-										fireEvent(si, currentObject, Class.forName(className).newInstance());
+										Object oldValue=currentObject;
+										fireEvent(si, currentObject, oldValue);
 									}
 								}
 							}

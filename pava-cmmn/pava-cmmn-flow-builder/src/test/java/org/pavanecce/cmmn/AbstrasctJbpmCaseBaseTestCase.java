@@ -69,7 +69,7 @@ import bitronix.tm.resource.jdbc.PoolingDataSource;
 
 public abstract class AbstrasctJbpmCaseBaseTestCase extends JbpmJUnitBaseTestCase {
 	ObjectPersistence persistence;
-	private boolean isJpa = false;
+	private boolean isJpa = true;
 	private OcmFactory ocmFactory;
 
 	public AbstrasctJbpmCaseBaseTestCase() {

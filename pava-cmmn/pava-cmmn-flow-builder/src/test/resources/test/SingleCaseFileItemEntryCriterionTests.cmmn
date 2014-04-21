@@ -41,11 +41,11 @@
 			<cmmn:planItem definitionRef="theTask" name="PlanItemEnteredWhenRoofPlanRemovedAsReference" id="planItemEnteredWhenRoofPlanRemovedAsReferenceId"
 				entryCriteriaRefs="waitingForRoofPlanRemovedAsReferenceSentryId">
 			</cmmn:planItem>
-			<cmmn:planItem definitionRef="theTask" name="PlanItemEnteredWallPlanUpdated" id="planItemEnteredWallPlanUpdatedId"
-				entryCriteriaRefs="waitingForWallPlanUpdatedSentryId">
+			<cmmn:planItem definitionRef="theTask" name="PlanItemEnteredWhenHouseUpdated" id="planItemEnteredHouseUpdatedId"
+				entryCriteriaRefs="waitingForHouseUpdatedSentryId">
 			</cmmn:planItem>
-			<cmmn:sentry id="waitingForWallPlanUpdatedSentryId" name="WaitingForWallPlanUpdatedSentry">
-				<cmmn:caseFileItemOnPart sourceRef="wallPlanFileItemId" id="OnWallPlanUpdatedPart">
+			<cmmn:sentry id="waitingForHouseUpdatedSentryId" name="WaitingForHouseUpdatedSentry">
+				<cmmn:caseFileItemOnPart sourceRef="houseFileItemId" id="OnHouseUpdatedPart">
 					<cmmn:standardEvent>update</cmmn:standardEvent>
 				</cmmn:caseFileItemOnPart>
 			</cmmn:sentry>
