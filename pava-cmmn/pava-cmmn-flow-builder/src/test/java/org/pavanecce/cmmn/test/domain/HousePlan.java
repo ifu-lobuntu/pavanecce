@@ -80,5 +80,13 @@ public class HousePlan {
 	public void setPath(String path) {
 		this.path = path;
 	}
-	
+	@Override
+	public boolean equals(Object obj) {
+		return obj instanceof HousePlan &&  ((HousePlan)obj).id!=null && ((HousePlan)obj).id.equals(id);
+	}
+	@Override
+	public int hashCode() {
+		return id ==null?0:id.hashCode();
+	}
+
 }

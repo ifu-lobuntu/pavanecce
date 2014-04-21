@@ -126,6 +126,7 @@ public class HibernateSubscriptionManager extends AbstractSubscriptionManager<Jp
 	protected void fireSingletonEvents(FlushEntityEvent event, CaseFileItemSubscriptionInfo is, int i) {
 		Object oldValue = event.hasDatabaseSnapshot()? event.getDatabaseSnapshot()[i]:event.getEntityEntry().getLoadedState()[i];
 		Object owner = event.getEntity();
+		Object[] deletedState = event.getEntityEntry().getDeletedState();
 		Object newValue = event.getPropertyValues()[i];
 		if (isEntityValueDirty(oldValue, newValue, event.getSession())) {
 			if (oldValue != null) {
@@ -155,9 +156,9 @@ public class HibernateSubscriptionManager extends AbstractSubscriptionManager<Jp
 
 	protected void fireCollectionEvents(FlushEntityEvent event, CaseFileItemSubscriptionInfo is, int i) {
 		Collection<?> newState = (Collection<?>) event.getPropertyValues()[i];
-		Collection<?> oldState = (Collection<?>) event.getEntityEntry().getLoadedState()[i];
-		if(oldState instanceof PersistentCollection){
-			Serializable storedSnapshot = ((PersistentCollection) oldState).getStoredSnapshot();
+		Collection<?> oldState = null;
+		if(newState instanceof PersistentCollection){
+			Serializable storedSnapshot = ((PersistentCollection) newState).getStoredSnapshot();
 			if(storedSnapshot instanceof Map){
 				oldState=((Map) storedSnapshot).values();
 			}else{

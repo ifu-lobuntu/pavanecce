@@ -318,7 +318,7 @@ public class SingleCaseFileItemEntryCriterionTests extends AbstrasctJbpmCaseBase
 	}
 	private void removeWallPlansAsReferenceFromHouse() {
 		house= getPersistence().find(House.class, house.getId());
-		house.getWalls().clear();
+		house.getWallPlans().clear();
 		getPersistence().update(house);
 		getPersistence().commit();
 	}
