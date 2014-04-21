@@ -25,7 +25,7 @@ public class House {
 	@GeneratedValue()
 	@Field(uuid = true)
 	private String id;
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "house")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "house",orphanRemoval=true)
 	@Collection(jcrName = "t:walls", jcrElementName = "t:wall")
 	private Set<Wall> walls = new HashSet<Wall>();
 	@Field(jcrName = "t:description")

@@ -152,8 +152,8 @@ public class SingleCaseFileItemEntryCriterionTests extends AbstrasctJbpmCaseBase
 	public void testDeletionOfObjectInSingletonFileItem() throws Exception {
 		// *****GIVEN
 		givenThatTheTestCaseIsStarted();
-		// *****WHEN
 		addRoofPlanAsChildToHousePlan();
+		// *****WHEN
 		removeRoofPlanAsChildFromHousePlan();
 		// *****THEN
 		/*

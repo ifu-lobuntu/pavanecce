@@ -15,7 +15,7 @@ import javax.persistence.Transient;
 import org.pavanecce.cmmn.instance.CaseSubscriptionKey;
 
 @Embeddable
-public class JpaCaseSubscriptionKey implements Serializable,CaseSubscriptionKey {
+public class JpaCaseSubscriptionKey implements Serializable, CaseSubscriptionKey {
 	/**
 	 * 
 	 */
@@ -24,6 +24,7 @@ public class JpaCaseSubscriptionKey implements Serializable,CaseSubscriptionKey 
 	private String id;
 	@Transient
 	private Class<?> entityClass;
+
 	public JpaCaseSubscriptionKey() {
 
 	}
@@ -32,11 +33,12 @@ public class JpaCaseSubscriptionKey implements Serializable,CaseSubscriptionKey 
 		Member idMember = JpaIdUtil.INSTANCE.findIdMember(object.getClass());
 		String idAsString = toIdString(object, idMember);
 		this.id = idAsString;
-		this.entityClass= JpaIdUtil.INSTANCE.findEntityClass(object.getClass());
-		this.className=entityClass.getName();
+		this.entityClass = JpaIdUtil.INSTANCE.findEntityClass(object.getClass());
+		this.className = entityClass.getName();
 	}
 
 	private String toIdString(Object object, Member idMember) {
+
 		Object id = JpaIdUtil.INSTANCE.getId(idMember, object);
 		String idAsString = null;
 		if (id instanceof Number) {

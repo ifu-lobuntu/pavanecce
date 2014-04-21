@@ -23,6 +23,9 @@ import org.pavanecce.cmmn.flow.CaseFileItemTransition;
 
 public abstract class AbstractSubscriptionManager<T extends CaseSubscriptionInfo<X>, X extends CaseFileItemSubscriptionInfo> {
 
+	private ThreadLocal<Set<EntityManager>> entityManagersToFlush=new ThreadLocal<Set<EntityManager>>();
+	
+
 	public AbstractSubscriptionManager() {
 		super();
 	}
@@ -37,7 +40,12 @@ public abstract class AbstractSubscriptionManager<T extends CaseSubscriptionInfo
 			subscribeToSingleObject(process, caseFileItem, val, em);
 		}
 	}
-
+	public void flushEntityManagers(){
+		for (EntityManager em : entityManagersToFlush.get()) {
+			em.flush();
+		}
+		entityManagersToFlush.get().clear();
+	}
 	protected void fireEvent(CaseFileItemSubscriptionInfo is, Object parentObject, Object value) {
 		InternalKnowledgeRuntime eventManager = CaseInstanceFactory.getEventManager(is.getCaseKey());
 		String eventType = CaseFileItemOnPart.getType(is.getItemName(), is.getTransition());
@@ -51,11 +59,19 @@ public abstract class AbstractSubscriptionManager<T extends CaseSubscriptionInfo
 			Method m = JpaPersistenceContextManager.class.getDeclaredMethod("getInternalCommandScopedEntityManager");
 			m.setAccessible(true);
 			EntityManager em = (EntityManager) m.invoke(pcm);
-			em.flush();
+			addEntityManagerToFlush(em);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		pcm.endCommandScopedEntityManager();
+	}
+
+	private void addEntityManagerToFlush(EntityManager em) {
+		Set<EntityManager> collection = entityManagersToFlush.get();
+		if(collection==null){
+			entityManagersToFlush.set(collection=new HashSet<EntityManager>());
+		}
+		collection.add(em);
 	}
 
 	private void subscribeToSingleObject(CaseInstance process, CaseFileItem caseFileItem, Object currentInstance, ObjectPersistence em) {

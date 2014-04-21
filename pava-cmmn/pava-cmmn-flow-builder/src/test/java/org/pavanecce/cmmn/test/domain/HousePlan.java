@@ -24,10 +24,10 @@ public class HousePlan {
 	@GeneratedValue
 	@Field(uuid=true)
 	private String id;
-	@OneToMany(cascade=CascadeType.ALL, mappedBy="housePlan")
+	@OneToMany(cascade=CascadeType.ALL, mappedBy="housePlan",orphanRemoval=true)
 	@Collection(jcrName="t:wallPlans",jcrElementName="t:wallPlan")
 	private Set<WallPlan> wallPlans = new HashSet<WallPlan>();
-	@OneToOne(cascade=CascadeType.ALL, mappedBy="housePlan")
+	@OneToOne(cascade=CascadeType.ALL, mappedBy="housePlan",orphanRemoval=true)
 	@Bean(jcrName="t:roofPlan",jcrType="t:roofPlan",converter=DefaultBeanConverterImpl.class)
 	private RoofPlan roofPlan;
 	@Bean(converter=ParentBeanConverterImpl.class)

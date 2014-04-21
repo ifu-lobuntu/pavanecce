@@ -73,6 +73,7 @@
             <property name="hibernate.id.new_generator_mappings" value="false" />            
             <property name="hibernate.transaction.jta.platform" value="org.hibernate.service.jta.platform.internal.BitronixJtaPlatform" />
             <property name="hibernate.ejb.event.post-update" value="org.pavanecce.cmmn.jpa.HibernateSubscriptionManager" />
+            <property name="hibernate.ejb.event.flush-entity" value="org.pavanecce.cmmn.jpa.HibernateSubscriptionManager" />
             <property name="hibernate.ejb.event.pre-collection-update" value="org.pavanecce.cmmn.jpa.HibernateSubscriptionManager"/>
         </properties>        
     </persistence-unit>
