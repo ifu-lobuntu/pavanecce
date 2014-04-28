@@ -1,0 +1,76 @@
+FNB:
+
+Collection Properties: declare two fields xxx and xxxImpl. No setter, lazy initialise both fields
+Implement minimum collection contract in Javascript and Python - 
+  add, addAll, remove, removeAll,contains, set with uniqueness, list with sequence
+But first implement the generation of TwoWaySets
+   
+
+We want to get to the ValueNetwork use case as soon as possible:
+As a User I would like to select an initiating Activity and start it so that I can follow it in my outbox
+1. Generate Java code from vdml.uml and myuml.uml
+2. Instantiate VDML and my own UMl elements (need to think about working together and reusing the code generation: Classes and Properties)
+3. Generate code from UML and VDML elements
+4. Initiate activity
+5. Store link from ActivityInstance to activity
+
+
+As a User I would like to select an Activity instance from my inbox and complete it
+On deliverable flows, the source Activity is not "Complete" until the receiver accepts the deliverable- allow for reworkk, The accepting Activity cannot start until an evaluation is given of the input deliverables 
+
+Implement file generator for Javascript and Python
+
+DBReverse
+When reversing properties into UML TODO check nullability/requirement for readOnly
+When reversing Database columns, create different uml.DataType for every configuration per column using constraints- see if you can identify enums
+When a PK is a FK, assume inheritance
+When a FK is unique, assume oneToOne
+Implement associationTables
+
+
+
+
+org.opaeum.reverse.java.ClassifierFactory.getPackageFor(SourceClass, Namespace) needs work, make this more intelligent. Create profile and model resources, generate unique name using non-organization part of qualified name
+org.opaeum.eclipse.reverse.db.UmlGenerator.isIdColumn(PersistentTable, Column) should return false for non-numbers - need number ids I think???
+In AbstractReverseEngineerAction, the dialog, support uml files to be opened
+org.opaeum.reverse.java.ClassifierFactory.createClassifier(SourceClass), 
+   when none of the isXXXType methods return true, it is usually java or similar library type that will always be "mapped" rather than generated. 
+   Think of a special type for that one.
+   On reverse-engineering from Java, specify which packages should simply map to the generated types, and which types are to be generated from the model in future
+   Maybe each creation in the method should use that to apply mappedImplementationType
+   "mappedImplementationType" should be a collection of Language:mappedType mappings
+   
+On reverseEngineering from Java, support template bindings
+On reverseEngineering from Java, do checks for Sets for uniques and (INDEXED arrayLists) for ordered (simply annotate sorted dudes)
+On reverseEngineering from Java, remember Constructors
+On reverseEngineering from Java, remember Fields
+Update reverse engineering from JDT to be in line with Reflection, especially for creating properties
+
+Forward engineer Java code, create an extremely simple attribute implementor 
+If any javax.persistence annotation is present, skip hibernate and jpa annotators, generated BodyCondition methodBodies for Java (support Javascript and Python??)
+For twoWay collections, generate a special collection for qualified relationships - the formating of parameters into a key can be standard - it is not for human consumption
+The getter for a qualified property must return a collection for OCL
+The getter and setter for hibernate needs to be the underlying PersistentCollection - 
+    populate the map dynamically from generated qualifier-concatenation code. 
+    Remember that qualifiers belonging to the Association will generate an association class carrying all the qualified properties.
+    Don't worry about being standard Java here, because multi-qualified relationships don't exist in Java
+    Non-standard "SimpleTypes" can be stringified with Strategies
+    StructuredDataTypes should generate stringification in a standard interface method 
+
+Lists can't work like qualified relationships because the index is stored in the database only. This is OK.
+OCL: Implement STdlLib collection operations in Java/Python/Javascript and extend it
+Code metamodel:
+Collection statements (mostly take zero or 1 parameter expression)
+New statements
+
+
+Neo4j
+
+JPA:
+Other datatypes like CLOBS, BLOBS, BITS
+ManyToManies
+Lists
+AssociationClasses
+Maps
+
+

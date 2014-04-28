@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="lib" path="libs/javassist.jar" sourcepath="/home/ampie/.m2/repository/org/javassist/javassist/3.18.0-GA/javassist-3.18.0-GA-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jython.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/javaee-api.jar"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>

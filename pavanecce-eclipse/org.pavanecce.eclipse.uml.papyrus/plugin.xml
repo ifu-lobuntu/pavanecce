@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.pavanecce.eclipse.uml.visualization.diagramCreator">
+      <diagramCreator
+            className="org.pavanecce.eclilpse.uml.papyrus.PapyrusDiagramCreator">
+      </diagramCreator>
+   </extension>   
+  <extension
+        point="org.eclipse.papyrus.uml.extensionpoints.UMLLibrary">
+     <library
+           name="Standard Simple Types"
+           path="pathmap://VDFP_MODELS/libraries/StandardSimpleTypes.uml">
+     </library>
+  </extension>     
+  <extension
+        point="org.eclipse.papyrus.uml.extensionpoints.UMLProfile">
+        <profile
+           name="Mapping Profile"
+           path="pathmap://VDFP_MODELS/profiles/MappingProfile.profile.uml">
+     </profile>
+  </extension>     
+</plugin>

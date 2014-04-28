@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.pavanecce</groupId>
+		<artifactId>pavanecce-parent</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+	<artifactId>pavanecce-eclipse</artifactId>
+	<packaging>pom</packaging>
+	<profiles>
+		<profile>
+			<id>eclipse</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<properties>
+				<artifactId>org.pavanecce.uml.tests</artifactId>
+				<packaging>eclipse-plugin</packaging>
+			</properties>
+			<modules>
+				<module>org.pavanecce.eclipse.equinox.target</module>
+				<module>org.pavanecce.eclipse.common</module>
+				<module>org.pavanecce.eclipse.uml.reverse.db</module>
+				<module>org.pavanecce.eclipse.uml.roundtrip</module>
+				<module>org.pavanecce.eclipse.uml.visualization</module>
+				<module>org.pavanecce.eclipse.uml.papyrus</module>
+<!-- 				<module>org.pavanecce.eclipse.plugin.tests</module> -->
+			</modules>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.eclipse.tycho</groupId>
+						<artifactId>tycho-maven-plugin</artifactId>
+						<extensions>true</extensions>
+					</plugin>
+
+					<plugin>
+						<groupId>org.eclipse.tycho</groupId>
+						<artifactId>tycho-source-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>plugin-source</id>
+								<goals>
+									<goal>plugin-source</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.eclipse.tycho</groupId>
+						<artifactId>target-platform-configuration</artifactId>
+						<version>${tycho.version}</version>
+						<configuration>
+							<pomDependencies>consider</pomDependencies>
+							<target>
+								<artifact>
+									<groupId>org.pavanecce</groupId>
+									<artifactId>org.pavanecce.eclipse.equinox.target</artifactId>
+									<version>${project.version}</version>
+								</artifact>
+							</target>
+							<environments>
+								<environment>
+									<os>win32</os>
+									<ws>win32</ws>
+									<arch>x86</arch>
+								</environment>
+								<environment>
+									<os>linux</os>
+									<ws>gtk</ws>
+									<arch>x86</arch>
+								</environment>
+							</environments>
+							<filters>
+
+
+								<!-- example 2: remove all providers of the package javax.persistence except the bundle javax.persistence -->
+								<filter>
+									<type>java-package</type>
+									<id>javax.servlet</id>
+									<restrictTo>
+										<type>eclipse-plugin</type>
+										<id>javax.servlet</id>
+									</restrictTo>
+								</filter>
+
+								<!-- example 3: work around Equinox bug 348045 -->
+								<filter>
+									<type>p2-installable-unit</type>
+									<id>org.eclipse.equinox.servletbridge.extensionbundle</id>
+									<removeAll />
+								</filter>
+							</filters>
+						</configuration>
+					</plugin>
+
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+</project>

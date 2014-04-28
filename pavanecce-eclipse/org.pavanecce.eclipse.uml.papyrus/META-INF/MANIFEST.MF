@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-Name: org.pavanecce.eclipse.uml.papyrus
+Bundle-SymbolicName: org.pavanecce.eclipse.uml.papyrus;singleton:=true
+Bundle-Version: 0.0.1.qualifier
+Bundle-ManifestVersion: 2
+Bundle-ClassPath: .
+Require-Bundle: org.eclipse.papyrus.editor,
+ org.eclipse.papyrus.infra.core,
+ org.eclipse.papyrus.uml.diagram.menu,
+ org.eclipse.gmf.runtime.notation,
+ org.eclipse.gmf.runtime.diagram.ui,
+ org.eclipse.uml2.uml,
+ org.eclipse.papyrus.infra.gmfdiag.common,
+ org.eclipse.papyrus.uml.diagram.clazz,
+ org.pavanecce.eclipse.uml.visualization,
+ org.pavanecce.common.util

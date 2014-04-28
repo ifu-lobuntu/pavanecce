@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: org.pavanecce.common.text.workspace
+Bundle-SymbolicName: org.pavanecce.common.text.workspace;singleton:=true
+Bundle-Version: 0.0.1.qualifier
+Bundle-ClassPath: .
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Export-Package: 
+ org.pavanecce.common.text.filegeneration,
+ org.pavanecce.common.text.workspace
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.pavanecce.common.util;bundle-version="0.0.1"

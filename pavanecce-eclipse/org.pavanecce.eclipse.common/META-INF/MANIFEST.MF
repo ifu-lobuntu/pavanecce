@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: org.pavanecce.eclipse.common
+Bundle-SymbolicName: org.pavanecce.eclipse.common; singleton:=true
+Bundle-Version: 0.0.1.qualifier
+Bundle-ClassPath: .
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
+Export-Package: org.pavanecce.eclipse.common
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.emf.common.ui,
+ org.eclipse.emf.edit
