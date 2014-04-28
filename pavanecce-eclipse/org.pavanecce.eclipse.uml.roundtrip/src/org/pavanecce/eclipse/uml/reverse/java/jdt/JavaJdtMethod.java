@@ -8,11 +8,11 @@ import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.uml2.uml.VisibilityKind;
 import org.pavanecce.common.util.NameConverter;
-import org.pavanecce.uml.reverse.java.SourceClass;
-import org.pavanecce.uml.reverse.java.SourceCode;
-import org.pavanecce.uml.reverse.java.SourceMethod;
-import org.pavanecce.uml.reverse.java.SourceProperty;
-import org.pavanecce.uml.reverse.java.reflect.JavaReflectUtil;
+import org.pavanecce.uml.reverse.java.sourcemodel.SourceClass;
+import org.pavanecce.uml.reverse.java.sourcemodel.SourceCode;
+import org.pavanecce.uml.reverse.java.sourcemodel.SourceMethod;
+import org.pavanecce.uml.reverse.java.sourcemodel.SourceProperty;
+import org.pavanecce.uml.reverse.java.sourcemodel.reflect.JavaReflectUtil;
 
 public class JavaJdtMethod extends JdtAnnotated implements SourceMethod {
 

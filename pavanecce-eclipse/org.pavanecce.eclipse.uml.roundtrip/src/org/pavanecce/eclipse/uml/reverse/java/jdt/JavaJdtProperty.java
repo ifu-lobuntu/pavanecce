@@ -14,11 +14,11 @@ import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.IVariableBinding;
 import org.eclipse.uml2.uml.VisibilityKind;
 import org.pavanecce.common.util.NameConverter;
-import org.pavanecce.uml.reverse.java.SourceAnnotation;
-import org.pavanecce.uml.reverse.java.SourceClass;
-import org.pavanecce.uml.reverse.java.SourceProperty;
-import org.pavanecce.uml.reverse.java.SourceVariable;
-import org.pavanecce.uml.reverse.java.reflect.JavaReflectUtil;
+import org.pavanecce.uml.reverse.java.sourcemodel.SourceAnnotation;
+import org.pavanecce.uml.reverse.java.sourcemodel.SourceClass;
+import org.pavanecce.uml.reverse.java.sourcemodel.SourceProperty;
+import org.pavanecce.uml.reverse.java.sourcemodel.SourceVariable;
+import org.pavanecce.uml.reverse.java.sourcemodel.reflect.JavaReflectUtil;
 
 public class JavaJdtProperty extends JdtAnnotated implements SourceProperty {
 	private String name;

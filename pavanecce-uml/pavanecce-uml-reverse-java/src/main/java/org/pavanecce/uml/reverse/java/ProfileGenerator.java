@@ -10,6 +10,8 @@ import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.Profile;
 import org.eclipse.uml2.uml.Property;
+import org.pavanecce.uml.reverse.java.sourcemodel.SourceClass;
+import org.pavanecce.uml.reverse.java.sourcemodel.SourceProperty;
 
 public class ProfileGenerator extends AbstractUmlGenerator {
 	public Collection<Element> generateUmlImpl(Set<SourceClass> selection, Package library, IProgressMonitor m) throws Exception {

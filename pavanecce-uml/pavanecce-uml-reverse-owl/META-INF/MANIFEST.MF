@@ -4,7 +4,8 @@ Bundle-Name: org.pavanecce.uml.reverse.owl
 Bundle-SymbolicName: org.pavanecce.uml.reverse.owl;singleton:=true
 Bundle-Version: 0.0.1.qualifier
 Require-Bundle: org.pavanecce.common.util,
- org.pavanecce.uml.common
+ org.pavanecce.uml.common,
+ org.pavanecce.uml.reverse.java
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: org.eclipse.core.runtime,

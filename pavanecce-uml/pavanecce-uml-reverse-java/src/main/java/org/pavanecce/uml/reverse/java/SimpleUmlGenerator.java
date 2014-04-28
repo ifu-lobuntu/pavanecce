@@ -8,6 +8,7 @@ import org.eclipse.uml2.uml.Classifier;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.Package;
+import org.pavanecce.uml.reverse.java.sourcemodel.SourceClass;
 
 public class SimpleUmlGenerator extends AbstractUmlGenerator {
 	@Override

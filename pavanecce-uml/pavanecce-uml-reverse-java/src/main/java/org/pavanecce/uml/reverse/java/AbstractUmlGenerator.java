@@ -37,6 +37,11 @@ import org.eclipse.uml2.uml.UMLFactory;
 import org.eclipse.uml2.uml.UMLPackage;
 import org.eclipse.uml2.uml.ValueSpecification;
 import org.pavanecce.uml.common.util.EmfParameterUtil;
+import org.pavanecce.uml.reverse.java.sourcemodel.SourceAnnotation;
+import org.pavanecce.uml.reverse.java.sourcemodel.SourceClass;
+import org.pavanecce.uml.reverse.java.sourcemodel.SourceCode;
+import org.pavanecce.uml.reverse.java.sourcemodel.SourceMethod;
+import org.pavanecce.uml.reverse.java.sourcemodel.SourceProperty;
 
 public abstract class AbstractUmlGenerator {
 	public static final String MAPPINGS_EXTENSION = "mappings";

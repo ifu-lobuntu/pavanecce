@@ -1,0 +1,2 @@
+This plugin defines a simple architecture for generating UML diagrams from existing elements and their associated elements.
+It also defines a ContributionFactory and the various diagram generating actions. 

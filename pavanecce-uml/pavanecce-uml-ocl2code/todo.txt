@@ -1,0 +1,14 @@
+Tested
+Any Collection Expression
+Collect Collection Expresssion
+Select Collection Expression
+
+Todo
+Iterate Collection Expression
+Method Call
+
+Bag Operationss
+Sequence Operations
+Set Operations
+etc
+etc

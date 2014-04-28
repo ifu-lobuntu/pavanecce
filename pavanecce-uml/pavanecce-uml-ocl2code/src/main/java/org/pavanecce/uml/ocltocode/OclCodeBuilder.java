@@ -12,7 +12,7 @@ import org.pavanecce.common.code.metamodel.CodeExpression;
 import org.pavanecce.common.code.metamodel.CodeMethod;
 import org.pavanecce.common.code.metamodel.CodeModel;
 import org.pavanecce.common.code.metamodel.CodeParameter;
-import org.pavanecce.common.code.metamodel.statement.AssignmentStatement;
+import org.pavanecce.common.code.metamodel.statements.AssignmentStatement;
 import org.pavanecce.uml.common.ocl.OpaqueExpressionContext;
 import org.pavanecce.uml.common.util.emulated.OclContextFactory;
 import org.pavanecce.uml.ocltocode.common.UmlToCodeMaps;

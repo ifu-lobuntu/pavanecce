@@ -19,7 +19,7 @@ import org.junit.Test;
 import org.pavanecce.common.code.metamodel.CodeClass;
 import org.pavanecce.common.code.metamodel.CodeMethod;
 import org.pavanecce.common.code.metamodel.expressions.PortableExpression;
-import org.pavanecce.common.code.metamodel.statement.CodeForStatement;
+import org.pavanecce.common.code.metamodel.statements.CodeForStatement;
 import org.pavanecce.uml.uml2code.java.JavaCodeGenerator;
 
 public class SelectExpressionTests extends AbstractOcl2CodeModelTest {

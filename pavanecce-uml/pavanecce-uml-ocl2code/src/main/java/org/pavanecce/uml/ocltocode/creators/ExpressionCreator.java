@@ -31,7 +31,7 @@ import org.pavanecce.common.code.metamodel.CodeVisibilityKind;
 import org.pavanecce.common.code.metamodel.expressions.NullExpression;
 import org.pavanecce.common.code.metamodel.expressions.PortableExpression;
 import org.pavanecce.common.code.metamodel.expressions.TernaryExpression;
-import org.pavanecce.common.code.metamodel.statement.SetResultStatement;
+import org.pavanecce.common.code.metamodel.statements.SetResultStatement;
 import org.pavanecce.common.util.NameConverter;
 import org.pavanecce.uml.common.ocl.AbstractOclContext;
 import org.pavanecce.uml.common.ocl.PropertyOfImplicitObject;

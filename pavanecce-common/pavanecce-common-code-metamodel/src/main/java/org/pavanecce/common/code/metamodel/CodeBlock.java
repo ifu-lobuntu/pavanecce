@@ -3,7 +3,7 @@ package org.pavanecce.common.code.metamodel;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.pavanecce.common.code.metamodel.statement.CodeStatement;
+import org.pavanecce.common.code.metamodel.statements.CodeStatement;
 
 public class CodeBlock extends CodeElement {
 	private List<CodeField>  locals = new ArrayList<CodeField>();

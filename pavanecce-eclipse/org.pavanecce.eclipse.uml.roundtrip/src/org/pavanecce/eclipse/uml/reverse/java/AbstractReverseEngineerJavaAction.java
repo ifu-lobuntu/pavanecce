@@ -37,7 +37,7 @@ import org.pavanecce.eclipse.uml.visualization.RelationshipDirection;
 import org.pavanecce.eclipse.uml.visualization.UmlVisualizationPlugin;
 import org.pavanecce.uml.reverse.java.AbstractUmlGenerator;
 import org.pavanecce.uml.reverse.java.IProgressMonitor;
-import org.pavanecce.uml.reverse.java.SourceClass;
+import org.pavanecce.uml.reverse.java.sourcemodel.SourceClass;
 
 public abstract class AbstractReverseEngineerJavaAction extends AbstractReverseEngineerAction {
 	private final class DelegatingProgressMonitor implements IProgressMonitor {

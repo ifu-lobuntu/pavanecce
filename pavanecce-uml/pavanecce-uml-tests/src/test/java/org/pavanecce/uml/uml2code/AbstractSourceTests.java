@@ -21,7 +21,7 @@ import org.pavanecce.common.code.metamodel.CodeVisibilityKind;
 import org.pavanecce.common.code.metamodel.CollectionTypeReference;
 import org.pavanecce.common.code.metamodel.PrimitiveTypeReference;
 import org.pavanecce.common.code.metamodel.expressions.NewInstanceExpression;
-import org.pavanecce.common.code.metamodel.statement.PortableStatement;
+import org.pavanecce.common.code.metamodel.statements.PortableStatement;
 
 public class AbstractSourceTests {
 	protected CodeModel codeModel;

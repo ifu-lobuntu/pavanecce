@@ -8,4 +8,4 @@ Bundle-ClassPath: .
 Export-Package: org.pavanecce.common.code.metamodel,
  org.pavanecce.common.code.metamodel.expressions,
  org.pavanecce.common.code.metamodel.relationaldb,
- org.pavanecce.common.code.metamodel.statement
+ org.pavanecce.common.code.metamodel.statements

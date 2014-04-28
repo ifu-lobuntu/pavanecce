@@ -1,0 +1,2 @@
+This project contains a couple of classes that generate a CodeModel from a UML model.
+It also contains a couple of classes that generate Java, JPA, Python and Javascript code from the resulting CodeModel

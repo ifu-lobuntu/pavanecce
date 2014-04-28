@@ -26,7 +26,7 @@ public class PapyrusDiagramCreator implements IDiagramCreator{
 	public void createDiagram(String suffix,Collection<? extends Element> elements,IEditorPart editor,RelationshipDirection direction,
 			EClass...relationships){
 		final PapyrusMultiDiagramEditor e = (PapyrusMultiDiagramEditor) editor;
-		CreateClassDiagramNotationElements cmd = new CreateClassDiagramNotationElements(elements, (ModelSet) e.getEditingDomain()
+		CreateClassDiagramNotationElementsCommand cmd = new CreateClassDiagramNotationElementsCommand(elements, (ModelSet) e.getEditingDomain()
 				.getResourceSet(), relationships, direction, suffix);
 		e.getEditingDomain().getCommandStack().execute(cmd);
 		final IPageManager pageManager = (IPageManager) e.getAdapter(IPageManager.class);

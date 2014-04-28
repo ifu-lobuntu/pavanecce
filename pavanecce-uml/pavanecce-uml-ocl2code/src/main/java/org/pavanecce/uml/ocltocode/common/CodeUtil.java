@@ -4,7 +4,7 @@ import org.eclipse.uml2.uml.EnumerationLiteral;
 import org.pavanecce.common.code.metamodel.CodeConstructor;
 import org.pavanecce.common.code.metamodel.CodeEnumeration;
 import org.pavanecce.common.code.metamodel.CodeField;
-import org.pavanecce.common.code.metamodel.statement.PortableStatement;
+import org.pavanecce.common.code.metamodel.statements.PortableStatement;
 import org.pavanecce.common.util.NameConverter;
 
 public class CodeUtil{

@@ -1,7 +1,7 @@
 package org.pavanecce.eclipse.uml.reverse.java.jdt;
 
 import org.eclipse.jdt.core.dom.IVariableBinding;
-import org.pavanecce.uml.reverse.java.SourceVariable;
+import org.pavanecce.uml.reverse.java.sourcemodel.SourceVariable;
 
 public class JavaJdtVariable extends JdtAnnotated implements SourceVariable {
 	IVariableBinding binding;

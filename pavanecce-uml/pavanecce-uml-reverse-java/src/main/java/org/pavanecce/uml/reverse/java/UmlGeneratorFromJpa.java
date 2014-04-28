@@ -27,6 +27,9 @@ import org.pavanecce.uml.common.util.EmfPropertyUtil;
 import org.pavanecce.uml.common.util.PersistentNameUtil;
 import org.pavanecce.uml.common.util.ProfileApplier;
 import org.pavanecce.uml.common.util.UmlResourceSetFactory;
+import org.pavanecce.uml.reverse.java.sourcemodel.SourceAnnotation;
+import org.pavanecce.uml.reverse.java.sourcemodel.SourceClass;
+import org.pavanecce.uml.reverse.java.sourcemodel.SourceProperty;
 
 public class UmlGeneratorFromJpa extends AbstractUmlGenerator {
 	@Override

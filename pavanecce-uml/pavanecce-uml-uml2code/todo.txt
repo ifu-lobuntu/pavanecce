@@ -1,0 +1,26 @@
+Minimum collection contract for OCL: add, addAll, remove, removeAll,contains, set with uniqueness, list with sequence
+
+Javascript:
+Implement minimum collection contract 
+Implement the generation of TwoWaySets
+Implement backbone.js code.
+Distinguish between property get("asdf") and methods
+Collection Properties: declare two fields xxx which is the collection contract and xxxImpl which is the array. 
+ No setter, lazy initialise both fields
+Lazy load collections or proxies using REST
+  
+But first implement the generation of TwoWaySets
+Java:
+Collection Properties: declare two fields xxx which is the collection contract and xxxImpl which is the hibernate collection. 
+ No setter, lazy initialise both fields
+OCM classes
+Implement the generation of TwoWaySets
+
+Python:
+Django persistence
+Implement minimum collection contract 
+But first implement the generation of TwoWaySets
+
+Other generators:
+UML2OWL
+UML2CND

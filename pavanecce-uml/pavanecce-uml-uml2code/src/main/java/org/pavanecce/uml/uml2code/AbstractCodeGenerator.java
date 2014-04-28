@@ -23,14 +23,14 @@ import org.pavanecce.common.code.metamodel.PrimitiveTypeReference;
 import org.pavanecce.common.code.metamodel.expressions.MethodCallExpression;
 import org.pavanecce.common.code.metamodel.expressions.NullExpression;
 import org.pavanecce.common.code.metamodel.expressions.PortableExpression;
-import org.pavanecce.common.code.metamodel.statement.AssignmentStatement;
-import org.pavanecce.common.code.metamodel.statement.CodeForStatement;
-import org.pavanecce.common.code.metamodel.statement.CodeIfStatement;
-import org.pavanecce.common.code.metamodel.statement.CodeSimpleStatement;
-import org.pavanecce.common.code.metamodel.statement.CodeStatement;
-import org.pavanecce.common.code.metamodel.statement.MappedStatement;
-import org.pavanecce.common.code.metamodel.statement.MethodCallStatement;
-import org.pavanecce.common.code.metamodel.statement.PortableStatement;
+import org.pavanecce.common.code.metamodel.statements.AssignmentStatement;
+import org.pavanecce.common.code.metamodel.statements.CodeForStatement;
+import org.pavanecce.common.code.metamodel.statements.CodeIfStatement;
+import org.pavanecce.common.code.metamodel.statements.CodeSimpleStatement;
+import org.pavanecce.common.code.metamodel.statements.CodeStatement;
+import org.pavanecce.common.code.metamodel.statements.MappedStatement;
+import org.pavanecce.common.code.metamodel.statements.MethodCallStatement;
+import org.pavanecce.common.code.metamodel.statements.PortableStatement;
 
 /**
  * Contract: appendXXX methods never end with lineEnds

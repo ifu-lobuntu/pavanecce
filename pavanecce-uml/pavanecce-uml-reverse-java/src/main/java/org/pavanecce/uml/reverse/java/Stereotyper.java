@@ -9,6 +9,9 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.impl.DynamicEObjectImpl;
 import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Stereotype;
+import org.pavanecce.uml.reverse.java.sourcemodel.SourceAnnotation;
+import org.pavanecce.uml.reverse.java.sourcemodel.SourceClass;
+import org.pavanecce.uml.reverse.java.sourcemodel.SourceVariable;
 
 public class Stereotyper {
 	public static void stereotype(Element e, SourceAnnotation[] javaAnnotations, ClassifierFactory cf) {

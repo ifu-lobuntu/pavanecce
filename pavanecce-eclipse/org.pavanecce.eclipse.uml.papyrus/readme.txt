@@ -1,0 +1,1 @@
+This project provides a DiagramCreator for Papyrus that is used by the Visualization plugin

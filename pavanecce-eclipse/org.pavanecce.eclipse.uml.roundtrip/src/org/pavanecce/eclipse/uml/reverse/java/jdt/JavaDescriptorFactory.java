@@ -11,7 +11,7 @@ import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.IVariableBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
-import org.pavanecce.uml.reverse.java.SourceCode;
+import org.pavanecce.uml.reverse.java.sourcemodel.SourceCode;
 
 public class JavaDescriptorFactory {
 	private Map<String, JavaJdtClass> classDescriptors = new HashMap<String, JavaJdtClass>();

@@ -1,0 +1,1 @@
+Some common, more or less useful classes for the  other Eclipse plugins

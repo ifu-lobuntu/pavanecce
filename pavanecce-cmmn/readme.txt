@@ -1,0 +1,1 @@
+This POM project contains all the projects that implement the CMMN runtime

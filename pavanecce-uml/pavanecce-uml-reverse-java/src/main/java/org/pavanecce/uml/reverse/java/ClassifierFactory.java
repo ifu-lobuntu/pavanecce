@@ -38,6 +38,9 @@ import org.eclipse.uml2.uml.resource.UMLResource;
 import org.pavanecce.uml.common.util.EmfClassifierUtil;
 import org.pavanecce.uml.common.util.LibraryImporter;
 import org.pavanecce.uml.common.util.StereotypeNames;
+import org.pavanecce.uml.reverse.java.sourcemodel.SourceAnnotation;
+import org.pavanecce.uml.reverse.java.sourcemodel.SourceClass;
+import org.pavanecce.uml.reverse.java.sourcemodel.SourceVariable;
 
 public class ClassifierFactory {
 	private Map<String, Classifier> classMap = new HashMap<String, Classifier>();

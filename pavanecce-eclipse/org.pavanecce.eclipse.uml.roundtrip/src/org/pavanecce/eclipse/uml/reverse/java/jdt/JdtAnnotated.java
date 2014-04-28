@@ -1,7 +1,7 @@
 package org.pavanecce.eclipse.uml.reverse.java.jdt;
 
 import org.eclipse.jdt.core.dom.IAnnotationBinding;
-import org.pavanecce.uml.reverse.java.SourceAnnotation;
+import org.pavanecce.uml.reverse.java.sourcemodel.SourceAnnotation;
 
 public class JdtAnnotated {
 
