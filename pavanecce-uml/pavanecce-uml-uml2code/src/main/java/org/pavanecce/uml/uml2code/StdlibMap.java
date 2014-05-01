@@ -1,7 +1,13 @@
 package org.pavanecce.uml.uml2code;
 
-import static org.pavanecce.common.code.metamodel.CodeCollectionKind.*;
-import static org.pavanecce.common.code.metamodel.CodePrimitiveTypeKind.*;
+import static org.pavanecce.common.code.metamodel.CodeCollectionKind.BAG;
+import static org.pavanecce.common.code.metamodel.CodeCollectionKind.ORDERED_SET;
+import static org.pavanecce.common.code.metamodel.CodeCollectionKind.SEQUENCE;
+import static org.pavanecce.common.code.metamodel.CodeCollectionKind.SET;
+import static org.pavanecce.common.code.metamodel.CodePrimitiveTypeKind.BOOLEAN;
+import static org.pavanecce.common.code.metamodel.CodePrimitiveTypeKind.INTEGER;
+import static org.pavanecce.common.code.metamodel.CodePrimitiveTypeKind.REAL;
+import static org.pavanecce.common.code.metamodel.CodePrimitiveTypeKind.STRING;
 
 import org.pavanecce.common.code.metamodel.CodeTypeReference;
 import org.pavanecce.common.code.metamodel.CollectionTypeReference;

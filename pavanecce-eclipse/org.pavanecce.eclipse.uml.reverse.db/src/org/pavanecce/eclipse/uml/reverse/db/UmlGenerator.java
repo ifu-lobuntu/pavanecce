@@ -1,6 +1,14 @@
 package org.pavanecce.eclipse.uml.reverse.db;
 
-import static org.pavanecce.uml.common.util.TagNames.*;
+import static org.pavanecce.uml.common.util.TagNames.INDICES;
+import static org.pavanecce.uml.common.util.TagNames.IS_ASCENDING;
+import static org.pavanecce.uml.common.util.TagNames.IS_UNIQUE;
+import static org.pavanecce.uml.common.util.TagNames.LINKED_PROPERTIES;
+import static org.pavanecce.uml.common.util.TagNames.LINK_PERSISTENT_NAME;
+import static org.pavanecce.uml.common.util.TagNames.NAME;
+import static org.pavanecce.uml.common.util.TagNames.PROPERTIES;
+import static org.pavanecce.uml.common.util.TagNames.SOURCE_PERSISTENT_NAME;
+import static org.pavanecce.uml.common.util.TagNames.TARGET_PROPERTY;
 
 import java.util.ArrayList;
 import java.util.Collection;

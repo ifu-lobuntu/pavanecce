@@ -6,7 +6,6 @@ import java.io.BufferedReader;
 import java.io.StringReader;
 
 import org.junit.Test;
-import org.pavanecce.uml.uml2code.AbstractCodeGenerator;
 import org.pavanecce.uml.uml2code.java.JavaCodeGenerator;
 
 /**

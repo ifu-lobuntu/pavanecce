@@ -1,6 +1,6 @@
 package org.pavanecce.uml.common.util;
 
-import static org.pavanecce.uml.common.util.PersistentNameUtil.*;
+import static org.pavanecce.uml.common.util.PersistentNameUtil.getPersistentName;
 
 import java.util.ArrayList;
 import java.util.HashMap;

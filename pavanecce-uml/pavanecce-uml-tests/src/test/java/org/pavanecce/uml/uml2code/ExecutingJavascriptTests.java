@@ -11,7 +11,6 @@ import javax.script.ScriptException;
 import org.junit.Test;
 import org.pavanecce.common.code.metamodel.CodeClass;
 import org.pavanecce.common.code.metamodel.CodeModel;
-import org.pavanecce.uml.uml2code.AbstractCodeGenerator;
 import org.pavanecce.uml.uml2code.javascript.JavaScriptGenerator;
 
 public class ExecutingJavascriptTests extends AbstractModelBuilderTest {

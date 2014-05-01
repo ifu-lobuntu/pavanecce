@@ -7,8 +7,6 @@ import org.eclipse.emf.common.command.AbstractCommand;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.Package;
-import org.pavanecce.eclipse.uml.reverse.db.SelectedTableCollector;
-import org.pavanecce.eclipse.uml.reverse.db.UmlGenerator;
 import org.pavanecce.eclipse.uml.roundtrip.AbstractReverseEngineerAction;
 public class ReverseEngineerTablesAction extends AbstractReverseEngineerAction{
 	public ReverseEngineerTablesAction(IStructuredSelection selection){

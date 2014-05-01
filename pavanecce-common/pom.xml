@@ -35,6 +35,7 @@
 				<activeByDefault>false</activeByDefault>
 			</activation>
 			<modules>
+				<module>pavanecce-system-dependencies</module>
 				<module>pavanecce-common-dependencies</module>
 				<module>pavanecce-common-util</module>
 				<module>pavanecce-common-text-workspace</module>

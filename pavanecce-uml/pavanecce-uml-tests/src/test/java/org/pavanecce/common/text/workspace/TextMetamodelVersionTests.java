@@ -10,14 +10,6 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.pavanecce.common.text.filegeneration.TextNodeVisitorAdapter;
-import org.pavanecce.common.text.workspace.ProjectNameStrategy;
-import org.pavanecce.common.text.workspace.SourceFolder;
-import org.pavanecce.common.text.workspace.SourceFolderDefinition;
-import org.pavanecce.common.text.workspace.SourceFolderNameStrategy;
-import org.pavanecce.common.text.workspace.TextFile;
-import org.pavanecce.common.text.workspace.TextProject;
-import org.pavanecce.common.text.workspace.TextProjectDefinition;
-import org.pavanecce.common.text.workspace.TextWorkspace;
 import org.pavanecce.common.util.VersionNumber;
 
 public class TextMetamodelVersionTests {

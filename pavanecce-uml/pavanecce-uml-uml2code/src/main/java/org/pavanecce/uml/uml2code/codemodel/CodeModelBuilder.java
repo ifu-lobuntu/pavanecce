@@ -1,6 +1,7 @@
 package org.pavanecce.uml.uml2code.codemodel;
 
-import static org.pavanecce.common.util.NameConverter.*;
+import static org.pavanecce.common.util.NameConverter.capitalize;
+import static org.pavanecce.common.util.NameConverter.toValidVariableName;
 
 import java.util.HashMap;
 import java.util.Map;

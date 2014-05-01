@@ -10,4 +10,11 @@ Export-Package: org.pavanecce.common,
  org.pavanecce.common.jpa,
  org.pavanecce.common.ocm,
  org.pavanecce.common.util
-Require-Bundle: pavanecce-common-dependencies;bundle-version="0.0.1"
+Import-Package: javax.jcr,
+ javax.jcr.observation,
+ javax.persistence,
+ javax.transaction;version="[1.0.0,1.1.0]",
+ org.apache.jackrabbit.ocm.manager,
+ org.apache.jackrabbit.ocm.manager.impl,
+ org.apache.jackrabbit.ocm.mapper,
+ org.apache.jackrabbit.ocm.mapper.model

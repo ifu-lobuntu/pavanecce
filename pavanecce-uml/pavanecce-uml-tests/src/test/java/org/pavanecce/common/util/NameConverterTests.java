@@ -4,7 +4,6 @@ package org.pavanecce.common.util;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.pavanecce.common.util.NameConverter;
 public class NameConverterTests{
 	@Test
 	public void testIt() throws Exception {

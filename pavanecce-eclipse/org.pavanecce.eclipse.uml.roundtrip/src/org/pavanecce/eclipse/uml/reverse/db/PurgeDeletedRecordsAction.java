@@ -41,7 +41,6 @@ import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.pavanecce.eclipse.common.CommonEclipsePlugin;
-import org.pavanecce.eclipse.uml.reverse.db.SelectedTableCollector;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class PurgeDeletedRecordsAction extends Action {

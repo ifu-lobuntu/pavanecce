@@ -3,6 +3,7 @@ package org.pavanecce.uml.uml2code.jpa;
 import java.util.HashMap;
 
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.OneToOne;
 import javax.script.ScriptContext;
 
 import org.eclipse.emf.common.util.URI;
@@ -40,6 +41,7 @@ public class JpaTests extends AbstractJavaCompilingTest {
 
 	@After
 	public void after() {
+		OneToOne.class.getName();
 		Thread.currentThread().setContextClassLoader(oldContextClassLoader);
 	}
 

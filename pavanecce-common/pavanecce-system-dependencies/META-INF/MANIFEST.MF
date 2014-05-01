@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-Name: pavanecce-system-dependencies
+Bundle-SymbolicName: pavanecce-system-dependencies
+Bundle-Version: 0.0.1.qualifier
+Bundle-ManifestVersion: 2
+Fragment-Host: org.eclipse.osgi;extension:=framework
+Bundle-ClassPath: libs/javaee-api.jar
+Export-Package: javax.transaction;version="1.1.0",
+ javax.transaction.xa;version="1.1.0"

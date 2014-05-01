@@ -1,6 +1,7 @@
 package org.pavanecce.eclipse.uml.reverse.db;
 
-import static org.pavanecce.uml.common.util.TagNames.*;
+import static org.pavanecce.uml.common.util.TagNames.IS_SCHEMA;
+import static org.pavanecce.uml.common.util.TagNames.PERSISTENT_NAME;
 
 import java.util.HashMap;
 import java.util.HashSet;

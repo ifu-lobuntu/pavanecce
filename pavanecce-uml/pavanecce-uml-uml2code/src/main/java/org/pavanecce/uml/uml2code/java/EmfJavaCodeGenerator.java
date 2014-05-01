@@ -1,7 +1,5 @@
 package org.pavanecce.uml.uml2code.java;
 
-import org.pavanecce.common.code.metamodel.CodeCollectionKind;
-import org.pavanecce.common.code.metamodel.CodeElementType;
 import org.pavanecce.common.code.metamodel.CodePrimitiveTypeKind;
 import org.pavanecce.common.code.metamodel.CodeTypeReference;
 import org.pavanecce.common.code.metamodel.CollectionTypeReference;

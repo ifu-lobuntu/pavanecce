@@ -1,6 +1,7 @@
 package org.pavanecce.eclipse.uml.reverse.db;
 
-import static org.pavanecce.uml.common.util.TagNames.*;
+import static org.pavanecce.uml.common.util.TagNames.LINKED_PROPERTIES;
+import static org.pavanecce.uml.common.util.TagNames.SOURCE_PERSISTENT_NAME;
 
 import java.util.List;
 
