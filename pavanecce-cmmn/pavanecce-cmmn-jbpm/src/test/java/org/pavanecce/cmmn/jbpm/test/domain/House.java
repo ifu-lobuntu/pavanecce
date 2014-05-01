@@ -7,6 +7,9 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
@@ -38,7 +41,7 @@ public class House {
 	@Bean(converter=ReferenceBeanConverterImpl.class,jcrName = "t:roofPlan")
 	@OneToOne()
 	private RoofPlan roofPlan;
-	@OneToMany(cascade=CascadeType.ALL, mappedBy="housePlan")
+	@ManyToMany(cascade=CascadeType.ALL, mappedBy="housePlan")
 	@Collection(jcrName="t:wallPlans", collectionConverter=BeanReferenceCollectionConverterImpl.class)
 	private Set<WallPlan> wallPlans = new HashSet<WallPlan>();
 	public House() {

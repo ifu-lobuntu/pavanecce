@@ -27,38 +27,68 @@ import org.pavanecce.common.code.metamodel.CodePrimitiveTypeKind;
 import org.pavanecce.common.code.metamodel.CodeTypeReference;
 import org.pavanecce.common.code.metamodel.CollectionTypeReference;
 import org.pavanecce.common.code.metamodel.PrimitiveTypeReference;
+import org.pavanecce.common.code.metamodel.expressions.BinaryOperatorExpression;
+import org.pavanecce.common.code.metamodel.expressions.IsNullExpression;
 import org.pavanecce.common.code.metamodel.expressions.NewInstanceExpression;
+import org.pavanecce.common.code.metamodel.expressions.NotExpression;
 import org.pavanecce.common.code.metamodel.expressions.NullExpression;
+import org.pavanecce.common.code.metamodel.expressions.PortableExpression;
 import org.pavanecce.common.code.metamodel.expressions.PrimitiveDefaultExpression;
 import org.pavanecce.common.code.metamodel.relationaldb.IRelationalElement;
+import org.pavanecce.common.code.metamodel.statements.CodeIfStatement;
 import org.pavanecce.common.code.metamodel.statements.MappedStatement;
+import org.pavanecce.common.code.metamodel.statements.MethodCallStatement;
 import org.pavanecce.common.code.metamodel.statements.PortableStatement;
+import org.pavanecce.common.util.NameConverter;
 import org.pavanecce.uml.common.util.EmfClassifierUtil;
 import org.pavanecce.uml.common.util.EmfParameterUtil;
 import org.pavanecce.uml.common.util.EmfPropertyUtil;
 
 public class CodeModelBuilder extends DefaultCodeModelBuilder {
 	@Override
-	public void visitProperty(Property property, CodeClass codeClass) {
-		String fieldName = toValidVariableName(property.getName());
+	public void visitProperty(Property p, CodeClass codeClass) {
+		String fieldName = toValidVariableName(p.getName());
 		CodeField cf = new CodeField(codeClass, fieldName);
-		cf.setType(calculateType(property));
-		cf.putData(IRelationalElement.class, RelationalUtil.buildRelationalElement(property));
-		String capitalized = toValidVariableName(capitalize(property.getName()));
+		cf.setType(calculateType(p));
+		cf.putData(IRelationalElement.class, RelationalUtil.buildRelationalElement(p));
+		String capitalized = toValidVariableName(capitalize(p.getName()));
 		String getterName = "get" + capitalized;
 		if (cf.getType() instanceof PrimitiveTypeReference && ((PrimitiveTypeReference) cf.getType()).getKind() == CodePrimitiveTypeKind.BOOLEAN) {
-			if (property.getName().startsWith("is")) {
-				getterName = property.getName();
+			if (p.getName().startsWith("is")) {
+				getterName = p.getName();
 			} else {
-				getterName = "is" + capitalize(property.getName());
+				getterName = "is" + capitalize(p.getName());
 			}
 		}
+
 		CodeMethod getter = new CodeMethod(codeClass, getterName, cf.getType());
 		getter.setResultInitialValue("${self}." + fieldName);
 		CodeMethod setter = new CodeMethod("set" + capitalized);
 		CodeParameter param = new CodeParameter("new" + capitalized, setter, cf.getType());
 		setter.setDeclaringClass(codeClass);
-		setter.getBody().getStatements().add(new PortableStatement("${self}." + fieldName + " = " + param.getName()));
+		if (p.getOtherEnd() != null && p.getOtherEnd().isNavigable()) {
+			if (EmfPropertyUtil.isManyToMany(p)) {
+				setter.getBody().getStatements().add(new PortableStatement("${self}." + fieldName + " = " + param.getName()));
+			} else if (EmfPropertyUtil.isOneToMany(p)) {
+				setter.getBody().getStatements().add(new PortableStatement("${self}." + fieldName + " = " + param.getName()));
+			} else if (EmfPropertyUtil.isManyToOne(p)) {
+				setter.getBody().getStatements().add(new PortableStatement("${self}." + fieldName + " = " + param.getName()));
+			} else if (EmfPropertyUtil.isOneToOne(p)) {
+				new CodeField(setter.getBody(),"oldValue",param.getType()).setInitExp("${self}."+ fieldName);
+				NotExpression notEquals = new NotExpression(new BinaryOperatorExpression(new PortableExpression(param.getName()), "==", new PortableExpression( "oldValue")));
+				CodeIfStatement ifNotEquals = new CodeIfStatement(setter.getBody(), notEquals);
+				new PortableStatement(ifNotEquals.getThenBlock(), "${self}." + fieldName + " = " + param.getName());
+				CodeIfStatement ifOldNotNull = new CodeIfStatement(ifNotEquals.getThenBlock(), new NotExpression(new IsNullExpression(new PortableExpression("oldValue"))));
+				String otherCappedName = toValidVariableName(NameConverter.capitalize(p.getOtherEnd().getName()));
+				new MethodCallStatement(ifOldNotNull.getThenBlock(), "oldValue.set" + otherCappedName,new NullExpression());
+				CodeIfStatement ifNewNotNull = new CodeIfStatement(ifNotEquals.getThenBlock(), new NotExpression(new IsNullExpression(new PortableExpression(param.getName()))));
+				NotExpression otherNotEquals = new NotExpression(new BinaryOperatorExpression(new PortableExpression("${self}"), "==", new PortableExpression(param.getName()+ ".get" + otherCappedName  + "()")));
+				CodeIfStatement ifOtherNotEquals = new CodeIfStatement(ifNewNotNull.getThenBlock(), otherNotEquals);
+				new PortableStatement(ifOtherNotEquals.getThenBlock(), param.getName()+ ".set" + otherCappedName  + "(${self})");
+			}
+		} else {
+			setter.getBody().getStatements().add(new PortableStatement("${self}." + fieldName + " = " + param.getName()));
+		}
 	}
 
 	private CodeTypeReference calculateType(TypedElement te) {

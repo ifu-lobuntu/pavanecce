@@ -1,9 +1,10 @@
-package org.pavanecce.cmmn.jbpm.ocm;
+package org.pavanecce.common.ocm;
 
 import javax.jcr.Repository;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.observation.Event;
+import javax.jcr.observation.EventListener;
 
 import org.apache.jackrabbit.ocm.manager.ObjectContentManager;
 import org.apache.jackrabbit.ocm.manager.impl.ObjectContentManagerImpl;
@@ -15,22 +16,22 @@ public class OcmFactory {
 	private String username;
 	private String password;
 	private Mapper mapper;
-	private OcmSubscriptionManager subscriptionManager;
+	private EventListener eventListener;
 	private static ThreadLocal<ObjectContentManager> currentObjectContentManager = new ThreadLocal<ObjectContentManager>();
 
-	public OcmFactory(Repository repository, String username, String password, Mapper mapper) {
+	public OcmFactory(Repository repository, String username, String password, Mapper mapper, EventListener  eventListener) {
 		super();
 		this.repository = repository;
 		this.username = username;
 		this.password = password;
 		this.mapper = mapper;
-		this.subscriptionManager = new OcmSubscriptionManager(this);
+		this.eventListener =eventListener;
 	}
 
 	public ObjectContentManager createObjectContentManager() {
 		try {
 			Session session = repository.login(new SimpleCredentials(username, password.toCharArray()));
-			session.getWorkspace().getObservationManager().addEventListener(subscriptionManager, getEventMask(), "/", true, null, null, false);
+			session.getWorkspace().getObservationManager().addEventListener(eventListener, getEventMask(), "/", true, null, null, false);
 			ObjectContentManagerImpl result = new ObjectContentManagerImpl(session, mapper);
 			currentObjectContentManager.set(result);
 			return result;
@@ -62,6 +63,10 @@ public class OcmFactory {
 		}
 		currentObjectContentManager.set(null);
 
+	}
+
+	public EventListener getEventListener() {
+		return this.eventListener;
 	}
 
 }

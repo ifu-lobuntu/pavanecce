@@ -9,8 +9,33 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>pavanecce-cmmn</artifactId>
 	<packaging>pom</packaging>
-	<modules>
-		<module>pavanecce-cmmn-jbpm</module>
-	</modules>
+	<profiles>
+		<profile>
+			<id>init</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<modules>
+			</modules>
+		</profile>
+		<profile>
+			<id>standalone</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<modules>
+				<module>pavanecce-cmmn-jbpm</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>eclipse</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<modules>
+				<module>pavanecce-cmmn-jbpm</module>
+			</modules>
+		</profile>
+	</profiles>
 </project>
 

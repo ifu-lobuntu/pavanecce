@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry exported="true" kind="lib" path="libs/slf4j-api.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/antlr.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/dom4j.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jboss-logging.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry exported="true" kind="lib" path="libs/activation.jar" sourcepath="libs/activation-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/btm.jar" sourcepath="libs/btm-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/h2.jar" sourcepath="libs/h2-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/hibernate-commons-annotations.jar" sourcepath="libs/hibernate-commons-annotations-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/hibernate-core.jar" sourcepath="libs/hibernate-core-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/hibernate-entitymanager.jar" sourcepath="libs/hibernate-entitymanager-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/hibernate-jpa-2.0-api.jar" sourcepath="libs/hibernate-jpa-2.0-api-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jackrabbit-ocm.jar" sourcepath="libs/jackrabbit-ocm-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/javaee-api.jar" sourcepath="libs/javaee-api-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/javassist.jar" sourcepath="libs/javassist-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jcr.jar" sourcepath="libs/jcr-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jta.jar" sourcepath="libs/jta-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jython.jar" sourcepath="libs/jython-sources.jar"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>

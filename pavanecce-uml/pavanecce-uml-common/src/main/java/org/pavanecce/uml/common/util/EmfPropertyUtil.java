@@ -292,7 +292,13 @@ public class EmfPropertyUtil {
 				if(isMany(f.getOtherEnd())){
 					return false;
 				}else{
-					return f.getAssociation().getMemberEnds().indexOf(f) == 1;
+					if(f.isComposite()){
+						return true;
+					}else if(f.getOtherEnd().isComposite()){
+						return false;
+					}else{
+						return f.getAssociation().getMemberEnds().indexOf(f) == 1;
+					}
 				}
 			}
 		}
@@ -347,5 +353,19 @@ public class EmfPropertyUtil {
 			}
 		}
 		return null;
+	}
+
+	public static boolean isOneToMany(Property p) {
+		return !isMany(p) && isMany(p.getOtherEnd());
+	}
+	public static boolean isOneToOne(Property p) {
+		return !isMany(p) && !isMany(p.getOtherEnd());
+	}
+	public static boolean isManyToOne(Property p) {
+		return isMany(p) && !isMany(p.getOtherEnd());
+	}
+
+	public static boolean isManyToMany(Property p) {
+		return isMany(p) && isMany(p.getOtherEnd());
 	}
 }

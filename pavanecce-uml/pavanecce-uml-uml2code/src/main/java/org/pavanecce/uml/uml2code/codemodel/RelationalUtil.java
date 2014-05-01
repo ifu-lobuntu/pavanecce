@@ -14,7 +14,9 @@ import org.pavanecce.common.code.metamodel.relationaldb.IRelationalElement;
 import org.pavanecce.common.code.metamodel.relationaldb.RelationalColumn;
 import org.pavanecce.common.code.metamodel.relationaldb.RelationalInverseLink;
 import org.pavanecce.common.code.metamodel.relationaldb.RelationalLink;
+import org.pavanecce.common.code.metamodel.relationaldb.RelationalLinkTable;
 import org.pavanecce.common.code.metamodel.relationaldb.RelationalTable;
+import org.pavanecce.common.util.NameConverter;
 import org.pavanecce.uml.common.util.EmfClassifierUtil;
 import org.pavanecce.uml.common.util.EmfPropertyUtil;
 import org.pavanecce.uml.common.util.PersistentNameUtil;
@@ -26,36 +28,63 @@ public class RelationalUtil {
 			result = new RelationalColumn(PersistentNameUtil.getPersistentName(p), EmfPropertyUtil.isRequired(p));
 		} else if (EmfClassifierUtil.isPersistent(p.getType())) {
 			if (EmfPropertyUtil.isMany(p)) {
-				result = new RelationalInverseLink(p.getOtherEnd().getName());
+				if (p.getOtherEnd() != null && EmfPropertyUtil.isMany(p.getOtherEnd())) {
+					if (EmfPropertyUtil.isInverse(p)) {
+						result = new RelationalInverseLink(p.getOtherEnd().getName(), true, true, false);
+					} else {
+						result = new RelationalLinkTable(NameConverter.toUpperCase(p.getAssociation().getName()), buildColumnMap(p),
+								buildColumnMap(p.getOtherEnd()));
+					}
+				} else {
+					result = new RelationalInverseLink(p.getOtherEnd().getName(), false, true, p.isComposite());
+				}
 			} else {
-				String linkName = PersistentNameUtil.getPersistentName(p);
-				LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
-				for (EObject sa : p.getStereotypeApplications()) {
-					EStructuralFeature linkNameFeature = sa.eClass().getEStructuralFeature("linkPersistentName");
-					if (linkNameFeature != null) {
-						linkName = (String) sa.eGet(linkNameFeature);
-						@SuppressWarnings("unchecked")
-						EList<EObject> linkedProperties = (EList<EObject>) sa.eGet(sa.eClass().getEStructuralFeature("linkedProperties"));
-						for (EObject eObject : linkedProperties) {
-							Property targetProperty = (Property) eObject.eGet(eObject.eClass().getEStructuralFeature("targetProperty"));
-							String targetColumn = "id";
-							if (targetProperty != null) {
-								targetColumn = PersistentNameUtil.getPersistentName(targetProperty);
-							}
-							String persistentName = (String) eObject.eGet(eObject.eClass().getEStructuralFeature("sourcePersistentName"));
-							map.put(persistentName, targetColumn);
+				if (p.getOtherEnd() != null && !EmfPropertyUtil.isMany(p.getOtherEnd()) && EmfPropertyUtil.isInverse(p)) {
+					result = new RelationalInverseLink(p.getOtherEnd().getName(), false, false, p.isComposite());
+				} else {
+					String linkName = PersistentNameUtil.getPersistentName(p);
+					for (EObject sa : p.getStereotypeApplications()) {
+						EStructuralFeature linkNameFeature = sa.eClass().getEStructuralFeature("linkPersistentName");
+						if (linkNameFeature != null) {
+							linkName = (String) sa.eGet(linkNameFeature);
 						}
 					}
+					LinkedHashMap<String, String> map = buildColumnMap(p);
+					if (p.getOtherEnd() != null && !EmfPropertyUtil.isMany(p.getOtherEnd())) {
+						result = new RelationalLink(linkName, map,true);
+					} else {
+						result = new RelationalLink(linkName, map);
+					}
 				}
-				if (map.isEmpty()) {
-					map.put(PersistentNameUtil.getPersistentName(p), "id");
-				}
-				result = new RelationalLink(linkName, map);
 			}
 		} else if (p.getType() instanceof Enumeration) {
 			result = new RelationalColumn(PersistentNameUtil.getPersistentName(p), EmfPropertyUtil.isRequired(p));
 		}
 		return result;
+	}
+
+	protected static LinkedHashMap<String, String> buildColumnMap(Property p) {
+		LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
+		for (EObject sa : p.getStereotypeApplications()) {
+			EStructuralFeature linkedPropertiesFeature = sa.eClass().getEStructuralFeature("linkedProperties");
+			if (linkedPropertiesFeature != null) {
+				@SuppressWarnings("unchecked")
+				EList<EObject> linkedProperties = (EList<EObject>) sa.eGet(linkedPropertiesFeature);
+				for (EObject eObject : linkedProperties) {
+					Property targetProperty = (Property) eObject.eGet(eObject.eClass().getEStructuralFeature("targetProperty"));
+					String targetColumn = "id";
+					if (targetProperty != null) {
+						targetColumn = PersistentNameUtil.getPersistentName(targetProperty);
+					}
+					String persistentName = (String) eObject.eGet(eObject.eClass().getEStructuralFeature("sourcePersistentName"));
+					map.put(persistentName, targetColumn);
+				}
+			}
+		}
+		if (map.isEmpty()) {
+			map.put(PersistentNameUtil.getPersistentName(p), "id");
+		}
+		return map;
 	}
 
 	public static IRelationalElement buildRelationalElement(Class c) {
@@ -66,6 +95,7 @@ public class RelationalUtil {
 				Property pkProp = (Property) sa.eGet(pkFeature);
 				if (pkProp != null) {
 					pk = PersistentNameUtil.getPersistentName(pkProp);
+					break;
 				}
 			}
 		}

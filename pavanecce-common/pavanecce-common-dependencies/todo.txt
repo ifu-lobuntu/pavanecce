@@ -1,0 +1,2 @@
+Try to generate a sources plugin
+In future we may want to break this dependency up into smaller dependencies

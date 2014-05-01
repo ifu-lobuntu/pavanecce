@@ -1,7 +1,7 @@
 package org.pavanecce.uml.uml2java.collections.tests;
 
-import org.pavanecce.uml.uml2java.collections.ManyToManyCollection;
-import org.pavanecce.uml.uml2java.collections.ManyToManySet;
+import org.pavanecce.common.collections.ManyToManyCollection;
+import org.pavanecce.common.collections.ManyToManySet;
 
 public class ManyTo {
 	ManyToManySet<ManyTo, ManyFrom> many=new ManyToManySet<ManyTo, ManyFrom>(this) {

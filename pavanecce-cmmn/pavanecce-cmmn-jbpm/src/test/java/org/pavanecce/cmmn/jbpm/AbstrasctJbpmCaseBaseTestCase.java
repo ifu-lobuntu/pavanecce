@@ -40,19 +40,15 @@ import org.pavanecce.cmmn.jbpm.flow.builder.DefinitionsHandler;
 import org.pavanecce.cmmn.jbpm.instance.AbstractSubscriptionManager;
 import org.pavanecce.cmmn.jbpm.instance.CaseInstanceFactory;
 import org.pavanecce.cmmn.jbpm.instance.CaseInstanceMarshaller;
-import org.pavanecce.cmmn.jbpm.instance.ObjectPersistence;
 import org.pavanecce.cmmn.jbpm.instance.OnPartInstance;
 import org.pavanecce.cmmn.jbpm.instance.PlanItemInstance;
 import org.pavanecce.cmmn.jbpm.instance.SentryInstance;
 import org.pavanecce.cmmn.jbpm.instance.SubscriptionManager;
 import org.pavanecce.cmmn.jbpm.jpa.CollectionPlaceHolderResolveStrategy;
 import org.pavanecce.cmmn.jbpm.jpa.HibernateSubscriptionManager;
-import org.pavanecce.cmmn.jbpm.jpa.JpaObjectPersistence;
 import org.pavanecce.cmmn.jbpm.ocm.OcmCaseFileItemSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.ocm.OcmCaseSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.ocm.OcmCollectionPlaceHolderResolveStrategy;
-import org.pavanecce.cmmn.jbpm.ocm.OcmFactory;
-import org.pavanecce.cmmn.jbpm.ocm.OcmObjectPersistence;
 import org.pavanecce.cmmn.jbpm.ocm.OcmPlaceHolderResolveStrategy;
 import org.pavanecce.cmmn.jbpm.ocm.OcmSubscriptionManager;
 import org.pavanecce.cmmn.jbpm.test.domain.ConstructionCase;
@@ -62,6 +58,10 @@ import org.pavanecce.cmmn.jbpm.test.domain.RoofPlan;
 import org.pavanecce.cmmn.jbpm.test.domain.Wall;
 import org.pavanecce.cmmn.jbpm.test.domain.WallPlan;
 import org.pavanecce.cmmn.jbpm.test.domain.WallQuote;
+import org.pavanecce.common.ObjectPersistence;
+import org.pavanecce.common.jpa.JpaObjectPersistence;
+import org.pavanecce.common.ocm.OcmFactory;
+import org.pavanecce.common.ocm.OcmObjectPersistence;
 
 import bitronix.tm.resource.jdbc.PoolingDataSource;
 
@@ -156,7 +156,7 @@ public abstract class AbstrasctJbpmCaseBaseTestCase extends JbpmJUnitBaseTestCas
 					new CollectionPlaceHolderResolveStrategy(env), new SerializablePlaceholderResolverStrategy(ClassObjectMarshallingStrategyAcceptor.DEFAULT) };
 		} else {
 			return new ObjectMarshallingStrategy[] { new ProcessInstanceResolverStrategy(), new OcmPlaceHolderResolveStrategy(env),
-					new JPAPlaceholderResolverStrategy(env), new CollectionPlaceHolderResolveStrategy(env),new OcmCollectionPlaceHolderResolveStrategy(env), 
+					new JPAPlaceholderResolverStrategy(env), new CollectionPlaceHolderResolveStrategy(env), new OcmCollectionPlaceHolderResolveStrategy(env),
 					new SerializablePlaceholderResolverStrategy(ClassObjectMarshallingStrategyAcceptor.DEFAULT) };
 
 		}
@@ -166,7 +166,7 @@ public abstract class AbstrasctJbpmCaseBaseTestCase extends JbpmJUnitBaseTestCas
 		if (isJpa) {
 			return new HibernateSubscriptionManager();
 		} else {
-			return new OcmSubscriptionManager(getOcmFactory());
+			return  (AbstractSubscriptionManager<?, ?>) getOcmFactory().getEventListener();
 		}
 	}
 
@@ -183,7 +183,10 @@ public abstract class AbstrasctJbpmCaseBaseTestCase extends JbpmJUnitBaseTestCas
 				CndImporter.registerNodeTypes(new InputStreamReader(JcrTestCase.class.getResourceAsStream("/build.cnd")), session);
 				session.save();
 				session.logout();
-				ocmFactory = new OcmFactory(tr, "admin", "admin", new AnnotationMapperImpl(Arrays.<Class> asList(getClasses())));
+				ocmFactory = new OcmFactory(tr, "admin", "admin", new AnnotationMapperImpl(Arrays.<Class> asList(getClasses())), new OcmSubscriptionManager());
+				OcmSubscriptionManager eventListener = (OcmSubscriptionManager) ocmFactory.getEventListener();
+				eventListener.setOcmFactory(ocmFactory);
+				return ocmFactory;
 			} catch (RuntimeException e) {
 				throw e;
 			} catch (Exception e) {

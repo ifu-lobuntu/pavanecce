@@ -88,7 +88,7 @@ public class CtClassBuilder {
 			if (ctMethod != null) {
 				ctClass.removeMethod(ctMethod);
 				ctClass.addMethod(CtNewMethod.make(jg.toMethodDeclaration(method).replaceAll("\\<\\w*\\>", ""), ctClass));
-//				String bodyString = jg.toMethodBody(method);
+//				String bodyString = javaCodeGenerator.toMethodBody(method);
 //				List<CodeParameter> parameters = method.getParameters();
 //				for (int i = 0; i < parameters.size(); i++) {
 //					CodeParameter codeParameter = parameters.get(i);

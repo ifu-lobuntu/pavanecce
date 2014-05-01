@@ -44,7 +44,7 @@ import org.pavanecce.uml.common.util.UmlResourceSetFactory;
 public class UmlGenerator {
 
 	private ClassifierFactory factory;
-	private INameGenerator nameGenerator = new FusionNameGenerator();
+	private INameGenerator nameGenerator = new VasNameGenerator();
 	private Collection<Class> pkPopulatedClasses = new HashSet<Class>();
 	private Set<Element> databaseElements = new HashSet<Element>();
 
@@ -401,6 +401,9 @@ public class UmlGenerator {
 			if (ass == null) {
 				ass = createAssociation(foreignKey, ownedTypes);
 			}
+			if(ass.getName().equals("User_user")){
+				System.out.println();
+			}
 			if (!ass.isStereotypeApplied(factory.getAssociationStereotype())) {
 				ass.applyStereotype(factory.getAssociationStereotype());
 				ass.setValue(factory.getAssociationStereotype(), "persistentName", expectedName);
@@ -416,8 +419,7 @@ public class UmlGenerator {
 		Classifier fromTable = factory.getClassifierFor((PersistentTable) foreignKey.getBaseTable());
 		Property end;
 		if (ass.getMemberEnds().size() == 1) {
-			end = ass.getNavigableOwnedEnd(nameGenerator.calcAssociationEndName((PersistentTable) foreignKey.getBaseTable()), fromTable, false, UMLPackage.eINSTANCE.getProperty(),
-					true);
+			end = ass.createNavigableOwnedEnd(nameGenerator.calcAssociationEndName((PersistentTable) foreignKey.getBaseTable()), fromTable);
 		} else {
 			end = toOne.getOtherEnd();
 		}

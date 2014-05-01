@@ -8,13 +8,13 @@ import javax.jcr.NodeIterator;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.pavanecce.cmmn.jbpm.ocm.OcmObjectPersistence;
 import org.pavanecce.cmmn.jbpm.test.domain.ConstructionCase;
 import org.pavanecce.cmmn.jbpm.test.domain.House;
 import org.pavanecce.cmmn.jbpm.test.domain.HousePlan;
 import org.pavanecce.cmmn.jbpm.test.domain.RoofPlan;
 import org.pavanecce.cmmn.jbpm.test.domain.Wall;
 import org.pavanecce.cmmn.jbpm.test.domain.WallPlan;
+import org.pavanecce.common.ocm.OcmObjectPersistence;
 
 public class OcmSingleCaseFileITemEntryCriterionTest extends SingleCaseFileItemEntryCriterionTests {
 	{

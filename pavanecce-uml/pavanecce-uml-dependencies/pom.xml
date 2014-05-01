@@ -7,63 +7,92 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>pavanecce-uml-dependencies</artifactId>
-	<packaging>eclipse-plugin</packaging>
-	<repositories>
-		<repository>
-			<id>kepler</id>
-			<layout>p2</layout>
-			<url>http://download.eclipse.org/releases/kepler</url>
-		</repository>
-	</repositories>
+	<packaging>${packaging}</packaging>
 	<dependencies>
 
 	</dependencies>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>tycho-maven-plugin</artifactId>
-				<extensions>true</extensions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>unpack-dependencies</id>
-						<phase>compile</phase>
-						<goals>
-							<goal>unpack-dependencies</goal>
-						</goals>
-						<inherited>false</inherited>
-						<configuration>
-							<outputDirectory>${project.build.directory}/classes</outputDirectory>
-							<actTransitively>true</actTransitively>
-							<excludeArtifactIds></excludeArtifactIds>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>delete-files</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<configuration>
-							<tasks>
-								<echo message="hello" />
-								<delete verbose="true">
-									<fileset dir="${project.build.directory}/classes/META-INF" includes="ECLIPSE*.* eclipse.*" />
-								</delete>
+	<profiles>
+		<profile>
+			<id>init</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<repositories>
+				<repository>
+					<id>kepler</id>
+					<layout>p2</layout>
+					<url>http://download.eclipse.org/releases/kepler</url>
+				</repository>
+			</repositories>
+			<properties>
+				<!-- Not really a plugin, but downstream dependencies do not know that -->
+				<!-- Using this packaging to activate tycho's OSGi dependency resolution -->
+				<packaging>eclipse-plugin</packaging>
+			</properties>
 
-							</tasks>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.eclipse.tycho</groupId>
+						<artifactId>tycho-maven-plugin</artifactId>
+						<extensions>true</extensions>
+					</plugin>
+					<plugin>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>unpack-dependencies</id>
+								<phase>compile</phase>
+								<goals>
+									<goal>unpack-dependencies</goal>
+								</goals>
+								<inherited>false</inherited>
+								<configuration>
+									<failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
+									<classifier>sources</classifier>
+									<outputDirectory>${project.build.directory}/classes</outputDirectory>
+									<actTransitively>true</actTransitively>
+									<excludeArtifactIds></excludeArtifactIds>
+								</configuration>
+							</execution>
+							<execution>
+								<id>unpack-dependencie-sourcess</id>
+								<phase>compile</phase>
+								<goals>
+									<goal>unpack-dependencies</goal>
+								</goals>
+								<inherited>false</inherited>
+								<configuration>
+									<failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
+									<outputDirectory>${project.build.directory}/classes</outputDirectory>
+									<actTransitively>true</actTransitively>
+									<excludeArtifactIds></excludeArtifactIds>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>delete-files</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<echo message="hello" />
+										<delete verbose="true">
+											<fileset dir="${project.build.directory}/classes/META-INF" includes="ECLIPSE*.* eclipse.*" />
+										</delete>
+									</tasks>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>

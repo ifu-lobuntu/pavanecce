@@ -179,4 +179,9 @@ public class JavaScriptGenerator extends AbstractCodeGenerator {
 		
 	}
 
+	@Override
+	protected String defaultValue(CollectionTypeReference kind) {
+		return "[]";
+	}
+
 }

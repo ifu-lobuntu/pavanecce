@@ -1,4 +1,4 @@
-package org.pavanecce.cmmn.jbpm.instance;
+package org.pavanecce.common;
 
 
 public interface ObjectPersistence {

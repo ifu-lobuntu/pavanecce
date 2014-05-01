@@ -4,7 +4,21 @@ Bundle-Name: org.pavanecce.uml.tests
 Bundle-SymbolicName: org.pavanecce.uml.tests
 Bundle-Version: 0.0.1.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Import-Package: org.osgi.framework
+Import-Package: bitronix.tm,
+ bitronix.tm.jndi,
+ bitronix.tm.resource.common,
+ bitronix.tm.resource.jdbc,
+ javassist,
+ javassist.bytecode,
+ javassist.util.proxy,
+ javax.persistence,
+ javax.persistence.spi,
+ org.hibernate.ejb,
+ org.hibernate.proxy,
+ org.osgi.framework,
+ org.python,
+ org.python.core,
+ org.python.util
 Require-Bundle: org.eclipse.uml2.uml,
  org.eclipse.uml2.uml.resources,
  org.junit,
@@ -17,9 +31,6 @@ Require-Bundle: org.eclipse.uml2.uml,
  org.pavanecce.uml.ocl2code,
  org.pavanecce.uml.reverse.java,
  org.pavanecce.common.code.metamodel
-Bundle-ClassPath: .,
- libs/javassist.jar,
- libs/jython.jar,
- libs/javaee-api.jar
+Bundle-ClassPath: .
 Export-Package: org.pavanecce.common.util
 Bundle-Activator: org.pavanecce.uml.uml2code.TestBundle

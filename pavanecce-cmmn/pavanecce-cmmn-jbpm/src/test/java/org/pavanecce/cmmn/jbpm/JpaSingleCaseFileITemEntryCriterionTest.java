@@ -1,13 +1,13 @@
 package org.pavanecce.cmmn.jbpm;
 
 import org.junit.Test;
-import org.pavanecce.cmmn.jbpm.jpa.JpaObjectPersistence;
 import org.pavanecce.cmmn.jbpm.test.domain.ConstructionCase;
 import org.pavanecce.cmmn.jbpm.test.domain.House;
 import org.pavanecce.cmmn.jbpm.test.domain.HousePlan;
 import org.pavanecce.cmmn.jbpm.test.domain.RoofPlan;
 import org.pavanecce.cmmn.jbpm.test.domain.Wall;
 import org.pavanecce.cmmn.jbpm.test.domain.WallPlan;
+import org.pavanecce.common.jpa.JpaObjectPersistence;
 
 public class JpaSingleCaseFileITemEntryCriterionTest extends SingleCaseFileItemEntryCriterionTests {
 	{

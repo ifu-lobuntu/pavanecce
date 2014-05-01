@@ -31,15 +31,16 @@ import org.pavanecce.cmmn.jbpm.instance.AbstractSubscriptionManager;
 import org.pavanecce.cmmn.jbpm.instance.CaseInstance;
 import org.pavanecce.cmmn.jbpm.instance.CaseSubscriptionKey;
 import org.pavanecce.cmmn.jbpm.instance.SubscriptionManager;
+import org.pavanecce.common.ocm.OcmFactory;
 
 public class OcmSubscriptionManager extends AbstractSubscriptionManager<OcmCaseSubscriptionInfo, OcmCaseFileItemSubscriptionInfo> implements
 		SubscriptionManager, SynchronousEventListener {
-	private OcmObjectPersistence persistence;
+	private OcmCasePersistence persistence;
 	private OcmFactory factory;
 	private ThreadLocal<Set<Node>> updatedNodes = new ThreadLocal<Set<Node>>();
 	private ThreadLocal<Map<String, OcmCaseSubscriptionInfo>> subscriptions = new ThreadLocal<Map<String, OcmCaseSubscriptionInfo>>();
 
-	public OcmSubscriptionManager(OcmFactory factory) {
+	public void setOcmFactory(OcmFactory factory) {
 		this.factory = factory;
 	}
 
@@ -380,9 +381,9 @@ public class OcmSubscriptionManager extends AbstractSubscriptionManager<OcmCaseS
 		return result;
 	}
 
-	private OcmObjectPersistence getPersistence() {
+	private OcmCasePersistence getPersistence() {
 		if (persistence == null) {
-			persistence = new OcmObjectPersistence(factory);
+			persistence = new OcmCasePersistence(factory);
 			persistence.start();
 		}
 		return persistence;

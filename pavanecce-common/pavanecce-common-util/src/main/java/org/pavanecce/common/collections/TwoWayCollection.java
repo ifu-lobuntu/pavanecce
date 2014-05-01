@@ -1,4 +1,4 @@
-package org.pavanecce.uml.uml2java.collections;
+package org.pavanecce.common.collections;
 
 import java.util.Collection;
 import java.util.Iterator;

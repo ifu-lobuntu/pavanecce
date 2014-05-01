@@ -13,7 +13,7 @@
 	</dependencies>
 	<profiles>
 		<profile>
-			<id>normal</id>
+			<id>standalone</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>

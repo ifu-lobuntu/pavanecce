@@ -11,6 +11,7 @@ import org.apache.jackrabbit.ocm.manager.ObjectContentManager;
 import org.drools.core.common.DroolsObjectInputStream;
 import org.drools.persistence.jpa.marshaller.JPAPlaceholderResolverStrategy;
 import org.kie.api.runtime.Environment;
+import org.pavanecce.common.ocm.OcmFactory;
 
 public class OcmPlaceHolderResolveStrategy extends JPAPlaceholderResolverStrategy {
 	private Environment env;

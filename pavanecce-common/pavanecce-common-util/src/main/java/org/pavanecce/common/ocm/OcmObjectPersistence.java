@@ -1,4 +1,4 @@
-package org.pavanecce.cmmn.jbpm.ocm;
+package org.pavanecce.common.ocm;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -12,7 +12,7 @@ import javax.transaction.UserTransaction;
 
 import org.apache.jackrabbit.ocm.manager.ObjectContentManager;
 import org.apache.jackrabbit.ocm.mapper.model.ClassDescriptor;
-import org.pavanecce.cmmn.jbpm.instance.ObjectPersistence;
+import org.pavanecce.common.ObjectPersistence;
 
 public class OcmObjectPersistence implements ObjectPersistence {
 	private UserTransaction transaction;
@@ -33,7 +33,8 @@ public class OcmObjectPersistence implements ObjectPersistence {
 			throw convertException(e);
 		}
 	}
-	public ClassDescriptor getClassDescriptor(String jcrNodeType){
+
+	public ClassDescriptor getClassDescriptor(String jcrNodeType) {
 		return factory.getMapper().getClassDescriptorByNodeType(jcrNodeType);
 	}
 
@@ -98,14 +99,7 @@ public class OcmObjectPersistence implements ObjectPersistence {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T find(Class<T> class1, Object id) {
-		if (id instanceof OcmCaseSubscriptionKey) {
-			return (T) getSubscription(((OcmCaseSubscriptionKey) id).getId());
-		}
 		return (T) getSession().getObjectByUuid((String) id);
-	}
-
-	public OcmCaseSubscriptionInfo getSubscription(String id) {
-		return (OcmCaseSubscriptionInfo) getSession().getObject("/subscriptions/" + id);
 	}
 
 	@Override

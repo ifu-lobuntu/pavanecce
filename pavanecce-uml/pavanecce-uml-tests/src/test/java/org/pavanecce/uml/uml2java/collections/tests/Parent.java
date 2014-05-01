@@ -2,7 +2,7 @@ package org.pavanecce.uml.uml2java.collections.tests;
 
 import java.util.Collection;
 
-import org.pavanecce.uml.uml2java.collections.OneToManySet;
+import org.pavanecce.common.collections.OneToManySet;
 
 public class Parent {
 	OneToManySet<Parent, Child> children = new OneToManySet<Parent, Child>(this) {

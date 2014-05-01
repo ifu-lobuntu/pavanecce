@@ -1,4 +1,4 @@
-package org.pavanecce.uml.uml2java.collections;
+package org.pavanecce.common.collections;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -7,16 +7,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public abstract class OneToManySet<P,C> extends OneToManyCollection<P,C> implements Set<C>,Serializable {
+public abstract class ManyToManySet<P,C> extends ManyToManyCollection<P,C> implements Set<C>,Serializable {
 
 	private static final long serialVersionUID = 6699029439985008351L;
 	private List<C> additions;
 	private List<C> removals;
 	private boolean isConsolidated = false;
-	public OneToManySet(Set<C> current, P parent) {
+	public ManyToManySet(Set<C> current, P parent) {
 		super(current, parent);
 	}
-	public OneToManySet(P parent) {
+	public ManyToManySet(P parent) {
 		super(parent);
 	}
 

@@ -26,7 +26,7 @@ public class CodeMethod extends CodeBehaviour {
 	}
 
 	public CodeMethod(CodeClassifier clss, String name) {
-		this(name);
+		super(clss,name);
 	}
 
 	public CodeMethod(String operName, CodeTypeReference type) {

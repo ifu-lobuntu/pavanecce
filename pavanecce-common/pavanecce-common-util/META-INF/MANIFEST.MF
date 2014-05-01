@@ -5,4 +5,9 @@ Bundle-SymbolicName: org.pavanecce.common.util
 Bundle-Version: 0.0.1.qualifier
 Bundle-ManifestVersion: 2
 Bundle-ClassPath: .
-Export-Package: org.pavanecce.common.util
+Export-Package: org.pavanecce.common,
+ org.pavanecce.common.collections,
+ org.pavanecce.common.jpa,
+ org.pavanecce.common.ocm,
+ org.pavanecce.common.util
+Require-Bundle: pavanecce-common-dependencies;bundle-version="0.0.1"

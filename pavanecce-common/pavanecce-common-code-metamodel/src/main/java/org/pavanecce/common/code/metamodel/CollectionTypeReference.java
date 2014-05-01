@@ -17,6 +17,11 @@ public class CollectionTypeReference extends CodeTypeReference {
 		this.isImplementation = isImplementation;
 	}
 
+	public CollectionTypeReference(CodeCollectionKind kind, CodeTypeReference typeReference) {
+		this(kind);
+		super.addToElementTypes(typeReference);
+	}
+
 	public CollectionTypeReference getCopy() {
 		return new CollectionTypeReference(kind,isImplementation);
 	}

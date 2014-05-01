@@ -1,4 +1,4 @@
-package org.pavanecce.cmmn.jbpm.jpa;
+package org.pavanecce.common.jpa;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -8,7 +8,7 @@ import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
-import org.pavanecce.cmmn.jbpm.instance.ObjectPersistence;
+import org.pavanecce.common.ObjectPersistence;
 
 public class JpaObjectPersistence implements ObjectPersistence {
 	private UserTransaction transaction;
@@ -52,8 +52,8 @@ public class JpaObjectPersistence implements ObjectPersistence {
 			if (!isTransactionActive()) {
 				this.startedTransaction = true;
 				getTransaction().begin();
-				getEntityManager().joinTransaction();
 			}
+			getEntityManager().joinTransaction();
 		} catch (Exception e) {
 			throw convertException(e);
 		}

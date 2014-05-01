@@ -20,6 +20,7 @@ import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItem;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemOnPart;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
+import org.pavanecce.common.ObjectPersistence;
 
 public abstract class AbstractSubscriptionManager<T extends CaseSubscriptionInfo<X>, X extends CaseFileItemSubscriptionInfo> {
 

@@ -24,14 +24,15 @@ import org.apache.jackrabbit.core.TransientRepository;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.AnnotationMapperImpl;
 import org.pavanecce.cmmn.jbpm.ocm.OcmCaseFileItemSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.ocm.OcmCaseSubscriptionInfo;
-import org.pavanecce.cmmn.jbpm.ocm.OcmFactory;
-import org.pavanecce.cmmn.jbpm.ocm.OcmObjectPersistence;
+import org.pavanecce.cmmn.jbpm.ocm.OcmSubscriptionManager;
 import org.pavanecce.cmmn.jbpm.test.domain.ConstructionCase;
 import org.pavanecce.cmmn.jbpm.test.domain.House;
 import org.pavanecce.cmmn.jbpm.test.domain.HousePlan;
 import org.pavanecce.cmmn.jbpm.test.domain.RoofPlan;
 import org.pavanecce.cmmn.jbpm.test.domain.Wall;
 import org.pavanecce.cmmn.jbpm.test.domain.WallPlan;
+import org.pavanecce.common.ocm.OcmFactory;
+import org.pavanecce.common.ocm.OcmObjectPersistence;
 
 public class JcrTestCase {
 	long time = System.currentTimeMillis();
@@ -53,7 +54,10 @@ public class JcrTestCase {
 		logDuration("4");
 		session.getRootNode().addNode("cases");
 		session.save();
-		OcmObjectPersistence oop = new OcmObjectPersistence(new OcmFactory(repository, "admin", "admin", getMapper()));
+		OcmSubscriptionManager eventListener = new OcmSubscriptionManager();
+		OcmFactory factory = new OcmFactory(repository, "admin", "admin", getMapper(),eventListener );
+		eventListener.setOcmFactory(factory);
+		OcmObjectPersistence oop = new OcmObjectPersistence(factory);
 		logDuration("5");
 		ConstructionCase constructionCase = new ConstructionCase("/cases/case1");
 		HousePlan housePlan = new HousePlan();

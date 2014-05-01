@@ -3,13 +3,7 @@
 <plugin>
 
    <extension-point id="org.pavanecce.eclipse.uml.visualization.diagramCreator" name="DiagramCreator" schema="schema/diagramCreator.exsd"/>
-      <extension
-     point="org.eclipse.emf.ecore.uri_mapping">
-    <mapping
-       source="pathmap://VDFP_MODELS/"
-       target="platform:/plugin/org.vdfp.uml.common.util/models/">
-    </mapping>
-  </extension>
+
   	 <extension
        point="org.eclipse.ui.menus">
     <menuContribution

@@ -15,7 +15,12 @@ import org.pavanecce.common.code.metamodel.CodePackage;
 import org.pavanecce.common.code.metamodel.CodePackageReference;
 import org.pavanecce.common.code.metamodel.CodeTypeReference;
 import org.pavanecce.uml.uml2code.UmlToCodeReferenceMap;
-
+/**
+ * A default implementation of the callbacks that are invoked from the UmlCodeModelVisitor. To be subclassed 
+ * by CodeModelBuilders that add CodeModel elements to the resultingCodeModel
+ * @author ampie
+ *
+ */
 public class DefaultCodeModelBuilder {
 	protected CodeModel codeModel;
 	private UmlToCodeReferenceMap umlToCodeReferenceMap = new UmlToCodeReferenceMap();

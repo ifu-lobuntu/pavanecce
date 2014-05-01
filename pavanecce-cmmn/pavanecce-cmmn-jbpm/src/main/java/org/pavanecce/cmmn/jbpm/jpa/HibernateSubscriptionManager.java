@@ -29,6 +29,7 @@ import org.pavanecce.cmmn.jbpm.instance.CaseFileItemSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.instance.CaseInstance;
 import org.pavanecce.cmmn.jbpm.instance.CaseSubscriptionKey;
 import org.pavanecce.cmmn.jbpm.instance.SubscriptionManager;
+import org.pavanecce.common.jpa.JpaObjectPersistence;
 
 public class HibernateSubscriptionManager extends AbstractSubscriptionManager<JpaCaseSubscriptionInfo, JpaCaseFileItemSubscriptionInfo> implements
 		SubscriptionManager, PostUpdateEventListener, PreCollectionUpdateEventListener, FlushEntityEventListener, FlushEventListener {

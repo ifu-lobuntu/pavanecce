@@ -1,5 +1,7 @@
 package org.pavanecce.uml.uml2code.java;
 
+import org.pavanecce.common.code.metamodel.CodeCollectionKind;
+import org.pavanecce.common.code.metamodel.CodeElementType;
 import org.pavanecce.common.code.metamodel.CodePrimitiveTypeKind;
 import org.pavanecce.common.code.metamodel.CodeTypeReference;
 import org.pavanecce.common.code.metamodel.CollectionTypeReference;
@@ -10,6 +12,7 @@ public class EmfJavaCodeGenerator extends JavaCodeGenerator {
 	protected String defaultValue(CodePrimitiveTypeKind kind) {
 		return super.defaultValue(kind);
 	}
+
 	@Override
 	protected String getMappedName(CodeTypeReference type) {
 		if (type instanceof PrimitiveTypeReference) {
@@ -51,5 +54,10 @@ public class EmfJavaCodeGenerator extends JavaCodeGenerator {
 			}
 		}
 		return super.getMappedName(type);
+	}
+
+	@Override
+	protected String defaultValue(CollectionTypeReference kind) {
+		return "new BasicEList<" + super.elementTypeLastName(kind) + ">()";
 	}
 }

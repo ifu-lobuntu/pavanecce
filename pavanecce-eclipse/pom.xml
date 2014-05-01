@@ -25,7 +25,7 @@
 				<module>org.pavanecce.eclipse.uml.roundtrip</module>
 				<module>org.pavanecce.eclipse.uml.visualization</module>
 				<module>org.pavanecce.eclipse.uml.papyrus</module>
-<!-- 				<module>org.pavanecce.eclipse.plugin.tests</module> -->
+				<!-- <module>org.pavanecce.eclipse.plugin.tests</module> -->
 			</modules>
 			<build>
 				<plugins>
@@ -72,29 +72,20 @@
 									<arch>x86</arch>
 								</environment>
 							</environments>
-							<filters>
+							<!-- <dependency-resolution> -->
+							<!-- <extraRequirements> -->
+							<!-- <requirement> -->
+							<!-- <type>eclipse-plugin</type> -->
+							<!-- <id>pavanecce-common-dependencies</id> -->
+							<!-- <versionRange>0.0.0</versionRange> -->
+							<!-- </requirement> -->
 
+							<!-- </extraRequirements> -->
 
-								<!-- example 2: remove all providers of the package javax.persistence except the bundle javax.persistence -->
-								<filter>
-									<type>java-package</type>
-									<id>javax.servlet</id>
-									<restrictTo>
-										<type>eclipse-plugin</type>
-										<id>javax.servlet</id>
-									</restrictTo>
-								</filter>
+							<!-- </dependency-resolution> -->
 
-								<!-- example 3: work around Equinox bug 348045 -->
-								<filter>
-									<type>p2-installable-unit</type>
-									<id>org.eclipse.equinox.servletbridge.extensionbundle</id>
-									<removeAll />
-								</filter>
-							</filters>
 						</configuration>
 					</plugin>
-
 				</plugins>
 			</build>
 		</profile>

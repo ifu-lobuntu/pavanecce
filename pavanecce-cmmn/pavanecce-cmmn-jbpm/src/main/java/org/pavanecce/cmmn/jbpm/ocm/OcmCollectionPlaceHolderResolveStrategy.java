@@ -17,6 +17,7 @@ import org.apache.jackrabbit.ocm.manager.ObjectContentManager;
 import org.drools.core.common.DroolsObjectInputStream;
 import org.kie.api.runtime.Environment;
 import org.pavanecce.cmmn.jbpm.jpa.CollectionPlaceHolderResolveStrategy;
+import org.pavanecce.common.ocm.OcmFactory;
 
 public class OcmCollectionPlaceHolderResolveStrategy extends CollectionPlaceHolderResolveStrategy {
 	private Environment env;

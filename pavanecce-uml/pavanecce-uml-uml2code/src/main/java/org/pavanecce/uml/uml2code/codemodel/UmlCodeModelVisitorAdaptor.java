@@ -29,7 +29,12 @@ import org.pavanecce.uml.common.util.EmfParameterUtil;
 import org.pavanecce.uml.common.util.EmfPropertyUtil;
 import org.pavanecce.uml.common.util.emulated.AssociationClassToEnd;
 import org.pavanecce.uml.common.util.emulated.EndToAssociationClass;
-
+/**
+ * This class implements the visiting logic required to traverse a UML model. When arriving at
+ * significant UML elements, it invokes callbacks on the CodeModelBuilder provided as input for startVisiting(DefaultCodeModelBuilder, Model)
+ * @author ampie
+ *
+ */
 public class UmlCodeModelVisitorAdaptor {
 
 	private static final class ElementComparator implements Comparator<Element> {

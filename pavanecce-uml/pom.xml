@@ -9,14 +9,46 @@
 	</parent>
 	<artifactId>pavanecce-uml</artifactId>
 	<packaging>pom</packaging>
-	<modules>
-		<module>pavanecce-uml-common</module>
-		<module>pavanecce-uml-uml2code</module>
-		<module>pavanecce-uml-ocl2code</module>
-		<module>pavanecce-uml-reverse-java</module>
-		<module>pavanecce-uml-reverse-owl</module>
-		<module>pavanecce-uml-dependencies</module>
-		<module>pavanecce-uml-tests</module>
-	</modules>
+	<profiles>
+		<profile>
+			<id>init</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<modules>
+				<module>pavanecce-uml-dependencies</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>standalone</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<modules>
+				<module>pavanecce-uml-dependencies</module>
+				<module>pavanecce-uml-common</module>
+				<module>pavanecce-uml-uml2code</module>
+				<module>pavanecce-uml-ocl2code</module>
+				<module>pavanecce-uml-reverse-java</module>
+				<module>pavanecce-uml-reverse-owl</module>
+				<module>pavanecce-uml-tests</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>eclipse</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<modules>
+				<module>pavanecce-uml-dependencies</module>
+				<module>pavanecce-uml-common</module>
+				<module>pavanecce-uml-uml2code</module>
+				<module>pavanecce-uml-ocl2code</module>
+				<module>pavanecce-uml-reverse-java</module>
+				<module>pavanecce-uml-reverse-owl</module>
+				<module>pavanecce-uml-tests</module>
+			</modules>
+		</profile>
+	</profiles>
 </project>
 

@@ -9,6 +9,7 @@ import java.util.List;
 import org.pavanecce.common.code.metamodel.CodeBlock;
 import org.pavanecce.common.code.metamodel.CodeClass;
 import org.pavanecce.common.code.metamodel.CodeClassifier;
+import org.pavanecce.common.code.metamodel.CodeCollectionKind;
 import org.pavanecce.common.code.metamodel.CodeEnumeration;
 import org.pavanecce.common.code.metamodel.CodeExpression;
 import org.pavanecce.common.code.metamodel.CodeField;
@@ -19,6 +20,7 @@ import org.pavanecce.common.code.metamodel.CodePackageReference;
 import org.pavanecce.common.code.metamodel.CodePrimitiveTypeKind;
 import org.pavanecce.common.code.metamodel.CodeTypeReference;
 import org.pavanecce.common.code.metamodel.CodeVisibilityKind;
+import org.pavanecce.common.code.metamodel.CollectionTypeReference;
 import org.pavanecce.common.code.metamodel.PrimitiveTypeReference;
 import org.pavanecce.common.code.metamodel.expressions.MethodCallExpression;
 import org.pavanecce.common.code.metamodel.expressions.NullExpression;
@@ -234,11 +236,17 @@ public abstract class AbstractCodeGenerator {
 	}
 
 	protected String applyCommonReplacements(PortableExpression textStatement) {
-		return textStatement.getExpression().replaceAll("\\$\\{self\\}", getSelf());
+		String expression = textStatement.getExpression();
+		return applyCommonReplacements(expression);
 	}
 
 	protected String applyCommonReplacements(PortableStatement textStatement) {
-		return textStatement.getStatement().replaceAll("\\$\\{self\\}", getSelf());
+		String statement = textStatement.getStatement();
+		return applyCommonReplacements(statement);
+	}
+
+	protected String applyCommonReplacements(String statement) {
+		return statement.replaceAll("\\$\\{self\\}", getSelf());
 	}
 
 	public String toFieldDeclaration(CodeField cf) {
@@ -273,8 +281,8 @@ public abstract class AbstractCodeGenerator {
 							sb.append("\n");
 						}
 					} catch (IOException e) {
-					}finally{
-						
+					} finally {
+
 					}
 				}
 			} else {
@@ -317,6 +325,8 @@ public abstract class AbstractCodeGenerator {
 			CodeTypeReference type = cf.getType();
 			if (type instanceof PrimitiveTypeReference) {
 				sb.append(defaultValue(((PrimitiveTypeReference) type).getKind()));
+			} else if (type instanceof CollectionTypeReference) {
+				sb.append(defaultValue((CollectionTypeReference) type));
 			} else {
 				interpretExpression(sb, new NullExpression());
 			}
@@ -325,8 +335,10 @@ public abstract class AbstractCodeGenerator {
 		}
 	}
 
+	protected abstract String defaultValue(CollectionTypeReference kind) ;
+
 	protected void invokeMethod(StringBuilder sb, List<CodeExpression> arguments, String methodName) {
-		sb.append(methodName);
+		sb.append(this.applyCommonReplacements(methodName));
 		sb.append("(");
 		Iterator<CodeExpression> iterator = arguments.iterator();
 		while (iterator.hasNext()) {

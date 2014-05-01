@@ -1,12 +1,15 @@
 package org.pavanecce.uml.uml2code.java;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.pavanecce.common.code.metamodel.CodeClass;
 import org.pavanecce.common.code.metamodel.CodeClassifier;
+import org.pavanecce.common.code.metamodel.CodeCollectionKind;
 import org.pavanecce.common.code.metamodel.CodeElementType;
 import org.pavanecce.common.code.metamodel.CodeEnumeration;
 import org.pavanecce.common.code.metamodel.CodeExpression;
@@ -31,9 +34,15 @@ import org.pavanecce.common.code.metamodel.expressions.StaticFieldExpression;
 import org.pavanecce.common.code.metamodel.expressions.StaticMethodCallExpression;
 import org.pavanecce.common.code.metamodel.expressions.TypeExpression;
 import org.pavanecce.uml.uml2code.AbstractCodeGenerator;
+import org.pavanecce.uml.uml2code.jpa.AbstractJavaCodeDecorator;
 
 public class JavaCodeGenerator extends AbstractCodeGenerator {
 	Map<CodeTypeReference, String> mappedJavaTypes = new HashMap<CodeTypeReference, String>();
+	private List<AbstractJavaCodeDecorator> decorators = new ArrayList<AbstractJavaCodeDecorator>();
+
+	public void addDecorator(AbstractJavaCodeDecorator decorator) {
+		this.decorators.add(decorator);
+	}
 
 	public void map(CodeTypeReference ctr, String javaName) {
 		mappedJavaTypes.put(ctr, javaName);
@@ -116,6 +125,12 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 	@Override
 	public void appendClassDefinition(StringBuilder sb, CodeClass cc) {
 		appendPackageAndImports(sb, cc);
+		for (AbstractJavaCodeDecorator d : this.decorators) {
+			d.appendAdditionalImports(sb, cc);
+		}
+		for (AbstractJavaCodeDecorator d : this.decorators) {
+			d.decorateClassDeclaration(sb, cc);
+		}
 		appendClassDeclaration(sb, cc);
 		sb.append("{\n");
 		appendFieldsAndMethodDeclarations(sb, cc);
@@ -124,12 +139,33 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 
 	protected void appendFieldsAndMethodDeclarations(StringBuilder sb, CodeClassifier cc) {
 		for (Entry<String, CodeField> fieldEntry : cc.getFields().entrySet()) {
+			for (AbstractJavaCodeDecorator d : this.decorators) {
+				d.decorateFieldDeclaration(sb, fieldEntry.getValue());
+			}
 			appendFieldDeclaration(sb, fieldEntry.getValue());
 			appendLineEnd(sb);
 		}
+		appendAdditionalFields(sb, cc);
 		for (Entry<String, CodeMethod> methodEntry : cc.getMethods().entrySet()) {
+			for (AbstractJavaCodeDecorator d : this.decorators) {
+				d.decorateMethodDeclaration(sb, methodEntry.getValue());
+			}
 			appendMethodDeclaration(sb, methodEntry.getValue());
 		}
+		appendAdditionalMethods(sb, cc);
+	}
+
+	protected void appendAdditionalFields(StringBuilder sb, CodeClassifier cc) {
+		for (AbstractJavaCodeDecorator d : this.decorators) {
+			d.appendAdditionalFields(sb, cc);
+		}
+	}
+
+	protected void appendAdditionalMethods(StringBuilder sb, CodeClassifier cc) {
+		for (AbstractJavaCodeDecorator d : this.decorators) {
+			d.appendAdditionalMethods(sb, cc);
+		}
+
 	}
 
 	protected void appendPackageAndImports(StringBuilder sb, CodeClassifier cc) {
@@ -203,7 +239,7 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 		sb.append(")");
 		if (method.getDeclaringClass() instanceof CodeInterface) {
 			sb.append(";\n");
-		}else{
+		} else {
 			sb.append("{\n");
 			appendMethodBody(sb, method);
 			sb.append("  }\n");
@@ -413,6 +449,24 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 		appendFieldsAndMethodDeclarations(sb, cc);
 		sb.append("}\n");
 		sb.append(cc.getName());
+	}
+
+	@Override
+	protected String defaultValue(CollectionTypeReference kind) {
+		if(kind.getKind()==CodeCollectionKind.SET){
+			return "new HashSet<" + elementTypeLastName(kind) +">()";
+		}else{
+			return "new ArrayList<" + elementTypeLastName(kind) +">()";
+		}
+	}
+
+	public String elementTypeLastName(CollectionTypeReference kind) {
+		CodeTypeReference type = kind.getElementTypes().get(0).getType();
+		String mappedName = getMappedName(type);
+		if(mappedName!=null){
+			return mappedName.substring(mappedName.lastIndexOf(".")+1);
+		}
+		return type.getLastName();
 	}
 
 }

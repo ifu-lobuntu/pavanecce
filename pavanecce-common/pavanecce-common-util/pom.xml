@@ -10,7 +10,7 @@
 	<packaging>${packaging}</packaging>
 	<profiles>
 		<profile>
-			<id>normal</id>
+			<id>standalone</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
@@ -18,6 +18,14 @@
 				<artifactId>pavanecce-common-util</artifactId>
 				<packaging>jar</packaging>
 			</properties>
+			<dependencies>
+				<dependency>
+					<groupId>org.pavanecce</groupId>
+					<artifactId>pavanecce-common-dependencies</artifactId>
+					<version>${project.parent.version}</version>
+					<type>jar</type>
+				</dependency>
+			</dependencies>
 		</profile>
 		<profile>
 			<id>eclipse</id>
@@ -36,8 +44,12 @@
 						<version>${tycho.version}</version>
 						<extensions>true</extensions>
 					</plugin>
+
 				</plugins>
 			</build>
 		</profile>
 	</profiles>
+	<dependencies>
+
+	</dependencies>
 </project>

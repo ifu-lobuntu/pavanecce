@@ -23,22 +23,23 @@ public class CompiledJythonTests extends AbstractModelBuilderTest {
 
 	@Test
 	public void testIt() throws Exception {
-		System.out.println();
 		root = new File("/tmp/pygen");
 		root.mkdirs();
-		adaptor.startVisiting(builder,model);
+		adaptor.startVisiting(builder, model);
 		this.cm = adaptor.getCodeModel();
-		File[] listFiles = new File(root,"model").listFiles();
-		for (File file : listFiles) {
-			file.delete();
-		} 
-		
+		File modelDir = new File(root, "model");
+		if (modelDir.exists()) {
+			File[] listFiles = modelDir.listFiles();
+			for (File file : listFiles) {
+				file.delete();
+			}
+		}
+
 		writeModule("model", "pkg1");
 		writeModule("model", "pkg2");
 		Properties props = new Properties();
 		props.setProperty("python.path", "/tmp/pygen/");
-		PythonInterpreter.initialize(System.getProperties(), props,
-		                             new String[] {""});
+		PythonInterpreter.initialize(System.getProperties(), props, new String[] { "" });
 		PythonInterpreter pi = new PythonInterpreter(null, new PySystemState());
 		pi.exec("from model.pkg1 import *");
 		pi.exec("from model.pkg2 import *");
@@ -70,6 +71,6 @@ public class CompiledJythonTests extends AbstractModelBuilderTest {
 		fw.write(classDeclaration);
 		fw.flush();
 		fw.close();
-		
+
 	}
 }

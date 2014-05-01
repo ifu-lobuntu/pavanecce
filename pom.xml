@@ -8,7 +8,7 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>pavanecce-common</module>
-		<module>pavanecce-cmmn</module>
+		<!-- <module>pavanecce-cmmn</module> -->
 		<module>pavanecce-uml</module>
 	</modules>
 	<profiles>
@@ -16,7 +16,7 @@
 			<id>eclipse</id>
 			<modules>
 				<module>pavanecce-common</module>
-				<module>pavanecce-cmmn</module>
+				<!--module>pavanecce-cmmn</module -->
 				<module>pavanecce-uml</module>
 				<module>pavanecce-eclipse</module>
 			</modules>
@@ -29,6 +29,8 @@
 			</repositories>
 			<properties>
 			</properties>
+			<build>
+			</build>
 		</profile>
 	</profiles>
 	<build>

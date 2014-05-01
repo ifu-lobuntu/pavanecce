@@ -186,5 +186,9 @@ public class PythonCodeGenerator extends AbstractCodeGenerator {
 		appendClassifierDefinitionImpl(sb, value);
 
 	}
+	@Override
+	protected String defaultValue(CollectionTypeReference kind) {
+		return "[]";
+	}
 
 }

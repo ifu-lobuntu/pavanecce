@@ -32,7 +32,8 @@ import org.pavanecce.eclipse.common.AbstractEditingDomainAction;
 import org.pavanecce.eclipse.common.AdapterFinder;
 import org.pavanecce.uml.uml2code.codemodel.CodeModelBuilder;
 import org.pavanecce.uml.uml2code.codemodel.UmlCodeModelVisitorAdaptor;
-import org.pavanecce.uml.uml2code.jpa.JpaCodeGenerator;
+import org.pavanecce.uml.uml2code.java.JavaCodeGenerator;
+import org.pavanecce.uml.uml2code.jpa.JpaCodeDecorator;
 
 public class GenerateJavaAction extends AbstractEditingDomainAction {
 
@@ -90,7 +91,9 @@ public class GenerateJavaAction extends AbstractEditingDomainAction {
 					adaptor.startVisiting(builder, model);
 					TextWorkspace tw = new TextWorkspace(folder.getProject().getName());
 					File outputRoot = folder.getProject().getLocation().toFile().getParentFile();
-					JavaTextFileGenerator jtfg = new JavaTextFileGenerator(tw,new JpaCodeGenerator());
+					JavaCodeGenerator jcd = new JavaCodeGenerator();
+					jcd.addDecorator(new JpaCodeDecorator());
+					JavaTextFileGenerator jtfg = new JavaTextFileGenerator(tw,jcd);
 					SourceFolderDefinition sfd = new SourceFolderDefinition(SourceFolderNameStrategy.QUALIFIER_ONLY, folder.getProjectRelativePath().toString());
 					TextProjectDefinition tpd = new TextProjectDefinition(ProjectNameStrategy.SUFFIX_ONLY, folder.getProject().getName());
 					jtfg.mapSourceFolder(JavaTextFileGenerator.DOMAIN, tpd, sfd);

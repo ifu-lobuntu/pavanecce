@@ -53,6 +53,9 @@ public class EmfColumnUtil {
 				break;
 			} else {
 				Property to = findAssociationEnd(foreignKey, cur.getMemberEnds(), "");
+				if(to!=null &&  to.getOtherEnd()==null){
+					System.out.println();
+				}
 				if (to != null && to.getOtherEnd().getType().equals(fromClass)) {
 					ass = cur;
 					break;
