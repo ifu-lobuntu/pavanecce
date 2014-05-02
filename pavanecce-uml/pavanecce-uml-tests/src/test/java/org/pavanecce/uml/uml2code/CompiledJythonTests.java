@@ -6,11 +6,12 @@ import static org.junit.Assert.assertSame;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileWriter;
-import java.util.Properties;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.pavanecce.common.code.metamodel.CodeModel;
 import org.pavanecce.common.code.metamodel.CodePackage;
+import org.pavanecce.common.util.FileUtil;
 import org.pavanecce.uml.uml2code.python.PythonCodeGenerator;
 import org.python.core.PyString;
 import org.python.core.PySystemState;
@@ -21,33 +22,36 @@ public class CompiledJythonTests extends AbstractModelBuilderTest {
 	private CodeModel cm;
 	private File root;
 
+	@Before
+	public void before() {
+//		PythonInterpreter.initialize(System.getProperties(), new Properties(), new String[] { "" });
+	}
+
+
 	@Test
 	public void testIt() throws Exception {
-		root = new File("/tmp/pygen");
+
+		File home = new File(System.getProperty("user.home"));
+		root = new File(home, "tmp/pygen");
 		root.mkdirs();
 		adaptor.startVisiting(builder, model);
 		this.cm = adaptor.getCodeModel();
 		File modelDir = new File(root, "model");
-		if (modelDir.exists()) {
-			File[] listFiles = modelDir.listFiles();
-			for (File file : listFiles) {
-				file.delete();
-			}
-		}
-
+		modelDir.mkdirs();
+		FileUtil.deleteAllChildren(modelDir);
 		writeModule("model", "pkg1");
 		writeModule("model", "pkg2");
-		Properties props = new Properties();
-		props.setProperty("python.path", "/tmp/pygen/");
-		PythonInterpreter.initialize(System.getProperties(), props, new String[] { "" });
 		PythonInterpreter pi = new PythonInterpreter(null, new PySystemState());
+//		pi.getSystemState().dont_write_bytecode=true;
+		pi.exec("import sys");
+		pi.exec("sys.path.append('"+root.getAbsolutePath()+"')");
 		pi.exec("from model.pkg1 import *");
 		pi.exec("from model.pkg2 import *");
+		pi.exec("obj2=TheClass()");
 		pi.exec("obj1=EmptyClass()");
 		pi.exec("obj1.setName(\"name1\")");
-		assertEquals(new PyString("name1"), pi.eval("obj1.getName()"));
-		pi.exec("obj2=TheClass()");
 		pi.exec("obj2.setSimpleClass(obj1)");
+		assertEquals(new PyString("name1"), pi.eval("obj1.getName()"));
 		assertSame(pi.eval("obj1"), pi.eval("obj2.getSimpleClass()"));
 	}
 

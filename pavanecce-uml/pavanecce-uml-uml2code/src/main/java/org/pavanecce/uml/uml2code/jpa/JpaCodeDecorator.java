@@ -22,6 +22,7 @@ import org.pavanecce.common.code.metamodel.relationaldb.RelationalLink;
 import org.pavanecce.common.code.metamodel.relationaldb.RelationalLinkTable;
 import org.pavanecce.common.code.metamodel.relationaldb.RelationalTable;
 import org.pavanecce.common.util.NameConverter;
+import org.pavanecce.uml.uml2code.java.JavaCodeGenerator;
 
 public class JpaCodeDecorator extends AbstractJavaCodeDecorator {
 	Map<CodeTypeReference, JpaDataTypeStrategy> dataTypeStrategies = new HashMap<CodeTypeReference, JpaDataTypeStrategy>();
@@ -38,7 +39,7 @@ public class JpaCodeDecorator extends AbstractJavaCodeDecorator {
 	}
 
 	@Override
-	public void appendAdditionalFields(StringBuilder sb, CodeClassifier cc) {
+	public void appendAdditionalFields(JavaCodeGenerator  sb, CodeClassifier cc) {
 		IRelationalElement element = cc.getData(IRelationalElement.class);
 		if (element instanceof RelationalTable) {
 			RelationalTable relationalTable = (RelationalTable) element;
@@ -47,7 +48,7 @@ public class JpaCodeDecorator extends AbstractJavaCodeDecorator {
 				sb.append("  @GeneratedValue\n");
 				sb.append("  String ");
 				sb.append(getPkFieldName(relationalTable));
-				appendLineEnd(sb);
+				sb.appendLineEnd();
 			}
 		}
 	}
@@ -61,7 +62,7 @@ public class JpaCodeDecorator extends AbstractJavaCodeDecorator {
 	}
 
 	@Override
-	public void appendAdditionalMethods(StringBuilder sb, CodeClassifier cc) {
+	public void appendAdditionalMethods(JavaCodeGenerator sb, CodeClassifier cc) {
 		IRelationalElement element = cc.getData(IRelationalElement.class);
 		if (element instanceof RelationalTable) {
 			RelationalTable relationalTable = (RelationalTable) element;
@@ -72,7 +73,7 @@ public class JpaCodeDecorator extends AbstractJavaCodeDecorator {
 				sb.append("(){\n");
 				sb.append("    return this.");
 				sb.append(pkFieldName);
-				appendLineEnd(sb);
+				sb.appendLineEnd();
 				sb.append("  }\n");
 				sb.append("  public void set");
 				sb.append(NameConverter.capitalize(pkFieldName));
@@ -80,14 +81,14 @@ public class JpaCodeDecorator extends AbstractJavaCodeDecorator {
 				sb.append("    this.");
 				sb.append(pkFieldName);
 				sb.append("=value");
-				appendLineEnd(sb);
+				sb.appendLineEnd();
 				sb.append("  }\n");
 			}
 		}
 	}
 
 	@Override
-	public void appendAdditionalImports(StringBuilder sb, CodeClassifier cc) {
+	public void appendAdditionalImports(JavaCodeGenerator sb, CodeClassifier cc) {
 		sb.append("import javax.persistence.Entity;\n");
 		sb.append("import javax.persistence.Table;\n");
 		SortedSet<String> imports = new TreeSet<String>();
@@ -137,12 +138,12 @@ public class JpaCodeDecorator extends AbstractJavaCodeDecorator {
 		for (String string : imports) {
 			sb.append("import ");
 			sb.append(string);
-			appendLineEnd(sb);
+			sb.appendLineEnd();
 		}
 	}
 
 	@Override
-	public void decorateClassDeclaration(StringBuilder sb, CodeClass cc) {
+	public void decorateClassDeclaration(JavaCodeGenerator sb, CodeClass cc) {
 		IRelationalElement element = cc.getData(IRelationalElement.class);
 		if (element instanceof RelationalTable) {
 			sb.append("@Entity(name=\"");
@@ -155,7 +156,7 @@ public class JpaCodeDecorator extends AbstractJavaCodeDecorator {
 	}
 
 	@Override
-	public void decorateFieldDeclaration(StringBuilder sb, CodeField field) {
+	public void decorateFieldDeclaration(JavaCodeGenerator sb, CodeField field) {
 		IRelationalElement element = field.getData(IRelationalElement.class);
 		if (element instanceof RelationalLink) {
 			RelationalLink relationalLink = (RelationalLink) element;
@@ -211,7 +212,7 @@ public class JpaCodeDecorator extends AbstractJavaCodeDecorator {
 		}
 	}
 
-	protected void appendJoinColumns(StringBuilder sb, Map<String, String> columnMap) {
+	protected void appendJoinColumns(JavaCodeGenerator sb, Map<String, String> columnMap) {
 		sb.append("{\n");
 		Set<Entry<String, String>> entrySet = columnMap.entrySet();
 		Iterator<Entry<String, String>> iterator = entrySet.iterator();

@@ -6,16 +6,12 @@ import java.util.Iterator;
 public abstract class OneToManyCollection<P, C> extends TwoWayCollection<C> implements Collection<C> {
 	private P parent;
 
-	public OneToManyCollection(Collection<C> current, P parent) {
-		super();
-		this.current = current;
-		this.parent = parent;
-	}
-
 	public OneToManyCollection(P parent) {
 		super();
 		this.parent = parent;
 	}
+
+	protected abstract Collection<C> getDelegate() ;
 
 	protected abstract P getParent(C child);
 

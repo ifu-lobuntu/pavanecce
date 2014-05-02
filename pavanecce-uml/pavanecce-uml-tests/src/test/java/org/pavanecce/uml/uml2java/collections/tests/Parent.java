@@ -1,6 +1,8 @@
 package org.pavanecce.uml.uml2java.collections.tests;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.pavanecce.common.collections.OneToManySet;
 
@@ -33,5 +35,10 @@ public class Parent {
 		protected Collection<Child> getChildren(Parent parent) {
 			return parent.children;
 		}
+
+		protected Collection<Child> getDelegate() {
+			return delegate;
+		};
 	};
+	Set<Child> delegate = new HashSet<Child>();
 }

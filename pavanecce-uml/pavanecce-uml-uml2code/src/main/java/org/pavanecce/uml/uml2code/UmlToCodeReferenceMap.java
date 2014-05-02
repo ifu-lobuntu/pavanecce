@@ -29,9 +29,6 @@ public class UmlToCodeReferenceMap {
 	protected Map<Namespace, CodePackageReference> packagePaths = new HashMap<Namespace, CodePackageReference>();
 	protected Map<Package, Map<String, CodeMappedType>> typeMap = new HashMap<Package, Map<String, CodeMappedType>>();
 
-	public UmlToCodeReferenceMap() {
-		super();
-	}
 	public Map<String, CodeMappedType> getTypeMap(Package p) {
 		Map<String, CodeMappedType> map = typeMap.get(p);
 		if (map == null) {

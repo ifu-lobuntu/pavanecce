@@ -33,6 +33,7 @@ import org.pavanecce.cmmn.jbpm.test.domain.Wall;
 import org.pavanecce.cmmn.jbpm.test.domain.WallPlan;
 import org.pavanecce.common.ocm.OcmFactory;
 import org.pavanecce.common.ocm.OcmObjectPersistence;
+import org.pavanecce.common.util.FileUtil;
 
 public class JcrTestCase {
 	long time = System.currentTimeMillis();
@@ -116,25 +117,9 @@ public class JcrTestCase {
 
 	public static void deleteTempRepo() throws IOException {
 		File repo = new File("./repository");
-		if (repo.exists() && !delete(repo)) {
-			throw new RuntimeException("could not delete old repo");
-		}
+		FileUtil.deleteRoot(repo);
 	}
 
-	public static boolean delete(File repo) throws IOException {
-		if (repo.isDirectory()) {
-			File[] listFiles = repo.listFiles();
-			for (File file : listFiles) {
-				delete(file);
-			}
-		}
-		if (!repo.delete()) {
-			throw new RuntimeException("could not delete " + repo.getCanonicalPath());
-		} else {
-			System.out.println("deleted " + repo.getCanonicalPath());
-		}
-		return true;
-	}
 
 	protected void asdf() throws IOException, SQLException {
 		URL ddl = JcrTestCase.class.getResource("/jackrabbit.ddl");

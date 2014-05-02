@@ -17,7 +17,7 @@ import org.pavanecce.common.text.workspace.TextProjectDefinition;
 import org.pavanecce.common.text.workspace.TextSource;
 import org.pavanecce.common.text.workspace.TextWorkspace;
 import org.pavanecce.common.util.VersionNumber;
-import org.pavanecce.uml.uml2code.java.JavaCodeGenerator;
+import org.pavanecce.uml.uml2code.AbstractCodeGenerator;
 
 public class JavaTextFileGenerator extends DefaultCodeModelVisitor {
 	public static final ISourceFolderIdentifier DOMAIN = new ISourceFolderIdentifier() {
@@ -29,7 +29,7 @@ public class JavaTextFileGenerator extends DefaultCodeModelVisitor {
 		this.projectDefinitions.put(id, tpd);
 		this.sourceFolderDefinitions.put(id, sfd);
 	}
-	private JavaCodeGenerator javaCodeGenerator;
+	private AbstractCodeGenerator javaCodeGenerator;
 	
 	@Override
 	public void visitClassifier(final CodeClassifier cc) {
@@ -69,7 +69,7 @@ public class JavaTextFileGenerator extends DefaultCodeModelVisitor {
 		
 	}
 
-	public JavaTextFileGenerator(TextWorkspace textWorkspace, JavaCodeGenerator javaCodeGenerator) {
+	public JavaTextFileGenerator(TextWorkspace textWorkspace, AbstractCodeGenerator javaCodeGenerator) {
 		super();
 		this.textWorkspace = textWorkspace;
 		this.javaCodeGenerator = javaCodeGenerator;

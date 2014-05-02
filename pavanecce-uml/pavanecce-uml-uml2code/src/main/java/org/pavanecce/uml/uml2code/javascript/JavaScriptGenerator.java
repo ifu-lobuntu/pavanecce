@@ -35,7 +35,7 @@ public class JavaScriptGenerator extends AbstractCodeGenerator {
 
 	public String getModuleDefinition(CodePackage pkg) {
 		SortedSet<CodeTypeReference> imports = new TreeSet<CodeTypeReference>();
-		StringBuilder sb = new StringBuilder();
+		pushNewStringBuilder();
 		for (Entry<String, CodeClassifier> entry : pkg.getClassifiers().entrySet()) {
 			imports.addAll(entry.getValue().getImports());
 		}
@@ -46,7 +46,7 @@ public class JavaScriptGenerator extends AbstractCodeGenerator {
 		// }
 		// }
 		for (Entry<String, CodeClassifier> entry : pkg.getClassifiers().entrySet()) {
-			appendClassifierDefinition(sb, entry.getValue());
+			appendClassifierDefinition(entry.getValue());
 			sb.append("\n");
 		}
 		// for (CodeTypeReference r : imports) {
@@ -55,15 +55,17 @@ public class JavaScriptGenerator extends AbstractCodeGenerator {
 		// appendLineEnd(sb);
 		// }
 		// }
-		return sb.toString();
+		return popStringBuilder().toString();
 
 	}
 
 	@Override
-	public void appendVariableDeclaration(StringBuilder sb, CodeField cf) {
+	public JavaScriptGenerator appendVariableDeclaration(CodeField cf) {
 		sb.append(cf.getName());
 		sb.append(" = ");
-		appendInitialization(sb, cf);
+		appendInitialization(cf);
+		return this;
+
 	}
 
 	@Override
@@ -72,8 +74,10 @@ public class JavaScriptGenerator extends AbstractCodeGenerator {
 	}
 
 	@Override
-	public void appendClassDefinition(StringBuilder sb, CodeClass cc) {
+	public JavaScriptGenerator appendClassDefinition(CodeClass cc) {
 		appendClassifierDefinitionImpl(sb, cc);
+		return this;
+
 	}
 
 	protected void appendClassifierDefinitionImpl(StringBuilder sb, CodeClassifier cc) {
@@ -82,17 +86,17 @@ public class JavaScriptGenerator extends AbstractCodeGenerator {
 		sb.append("(){\n");
 		for (Entry<String, CodeField> fieldEntry : cc.getFields().entrySet()) {
 			sb.append("  this.");
-			appendVariableDeclaration(sb, fieldEntry.getValue());
-			appendLineEnd(sb);
+			appendVariableDeclaration(fieldEntry.getValue());
+			appendLineEnd();
 		}
 		for (Entry<String, CodeMethod> methodEntry : cc.getMethods().entrySet()) {
-			appendMethodDeclaration(sb, methodEntry.getValue());
+			appendMethodDeclaration(methodEntry.getValue());
 		}
 		sb.append("}\n");
 	}
 
 	@Override
-	public void appendMethodDeclaration(StringBuilder sb, CodeMethod method) {
+	public JavaScriptGenerator appendMethodDeclaration(CodeMethod method) {
 		sb.append("  ");
 		sb.append(method.getDeclaringClass().getName());
 		sb.append(".prototype.");
@@ -107,28 +111,32 @@ public class JavaScriptGenerator extends AbstractCodeGenerator {
 			}
 		}
 		sb.append("){\n");
-		appendMethodBody(sb, method);
+		appendMethodBody(method);
 		sb.append("  }\n");
+		return this;
+
 	}
 
 	@Override
-	protected void appendMethodBody(StringBuilder sb, CodeMethod method) {
+	protected JavaScriptGenerator appendMethodBody(CodeMethod method) {
 		CodeExpression result2 = method.getResult();
 		if (result2 != null && method.returnsResult()) {
 			sb.append("    var result = ");
-			interpretExpression(sb, result2);
-			appendLineEnd(sb);
+			interpretExpression(result2);
+			appendLineEnd();
 		}
-		appendCodeBlock("    ", sb, method.getBody());
+		appendCodeBlock("    ", method.getBody());
 		if (result2 != null && method.returnsResult()) {
 			sb.append("    return result;\n");
 		}
+		return this;
+
 	}
 
 	@Override
-	public void interpretExpression(StringBuilder sb, CodeExpression exp) {
+	public JavaScriptGenerator interpretExpression(CodeExpression exp) {
 		if (exp instanceof PortableExpression) {
-			sb.append(super.applyCommonReplacements(((PortableExpression) exp)) );
+			sb.append(super.applyCommonReplacements(((PortableExpression) exp)));
 		} else if (exp instanceof PrimitiveDefaultExpression) {
 			sb.append(defaultValue(((PrimitiveDefaultExpression) exp).getPrimitiveTypeKind()));
 		} else if (exp instanceof NullExpression) {
@@ -136,7 +144,7 @@ public class JavaScriptGenerator extends AbstractCodeGenerator {
 		} else if (exp instanceof NewInstanceExpression) {
 			CodeTypeReference type = ((NewInstanceExpression) exp).getType();
 			if (type instanceof CollectionTypeReference) {
-				sb.append( "[]");
+				sb.append("[]");
 			} else if (type instanceof PrimitiveTypeReference) {
 				CodePrimitiveTypeKind kind = ((PrimitiveTypeReference) type).getKind();
 				sb.append(defaultValue(kind));
@@ -146,11 +154,12 @@ public class JavaScriptGenerator extends AbstractCodeGenerator {
 				sb.append("()");
 			}
 		}
+		return this;
 	}
 
 	@Override
-	protected StringBuilder appendLineEnd(StringBuilder sb) {
-		return sb.append(";\n");
+	protected void appendLineEnd() {
+		sb.append(";\n");
 	}
 
 	@Override
@@ -169,14 +178,15 @@ public class JavaScriptGenerator extends AbstractCodeGenerator {
 	}
 
 	@Override
-	protected void appendInterfaceDefinition(StringBuilder sb, CodeInterface value) {
+	protected JavaScriptGenerator appendInterfaceDefinition(CodeInterface value) {
 		appendClassifierDefinitionImpl(sb, value);
+		return this;
 	}
 
 	@Override
-	protected void appendEnumerationDefinition(StringBuilder sb, CodeEnumeration value) {
+	protected JavaScriptGenerator appendEnumerationDefinition(CodeEnumeration value) {
 		appendClassifierDefinitionImpl(sb, value);
-		
+		return this;
 	}
 
 	@Override

@@ -1,5 +1,9 @@
 package org.pavanecce.uml.uml2java.collections.tests;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.pavanecce.common.collections.ManyToManyCollection;
 import org.pavanecce.common.collections.ManyToManySet;
 
@@ -23,6 +27,12 @@ public class ManyFrom {
 		protected boolean isInstanceOfChild(Object o) {
 			return o instanceof ManyTo;
 		}
+
+		@Override
+		protected Collection<ManyTo> getDelegate() {
+			return delegate;
+		}
 	};
+	Set<ManyTo> delegate = new HashSet<ManyTo>();
 
 }

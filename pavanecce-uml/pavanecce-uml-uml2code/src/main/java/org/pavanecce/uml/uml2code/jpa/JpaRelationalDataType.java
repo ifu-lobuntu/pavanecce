@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.pavanecce.common.code.metamodel.CodeField;
 import org.pavanecce.common.code.metamodel.relationaldb.RelationalColumn;
+import org.pavanecce.uml.uml2code.java.JavaCodeGenerator;
 
 public enum JpaRelationalDataType implements JpaDataTypeStrategy {
 	INT() {
@@ -13,7 +14,7 @@ public enum JpaRelationalDataType implements JpaDataTypeStrategy {
 			imports.add("javax.persistence.Basic");
 			imports.add("javax.persistence.Column");
 		}
-		public void beforeField(String padding, StringBuilder sb, CodeField field, RelationalColumn column) {
+		public void beforeField(String padding, JavaCodeGenerator sb, CodeField field, RelationalColumn column) {
 			sb.append(padding);
 			sb.append("@Basic(");
 			if (column.isRequired()) {
@@ -38,7 +39,7 @@ public enum JpaRelationalDataType implements JpaDataTypeStrategy {
 			imports.add("javax.persistence.TemporalType");
 			imports.add("javax.persistence.Column");
 		}
-		public void beforeField(String padding, StringBuilder sb, CodeField field, RelationalColumn col) {
+		public void beforeField(String padding, JavaCodeGenerator sb, CodeField field, RelationalColumn col) {
 			sb.append(padding);
 			sb.append("@Temporal(TemporalType.TIMESTAMP)\n");
 			sb.append(padding);
@@ -59,7 +60,7 @@ public enum JpaRelationalDataType implements JpaDataTypeStrategy {
 			imports.add("javax.persistence.TemporalType");
 			imports.add("javax.persistence.Column");
 		}
-		public void beforeField(String padding, StringBuilder sb, CodeField field, RelationalColumn col) {
+		public void beforeField(String padding, JavaCodeGenerator sb, CodeField field, RelationalColumn col) {
 			sb.append(padding);
 			sb.append("@Temporal(TemporalType.DATE)\n");
 			sb.append(padding);
@@ -81,7 +82,7 @@ public enum JpaRelationalDataType implements JpaDataTypeStrategy {
 			imports.add("javax.persistence.Column");
 		}
 
-		public void beforeField(String padding, StringBuilder sb, CodeField field, RelationalColumn col) {
+		public void beforeField(String padding, JavaCodeGenerator sb, CodeField field, RelationalColumn col) {
 			sb.append(padding);
 			sb.append("@Temporal(TemporalType.TIME)\n");
 			sb.append(padding);
@@ -102,7 +103,7 @@ public enum JpaRelationalDataType implements JpaDataTypeStrategy {
 			imports.add("javax.persistence.Column");
 		}
 
-		public void beforeField(String padding, StringBuilder sb, CodeField field, RelationalColumn col) {
+		public void beforeField(String padding, JavaCodeGenerator sb, CodeField field, RelationalColumn col) {
 			sb.append(padding);
 			sb.append("@Basic()\n");
 			sb.append("@Column(name=\"");
@@ -122,7 +123,7 @@ public enum JpaRelationalDataType implements JpaDataTypeStrategy {
 			imports.add("javax.persistence.Column");
 		}
 
-		public void beforeField(String padding, StringBuilder sb, CodeField field, RelationalColumn col) {
+		public void beforeField(String padding, JavaCodeGenerator sb, CodeField field, RelationalColumn col) {
 			sb.append(padding);
 			sb.append("@Basic()\n");
 			sb.append(padding);
@@ -143,7 +144,7 @@ public enum JpaRelationalDataType implements JpaDataTypeStrategy {
 			imports.add("javax.persistence.Column");
 		}
 
-		public void beforeField(String padding, StringBuilder sb, CodeField field, RelationalColumn col) {
+		public void beforeField(String padding, JavaCodeGenerator sb, CodeField field, RelationalColumn col) {
 			sb.append(padding);
 			sb.append("@Basic()\n");
 			sb.append(padding);
@@ -164,7 +165,7 @@ public enum JpaRelationalDataType implements JpaDataTypeStrategy {
 			imports.add("javax.persistence.Column");
 		}
 
-		public void beforeField(String padding, StringBuilder sb, CodeField field, RelationalColumn col) {
+		public void beforeField(String padding, JavaCodeGenerator sb, CodeField field, RelationalColumn col) {
 			sb.append(padding);
 			sb.append("@Lob()\n");
 			sb.append(padding);
@@ -186,7 +187,7 @@ public enum JpaRelationalDataType implements JpaDataTypeStrategy {
 			imports.add("javax.persistence.Lob");
 		}
 
-		public void beforeField(String padding, StringBuilder sb, CodeField field, RelationalColumn col) {
+		public void beforeField(String padding, JavaCodeGenerator sb, CodeField field, RelationalColumn col) {
 			sb.append(padding);
 			sb.append("@Lob()\n");
 			sb.append(padding);

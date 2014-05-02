@@ -23,7 +23,7 @@ import org.pavanecce.common.code.metamodel.statements.CodeForStatement;
 import org.pavanecce.uml.uml2code.java.JavaCodeGenerator;
 
 public class SelectExpressionTests extends AbstractOcl2CodeModelTest {
-	JavaCodeGenerator jcg=new JavaCodeGenerator();
+	AbstractCodeGenerator jcg=new JavaCodeGenerator();
 	@Test
 	public void testPrimitiveLiterals() throws IOException {
 		super.adaptor.startVisiting(builder, model);

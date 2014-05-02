@@ -12,7 +12,7 @@
 	<classpathentry exported="true" kind="lib" path="libs/jackrabbit-ocm.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/javassist.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/jcr.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/jython.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jython.jar" sourcepath="libs/jython-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/jboss-logging.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/dom4j.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/slf4j-api.jar"/>

@@ -22,6 +22,7 @@ import org.junit.Test;
 import org.pavanecce.common.code.metamodel.CodeModel;
 import org.pavanecce.common.code.metamodel.CodeTypeReference;
 import org.pavanecce.common.text.filegeneration.TextFileGenerator;
+import org.pavanecce.common.util.AbstractJavaCompilingTest;
 import org.pavanecce.common.util.DummyProgressMonitor;
 import org.pavanecce.common.util.IntrospectionUtil;
 import org.pavanecce.uml.common.util.UmlResourceSetFactory;

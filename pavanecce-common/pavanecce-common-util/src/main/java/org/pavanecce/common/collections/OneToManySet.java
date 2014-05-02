@@ -13,9 +13,7 @@ public abstract class OneToManySet<P,C> extends OneToManyCollection<P,C> impleme
 	private List<C> additions;
 	private List<C> removals;
 	private boolean isConsolidated = false;
-	public OneToManySet(Set<C> current, P parent) {
-		super(current, parent);
-	}
+
 	public OneToManySet(P parent) {
 		super(parent);
 	}
@@ -60,7 +58,7 @@ public abstract class OneToManySet<P,C> extends OneToManyCollection<P,C> impleme
 
 	public Set<C> getCurrent() {
 		isConsolidated=true;
-		Collection<C> current = super.getCurrent();
+		Collection<C> current = getDelegate();
 		if (additions != null) {
 			current.addAll(additions);
 			additions = null;

@@ -24,7 +24,6 @@ import org.pavanecce.common.code.metamodel.CodeField;
 import org.pavanecce.common.code.metamodel.CodeMethod;
 import org.pavanecce.common.code.metamodel.CodeParameter;
 import org.pavanecce.common.code.metamodel.CodeTypeReference;
-import org.pavanecce.uml.uml2code.java.JavaCodeGenerator;
 
 public class CtClassBuilder {
 	Set<CtClass> generatedClasses = new HashSet<CtClass>();
@@ -50,9 +49,9 @@ public class CtClassBuilder {
 		}
 	};
 
-	private JavaCodeGenerator jg;
+	private AbstractCodeGenerator jg;
 
-	public CtClassBuilder(JavaCodeGenerator jg) {
+	public CtClassBuilder(AbstractCodeGenerator jg) {
 		super();
 		this.jg = jg;
 	}

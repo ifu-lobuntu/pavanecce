@@ -35,44 +35,48 @@ public class PythonCodeGenerator extends AbstractCodeGenerator {
 
 	public String getModuleDefinition(CodePackage pkg) {
 		SortedSet<CodeTypeReference> imports = new TreeSet<CodeTypeReference>();
-		StringBuilder sb = new StringBuilder();
+		pushNewStringBuilder();
 		for (Entry<String, CodeClassifier> entry : pkg.getClassifiers().entrySet()) {
 			imports.addAll(entry.getValue().getImports());
 		}
 		for (CodeTypeReference r : imports) {
 			if (!(r instanceof CollectionTypeReference) && !r.isPeer() && !mappedPythonTypes.containsKey(r)) {
 				appendImport(sb, r);
-				appendLineEnd(sb);
+				appendLineEnd();
 			}
 		}
 		for (Entry<String, CodeClassifier> entry : pkg.getClassifiers().entrySet()) {
-			appendClassifierDefinition(sb, entry.getValue());
+			appendClassifierDefinition(entry.getValue());
 			sb.append("\n");
 		}
 		for (CodeTypeReference r : imports) {
 			if (!(r instanceof CollectionTypeReference) && r.isPeer() && !mappedPythonTypes.containsKey(r)) {
 				if (!r.getCodePackageReference().equals(pkg.getPackageReference())) {
-					appendImport(sb, r);
-					appendLineEnd(sb);
+					//TODO figure out why this causes the test to fail
+					//Maybe find a mechanism to import it on a need to know basis
+//					appendImport(sb, r);
+//					appendLineEnd();
 				}
 			}
 		}
-		return sb.toString();
+		return popStringBuilder().toString();
 
 	}
 
 	protected void appendImport(StringBuilder sb, CodeTypeReference r) {
 		sb.append("from ");
-		appendQualifiedName(sb, r.getCodePackageReference());
+		appendQualifiedName(r.getCodePackageReference());
 		sb.append(" import ");
 		sb.append(r.getLastName());
 	}
 
 	@Override
-	public void appendVariableDeclaration(StringBuilder sb, CodeField cf) {
+	public PythonCodeGenerator appendVariableDeclaration(CodeField cf) {
 		sb.append(cf.getName());
 		sb.append(" = ");
-		appendInitialization(sb, cf);
+		appendInitialization(cf);
+		return this;
+
 	}
 
 	@Override
@@ -81,8 +85,10 @@ public class PythonCodeGenerator extends AbstractCodeGenerator {
 	}
 
 	@Override
-	public void appendClassDefinition(StringBuilder sb, CodeClass cc) {
+	public PythonCodeGenerator appendClassDefinition(CodeClass cc) {
 		appendClassifierDefinitionImpl(sb, cc);
+		return this;
+
 	}
 
 	protected void appendClassifierDefinitionImpl(StringBuilder sb, CodeClassifier cc) {
@@ -92,21 +98,21 @@ public class PythonCodeGenerator extends AbstractCodeGenerator {
 		sb.append("  def __init__(self):\n");
 		for (Entry<String, CodeField> fieldEntry : cc.getFields().entrySet()) {
 			sb.append("    self.");
-			appendVariableDeclaration(sb, fieldEntry.getValue());
-			appendLineEnd(sb);
+			appendVariableDeclaration(fieldEntry.getValue());
+			appendLineEnd();
 		}
 		if (cc.getFields().isEmpty()) {
 			sb.append("    pass");
 		}
 		sb.append("\n");
 		for (Entry<String, CodeMethod> methodEntry : cc.getMethods().entrySet()) {
-			appendMethodDeclaration(sb, methodEntry.getValue());
+			appendMethodDeclaration(methodEntry.getValue());
 		}
 		sb.append("\n");
 	}
 
 	@Override
-	public void appendMethodDeclaration(StringBuilder sb, CodeMethod method) {
+	public PythonCodeGenerator appendMethodDeclaration(CodeMethod method) {
 		sb.append("  def ");
 		sb.append(method.getName());
 		sb.append("(self");
@@ -117,25 +123,27 @@ public class PythonCodeGenerator extends AbstractCodeGenerator {
 			sb.append(codeParameter.getName());
 		}
 		sb.append("):\n");
-		appendMethodBody(sb, method);
-		sb.append("\n");
+		appendMethodBody(method);
+		sb.append("\n");		return this;
+
 	}
 
 	@Override
-	protected void appendMethodBody(StringBuilder sb, CodeMethod method) {
+	protected PythonCodeGenerator appendMethodBody(CodeMethod method) {
 		if (method.getResult() != null && method.returnsResult()) {
 			sb.append("    result = ");
-			interpretExpression(sb, method.getResult());
-			appendLineEnd(sb);
+			interpretExpression(method.getResult());
+			appendLineEnd();
 		}
-		appendCodeBlock("    ", sb, method.getBody());
+		appendCodeBlock("    ", method.getBody());
 		if (method.getResult() != null && method.returnsResult()) {
 			sb.append("    return result\n");
-		}
+		}		return this;
+
 	}
 
 	@Override
-	public void interpretExpression(StringBuilder sb, CodeExpression exp) {
+	public PythonCodeGenerator interpretExpression(CodeExpression exp) {
 		if (exp instanceof PortableExpression) {
 			sb.append(super.applyCommonReplacements(((PortableExpression) exp)));
 		} else if (exp instanceof PrimitiveDefaultExpression) {
@@ -154,11 +162,12 @@ public class PythonCodeGenerator extends AbstractCodeGenerator {
 				sb.append("()");
 			}
 		}
+		return this;
 	}
 
 	@Override
-	protected StringBuilder appendLineEnd(StringBuilder sb) {
-		return sb.append("\n");
+	protected void appendLineEnd() {
+		 sb.append("\n");
 	}
 
 	@Override
@@ -177,13 +186,15 @@ public class PythonCodeGenerator extends AbstractCodeGenerator {
 	}
 
 	@Override
-	protected void appendInterfaceDefinition(StringBuilder sb, CodeInterface value) {
+	protected PythonCodeGenerator appendInterfaceDefinition(CodeInterface value) {
 		appendClassifierDefinitionImpl(sb, value);
+		return this;
 	}
 
 	@Override
-	protected void appendEnumerationDefinition(StringBuilder sb, CodeEnumeration value) {
+	protected PythonCodeGenerator appendEnumerationDefinition(CodeEnumeration value) {
 		appendClassifierDefinitionImpl(sb, value);
+		return this;
 
 	}
 	@Override

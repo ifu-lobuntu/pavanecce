@@ -37,62 +37,69 @@ import org.pavanecce.common.code.metamodel.statements.PortableStatement;
  * Contract: appendXXX methods never end with lineEnds
  * 
  */
-public abstract class AbstractCodeGenerator {
-
+public abstract class AbstractCodeGenerator extends AbstractTextGenerator {
 	public AbstractCodeGenerator() {
 		super();
 	}
+
+	public abstract AbstractCodeGenerator interpretExpression(CodeExpression exp);
 
 	public abstract String getSelf();
 
 	protected abstract String toVisibility(CodeVisibilityKind k);
 
-	protected abstract StringBuilder appendLineEnd(StringBuilder sb);
+	protected abstract void appendLineEnd();
 
-	protected abstract void appendMethodBody(StringBuilder sb, CodeMethod method);
+	protected abstract AbstractCodeGenerator appendMethodBody(CodeMethod method);
 
+	protected abstract AbstractCodeGenerator appendInterfaceDefinition(CodeInterface value);
+
+	protected abstract AbstractCodeGenerator appendEnumerationDefinition(CodeEnumeration value);
+
+	public abstract AbstractCodeGenerator appendMethodDeclaration(CodeMethod method);
+
+	public abstract AbstractCodeGenerator appendClassDefinition(CodeClass cc);
+
+	public abstract AbstractCodeGenerator appendVariableDeclaration(CodeField cf);
+
+	protected abstract String getVoidType();
+
+	protected abstract String defaultValue(CollectionTypeReference kind);
+
+	protected abstract String getMappedName(CodeTypeReference type);
 	public String toMethodBody(CodeMethod m) {
-		StringBuilder sb = new StringBuilder();
-		appendMethodBody(sb, m);
-		return sb.toString();
+		pushNewStringBuilder();
+		appendMethodBody(m);
+		return popStringBuilder().toString();
 	}
-
-	public abstract void appendMethodDeclaration(StringBuilder sb, CodeMethod method);
-
-	public abstract void appendClassDefinition(StringBuilder sb, CodeClass cc);
-
-	public abstract void appendVariableDeclaration(StringBuilder sb, CodeField cf);
 
 	public String toClassifierDeclaration(CodeClassifier cc) {
-		StringBuilder sb = new StringBuilder();
-		appendClassifierDefinition(sb, cc);
-		return sb.toString();
+		pushNewStringBuilder();
+		appendClassifierDefinition(cc);
+		return popStringBuilder().toString();
 	}
 
-	protected void appendClassifierDefinition(StringBuilder sb, CodeClassifier value) {
+	protected AbstractCodeGenerator appendClassifierDefinition(CodeClassifier value) {
 		if (value instanceof CodeClass) {
-			appendClassDefinition(sb, (CodeClass) value);
+			appendClassDefinition((CodeClass) value);
 		} else if (value instanceof CodeEnumeration) {
-			appendEnumerationDefinition(sb, (CodeEnumeration) value);
+			appendEnumerationDefinition((CodeEnumeration) value);
 		} else if (value instanceof CodeInterface) {
-			appendInterfaceDefinition(sb, (CodeInterface) value);
+			appendInterfaceDefinition((CodeInterface) value);
 		}
+		return this;
 
 	}
-
-	protected abstract void appendInterfaceDefinition(StringBuilder sb, CodeInterface value);
-
-	protected abstract void appendEnumerationDefinition(StringBuilder sb, CodeEnumeration value);
 
 	public String toQualifiedName(CodeClass cc) {
-		StringBuilder sb = new StringBuilder();
-		appendQualifiedName(sb, cc.getPackage());
+		pushNewStringBuilder();
+		appendQualifiedName(cc.getPackage());
 		sb.append(".");
 		sb.append(cc.getName());
-		return sb.toString();
+		return popStringBuilder().toString();
 	}
 
-	public void appendQualifiedName(StringBuilder sb, CodePackage cp) {
+	public AbstractCodeGenerator appendQualifiedName(CodePackage cp) {
 		List<String> qn = cp.getPackageReference().getQualifiedNameInLanguage(getLanguage());
 		Iterator<String> iterator = qn.iterator();
 		while (iterator.hasNext()) {
@@ -103,6 +110,7 @@ public abstract class AbstractCodeGenerator {
 			}
 
 		}
+		return this;
 	}
 
 	protected String getLanguage() {
@@ -112,17 +120,17 @@ public abstract class AbstractCodeGenerator {
 	public String toQualifiedName(CodeTypeReference type) {
 		String mappedName = getMappedName(type);
 		if (mappedName == null) {
-			StringBuilder sb = new StringBuilder();
-			appendQualifiedName(sb, type.getCodePackageReference());
+			pushNewStringBuilder();
+			appendQualifiedName(type.getCodePackageReference());
 			sb.append(".");
 			sb.append(type.getLastName());
-			return sb.toString();
+			return popStringBuilder().toString();
 		} else {
 			return mappedName;
 		}
 	}
 
-	public void appendQualifiedName(StringBuilder sb, CodeTypeReference type) {
+	public AbstractCodeGenerator appendQualifiedName(CodeTypeReference type) {
 		String mappedType = getMappedName(type);
 		if (mappedType != null) {
 			sb.append(mappedType);
@@ -130,14 +138,15 @@ public abstract class AbstractCodeGenerator {
 			if (type == null) {
 				sb.append(getVoidType());
 			} else {
-				appendQualifiedName(sb, type.getCodePackageReference());
+				appendQualifiedName(type.getCodePackageReference());
 				sb.append(".");
 				sb.append(type.getLastName());
 			}
 		}
+		return this;
 	}
 
-	protected void appendQualifiedName(StringBuilder sb, CodePackageReference ref) {
+	protected AbstractCodeGenerator appendQualifiedName(CodePackageReference ref) {
 		Iterator<String> iter = ref.getQualifiedNameInLanguage(getLanguage()).iterator();
 		while (iter.hasNext()) {
 			String string = (String) iter.next();
@@ -147,91 +156,93 @@ public abstract class AbstractCodeGenerator {
 			}
 
 		}
-
+		return this;
 	}
 
-	protected abstract String getVoidType();
-
-	protected abstract String getMappedName(CodeTypeReference type);
-
 	public String toCodeBlock(CodeBlock body) {
-		StringBuilder sb = new StringBuilder();
-		appendCodeBlock("", sb, body);
-		return sb.toString();
+		pushNewStringBuilder();
+		appendCodeBlock("", body);
+		return popStringBuilder().toString();
 	}
 
 	public String toMethodDeclaration(CodeMethod value) {
-		StringBuilder sb = new StringBuilder();
-		appendMethodDeclaration(sb, value);
-		return sb.toString();
+		pushNewStringBuilder();
+		appendMethodDeclaration(value);
+		return popStringBuilder().toString();
 	}
 
-	public void appendStatement(String padding, StringBuilder sb, CodeStatement st) {
+	public AbstractCodeGenerator appendStatement(String padding, CodeStatement st) {
 		if (st instanceof CodeSimpleStatement) {
 			sb.append(padding);
-			appendSimpleStatement(sb, (CodeSimpleStatement) st);
+			appendSimpleStatement((CodeSimpleStatement) st);
 		} else if (st instanceof CodeIfStatement) {
 			sb.append(padding);
 			CodeIfStatement ifStatement = (CodeIfStatement) st;
-			StringBuilder condition = new StringBuilder();
-			interpretExpression(condition, ifStatement.getCondition());
-			openIf(sb, condition.toString());
+			pushNewStringBuilder();
+			interpretExpression(ifStatement.getCondition());
+			openIf(popStringBuilder().toString());
 			sb.append("\n");
-			appendCodeBlock(padding + "  ", sb, ifStatement.getThenBlock());
+			appendCodeBlock(padding + "  ", ifStatement.getThenBlock());
 			if (ifStatement.hasElse()) {
 				sb.append(padding);
-				openElse(sb);
+				openElse();
 				sb.append("\n");
-				appendCodeBlock(padding + "  ", sb, ifStatement.getElseBlock());
+				appendCodeBlock(padding + "  ", ifStatement.getElseBlock());
 			}
 			sb.append(padding);
-			closeIf(sb);
+			closeIf();
 			sb.append("\n");
 		} else if (st instanceof CodeForStatement) {
 			sb.append(padding);
 			CodeForStatement forStatement = (CodeForStatement) st;
-			StringBuilder collectionExpression = new StringBuilder();
-			interpretExpression(collectionExpression, forStatement.getCollectionExpression());
-			openFor(sb, forStatement.getElemType(), forStatement.getElemName(), collectionExpression.toString());
+			pushNewStringBuilder();
+			interpretExpression(forStatement.getCollectionExpression());
+			openFor(forStatement.getElemType(), forStatement.getElemName(), popStringBuilder().toString());
 			sb.append("\n");
-			appendCodeBlock(padding + "  ", sb, forStatement.getBody());
+			appendCodeBlock(padding + "  ", forStatement.getBody());
 			sb.append(padding);
-			closeFor(sb);
+			closeFor();
 			sb.append("\n");
 		}
+		return this;
 	}
 
-	protected void closeFor(StringBuilder sb) {
+	protected AbstractCodeGenerator closeFor() {
 		sb.append("}");
+		return this;
 	}
 
-	protected void closeIf(StringBuilder sb) {
+	protected AbstractCodeGenerator closeIf() {
 		sb.append("}");
+		return this;
 	}
 
-	protected void openIf(StringBuilder sb, String condition) {
+	protected AbstractCodeGenerator openIf(String condition) {
 		sb.append("if(");
 		sb.append(condition);
 		sb.append("){");
+		return this;
 	}
 
-	protected void openElse(StringBuilder sb) {
+	protected AbstractCodeGenerator openElse() {
 		sb.append("} else {");
+		return this;
 	}
 
-	protected void appendSimpleStatement(StringBuilder sb, CodeSimpleStatement statement) {
+	protected AbstractCodeGenerator appendSimpleStatement(CodeSimpleStatement statement) {
 		if (statement instanceof PortableStatement) {
 			sb.append(applyCommonReplacements((PortableStatement) statement));
 		} else if (statement instanceof MethodCallStatement) {
 			MethodCallStatement ms = (MethodCallStatement) statement;
-			invokeMethod(sb, ms.getArguments(), ms.getMethodName());
+			invokeMethod(ms.getArguments(), ms.getMethodName());
 		} else if (statement instanceof AssignmentStatement) {
 			sb.append(((AssignmentStatement) statement).getVariableName());
 			sb.append(" = ");
-			interpretExpression(sb, ((AssignmentStatement) statement).getValue());
+			interpretExpression(((AssignmentStatement) statement).getValue());
 		} else {
 			sb.append("Not Supported: " + statement.getClass());
 		}
+		return this;
 	}
 
 	protected String applyCommonReplacements(PortableExpression textStatement) {
@@ -249,23 +260,24 @@ public abstract class AbstractCodeGenerator {
 	}
 
 	public String toFieldDeclaration(CodeField cf) {
-		StringBuilder sb = new StringBuilder();
-		appendFieldDeclaration(sb, cf);
-		appendLineEnd(sb);
-		return sb.toString();
+		pushNewStringBuilder();
+		appendFieldDeclaration(cf);
+		appendLineEnd();
+		return popStringBuilder().toString();
 	}
 
-	protected void appendFieldDeclaration(StringBuilder sb, CodeField cf) {
+	protected AbstractCodeGenerator appendFieldDeclaration(CodeField cf) {
 		sb.append("  ");
 		sb.append(toVisibility(cf.getVisibility()));
-		appendVariableDeclaration(sb, cf);
+		appendVariableDeclaration(cf);
+		return this;
 	}
 
-	public void appendCodeBlock(String padding, StringBuilder sb, CodeBlock body) {
+	public AbstractCodeGenerator appendCodeBlock(String padding, CodeBlock body) {
 		for (CodeField codeField : body.getLocals()) {
 			sb.append(padding);
-			appendVariableDeclaration(sb, codeField);
-			appendLineEnd(sb);
+			appendVariableDeclaration(codeField);
+			appendLineEnd();
 		}
 		for (CodeStatement statement : body.getStatements()) {
 			if (statement instanceof MappedStatement) {
@@ -285,12 +297,13 @@ public abstract class AbstractCodeGenerator {
 					}
 				}
 			} else {
-				appendStatement(padding, sb, statement);
+				appendStatement(padding, statement);
 				if (statement instanceof CodeSimpleStatement) {
-					appendLineEnd(sb);
+					appendLineEnd();
 				}
 			}
 		}
+		return this;
 	}
 
 	protected String defaultValue(CodePrimitiveTypeKind kind) {
@@ -317,9 +330,7 @@ public abstract class AbstractCodeGenerator {
 		}
 	}
 
-	public abstract void interpretExpression(StringBuilder sb, CodeExpression exp);
-
-	protected void appendInitialization(StringBuilder sb, CodeField cf) {
+	protected AbstractCodeGenerator appendInitialization(CodeField cf) {
 		if (cf.getInitialization() == null) {
 			CodeTypeReference type = cf.getType();
 			if (type instanceof PrimitiveTypeReference) {
@@ -327,41 +338,43 @@ public abstract class AbstractCodeGenerator {
 			} else if (type instanceof CollectionTypeReference) {
 				sb.append(defaultValue((CollectionTypeReference) type));
 			} else {
-				interpretExpression(sb, new NullExpression());
+				interpretExpression(new NullExpression());
 			}
 		} else {
-			interpretExpression(sb, cf.getInitialization());
+			interpretExpression(cf.getInitialization());
 		}
+		return this;
 	}
 
-	protected abstract String defaultValue(CollectionTypeReference kind) ;
-
-	protected void invokeMethod(StringBuilder sb, List<CodeExpression> arguments, String methodName) {
+	protected AbstractCodeGenerator invokeMethod(List<CodeExpression> arguments, String methodName) {
 		sb.append(this.applyCommonReplacements(methodName));
 		sb.append("(");
 		Iterator<CodeExpression> iterator = arguments.iterator();
 		while (iterator.hasNext()) {
 			CodeExpression arg = iterator.next();
-			interpretExpression(sb, arg);
+			interpretExpression(arg);
 			if (iterator.hasNext()) {
 				sb.append(",");
 			}
 		}
 		sb.append(")");
+		return this;
 	}
 
-	protected void interpretMethodCallExpression(StringBuilder sb, MethodCallExpression mce) {
+	protected AbstractCodeGenerator interpretMethodCallExpression(MethodCallExpression mce) {
 		if (mce.getTarget() != null) {
-			interpretExpression(sb, mce.getTarget());
+			interpretExpression(mce.getTarget());
 			sb.append(".");
 		}
 		List<CodeExpression> arguments = mce.getArguments();
 		String methodName = mce.getMethodName();
-		invokeMethod(sb, arguments, methodName);
+		invokeMethod(arguments, methodName);
+		return this;
 	}
 
-	protected void openFor(StringBuilder sb, CodeTypeReference elemType, String elemName, String collectionExpression) {
+	protected AbstractCodeGenerator openFor(CodeTypeReference elemType, String elemName, String collectionExpression) {
 		throw new RuntimeException();
 	}
+
 
 }

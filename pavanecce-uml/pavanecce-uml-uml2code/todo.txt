@@ -1,4 +1,9 @@
+Done
+AssociationCollections:OneToManySet,  ManyToManySet
+Basic JPA support
+
 Minimum collection contract for OCL: add, addAll, remove, removeAll,contains, set with uniqueness, list with sequence
+
 
 Javascript:
 Implement minimum collection contract 
@@ -9,12 +14,10 @@ Collection Properties: declare two fields xxx which is the collection contract a
  No setter, lazy initialise both fields
 Lazy load collections or proxies using REST
   
-But first implement the generation of TwoWaySets
 Java:
-Collection Properties: declare two fields xxx which is the collection contract and xxxImpl which is the hibernate collection. 
- No setter, lazy initialise both fields
 OCM classes
-Implement the generation of TwoWaySets
+
+AssociationCollections:OneToManySequence,  ManyToManySequence,OneToManyOrderedSet,  ManyToManyOrderedSet
 
 Python:
 Django persistence

@@ -25,7 +25,7 @@ import org.pavanecce.cmmn.jbpm.test.domain.HousePlan;
 import org.pavanecce.cmmn.jbpm.test.domain.Wall;
 import org.pavanecce.cmmn.jbpm.test.domain.WallPlan;
 
-public class BuilderTest extends AbstrasctJbpmCaseBaseTestCase {
+public class BuilderTest extends AbstractJbpmCaseTestCase {
 
 	public BuilderTest() {
 		super(true, true, "org.jbpm.persistence.jpa");

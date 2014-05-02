@@ -20,7 +20,7 @@ import org.pavanecce.cmmn.jbpm.test.domain.HousePlan;
 import org.pavanecce.cmmn.jbpm.test.domain.RoofPlan;
 import org.pavanecce.cmmn.jbpm.test.domain.WallPlan;
 
-public abstract class SingleCaseFileItemEntryCriterionTests extends AbstrasctJbpmCaseBaseTestCase {
+public abstract class SingleCaseFileItemEntryCriterionTests extends AbstractJbpmCaseTestCase {
 
 	protected HousePlan housePlan;
 	protected House house;

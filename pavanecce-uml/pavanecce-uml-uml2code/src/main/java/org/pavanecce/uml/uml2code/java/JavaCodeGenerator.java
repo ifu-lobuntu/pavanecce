@@ -34,6 +34,7 @@ import org.pavanecce.common.code.metamodel.expressions.StaticFieldExpression;
 import org.pavanecce.common.code.metamodel.expressions.StaticMethodCallExpression;
 import org.pavanecce.common.code.metamodel.expressions.TypeExpression;
 import org.pavanecce.uml.uml2code.AbstractCodeGenerator;
+import org.pavanecce.uml.uml2code.AbstractTextGenerator;
 import org.pavanecce.uml.uml2code.jpa.AbstractJavaCodeDecorator;
 
 public class JavaCodeGenerator extends AbstractCodeGenerator {
@@ -49,7 +50,7 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 	}
 
 	@Override
-	public void appendVariableDeclaration(StringBuilder sb, CodeField cf) {
+	public JavaCodeGenerator appendVariableDeclaration(CodeField cf) {
 		CodeTypeReference varName = cf.getType();
 		if (cf.isStatic()) {
 			sb.append("static ");
@@ -57,11 +58,12 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 		if (cf.isConstant()) {
 			sb.append("final ");
 		}
-		appendType(sb, varName);
+		appendType(varName);
 		sb.append(" ");
 		sb.append(cf.getName());
 		sb.append(" = ");
-		appendInitialization(sb, cf);
+		appendInitialization(cf);
+		return this;
 	}
 
 	@Override
@@ -123,59 +125,64 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 	}
 
 	@Override
-	public void appendClassDefinition(StringBuilder sb, CodeClass cc) {
-		appendPackageAndImports(sb, cc);
+	public JavaCodeGenerator appendClassDefinition(CodeClass cc) {
+		appendPackageAndImports(cc);
 		for (AbstractJavaCodeDecorator d : this.decorators) {
-			d.appendAdditionalImports(sb, cc);
+			d.appendAdditionalImports(this, cc);
 		}
 		for (AbstractJavaCodeDecorator d : this.decorators) {
-			d.decorateClassDeclaration(sb, cc);
+			d.decorateClassDeclaration(this, cc);
 		}
-		appendClassDeclaration(sb, cc);
+		appendClassDeclaration(cc);
 		sb.append("{\n");
-		appendFieldsAndMethodDeclarations(sb, cc);
+		appendFieldsAndMethodDeclarations(cc);
 		sb.append("}\n");
+		return this;
 	}
 
-	protected void appendFieldsAndMethodDeclarations(StringBuilder sb, CodeClassifier cc) {
+	protected JavaCodeGenerator appendFieldsAndMethodDeclarations(CodeClassifier cc) {
 		for (Entry<String, CodeField> fieldEntry : cc.getFields().entrySet()) {
 			for (AbstractJavaCodeDecorator d : this.decorators) {
-				d.decorateFieldDeclaration(sb, fieldEntry.getValue());
+				d.decorateFieldDeclaration(this, fieldEntry.getValue());
 			}
-			appendFieldDeclaration(sb, fieldEntry.getValue());
-			appendLineEnd(sb);
+			appendFieldDeclaration(fieldEntry.getValue());
+			appendLineEnd();
 		}
-		appendAdditionalFields(sb, cc);
+		appendAdditionalFields(cc);
 		for (Entry<String, CodeMethod> methodEntry : cc.getMethods().entrySet()) {
 			for (AbstractJavaCodeDecorator d : this.decorators) {
-				d.decorateMethodDeclaration(sb, methodEntry.getValue());
+				d.decorateMethodDeclaration(this, methodEntry.getValue());
 			}
-			appendMethodDeclaration(sb, methodEntry.getValue());
+			appendMethodDeclaration(methodEntry.getValue());
 		}
-		appendAdditionalMethods(sb, cc);
+		appendAdditionalMethods(cc);
+		return this;
 	}
 
-	protected void appendAdditionalFields(StringBuilder sb, CodeClassifier cc) {
+	protected JavaCodeGenerator appendAdditionalFields(CodeClassifier cc) {
 		for (AbstractJavaCodeDecorator d : this.decorators) {
-			d.appendAdditionalFields(sb, cc);
+			d.appendAdditionalFields(this, cc);
 		}
+		return this;
 	}
 
-	protected void appendAdditionalMethods(StringBuilder sb, CodeClassifier cc) {
+	protected JavaCodeGenerator appendAdditionalMethods(CodeClassifier cc) {
 		for (AbstractJavaCodeDecorator d : this.decorators) {
-			d.appendAdditionalMethods(sb, cc);
+			d.appendAdditionalMethods(this, cc);
 		}
+		return this;
 
 	}
 
-	protected void appendPackageAndImports(StringBuilder sb, CodeClassifier cc) {
+	protected JavaCodeGenerator appendPackageAndImports(CodeClassifier cc) {
 		sb.append("package ");
-		appendQualifiedName(sb, cc.getPackage());
-		appendLineEnd(sb);
-		appendImports(sb, cc);
+		appendQualifiedName(cc.getPackage());
+		appendLineEnd();
+		appendImports(cc);
+		return this;
 	}
 
-	protected void appendClassDeclaration(StringBuilder sb, CodeClass cc) {
+	protected JavaCodeGenerator appendClassDeclaration(CodeClass cc) {
 		sb.append("public class ");
 		sb.append(cc.getName());
 		if (cc.getSuperClass() != null) {
@@ -194,17 +201,19 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 			}
 
 		}
+		return this;
 	}
 
-	protected void appendImports(StringBuilder sb, CodeClassifier cc) {
+	protected JavaCodeGenerator appendImports(CodeClassifier cc) {
 		for (CodeTypeReference r : cc.getImports()) {
 			String qualifiedName = this.toQualifiedName(r);
 			if (!isInJavaLang(qualifiedName)) {
 				sb.append("import ");
 				sb.append(qualifiedName);
-				appendLineEnd(sb);
+				appendLineEnd();
 			}
 		}
+		return this;
 	}
 
 	private boolean isInJavaLang(String r) {
@@ -213,14 +222,14 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 	}
 
 	@Override
-	public void appendMethodDeclaration(StringBuilder sb, CodeMethod method) {
+	public JavaCodeGenerator appendMethodDeclaration(CodeMethod method) {
 		sb.append("  ");
 		sb.append(toVisibility(method.getVisibility()));
 		CodeTypeReference returnType = method.getReturnType();
 		if (returnType == null) {
 			sb.append("void");
 		} else {
-			appendType(sb, returnType);
+			appendType(returnType);
 		}
 		sb.append(" ");
 		sb.append(method.getName());
@@ -229,7 +238,7 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 		while (iterator.hasNext()) {
 			CodeParameter codeParameter = (CodeParameter) iterator.next();
 			CodeTypeReference paramType = codeParameter.getType();
-			appendType(sb, paramType);
+			appendType(paramType);
 			sb.append(" ");
 			sb.append(codeParameter.getName());
 			if (iterator.hasNext()) {
@@ -241,9 +250,10 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 			sb.append(";\n");
 		} else {
 			sb.append("{\n");
-			appendMethodBody(sb, method);
+			appendMethodBody(method);
 			sb.append("  }\n");
 		}
+		return this;
 	}
 
 	public String toVisibility(CodeVisibilityKind k) {
@@ -260,33 +270,35 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 	}
 
 	@Override
-	protected void appendMethodBody(StringBuilder sb, CodeMethod method) {
+	protected JavaCodeGenerator appendMethodBody(CodeMethod method) {
 		if (method.getResult() != null && method.returnsResult()) {
 			sb.append("    ");
 			CodeTypeReference returnType = method.getReturnType();
-			appendType(sb, returnType);
+			appendType(returnType);
 			sb.append(" result = ");
-			interpretExpression(sb, method.getResult());
-			appendLineEnd(sb);
+			interpretExpression(method.getResult());
+			appendLineEnd();
 		}
-		appendCodeBlock("    ", sb, method.getBody());
+		appendCodeBlock("    ", method.getBody());
 		if (method.getResult() != null && method.returnsResult()) {
 			sb.append("    return result;\n");
 		}
+		return this;
 	}
 
 	@Override
-	protected void openFor(StringBuilder sb, CodeTypeReference elemType, String elemName, String collectionExpression) {
+	protected JavaCodeGenerator openFor(CodeTypeReference elemType, String elemName, String collectionExpression) {
 		sb.append("for(");
-		appendType(sb, elemType);
+		appendType(elemType);
 		sb.append(" ");
 		sb.append(elemName);
 		sb.append(" : ");
 		sb.append(collectionExpression);
 		sb.append("){");
+		return this;
 	}
 
-	private void appendType(StringBuilder sb, CodeTypeReference returnType) {
+	public JavaCodeGenerator appendType(CodeTypeReference returnType) {
 		if (returnType.isMapped()) {
 			String mappedName = getMappedName(returnType);
 			if (mappedName != null) {
@@ -297,11 +309,12 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 			sb.append(returnType.getLastName());
 		}
 		if (returnType.getElementTypes().size() > 0) {
-			appendElementTypes(sb, returnType);
+			appendElementTypes(returnType);
 		}
+		return this;
 	}
 
-	protected void appendElementTypes(StringBuilder sb, CodeTypeReference returnType) {
+	protected JavaCodeGenerator appendElementTypes(CodeTypeReference returnType) {
 		sb.append("<");
 		Iterator<CodeElementType> iterator = returnType.getElementTypes().iterator();
 		while (iterator.hasNext()) {
@@ -309,17 +322,18 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 			if (element.isExtends()) {
 				sb.append("? extends ");
 			}
-			appendType(sb, element.getType());
+			appendType(element.getType());
 			if (iterator.hasNext()) {
 				sb.append(",");
 			}
 		}
 		sb.append(">");
+		return this;
 	}
 
 	@Override
-	protected StringBuilder appendLineEnd(StringBuilder sb) {
-		return sb.append(";\n");
+	public void appendLineEnd() {
+		 sb.append(";\n");
 	}
 
 	@Override
@@ -332,7 +346,7 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 		return "this";
 	}
 
-	public void interpretExpression(StringBuilder sb, CodeExpression exp) {
+	public JavaCodeGenerator interpretExpression(CodeExpression exp) {
 		if (exp instanceof PortableExpression) {
 			sb.append(super.applyCommonReplacements((PortableExpression) exp));
 		} else if (exp instanceof TypeExpression) {
@@ -342,36 +356,36 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 				sb.append("(");
 				sb.append(te.getType().getLastName());
 				sb.append(")");
-				interpretExpression(sb, te.getArg());
+				interpretExpression(te.getArg());
 			case IS_TYPE:
 				// TODO make this more intelligent
-				interpretExpression(sb, te.getArg());
+				interpretExpression(te.getArg());
 				sb.append(" instanceof ");
 				sb.append(te.getType().getLastName());
 			case IS_KIND:
-				interpretExpression(sb, te.getArg());
+				interpretExpression(te.getArg());
 				sb.append(" instanceof ");
 				sb.append(te.getType().getLastName());
 			}
 		} else if (exp instanceof IsNullExpression) {
 			IsNullExpression ne = (IsNullExpression) exp;
-			interpretExpression(sb, ne.getSource());
+			interpretExpression(ne.getSource());
 			sb.append(" == null");
 		} else if (exp instanceof NotExpression) {
 			NotExpression ne = (NotExpression) exp;
 			sb.append("!(");
-			interpretExpression(sb, ne.getSource());
+			interpretExpression(ne.getSource());
 			sb.append(")");
 		} else if (exp instanceof PrimitiveDefaultExpression) {
 			sb.append(defaultValue(((PrimitiveDefaultExpression) exp).getPrimitiveTypeKind()));
 		} else if (exp instanceof BinaryOperatorExpression) {
 			BinaryOperatorExpression boe = (BinaryOperatorExpression) exp;
 			sb.append("( ");
-			interpretExpression(sb, boe.getArg1());
+			interpretExpression(boe.getArg1());
 			sb.append(" ");
 			sb.append(boe.getOperator());
 			sb.append(" ");
-			interpretExpression(sb, boe.getArg2());
+			interpretExpression(boe.getArg2());
 			sb.append(" )");
 		} else if (exp instanceof StaticFieldExpression) {
 			StaticFieldExpression sfe = (StaticFieldExpression) exp;
@@ -382,9 +396,9 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 			StaticMethodCallExpression smce = (StaticMethodCallExpression) exp;
 			sb.append(smce.getType().getLastName());
 			sb.append(".");
-			invokeMethod(sb, smce.getArguments(), smce.getMethodName());
+			invokeMethod(smce.getArguments(), smce.getMethodName());
 		} else if (exp instanceof MethodCallExpression) {
-			interpretMethodCallExpression(sb, (MethodCallExpression) exp);
+			interpretMethodCallExpression((MethodCallExpression) exp);
 		} else if (exp instanceof NullExpression) {
 			sb.append("null");
 		} else if (exp instanceof NewInstanceExpression) {
@@ -393,7 +407,7 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 				CollectionTypeReference impl = ((CollectionTypeReference) type).getImplementation();
 				sb.append("new ");
 				sb.append(this.toSimpleName(impl));
-				appendElementTypes(sb, type);
+				appendElementTypes(type);
 				sb.append("()");
 			} else if (type instanceof PrimitiveTypeReference) {
 				CodePrimitiveTypeKind kind = ((PrimitiveTypeReference) type).getKind();
@@ -404,12 +418,12 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 				sb.append("()");
 			}
 		}
-
+		return this;
 	}
 
 	@Override
-	protected void appendInterfaceDefinition(StringBuilder sb, CodeInterface cc) {
-		appendPackageAndImports(sb, cc);
+	protected JavaCodeGenerator appendInterfaceDefinition(CodeInterface cc) {
+		appendPackageAndImports(cc);
 		sb.append("public interface ");
 		sb.append(cc.getName());
 		if (cc.getSuperInterfaces().size() > 0) {
@@ -424,14 +438,15 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 			}
 		}
 		sb.append("{\n");
-		appendFieldsAndMethodDeclarations(sb, cc);
+		appendFieldsAndMethodDeclarations(cc);
 		sb.append("}\n");
+		return this;
 
 	}
 
 	@Override
-	protected void appendEnumerationDefinition(StringBuilder sb, CodeEnumeration cc) {
-		appendPackageAndImports(sb, cc);
+	protected JavaCodeGenerator appendEnumerationDefinition(CodeEnumeration cc) {
+		appendPackageAndImports(cc);
 		sb.append("public enum ");
 		if (cc.getImplementedInterfaces().size() > 0) {
 			sb.append(" implements ");
@@ -446,9 +461,11 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 
 		}
 		sb.append("{\n");
-		appendFieldsAndMethodDeclarations(sb, cc);
+		appendFieldsAndMethodDeclarations(cc);
 		sb.append("}\n");
 		sb.append(cc.getName());
+		
+		return this;
 	}
 
 	@Override
@@ -462,11 +479,19 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 
 	public String elementTypeLastName(CollectionTypeReference kind) {
 		CodeTypeReference type = kind.getElementTypes().get(0).getType();
+		return typeLastName(type);
+	}
+
+	public String typeLastName(CodeTypeReference type) {
 		String mappedName = getMappedName(type);
 		if(mappedName!=null){
 			return mappedName.substring(mappedName.lastIndexOf(".")+1);
 		}
 		return type.getLastName();
+	}
+	public JavaCodeGenerator append(String string) {
+		super.append(string);
+		return this;
 	}
 
 }

@@ -13,14 +13,12 @@ public abstract class ManyToManySet<P,C> extends ManyToManyCollection<P,C> imple
 	private List<C> additions;
 	private List<C> removals;
 	private boolean isConsolidated = false;
-	public ManyToManySet(Set<C> current, P parent) {
-		super(current, parent);
-	}
 	public ManyToManySet(P parent) {
 		super(parent);
 	}
 
 	protected abstract boolean isLoaded();
+	protected abstract Collection<C> getDelegate() ;
 
 	@Override
 	public boolean removeImpl(C child) {
@@ -60,7 +58,7 @@ public abstract class ManyToManySet<P,C> extends ManyToManyCollection<P,C> imple
 
 	public Set<C> getCurrent() {
 		isConsolidated=true;
-		Collection<C> current = super.getCurrent();
+		Collection<C> current = getDelegate();
 		if (additions != null) {
 			current.addAll(additions);
 			additions = null;
@@ -71,6 +69,7 @@ public abstract class ManyToManySet<P,C> extends ManyToManyCollection<P,C> imple
 		}
 		return (Set<C>) current;
 	}
+
 	@Override
 	public boolean contains(Object child) {
 		if (useTempCollections()) {

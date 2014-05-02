@@ -1,4 +1,4 @@
-package org.pavanecce.uml.uml2code;
+package org.pavanecce.common.util;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,8 +37,9 @@ import org.pavanecce.common.text.workspace.SourceFolderNameStrategy;
 import org.pavanecce.common.text.workspace.TextProject;
 import org.pavanecce.common.text.workspace.TextProjectDefinition;
 import org.pavanecce.common.text.workspace.TextWorkspace;
-import org.pavanecce.common.util.VersionNumber;
 import org.pavanecce.uml.common.util.IFileLocator;
+import org.pavanecce.uml.uml2code.AdaptableFileLocator;
+import org.pavanecce.uml.uml2code.TestBundle;
 import org.pavanecce.uml.uml2code.java.EmfJavaCodeGenerator;
 import org.pavanecce.uml.uml2code.java.JavaCodeGenerator;
 import org.pavanecce.uml.uml2code.jpa.TestPersistenceUnitInfo;
@@ -49,8 +50,9 @@ public abstract class AbstractJavaCompilingTest extends Assert {
 
 	protected IFileLocator fileLocator = new AdaptableFileLocator();
 	protected JavaCodeGenerator javaCodeGenerator;
-	protected ScriptEngine javaScriptEngine;
+	private ScriptEngine javaScriptEngine;
 	protected ScriptContext javaScriptContext;
+	protected ClassLoader classLoader;
 
 	public AbstractJavaCompilingTest() {
 		super();
@@ -97,33 +99,24 @@ public abstract class AbstractJavaCompilingTest extends Assert {
 	}
 
 	protected void initScriptingEngine() {
+		Thread.currentThread().setContextClassLoader(classLoader);
 		ScriptEngineManager manager = new ScriptEngineManager();
-		javaScriptEngine = manager.getEngineByName("js");
-		javaScriptContext = javaScriptEngine.getContext();
+
+		setJavaScriptEngine(manager.getEngineByName("js"));
+		javaScriptContext = getJavaScriptEngine().getContext();
 	}
 
 	private File calculateOutputRoot() {
 		File f = new File(System.getProperty("user.home"), "tmp/" + getTestName() + "/java");
 		f.mkdirs();
-		deleteAll(f);
+		FileUtil.deleteAllChildren(f);
 		return f;
-	}
-
-	protected void deleteAll(File f) {
-		File[] listFiles = f.listFiles();
-		for (File file : listFiles) {
-			if(file.isFile()){
-				file.delete();
-			}else{
-				deleteAll(file);
-			}
-		}
 	}
 
 	private File calculateClasspath() {
 		File cp = new File(System.getProperty("user.home"), "tmp/" + getTestName() + "/classes");
 		cp.mkdirs();
-		deleteAll(cp);
+		FileUtil.deleteAllChildren(cp);
 		return cp;
 	}
 
@@ -252,7 +245,7 @@ public abstract class AbstractJavaCompilingTest extends Assert {
 			cp.append(fileLocator.resolve(url).toExternalForm());
 			cp.append(File.pathSeparatorChar);
 		}
-		if(urlClassLoader.getParent() instanceof URLClassLoader){
+		if (urlClassLoader.getParent() instanceof URLClassLoader) {
 			appendClassPath(cp, (URLClassLoader) urlClassLoader.getParent());
 		}
 	}
@@ -266,6 +259,14 @@ public abstract class AbstractJavaCompilingTest extends Assert {
 			addMappedClasses(pui, child);
 		}
 
+	}
+
+	public ScriptEngine getJavaScriptEngine() {
+		return javaScriptEngine;
+	}
+
+	public void setJavaScriptEngine(ScriptEngine javaScriptEngine) {
+		this.javaScriptEngine = javaScriptEngine;
 	}
 
 }

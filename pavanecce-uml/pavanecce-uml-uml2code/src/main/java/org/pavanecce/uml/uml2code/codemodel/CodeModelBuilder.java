@@ -18,6 +18,7 @@ import org.eclipse.uml2.uml.Parameter;
 import org.eclipse.uml2.uml.PrimitiveType;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.TypedElement;
+import org.pavanecce.common.code.metamodel.AssociationCollectionTypeReference;
 import org.pavanecce.common.code.metamodel.CodeClass;
 import org.pavanecce.common.code.metamodel.CodeCollectionKind;
 import org.pavanecce.common.code.metamodel.CodeField;
@@ -28,6 +29,7 @@ import org.pavanecce.common.code.metamodel.CodePrimitiveTypeKind;
 import org.pavanecce.common.code.metamodel.CodeTypeReference;
 import org.pavanecce.common.code.metamodel.CollectionTypeReference;
 import org.pavanecce.common.code.metamodel.PrimitiveTypeReference;
+import org.pavanecce.common.code.metamodel.documentdb.IDocumentElement;
 import org.pavanecce.common.code.metamodel.expressions.BinaryOperatorExpression;
 import org.pavanecce.common.code.metamodel.expressions.IsNullExpression;
 import org.pavanecce.common.code.metamodel.expressions.NewInstanceExpression;
@@ -46,12 +48,29 @@ import org.pavanecce.uml.common.util.EmfParameterUtil;
 import org.pavanecce.uml.common.util.EmfPropertyUtil;
 
 public class CodeModelBuilder extends DefaultCodeModelBuilder {
+	private boolean useAssociationCollections = false;
+	private DocumentUtil documentUtil=new DocumentUtil();
+
+	public boolean useAssociationCollections() {
+		return useAssociationCollections;
+	}
+
+	public CodeModelBuilder(boolean useAssociationCollections) {
+		super();
+		this.useAssociationCollections = useAssociationCollections;
+	}
+
+	public CodeModelBuilder() {
+		this(false);
+	}
+
 	@Override
 	public void visitProperty(Property p, CodeClass codeClass) {
 		String fieldName = toValidVariableName(p.getName());
 		CodeField cf = new CodeField(codeClass, fieldName);
 		cf.setType(calculateType(p));
 		cf.putData(IRelationalElement.class, RelationalUtil.buildRelationalElement(p));
+		cf.putData(IDocumentElement.class, documentUtil.buildDocumentElement(p));
 		String capitalized = toValidVariableName(capitalize(p.getName()));
 		String getterName = "get" + capitalized;
 		if (cf.getType() instanceof PrimitiveTypeReference && ((PrimitiveTypeReference) cf.getType()).getKind() == CodePrimitiveTypeKind.BOOLEAN) {
@@ -63,7 +82,11 @@ public class CodeModelBuilder extends DefaultCodeModelBuilder {
 		}
 
 		CodeMethod getter = new CodeMethod(codeClass, getterName, cf.getType());
-		getter.setResultInitialValue("${self}." + fieldName);
+		if (useAssociationCollections && p.getOtherEnd() != null && p.getOtherEnd().isNavigable() && EmfPropertyUtil.isMany(p) && p.isUnique() ) {
+			getter.setResultInitialValue("${self}." + fieldName + "Wrapper");
+		} else {
+			getter.setResultInitialValue("${self}." + fieldName);
+		}
 		CodeMethod setter = new CodeMethod("set" + capitalized);
 		CodeParameter param = new CodeParameter("new" + capitalized, setter, cf.getType());
 		setter.setDeclaringClass(codeClass);
@@ -71,21 +94,31 @@ public class CodeModelBuilder extends DefaultCodeModelBuilder {
 			if (EmfPropertyUtil.isManyToMany(p)) {
 				setter.getBody().getStatements().add(new PortableStatement("${self}." + fieldName + " = " + param.getName()));
 			} else if (EmfPropertyUtil.isOneToMany(p)) {
+				NotExpression notNull= new NotExpression(new IsNullExpression(new PortableExpression(param.getName())));
+				CodeIfStatement ifNewNotNull = new CodeIfStatement(setter.getBody(), notNull);
+				new PortableStatement(ifNewNotNull.getThenBlock(), param.getName() +".get" +NameConverter.capitalize(p.getOtherEnd().getName())+"().add(this)");
+				NotExpression oldNotNull= new NotExpression(new IsNullExpression(new PortableExpression("${self}." + fieldName)));
+				CodeIfStatement ifOldNotNull = new CodeIfStatement(ifNewNotNull.getElseBlock(), oldNotNull);
+				new PortableStatement(ifOldNotNull.getThenBlock(), "${self}." + fieldName +".get" +NameConverter.capitalize(p.getOtherEnd().getName())+"().remove(this)");
 				setter.getBody().getStatements().add(new PortableStatement("${self}." + fieldName + " = " + param.getName()));
 			} else if (EmfPropertyUtil.isManyToOne(p)) {
 				setter.getBody().getStatements().add(new PortableStatement("${self}." + fieldName + " = " + param.getName()));
 			} else if (EmfPropertyUtil.isOneToOne(p)) {
-				new CodeField(setter.getBody(),"oldValue",param.getType()).setInitExp("${self}."+ fieldName);
-				NotExpression notEquals = new NotExpression(new BinaryOperatorExpression(new PortableExpression(param.getName()), "==", new PortableExpression( "oldValue")));
+				new CodeField(setter.getBody(), "oldValue", param.getType()).setInitExp("${self}." + fieldName);
+				NotExpression notEquals = new NotExpression(new BinaryOperatorExpression(new PortableExpression(param.getName()), "==", new PortableExpression(
+						"oldValue")));
 				CodeIfStatement ifNotEquals = new CodeIfStatement(setter.getBody(), notEquals);
 				new PortableStatement(ifNotEquals.getThenBlock(), "${self}." + fieldName + " = " + param.getName());
-				CodeIfStatement ifOldNotNull = new CodeIfStatement(ifNotEquals.getThenBlock(), new NotExpression(new IsNullExpression(new PortableExpression("oldValue"))));
+				CodeIfStatement ifOldNotNull = new CodeIfStatement(ifNotEquals.getThenBlock(), new NotExpression(new IsNullExpression(new PortableExpression(
+						"oldValue"))));
 				String otherCappedName = toValidVariableName(NameConverter.capitalize(p.getOtherEnd().getName()));
-				new MethodCallStatement(ifOldNotNull.getThenBlock(), "oldValue.set" + otherCappedName,new NullExpression());
-				CodeIfStatement ifNewNotNull = new CodeIfStatement(ifNotEquals.getThenBlock(), new NotExpression(new IsNullExpression(new PortableExpression(param.getName()))));
-				NotExpression otherNotEquals = new NotExpression(new BinaryOperatorExpression(new PortableExpression("${self}"), "==", new PortableExpression(param.getName()+ ".get" + otherCappedName  + "()")));
+				new MethodCallStatement(ifOldNotNull.getThenBlock(), "oldValue.set" + otherCappedName, new NullExpression());
+				CodeIfStatement ifNewNotNull = new CodeIfStatement(ifNotEquals.getThenBlock(), new NotExpression(new IsNullExpression(new PortableExpression(
+						param.getName()))));
+				NotExpression otherNotEquals = new NotExpression(new BinaryOperatorExpression(new PortableExpression("${self}"), "==", new PortableExpression(
+						param.getName() + ".get" + otherCappedName + "()")));
 				CodeIfStatement ifOtherNotEquals = new CodeIfStatement(ifNewNotNull.getThenBlock(), otherNotEquals);
-				new PortableStatement(ifOtherNotEquals.getThenBlock(), param.getName()+ ".set" + otherCappedName  + "(${self})");
+				new PortableStatement(ifOtherNotEquals.getThenBlock(), param.getName() + ".set" + otherCappedName + "(${self})");
 			}
 		} else {
 			setter.getBody().getStatements().add(new PortableStatement("${self}." + fieldName + " = " + param.getName()));
@@ -96,20 +129,52 @@ public class CodeModelBuilder extends DefaultCodeModelBuilder {
 		CodeTypeReference result = null;
 		if (EmfPropertyUtil.isMany(te)) {
 			MultiplicityElement me = (MultiplicityElement) te;
-			if (me.isUnique() && me.isOrdered()) {
-				result = new CollectionTypeReference(CodeCollectionKind.ORDERED_SET);
-				result = new CollectionTypeReference(CodeCollectionKind.SET);
-			} else if (me.isOrdered()) {
-				result = new CollectionTypeReference(CodeCollectionKind.SEQUENCE);
+			if (useAssociationCollections && me instanceof Property && ((Property) me).getOtherEnd() != null && ((Property) me).getOtherEnd().isNavigable()) {
+				Property otherEnd = ((Property) me).getOtherEnd();
+				result = calculateAssociationType(me, otherEnd);
+				AssociationCollectionTypeReference associationCollectionTypeReference = (AssociationCollectionTypeReference) result;
+				if (EmfPropertyUtil.isMany(otherEnd)) {
+					AssociationCollectionTypeReference otherType = calculateAssociationType(otherEnd, (Property) me);
+					associationCollectionTypeReference.setOtherFieldType(otherType);
+					otherType.setOtherFieldType(associationCollectionTypeReference);
+				} else {
+					associationCollectionTypeReference.setOtherFieldType(calculateType(otherEnd));
+				}
 			} else {
-				result = new CollectionTypeReference(CodeCollectionKind.BAG);
+				if (me.isUnique() && me.isOrdered()) {
+					result = new CollectionTypeReference(CodeCollectionKind.ORDERED_SET);
+				} else if (me.isUnique()) {
+					result = new CollectionTypeReference(CodeCollectionKind.SET);
+				} else if (me.isOrdered()) {
+					result = new CollectionTypeReference(CodeCollectionKind.SEQUENCE);
+				} else {
+					result = new CollectionTypeReference(CodeCollectionKind.BAG);
+				}
+				result.addToElementTypes(calculateTypeReference(te.getType()));
 			}
-			result.addToElementTypes(calculateTypeReference(te.getType()));
 		} else if (te.getType() instanceof PrimitiveType) {
 			result = new PrimitiveTypeReference(getPrimitiveTypeKind(te), EmfClassifierUtil.getMappings(te.getType()));
 		} else {
 			result = calculateTypeReference(te.getType());
 		}
+		return result;
+	}
+
+	protected AssociationCollectionTypeReference calculateAssociationType(MultiplicityElement me, Property otherEnd) {
+		AssociationCollectionTypeReference result;
+		String otherFieldName = NameConverter.decapitalize(otherEnd.getName());
+
+		if (me.isUnique() && me.isOrdered()) {
+			result = new AssociationCollectionTypeReference(CodeCollectionKind.ORDERED_SET, otherFieldName);
+		} else if (me.isUnique()) {
+			result = new AssociationCollectionTypeReference(CodeCollectionKind.SET, otherFieldName);
+		} else if (me.isOrdered()) {
+			result = new AssociationCollectionTypeReference(CodeCollectionKind.SEQUENCE, otherFieldName);
+		} else {
+			result = new AssociationCollectionTypeReference(CodeCollectionKind.BAG, otherFieldName);
+		}
+		result.addToElementTypes(calculateTypeReference(((Property) me).getType()));
+
 		return result;
 	}
 
@@ -187,6 +252,7 @@ public class CodeModelBuilder extends DefaultCodeModelBuilder {
 		codeClass.putData(Model.class, c.getModel());
 		codeClass.setTypeReference(this.calculateTypeReference(c));
 		codeClass.putData(IRelationalElement.class, RelationalUtil.buildRelationalElement(c));
+		codeClass.putData(IDocumentElement.class, documentUtil.getDocumentNode(c));
 		return codeClass;
 	}
 }

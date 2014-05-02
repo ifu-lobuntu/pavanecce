@@ -65,20 +65,20 @@ import org.pavanecce.common.ocm.OcmObjectPersistence;
 
 import bitronix.tm.resource.jdbc.PoolingDataSource;
 
-public abstract class AbstrasctJbpmCaseBaseTestCase extends JbpmJUnitBaseTestCase {
+public abstract class AbstractJbpmCaseTestCase extends JbpmJUnitBaseTestCase {
 	ObjectPersistence persistence;
 	protected boolean isJpa = false;
 	private OcmFactory ocmFactory;
 
-	public AbstrasctJbpmCaseBaseTestCase() {
+	public AbstractJbpmCaseTestCase() {
 		super();
 	}
 
-	public AbstrasctJbpmCaseBaseTestCase(boolean setupDataSource, boolean sessionPersistence) {
+	public AbstractJbpmCaseTestCase(boolean setupDataSource, boolean sessionPersistence) {
 		super(setupDataSource, sessionPersistence);
 	}
 
-	public AbstrasctJbpmCaseBaseTestCase(boolean setupDataSource, boolean sessionPersistence, String persistenceUnitName) {
+	public AbstractJbpmCaseTestCase(boolean setupDataSource, boolean sessionPersistence, String persistenceUnitName) {
 		super(setupDataSource, sessionPersistence, persistenceUnitName);
 	}
 

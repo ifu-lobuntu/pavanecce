@@ -5,12 +5,10 @@ import java.util.Iterator;
 
 public abstract class TwoWayCollection<C> implements Collection<C>{
 
-	protected Collection<C> current;
 
 	public TwoWayCollection() {
 		super();
 	}
-
 	protected abstract boolean isInstanceOfChild(Object o);
 
 	protected abstract Collection<C> newInstance();
@@ -18,6 +16,8 @@ public abstract class TwoWayCollection<C> implements Collection<C>{
 	protected abstract boolean addImpl(C e);
 
 	protected abstract boolean removeImpl(C e);
+
+	protected abstract Collection<C> getCurrent() ;
 
 	public <T> T[] toArray(T[] a) {
 		return getCurrent().toArray(a);
@@ -53,14 +53,6 @@ public abstract class TwoWayCollection<C> implements Collection<C>{
 	public int size() {
 		return getCurrent().size();
 	}
-
-	protected Collection<C> getCurrent() {
-		if (current == null) {
-			current = newInstance();
-		}
-		return current;
-	}
-
 	@Override
 	public boolean isEmpty() {
 		return getCurrent().isEmpty();

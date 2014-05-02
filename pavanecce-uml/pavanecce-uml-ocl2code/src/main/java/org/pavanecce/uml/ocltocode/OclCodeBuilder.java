@@ -11,6 +11,7 @@ import org.pavanecce.common.code.metamodel.CodeConstructor;
 import org.pavanecce.common.code.metamodel.CodeExpression;
 import org.pavanecce.common.code.metamodel.CodeMethod;
 import org.pavanecce.common.code.metamodel.CodeModel;
+import org.pavanecce.common.code.metamodel.CodePackage;
 import org.pavanecce.common.code.metamodel.CodeParameter;
 import org.pavanecce.common.code.metamodel.statements.AssignmentStatement;
 import org.pavanecce.uml.common.ocl.OpaqueExpressionContext;
@@ -25,7 +26,7 @@ public class OclCodeBuilder extends DefaultCodeModelBuilder {
 	private UmlToCodeMaps codeMaps;
 
 	@Override
-	public void initialize(SortedSet<Model> models, CodeModel codeModel) {
+	public void initialize(SortedSet<Model> models, CodePackage codeModel) {
 		super.initialize(models, codeModel);
 		this.oclContextFactory = new OclContextFactory(models.iterator().next().eResource().getResourceSet());
 		this.codeMaps = new UmlToCodeMaps(false);

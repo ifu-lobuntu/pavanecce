@@ -5,11 +5,6 @@ import java.util.Iterator;
 
 public abstract class ManyToManyCollection<P, C> extends TwoWayCollection<C> implements Collection<C> {
 	private P parent;
-	public ManyToManyCollection(Collection<C> current, P parent) {
-		super();
-		this.current = current;
-	}
-
 	public ManyToManyCollection(P parent2) {
 		this.parent=parent2;
 	}

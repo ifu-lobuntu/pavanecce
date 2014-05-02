@@ -97,7 +97,7 @@ public class UmlGeneratorFromOwl extends AbstractUmlGenerator {
 			return attr;
 		} else {
 			Association assoc = createAssociation(cls, pd);
-			Property otherEnd = createEnd(baseType, assoc, pd.getOtherEnd(), cls);
+			createEnd(baseType, assoc, pd.getOtherEnd(), cls);
 			Property thisEnd = createEnd(cls, assoc, pd, baseType);
 			return thisEnd;
 		}
