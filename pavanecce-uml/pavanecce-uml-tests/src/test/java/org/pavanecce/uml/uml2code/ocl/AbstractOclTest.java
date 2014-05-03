@@ -2,6 +2,8 @@ package org.pavanecce.uml.uml2code.ocl;
 
 import javax.script.ScriptException;
 
+import org.eclipse.emf.common.util.BasicEList;
+import org.eclipse.emf.common.util.EList;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.pavanecce.common.util.ConstructionCaseExample;
@@ -18,6 +20,14 @@ public abstract class AbstractOclTest extends Assert {
 		example.after();
 	}
 
+	protected final static <T> EList<T> list(T... t) {
+		BasicEList<T> result = new BasicEList<T>();
+		for (T t2 : t) {
+			result.add(t2);
+		}
+		return result;
+	}
+
 	protected static Object eval(String s) throws ScriptException {
 		return example.getJavaScriptEngine().eval(s);
 	}
@@ -25,10 +35,9 @@ public abstract class AbstractOclTest extends Assert {
 	public void assertEquals(int i, Object val) {
 		if (val instanceof Number) {
 			assertEquals(i, ((Number) val).intValue());
-		}else{
+		} else {
 			super.assertEquals(i, val);
 		}
 	}
-	
 
 }

@@ -1,7 +1,5 @@
 package org.pavanecce.uml.uml2code.ocl;
 
-import org.eclipse.emf.common.util.BasicEList;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.uml2.uml.OpaqueExpression;
 import org.eclipse.uml2.uml.Operation;
 import org.eclipse.uml2.uml.Parameter;
@@ -20,14 +18,6 @@ public abstract class AbstractCollectTests extends AbstractOclTest {
 		OpaqueExpression ocl = (OpaqueExpression) find.createBodyCondition("body").createSpecification("spec", example.getRoomPlan(), UMLPackage.eINSTANCE.getOpaqueExpression());
 		ocl.getLanguages().add("ocl");
 		ocl.getBodies().add("housePlan.wallPlan->collect(roomPlan->any(rp|rp.name=nameToFind))");
-	}
-
-	private static <T> EList<T> list(T... t) {
-		BasicEList<T> result = new BasicEList<T>();
-		for (T t2 : t) {
-			result.add(t2);
-		}
-		return result;
 	}
 
 	@Test

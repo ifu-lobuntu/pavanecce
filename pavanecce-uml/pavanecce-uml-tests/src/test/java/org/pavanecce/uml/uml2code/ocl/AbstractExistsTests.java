@@ -1,7 +1,5 @@
 package org.pavanecce.uml.uml2code.ocl;
 
-import org.eclipse.emf.common.util.BasicEList;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.uml2.uml.OpaqueExpression;
 import org.eclipse.uml2.uml.Operation;
 import org.eclipse.uml2.uml.Parameter;
@@ -10,16 +8,17 @@ import org.eclipse.uml2.uml.Type;
 import org.eclipse.uml2.uml.UMLPackage;
 import org.junit.Test;
 
-public abstract class AbstractSelectTests extends AbstractOclTest {
+public abstract class AbstractExistsTests extends AbstractOclTest {
 	protected static void addOcl() {
-		Operation find = example.getConstructionCase().createOwnedOperation("findRoomPlan", list("nameToFind"), list((Type) example.getType("String")));
-		Parameter result = find.createOwnedParameter("result", example.getRoomPlan());
+		Operation find = example.getConstructionCase().createOwnedOperation("existsRoomPlan", list("nameToFind"), list((Type) example.getType("String")));
+		Parameter result = find.createOwnedParameter("result", example.getType("Boolean"));
 		result.setDirection(ParameterDirectionKind.RETURN_LITERAL);
-		result.setUpper(-1);
+		result.setUpper(1);
 		OpaqueExpression ocl = (OpaqueExpression) find.createBodyCondition("body").createSpecification("spec", example.getRoomPlan(), UMLPackage.eINSTANCE.getOpaqueExpression());
 		ocl.getLanguages().add("ocl");
-		ocl.getBodies().add("housePlan.roomPlan->select(name=nameToFind)");
+		ocl.getBodies().add("housePlan.roomPlan->exists(rp|rp.name=nameToFind)");
 	}
+
 
 
 	@Test
@@ -37,7 +36,9 @@ public abstract class AbstractSelectTests extends AbstractOclTest {
 		eval("roomPlan2.setName('roomPlan2');");
 		eval("housePlan.getRoomPlan().add(roomPlan1);");
 		eval("housePlan.getRoomPlan().add(roomPlan2);");
-		eval("var found=constructionCase.findRoomPlan('roomPlan1');");
-		assertEquals(1, eval("found.size();"));
+		assertEquals(2, eval("housePlan.getRoomPlan().size();"));
+		assertEquals(true, eval("constructionCase.existsRoomPlan('roomPlan1');"));
+		assertEquals(true, eval("constructionCase.existsRoomPlan('roomPlan2');"));
+		assertEquals(false, eval("constructionCase.existsRoomPlan('roomPlan3');"));
 	}
 }

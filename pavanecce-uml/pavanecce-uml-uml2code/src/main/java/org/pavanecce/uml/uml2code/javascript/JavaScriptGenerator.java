@@ -1,5 +1,7 @@
 package org.pavanecce.uml.uml2code.javascript;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -35,10 +37,11 @@ import org.pavanecce.common.code.metamodel.expressions.StaticFieldExpression;
 import org.pavanecce.common.code.metamodel.expressions.StaticMethodCallExpression;
 import org.pavanecce.common.code.metamodel.expressions.TypeExpression;
 import org.pavanecce.common.code.metamodel.statements.AssignmentStatement;
+import org.pavanecce.common.code.metamodel.statements.SetResultStatement;
 import org.pavanecce.uml.uml2code.AbstractCodeGenerator;
 
 public class JavaScriptGenerator extends AbstractCodeGenerator {
-	boolean isInFor = false;
+	Deque<Object>  isInFor =new ArrayDeque<Object>();
 	private Map<CodeTypeReference, String> mappedJavaScriptTypes = new HashMap<CodeTypeReference, String>();
 	{
 
@@ -81,6 +84,10 @@ public class JavaScriptGenerator extends AbstractCodeGenerator {
 			sb.append(statement2.getVariableName());
 			sb.append(" = ");
 			interpretExpression(statement2.getValue());
+			
+			if(statement2 instanceof SetResultStatement && this.isInFor.size()>0){
+				sb.append(";return false");
+			}
 		}
 	}
 
@@ -309,7 +316,7 @@ public class JavaScriptGenerator extends AbstractCodeGenerator {
 
 	@Override
 	public String getSelf() {
-		return isInFor?"self":"this";
+		return isInFor.isEmpty()?"this":"self";
 	}
 
 	@Override
@@ -336,16 +343,16 @@ public class JavaScriptGenerator extends AbstractCodeGenerator {
 
 	@Override
 	protected JavaScriptGenerator closeFor() {
-		sb.append("});");
-		isInFor = false;
+		sb.append("return true;});");
+		isInFor.pop();
 		return this;
 	}
 
 	@Override
 	protected JavaScriptGenerator openFor(CodeTypeReference elemType, String elemName, String collectionExpression) {
-		isInFor=true;
+		isInFor.push(new Object());
 		sb.append(collectionExpression);
-		sb.append(".each(function(");
+		sb.append(".all(function(");
 		sb.append(elemName);
 		sb.append("){");
 		return this;

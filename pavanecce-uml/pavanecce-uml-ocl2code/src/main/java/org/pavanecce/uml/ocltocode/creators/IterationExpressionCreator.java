@@ -223,14 +223,15 @@ public class IterationExpressionCreator {
 	private CodeExpression createOne(IteratorExp exp, CodeExpression source, boolean isStatic, List<CodeParameter> params) {
 		// generate operation
 		CodeMethod oper = buildOperation(exp, isStatic, params);
-		CodeField genr = new CodeField(oper.getBody(), "_genNr", StdlibMap.javaIntegerType);
+		oper.setResultInitialValue("false");
+		CodeField genr = new CodeField(oper.getBody(), "count", StdlibMap.javaIntegerType);
 		genr.setInitialization("0");
 		CodeForStatement forEach = new CodeForStatement(oper.getBody(), iterVarNames[0], myElementTypePath, source);
 		CodeIfStatement ifMatch = new CodeIfStatement(forEach.getBody(), expStr);
-		new PortableStatement(ifMatch.getThenBlock(), "_genNr = _genNr + 1");
-		CodeIfStatement ifNotOne = new CodeIfStatement(oper.getBody(), new PortableExpression("_genNr != 1"));
-		new PortableStatement(ifNotOne.getThenBlock(), "return false");
-		new PortableStatement(oper.getBody(), "return true");
+		new PortableStatement(ifMatch.getThenBlock(), "count = count + 1");
+		CodeIfStatement ifNotOne = new CodeIfStatement(ifMatch.getThenBlock(), new PortableExpression("count > 1"));
+		new SetResultStatement(ifNotOne.getThenBlock(),new PortableExpression("false"));
+		new SetResultStatement(oper.getBody(), new PortableExpression("count == 1"));
 		return callMethod(oper);
 	}
 
@@ -254,10 +255,10 @@ public class IterationExpressionCreator {
 
 	private CodeExpression createExists(IteratorExp exp, CodeExpression source, boolean isStatic, List<CodeParameter> params) {
 		CodeMethod oper = buildOperation(exp, isStatic, params);
+		oper.setResultInitialValue("false");
 		CodeForStatement forEach = new CodeForStatement(oper.getBody(), iterVarNames[0], myElementTypePath, source);
 		CodeIfStatement ifMatch = new CodeIfStatement(forEach.getBody(), expStr);
-		new PortableStatement(ifMatch.getThenBlock(), "return true");
-		new PortableStatement(oper.getBody(), "return false");
+		new SetResultStatement(ifMatch.getThenBlock(), new PortableExpression("true"));
 		return callMethod(oper);
 	}
 
