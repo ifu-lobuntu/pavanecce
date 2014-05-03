@@ -38,6 +38,7 @@ import org.pavanecce.common.code.metamodel.statements.AssignmentStatement;
 import org.pavanecce.uml.uml2code.AbstractCodeGenerator;
 
 public class JavaScriptGenerator extends AbstractCodeGenerator {
+	boolean isInFor = false;
 	private Map<CodeTypeReference, String> mappedJavaScriptTypes = new HashMap<CodeTypeReference, String>();
 	{
 
@@ -194,6 +195,8 @@ public class JavaScriptGenerator extends AbstractCodeGenerator {
 	@Override
 	protected JavaScriptGenerator appendMethodBody(CodeMethod method) {
 		CodeExpression result2 = method.getResult();
+		sb.append("    var self = this");
+		this.appendLineEnd();
 		if (result2 != null && method.returnsResult()) {
 			sb.append("    var result = ");
 			interpretExpression(result2);
@@ -247,8 +250,8 @@ public class JavaScriptGenerator extends AbstractCodeGenerator {
 			}
 		} else if (exp instanceof IsNullExpression) {
 			IsNullExpression ne = (IsNullExpression) exp;
+			sb.append("!");
 			interpretExpression(ne.getSource());
-			sb.append(" == null");
 		} else if (exp instanceof NotExpression) {
 			NotExpression ne = (NotExpression) exp;
 			sb.append("!(");
@@ -306,7 +309,7 @@ public class JavaScriptGenerator extends AbstractCodeGenerator {
 
 	@Override
 	public String getSelf() {
-		return "this";
+		return isInFor?"self":"this";
 	}
 
 	@Override
@@ -334,12 +337,13 @@ public class JavaScriptGenerator extends AbstractCodeGenerator {
 	@Override
 	protected JavaScriptGenerator closeFor() {
 		sb.append("});");
+		isInFor = false;
 		return this;
 	}
 
 	@Override
 	protected JavaScriptGenerator openFor(CodeTypeReference elemType, String elemName, String collectionExpression) {
-
+		isInFor=true;
 		sb.append(collectionExpression);
 		sb.append(".each(function(");
 		sb.append(elemName);

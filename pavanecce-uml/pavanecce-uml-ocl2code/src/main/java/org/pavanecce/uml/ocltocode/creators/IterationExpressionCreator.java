@@ -33,6 +33,7 @@ import org.pavanecce.common.code.metamodel.statements.CodeForStatement;
 import org.pavanecce.common.code.metamodel.statements.CodeIfStatement;
 import org.pavanecce.common.code.metamodel.statements.MethodCallStatement;
 import org.pavanecce.common.code.metamodel.statements.PortableStatement;
+import org.pavanecce.common.code.metamodel.statements.SetResultStatement;
 import org.pavanecce.common.util.NameConverter;
 import org.pavanecce.uml.common.ocl.AbstractOclContext;
 import org.pavanecce.uml.ocltocode.common.EmfPropertyCallHelper;
@@ -138,8 +139,10 @@ public class IterationExpressionCreator {
 			new PortableStatement(forEach.getBody(), "result.addAll( bodyExpResult )");
 		} else {
 			NotExpression notNull = new NotExpression(new IsNullExpression(new PortableExpression("bodyExpResult")));
-			new CodeIfStatement(forEach.getBody(), notNull, new PortableStatement("result.add( bodyExpResult )"));
+			CodeIfStatement ifMatch = new CodeIfStatement(forEach.getBody(), notNull, new PortableStatement("result.add( bodyExpResult )"));
+//			new PortableStatement(ifMatch.getThenBlock(),"Packages.java.lang.System.out.println(bodyExpResult)" );
 		}
+
 		return callMethod(oper);
 	}
 
@@ -213,7 +216,7 @@ public class IterationExpressionCreator {
 		oper.setComment("implements " + exp.toString());
 		CodeForStatement forEach = new CodeForStatement(oper.getBody(), iterVarNames[0], myElementTypePath, source);
 		CodeIfStatement ifMatch = new CodeIfStatement(forEach.getBody(), expStr);
-		new PortableStatement(ifMatch.getThenBlock(), "return " + iterVarNames[0]);
+		new SetResultStatement(ifMatch.getThenBlock(), new PortableExpression(iterVarNames[0]));
 		return callMethod(oper);
 	}
 

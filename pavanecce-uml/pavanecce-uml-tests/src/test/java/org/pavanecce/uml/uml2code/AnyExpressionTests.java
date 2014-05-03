@@ -41,7 +41,7 @@ public class AnyExpressionTests extends AbstractOcl2CodeModelTest {
 		assertEquals("    Integer result = 0;", getDefaultIntegerBody.readLine());
 		assertEquals("    for(Integer x : collectionLiteral0()){", getDefaultIntegerBody.readLine());
 		assertEquals("      if(( x > 3 )){", getDefaultIntegerBody.readLine());
-		assertEquals("        return x;", getDefaultIntegerBody.readLine());
+		assertEquals("        result = x;", getDefaultIntegerBody.readLine());
 		assertEquals("      }", getDefaultIntegerBody.readLine());
 		assertEquals("    }", getDefaultIntegerBody.readLine());
 		assertEquals("    return result;", getDefaultIntegerBody.readLine());
