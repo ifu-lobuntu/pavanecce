@@ -34,7 +34,7 @@ public class OcmTests extends AbstractPersistenceTest {
 		FileUtil.deleteRoot(new File("./repository"));
 		System.setProperty("java.naming.factory.initial", "bitronix.tm.jndi.BitronixInitialContextFactory");
 		example = new ConstructionCaseExample("OcmPersistence");
-		example.setup(new JavaCodeGenerator(), new OcmCodeDecorator());
+		example.generateCode(new JavaCodeGenerator(), new OcmCodeDecorator());
 		List<Class> classes = getClasses();
 		UmlDocumentModelFileVisitorAdaptor a = new UmlDocumentModelFileVisitorAdaptor();
 		DocumentModelBuilder docBuilder = new DocumentModelBuilder();
@@ -59,7 +59,7 @@ public class OcmTests extends AbstractPersistenceTest {
 	@SuppressWarnings("rawtypes")
 	private static List<Class> getClasses() throws Exception {
 		List<Class> result = new ArrayList<Class>();
-		addMappedClasses(result, example.getAdaptor().getCodeModel(), example.getJavaCodeGenerator(), example.getClassLoader());
+		addMappedClasses(result, example.getAdaptor().getCodeModel(), (JavaCodeGenerator) example.getCodeGenerator(), example.getClassLoader());
 		return result;
 	}
 

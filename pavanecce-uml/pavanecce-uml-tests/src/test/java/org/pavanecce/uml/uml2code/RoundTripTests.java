@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.pavanecce.common.code.metamodel.CodeModel;
 import org.pavanecce.common.code.metamodel.CodeTypeReference;
 import org.pavanecce.common.text.filegeneration.TextFileGenerator;
-import org.pavanecce.common.util.AbstractJavaCompilingTest;
+import org.pavanecce.common.util.AbstractPotentiallyJavaCompilingTest;
 import org.pavanecce.common.util.DummyProgressMonitor;
 import org.pavanecce.common.util.IntrospectionUtil;
 import org.pavanecce.uml.common.util.UmlResourceSetFactory;
@@ -31,8 +31,9 @@ import org.pavanecce.uml.reverse.java.sourcemodel.SourceClass;
 import org.pavanecce.uml.reverse.java.sourcemodel.reflect.JavaDescriptorFactory;
 import org.pavanecce.uml.uml2code.codemodel.CodeModelBuilder;
 import org.pavanecce.uml.uml2code.codemodel.UmlCodeModelVisitorAdaptor;
+import org.pavanecce.uml.uml2code.java.JavaCodeGenerator;
 
-public class RoundTripTests extends AbstractJavaCompilingTest {
+public class RoundTripTests extends AbstractPotentiallyJavaCompilingTest {
 
 	protected CodeModelBuilder builder;
 	protected Model model;
@@ -62,7 +63,7 @@ public class RoundTripTests extends AbstractJavaCompilingTest {
 		UmlCodeModelVisitorAdaptor adaptor = new UmlCodeModelVisitorAdaptor(importUmlClasses(rst));
 		adaptor.startVisiting(builder, model);
 		CodeModel codeModel = adaptor.getCodeModel();
-		TextFileGenerator tfg = generateJava(codeModel);
+		TextFileGenerator tfg = generateSourceCode(codeModel);
 		ClassLoader cl = compile(tfg.getNewFiles());
 		Class<?> classifierClass = cl.loadClass(Classifier.class.getName());
 		Class<?> vdfpClass = cl.loadClass("vdfp_uml.VdfpClassifier");
@@ -76,7 +77,7 @@ public class RoundTripTests extends AbstractJavaCompilingTest {
 		Set<SourceClass> sourceClasses = new HashSet<SourceClass>();
 		for (Class<?> class1 : dependencies) {
 			sourceClasses.add(jfd.getClassDescriptor(class1));
-			getJavaCodeGenerator().map(new CodeTypeReference(false, ("tmp." + class1.getName()).split("\\.")), class1.getName());
+			((JavaCodeGenerator) getCodeGenerator()).map(new CodeTypeReference(false, ("tmp." + class1.getName()).split("\\.")), class1.getName());
 		}
 		SimpleUmlGenerator sug = new SimpleUmlGenerator();
 		Resource tmpResource = rst.createResource(URI.createFileURI("test-input/tmp.uml"));
@@ -97,7 +98,7 @@ public class RoundTripTests extends AbstractJavaCompilingTest {
 		Set<Entry<String, Classifier>> entrySet = sug.getClassMap().entrySet();
 		for (Entry<String, Classifier> entry : entrySet) {
 			String[] split = entry.getValue().getQualifiedName().split("\\:\\:");
-			getJavaCodeGenerator().map(new CodeTypeReference(false, split), entry.getKey());
+			((JavaCodeGenerator) getCodeGenerator()).map(new CodeTypeReference(false, split), entry.getKey());
 		}
 
 		return result;

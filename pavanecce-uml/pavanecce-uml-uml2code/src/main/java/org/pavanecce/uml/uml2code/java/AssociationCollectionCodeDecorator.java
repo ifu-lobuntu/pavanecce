@@ -119,7 +119,7 @@ public class AssociationCollectionCodeDecorator extends AbstractJavaCodeDecorato
 			if(!(type instanceof CollectionTypeReference || type instanceof PrimitiveTypeReference)){
 				sb.append("  public void zz_internalSet").append(NameConverter.capitalize(field.getName())).append("(").appendType(type).append(" value){\n");
 				sb.append("    this.").append(field.getName()).append("=value").appendLineEnd();
-				sb.append("  }");
+				sb.append("  }\n");
 			}
 		}
 

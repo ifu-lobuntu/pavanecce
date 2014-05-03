@@ -1,6 +1,8 @@
-Done
+Done and Tested
 AssociationCollections:OneToManySet,  ManyToManySet
 Basic JPA support
+OCM classes
+UML2CND
 
 Minimum collection contract for OCL: add, addAll, remove, removeAll,contains, set with uniqueness, list with sequence
 
@@ -9,15 +11,18 @@ Javascript:
 Implement minimum collection contract 
 Implement the generation of TwoWaySets
 Implement backbone.js code.
-Distinguish between property get("asdf") and methods
+Implement rest servlet that can support backbone code
+Distinguish between property get("asdf") and normal method invocations
 Collection Properties: declare two fields xxx which is the collection contract and xxxImpl which is the array. 
  No setter, lazy initialise both fields
 Lazy load collections or proxies using REST
   
 Java:
-OCM classes
-
 AssociationCollections:OneToManySequence,  ManyToManySequence,OneToManyOrderedSet,  ManyToManyOrderedSet
+Multiple Inheritance
+getOwner() with multiple ownerships
+Persistence of primitives and enums
+Persistence of collections of primitives and enums
 
 Python:
 Django persistence
@@ -26,4 +31,3 @@ But first implement the generation of TwoWaySets
 
 Other generators:
 UML2OWL
-UML2CND

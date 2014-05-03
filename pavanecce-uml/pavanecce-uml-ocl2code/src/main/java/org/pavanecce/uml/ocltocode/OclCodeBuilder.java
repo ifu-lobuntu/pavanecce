@@ -1,23 +1,29 @@
 package org.pavanecce.uml.ocltocode;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.SortedSet;
 
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.OpaqueExpression;
+import org.eclipse.uml2.uml.Operation;
 import org.eclipse.uml2.uml.Property;
 import org.pavanecce.common.code.metamodel.CodeClass;
 import org.pavanecce.common.code.metamodel.CodeConstructor;
 import org.pavanecce.common.code.metamodel.CodeExpression;
 import org.pavanecce.common.code.metamodel.CodeMethod;
-import org.pavanecce.common.code.metamodel.CodeModel;
 import org.pavanecce.common.code.metamodel.CodePackage;
 import org.pavanecce.common.code.metamodel.CodeParameter;
 import org.pavanecce.common.code.metamodel.statements.AssignmentStatement;
 import org.pavanecce.uml.common.ocl.OpaqueExpressionContext;
 import org.pavanecce.uml.common.util.emulated.OclContextFactory;
+import org.pavanecce.uml.common.util.emulated.PropertyEmulationLibrary;
+import org.pavanecce.uml.common.util.emulated.UriToFileConverter;
 import org.pavanecce.uml.ocltocode.common.UmlToCodeMaps;
 import org.pavanecce.uml.ocltocode.creators.ExpressionCreator;
+import org.pavanecce.uml.ocltocode.maps.OperationMap;
 import org.pavanecce.uml.ocltocode.maps.PropertyMap;
 import org.pavanecce.uml.uml2code.codemodel.DefaultCodeModelBuilder;
 
@@ -28,8 +34,15 @@ public class OclCodeBuilder extends DefaultCodeModelBuilder {
 	@Override
 	public void initialize(SortedSet<Model> models, CodePackage codeModel) {
 		super.initialize(models, codeModel);
-		this.oclContextFactory = new OclContextFactory(models.iterator().next().eResource().getResourceSet());
-		this.codeMaps = new UmlToCodeMaps(false);
+		ResourceSet rst = models.iterator().next().eResource().getResourceSet();
+		this.oclContextFactory = new OclContextFactory(rst);
+		this.codeMaps = new UmlToCodeMaps(false, new PropertyEmulationLibrary(rst,new UriToFileConverter() {
+			
+			@Override
+			public File resolveUri(URI uri) {
+				return new File(uri.toFileString());
+			}
+		}));
 
 	}
 
@@ -44,9 +57,21 @@ public class OclCodeBuilder extends DefaultCodeModelBuilder {
 				CodeMethod getter = codeClass.getMethod(map.getter(), Collections.<CodeParameter> emptyList());
 				getter.setResultInitialValue(codeExpression);
 			} else {
-				CodeConstructor constr= codeClass.findOrCreateConstructor(Collections.<CodeParameter> emptyList());
+				CodeConstructor constr = codeClass.findOrCreateConstructor(Collections.<CodeParameter> emptyList());
 				new AssignmentStatement(constr.getBody(), map.fieldname(), codeExpression);
 			}
+		}
+	}
+
+	@Override
+	public void visitOperation(Operation operation, CodeClass codeClass) {
+		if (operation.getBodyCondition() != null && operation.getBodyCondition().getSpecification() instanceof OpaqueExpression) {
+			OperationMap map = codeMaps.buildOperationMap(operation);
+			OpaqueExpressionContext ctx = oclContextFactory.getOclExpressionContext((OpaqueExpression) operation.getBodyCondition().getSpecification());
+			ExpressionCreator ec = new ExpressionCreator(codeMaps, codeClass);
+			CodeMethod getter = codeClass.getMethod(map.javaOperName(), map.javaParamTypePaths());
+			CodeExpression codeExpression = ec.makeExpression(ctx, operation.isStatic(), getter.getParameters());
+			getter.setResultInitialValue(codeExpression);
 		}
 	}
 }

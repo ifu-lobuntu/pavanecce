@@ -30,9 +30,11 @@ import org.pavanecce.common.code.metamodel.expressions.NotExpression;
 import org.pavanecce.common.code.metamodel.expressions.NullExpression;
 import org.pavanecce.common.code.metamodel.expressions.PortableExpression;
 import org.pavanecce.common.code.metamodel.expressions.PrimitiveDefaultExpression;
+import org.pavanecce.common.code.metamodel.expressions.ReadFieldExpression;
 import org.pavanecce.common.code.metamodel.expressions.StaticFieldExpression;
 import org.pavanecce.common.code.metamodel.expressions.StaticMethodCallExpression;
 import org.pavanecce.common.code.metamodel.expressions.TypeExpression;
+import org.pavanecce.common.code.metamodel.statements.AssignmentStatement;
 import org.pavanecce.uml.uml2code.AbstractCodeGenerator;
 import org.pavanecce.uml.uml2code.AbstractTextGenerator;
 import org.pavanecce.uml.uml2code.jpa.AbstractJavaCodeDecorator;
@@ -65,7 +67,18 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 		appendInitialization(cf);
 		return this;
 	}
-
+	protected void appendAssignmentStatement(AssignmentStatement statement2) {
+		if (statement2.getVariableName().startsWith("${self}")) {
+			sb.append("this");
+			sb.append(statement2.getVariableName().substring("${self}".length()));
+			sb.append("=");
+			interpretExpression(statement2.getValue());
+		} else {
+			sb.append(statement2.getVariableName());
+			sb.append(" = ");
+			interpretExpression(statement2.getValue());
+		}
+	}
 	@Override
 	protected String getMappedName(CodeTypeReference type) {
 		if (type instanceof PrimitiveTypeReference) {
@@ -333,7 +346,7 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 
 	@Override
 	public void appendLineEnd() {
-		 sb.append(";\n");
+		sb.append(";\n");
 	}
 
 	@Override
@@ -380,13 +393,20 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 			sb.append(defaultValue(((PrimitiveDefaultExpression) exp).getPrimitiveTypeKind()));
 		} else if (exp instanceof BinaryOperatorExpression) {
 			BinaryOperatorExpression boe = (BinaryOperatorExpression) exp;
-			sb.append("( ");
-			interpretExpression(boe.getArg1());
-			sb.append(" ");
-			sb.append(boe.getOperator());
-			sb.append(" ");
-			interpretExpression(boe.getArg2());
-			sb.append(" )");
+			if (boe.getOperator().equals("${equals}")) {
+				interpretExpression(boe.getArg1());
+				sb.append(".equals(");
+				interpretExpression(boe.getArg2());
+				sb.append(")");
+			} else {
+				sb.append("( ");
+				interpretExpression(boe.getArg1());
+				sb.append(" ");
+				sb.append(boe.getOperator());
+				sb.append(" ");
+				interpretExpression(boe.getArg2());
+				sb.append(" )");
+			}
 		} else if (exp instanceof StaticFieldExpression) {
 			StaticFieldExpression sfe = (StaticFieldExpression) exp;
 			sb.append(sfe.getType().getLastName());
@@ -399,6 +419,9 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 			invokeMethod(smce.getArguments(), smce.getMethodName());
 		} else if (exp instanceof MethodCallExpression) {
 			interpretMethodCallExpression((MethodCallExpression) exp);
+		} else if (exp instanceof ReadFieldExpression) {
+			sb.append("this.");
+			sb.append(((ReadFieldExpression) exp).getFieldName());
 		} else if (exp instanceof NullExpression) {
 			sb.append("null");
 		} else if (exp instanceof NewInstanceExpression) {
@@ -464,16 +487,16 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 		appendFieldsAndMethodDeclarations(cc);
 		sb.append("}\n");
 		sb.append(cc.getName());
-		
+
 		return this;
 	}
 
 	@Override
 	protected String defaultValue(CollectionTypeReference kind) {
-		if(kind.getKind()==CodeCollectionKind.SET){
-			return "new HashSet<" + elementTypeLastName(kind) +">()";
-		}else{
-			return "new ArrayList<" + elementTypeLastName(kind) +">()";
+		if (kind.getKind() == CodeCollectionKind.SET) {
+			return "new HashSet<" + elementTypeLastName(kind) + ">()";
+		} else {
+			return "new ArrayList<" + elementTypeLastName(kind) + ">()";
 		}
 	}
 
@@ -484,11 +507,12 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 
 	public String typeLastName(CodeTypeReference type) {
 		String mappedName = getMappedName(type);
-		if(mappedName!=null){
-			return mappedName.substring(mappedName.lastIndexOf(".")+1);
+		if (mappedName != null) {
+			return mappedName.substring(mappedName.lastIndexOf(".") + 1);
 		}
 		return type.getLastName();
 	}
+
 	public JavaCodeGenerator append(String string) {
 		super.append(string);
 		return this;

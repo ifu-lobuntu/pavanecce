@@ -2,8 +2,12 @@ Tested
 Any Collection Expression
 Collect Collection Expresssion
 Select Collection Expression
+bodyConditions
 
 Todo
+Preconditions and postconditions
+Implement compiled tests using Javascript
+Implement Javascript tests
 Iterate Collection Expression
 Method Call
 

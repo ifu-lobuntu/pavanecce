@@ -5,6 +5,7 @@ import static org.junit.Assert.assertSame;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileReader;
 import java.io.FileWriter;
 
 import org.junit.Before;
@@ -75,6 +76,7 @@ public class CompiledJythonTests extends AbstractModelBuilderTest {
 		fw.write(classDeclaration);
 		fw.flush();
 		fw.close();
+		
 
 	}
 }

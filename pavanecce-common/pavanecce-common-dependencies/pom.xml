@@ -41,7 +41,7 @@
 									<overWriteReleases>false</overWriteReleases>
 									<overWriteSnapshots>false</overWriteSnapshots>
 									<overWriteIfNewer>true</overWriteIfNewer>
-									<includeGroupIds>org.javassist,org.python,javax,org.hibernate,org.codehaus.btm,com.h2database,org.apache,org.apache,org.jboss.logging,dom4j,antlr,org.slf4j,org.apache.jackrabbit,commons-io,concurrent,org.apache.derby,commons-dbcp,commons-pool</includeGroupIds>
+									<includeGroupIds>org.javassist,org.python,javax,org.hibernate,org.codehaus.btm,com.h2database,org.apache,org.apache,org.jboss.logging,dom4j,antlr,org.slf4j,org.apache.jackrabbit,commons-io,concurrent,org.apache.derby,commons-dbcp,commons-pool,commons-lang,commons-beanutils,commons-collections,xalan,cglib,asm</includeGroupIds>
 									<excludeArtifactIds></excludeArtifactIds>
 									<excludeTransitive>false</excludeTransitive>
 									<excludeScope>provided</excludeScope>
@@ -62,7 +62,7 @@
 									<overWriteReleases>false</overWriteReleases>
 									<overWriteSnapshots>false</overWriteSnapshots>
 									<overWriteIfNewer>true</overWriteIfNewer>
-									<includeGroupIds>org.javassist,org.python,javax,org.hibernate,org.codehaus.btm,com.h2database,org.apache,org.apache,org.jboss.logging,dom4j,antlr,org.slf4j,org.apache.jackrabbit,commons-io,concurrent,org.apache.derby,commons-dbcp,commons-pool</includeGroupIds>
+									<includeGroupIds>org.javassist,org.python,javax,org.hibernate,org.codehaus.btm,com.h2database,org.apache,org.apache,org.jboss.logging,dom4j,antlr,org.slf4j,org.apache.jackrabbit,commons-io,concurrent,org.apache.derby,commons-dbcp,commons-pool,commons-lang,commons-beanutils,commons-collections,xalan,cglib,asm</includeGroupIds>
 									<excludeArtifactIds></excludeArtifactIds>
 									<excludeTransitive>false</excludeTransitive>
 									<excludeScope>provided</excludeScope>
@@ -124,7 +124,7 @@
 									<overWriteReleases>false</overWriteReleases>
 									<overWriteSnapshots>false</overWriteSnapshots>
 									<overWriteIfNewer>true</overWriteIfNewer>
-									<includeGroupIds>org.javassist,org.python,javax,org.hibernate,org.codehaus.btm,com.h2database,org.apache,org.jboss.logging,dom4j,antlr,org.slf4j,org.apache.jackrabbit,commons-io,concurrent,org.apache.derby,commons-dbcp,commons-pool</includeGroupIds>
+									<includeGroupIds>org.javassist,org.python,javax,org.hibernate,org.codehaus.btm,com.h2database,org.apache,org.jboss.logging,dom4j,antlr,org.slf4j,org.apache.jackrabbit,commons-io,concurrent,org.apache.derby,commons-dbcp,commons-pool,commons-lang,commons-beanutils,commons-collections,xalan,cglib,asm</includeGroupIds>
 									<excludeArtifactIds></excludeArtifactIds>
 									<excludeTransitive>false</excludeTransitive>
 									<excludeScope>provided</excludeScope>
@@ -145,7 +145,7 @@
 									<overWriteReleases>false</overWriteReleases>
 									<overWriteSnapshots>false</overWriteSnapshots>
 									<overWriteIfNewer>true</overWriteIfNewer>
-									<includeGroupIds>org.javassist,org.python,javax,org.hibernate,org.codehaus.btm,com.h2database,org.apache,org.jboss.logging,dom4j,antlr,org.slf4j,org.apache.jackrabbit,commons-io,concurrent,org.apache.derby,commons-dbcp,commons-pool</includeGroupIds>
+									<includeGroupIds>org.javassist,org.python,javax,org.hibernate,org.codehaus.btm,com.h2database,org.apache,org.jboss.logging,dom4j,antlr,org.slf4j,org.apache.jackrabbit,commons-io,concurrent,org.apache.derby,commons-dbcp,commons-pool,commons-lang,commons-beanutils,commons-collections,xalan,cglib,asm</includeGroupIds>
 									<excludeArtifactIds></excludeArtifactIds>
 									<excludeTransitive>false</excludeTransitive>
 									<excludeScope>provided</excludeScope>
@@ -205,6 +205,11 @@
 			<groupId>org.jboss.logging</groupId>
 			<artifactId>jboss-logging</artifactId>
 			<version>3.1.4.GA</version>
+		</dependency>
+		<dependency>
+		<groupId>xalan</groupId>
+		<artifactId>xalan</artifactId>
+		<version>2.5.1</version>
 		</dependency>
 	</dependencies>
 </project>

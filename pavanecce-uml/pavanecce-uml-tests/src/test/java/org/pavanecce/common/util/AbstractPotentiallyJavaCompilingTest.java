@@ -38,27 +38,28 @@ import org.pavanecce.common.text.workspace.TextProject;
 import org.pavanecce.common.text.workspace.TextProjectDefinition;
 import org.pavanecce.common.text.workspace.TextWorkspace;
 import org.pavanecce.uml.common.util.IFileLocator;
+import org.pavanecce.uml.uml2code.AbstractCodeGenerator;
 import org.pavanecce.uml.uml2code.AdaptableFileLocator;
 import org.pavanecce.uml.uml2code.TestBundle;
 import org.pavanecce.uml.uml2code.java.EmfJavaCodeGenerator;
 import org.pavanecce.uml.uml2code.java.JavaCodeGenerator;
-import org.pavanecce.uml.uml2code.jpa.TestPersistenceUnitInfo;
+import org.pavanecce.uml.uml2code.javascript.JavaScriptGenerator;
 import org.phidias.compile.BundleJavaManager;
 import org.phidias.compile.ResourceResolver;
 
-public abstract class AbstractJavaCompilingTest extends Assert {
+public abstract class AbstractPotentiallyJavaCompilingTest extends Assert {
 
 	protected IFileLocator fileLocator = new AdaptableFileLocator();
-	private JavaCodeGenerator javaCodeGenerator;
+	private AbstractCodeGenerator javaCodeGenerator;
 	private ScriptEngine javaScriptEngine;
 	private ScriptContext javaScriptContext;
 	private ClassLoader classLoader;
 
-	public AbstractJavaCompilingTest() {
+	public AbstractPotentiallyJavaCompilingTest() {
 		super();
 	}
 
-	protected TextFileGenerator generateJava(CodeModel codeModel) {
+	protected TextFileGenerator generateSourceCode(CodeModel codeModel) {
 		TextWorkspace tw = new TextWorkspace("thisgoesnowhere");
 		File outputRoot = calculateTextOutputRoot();
 		TextFileGenerator tfg = new TextFileGenerator(outputRoot);
@@ -75,9 +76,9 @@ public abstract class AbstractJavaCompilingTest extends Assert {
 	protected void createText(CodePackage codeModel, SourceFolder sf) {
 		Collection<CodeClassifier> values = codeModel.getClassifiers().values();
 		for (CodeClassifier codeClassifier : values) {
-			String javaSource = getJavaCodeGenerator().toClassifierDeclaration(codeClassifier);
+			String javaSource = getCodeGenerator().toClassifierDeclaration(codeClassifier);
 			List<String> path = codeClassifier.getPackage().getPath();
-			path.add(codeClassifier.getName() + ".java");
+			path.add(codeClassifier.getName() + getExtension());
 			sf.findOrCreateTextFile(path).setTextSource(new CharArrayTextSource(javaSource.toCharArray()));
 		}
 		for (CodePackage codePackage : codeModel.getChildren().values()) {
@@ -85,11 +86,22 @@ public abstract class AbstractJavaCompilingTest extends Assert {
 		}
 	}
 
+	protected String getExtension() {
+		if (getCodeGenerator() instanceof JavaCodeGenerator) {
+			return ".java";
+		} else if (getCodeGenerator() instanceof JavaScriptGenerator) {
+			return ".js";
+		}else{
+			return ".py";
+					
+		}
+	}
+
 	protected void createText(SourceFolder sf, Collection<CodeClassifier> values) {
 		for (CodeClassifier codeClassifier : values) {
-			String javaSource = getJavaCodeGenerator().toClassifierDeclaration(codeClassifier);
+			String javaSource = getCodeGenerator().toClassifierDeclaration(codeClassifier);
 			List<String> path = codeClassifier.getPackage().getPath();
-			path.add(codeClassifier.getName() + ".java");
+			path.add(codeClassifier.getName() + getExtension());
 			sf.findOrCreateTextFile(path).setTextSource(new CharArrayTextSource(javaSource.toCharArray()));
 		}
 	}
@@ -99,7 +111,7 @@ public abstract class AbstractJavaCompilingTest extends Assert {
 		setJavaCodeGenerator(new EmfJavaCodeGenerator());
 	}
 
-	public  void initScriptingEngine() {
+	public void initScriptingEngine() {
 		Thread.currentThread().setContextClassLoader(getClassLoader());
 		ScriptEngineManager manager = new ScriptEngineManager();
 		setJavaScriptEngine(manager.getEngineByName("js"));
@@ -107,7 +119,7 @@ public abstract class AbstractJavaCompilingTest extends Assert {
 	}
 
 	private File calculateTextOutputRoot() {
-		File f = new File(System.getProperty("user.home"), "tmp/" + getTestName() + "/java");
+		File f = new File(System.getProperty("user.home"), "tmp/" + getTestName() + "/");
 		f.mkdirs();
 		return f;
 	}
@@ -249,7 +261,6 @@ public abstract class AbstractJavaCompilingTest extends Assert {
 		}
 	}
 
-
 	public ScriptEngine getJavaScriptEngine() {
 		return javaScriptEngine;
 	}
@@ -266,11 +277,11 @@ public abstract class AbstractJavaCompilingTest extends Assert {
 		this.classLoader = classLoader;
 	}
 
-	public JavaCodeGenerator getJavaCodeGenerator() {
+	public AbstractCodeGenerator getCodeGenerator() {
 		return javaCodeGenerator;
 	}
 
-	public void setJavaCodeGenerator(JavaCodeGenerator javaCodeGenerator) {
+	public void setJavaCodeGenerator(AbstractCodeGenerator javaCodeGenerator) {
 		this.javaCodeGenerator = javaCodeGenerator;
 	}
 

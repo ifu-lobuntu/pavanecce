@@ -25,6 +25,8 @@ import org.pavanecce.common.code.metamodel.expressions.NewInstanceExpression;
 import org.pavanecce.common.code.metamodel.expressions.NullExpression;
 import org.pavanecce.common.code.metamodel.expressions.PortableExpression;
 import org.pavanecce.common.code.metamodel.expressions.PrimitiveDefaultExpression;
+import org.pavanecce.common.code.metamodel.expressions.ReadFieldExpression;
+import org.pavanecce.common.code.metamodel.statements.AssignmentStatement;
 import org.pavanecce.uml.uml2code.AbstractCodeGenerator;
 
 public class PythonCodeGenerator extends AbstractCodeGenerator {
@@ -77,6 +79,12 @@ public class PythonCodeGenerator extends AbstractCodeGenerator {
 		appendInitialization(cf);
 		return this;
 
+	}
+	@Override
+	protected void appendAssignmentStatement(AssignmentStatement statement2) {
+		sb.append(applyCommonReplacements(statement2.getVariableName()));
+		sb.append(" = ");
+		interpretExpression(statement2.getValue());
 	}
 
 	@Override
@@ -150,6 +158,9 @@ public class PythonCodeGenerator extends AbstractCodeGenerator {
 			sb.append(defaultValue(((PrimitiveDefaultExpression) exp).getPrimitiveTypeKind()));
 		} else if (exp instanceof NullExpression) {
 			sb.append("None");
+		} else if (exp instanceof ReadFieldExpression) {
+			sb.append("self.");
+			sb.append(((ReadFieldExpression) exp).getFieldName());
 		} else if (exp instanceof NewInstanceExpression) {
 			CodeTypeReference type = ((NewInstanceExpression) exp).getType();
 			if (type instanceof CollectionTypeReference) {

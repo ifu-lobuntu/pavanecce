@@ -177,7 +177,7 @@ public class IterationExpressionCreator {
 	}
 
 	private CodeExpression callMethod(CodeMethod oper) {
-		return new PortableExpression(oper.getName() + "(" + CodeMethod.paramsToActuals(oper) + ")");
+		return new PortableExpression("${self}."+ oper.getName() + "(" + CodeMethod.paramsToActuals(oper) + ")");
 	}
 
 	private CodeExpression createReject(IteratorExp exp, CodeExpression source, boolean isStatic, List<CodeParameter> params) {

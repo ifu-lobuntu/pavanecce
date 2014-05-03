@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="libs/asm.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/commons-lang.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/commons-beanutils.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/cglib.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/xalan.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/commons-collections.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/commons-pool.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/commons-dbcp.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/derby.jar"/>

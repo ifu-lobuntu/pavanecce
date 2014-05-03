@@ -42,7 +42,9 @@ import org.pavanecce.common.code.metamodel.expressions.NotExpression;
 import org.pavanecce.common.code.metamodel.expressions.NullExpression;
 import org.pavanecce.common.code.metamodel.expressions.PortableExpression;
 import org.pavanecce.common.code.metamodel.expressions.PrimitiveDefaultExpression;
+import org.pavanecce.common.code.metamodel.expressions.ReadFieldExpression;
 import org.pavanecce.common.code.metamodel.relationaldb.IRelationalElement;
+import org.pavanecce.common.code.metamodel.statements.AssignmentStatement;
 import org.pavanecce.common.code.metamodel.statements.CodeIfStatement;
 import org.pavanecce.common.code.metamodel.statements.MappedStatement;
 import org.pavanecce.common.code.metamodel.statements.MethodCallStatement;
@@ -54,7 +56,7 @@ import org.pavanecce.uml.common.util.EmfPropertyUtil;
 
 public class CodeModelBuilder extends DefaultCodeModelBuilder {
 	private boolean useAssociationCollections = false;
-	private DocumentUtil documentUtil=new DocumentUtil();
+	private DocumentUtil documentUtil = new DocumentUtil();
 
 	public boolean useAssociationCollections() {
 		return useAssociationCollections;
@@ -87,46 +89,44 @@ public class CodeModelBuilder extends DefaultCodeModelBuilder {
 		}
 
 		CodeMethod getter = new CodeMethod(codeClass, getterName, cf.getType());
-		if (useAssociationCollections && p.getOtherEnd() != null && p.getOtherEnd().isNavigable() && EmfPropertyUtil.isMany(p) && p.isUnique() ) {
-			getter.setResultInitialValue("${self}." + fieldName + "Wrapper");
+		if (useAssociationCollections && p.getOtherEnd() != null && p.getOtherEnd().isNavigable() && EmfPropertyUtil.isMany(p) && p.isUnique()) {
+			getter.setResultInitialValue(new ReadFieldExpression(fieldName + "Wrapper"));
 		} else {
-			getter.setResultInitialValue("${self}." + fieldName);
+			getter.setResultInitialValue(new ReadFieldExpression(fieldName));
 		}
 		CodeMethod setter = new CodeMethod("set" + capitalized);
 		CodeParameter param = new CodeParameter("new" + capitalized, setter, cf.getType());
 		setter.setDeclaringClass(codeClass);
 		if (p.getOtherEnd() != null && p.getOtherEnd().isNavigable()) {
 			if (EmfPropertyUtil.isManyToMany(p)) {
-				setter.getBody().getStatements().add(new PortableStatement("${self}." + fieldName + " = " + param.getName()));
+				new AssignmentStatement(setter.getBody(),"${self}." + fieldName, new PortableExpression(param.getName()));
 			} else if (EmfPropertyUtil.isOneToMany(p)) {
-				NotExpression notNull= new NotExpression(new IsNullExpression(new PortableExpression(param.getName())));
+				NotExpression notNull = new NotExpression(new IsNullExpression(new PortableExpression(param.getName())));
 				CodeIfStatement ifNewNotNull = new CodeIfStatement(setter.getBody(), notNull);
-				new PortableStatement(ifNewNotNull.getThenBlock(), param.getName() +".get" +NameConverter.capitalize(p.getOtherEnd().getName())+"().add(this)");
-				NotExpression oldNotNull= new NotExpression(new IsNullExpression(new PortableExpression("${self}." + fieldName)));
+				new PortableStatement(ifNewNotNull.getThenBlock(), param.getName() + ".get" + NameConverter.capitalize(p.getOtherEnd().getName()) + "().add(this)");
+				NotExpression oldNotNull = new NotExpression(new IsNullExpression(new PortableExpression("${self}." + fieldName)));
 				CodeIfStatement ifOldNotNull = new CodeIfStatement(ifNewNotNull.getElseBlock(), oldNotNull);
-				new PortableStatement(ifOldNotNull.getThenBlock(), "${self}." + fieldName +".get" +NameConverter.capitalize(p.getOtherEnd().getName())+"().remove(this)");
-				setter.getBody().getStatements().add(new PortableStatement("${self}." + fieldName + " = " + param.getName()));
+				new PortableStatement(ifOldNotNull.getThenBlock(), "${self}." + fieldName + ".get" + NameConverter.capitalize(p.getOtherEnd().getName()) + "().remove(this)");
+				new AssignmentStatement(setter.getBody(),"${self}." + fieldName, new PortableExpression(param.getName()));
 			} else if (EmfPropertyUtil.isManyToOne(p)) {
-				setter.getBody().getStatements().add(new PortableStatement("${self}." + fieldName + " = " + param.getName()));
+				new AssignmentStatement(setter.getBody(),"${self}." + fieldName, new PortableExpression(param.getName()));
 			} else if (EmfPropertyUtil.isOneToOne(p)) {
 				new CodeField(setter.getBody(), "oldValue", param.getType()).setInitExp("${self}." + fieldName);
-				NotExpression notEquals = new NotExpression(new BinaryOperatorExpression(new PortableExpression(param.getName()), "==", new PortableExpression(
-						"oldValue")));
-				CodeIfStatement ifNotEquals = new CodeIfStatement(setter.getBody(), notEquals);
-				new PortableStatement(ifNotEquals.getThenBlock(), "${self}." + fieldName + " = " + param.getName());
-				CodeIfStatement ifOldNotNull = new CodeIfStatement(ifNotEquals.getThenBlock(), new NotExpression(new IsNullExpression(new PortableExpression(
-						"oldValue"))));
+				NotExpression notEquals = new NotExpression(new BinaryOperatorExpression(new PortableExpression(param.getName()), "${equals}", new PortableExpression("oldValue")));
+				BinaryOperatorExpression nullOrNotEquals=new BinaryOperatorExpression(new IsNullExpression(new PortableExpression(param.getName())), "||", notEquals);
+				CodeIfStatement ifNotEquals = new CodeIfStatement(setter.getBody(), nullOrNotEquals);
+				new AssignmentStatement(ifNotEquals.getThenBlock(),"${self}." + fieldName, new PortableExpression(param.getName()));
+				CodeIfStatement ifOldNotNull = new CodeIfStatement(ifNotEquals.getThenBlock(), new NotExpression(new IsNullExpression(new PortableExpression("oldValue"))));
 				String otherCappedName = toValidVariableName(NameConverter.capitalize(p.getOtherEnd().getName()));
 				new MethodCallStatement(ifOldNotNull.getThenBlock(), "oldValue.set" + otherCappedName, new NullExpression());
-				CodeIfStatement ifNewNotNull = new CodeIfStatement(ifNotEquals.getThenBlock(), new NotExpression(new IsNullExpression(new PortableExpression(
-						param.getName()))));
-				NotExpression otherNotEquals = new NotExpression(new BinaryOperatorExpression(new PortableExpression("${self}"), "==", new PortableExpression(
-						param.getName() + ".get" + otherCappedName + "()")));
+				CodeIfStatement ifNewNotNull = new CodeIfStatement(ifNotEquals.getThenBlock(), new NotExpression(new IsNullExpression(new PortableExpression(param.getName()))));
+				NotExpression otherNotEquals = new NotExpression(new BinaryOperatorExpression(new PortableExpression("${self}"), "${equals}", new PortableExpression(param.getName() + ".get"
+						+ otherCappedName + "()")));
 				CodeIfStatement ifOtherNotEquals = new CodeIfStatement(ifNewNotNull.getThenBlock(), otherNotEquals);
 				new PortableStatement(ifOtherNotEquals.getThenBlock(), param.getName() + ".set" + otherCappedName + "(${self})");
 			}
 		} else {
-			setter.getBody().getStatements().add(new PortableStatement("${self}." + fieldName + " = " + param.getName()));
+			new AssignmentStatement(setter.getBody(),"${self}." + fieldName, new PortableExpression(param.getName()));
 		}
 	}
 
@@ -171,13 +171,13 @@ public class CodeModelBuilder extends DefaultCodeModelBuilder {
 
 		Property thisEnd = (Property) me;
 		if (me.isUnique() && me.isOrdered()) {
-			result = new AssociationCollectionTypeReference(CodeCollectionKind.ORDERED_SET, otherFieldName,thisEnd.isComposite());
+			result = new AssociationCollectionTypeReference(CodeCollectionKind.ORDERED_SET, otherFieldName, thisEnd.isComposite());
 		} else if (me.isUnique()) {
-			result = new AssociationCollectionTypeReference(CodeCollectionKind.SET, otherFieldName,thisEnd.isComposite());
+			result = new AssociationCollectionTypeReference(CodeCollectionKind.SET, otherFieldName, thisEnd.isComposite());
 		} else if (me.isOrdered()) {
-			result = new AssociationCollectionTypeReference(CodeCollectionKind.SEQUENCE, otherFieldName,thisEnd.isComposite());
+			result = new AssociationCollectionTypeReference(CodeCollectionKind.SEQUENCE, otherFieldName, thisEnd.isComposite());
 		} else {
-			result = new AssociationCollectionTypeReference(CodeCollectionKind.BAG, otherFieldName,thisEnd.isComposite());
+			result = new AssociationCollectionTypeReference(CodeCollectionKind.BAG, otherFieldName, thisEnd.isComposite());
 		}
 		result.addToElementTypes(calculateTypeReference(thisEnd.getType()));
 
@@ -213,16 +213,14 @@ public class CodeModelBuilder extends DefaultCodeModelBuilder {
 		if (returnParameter != null) {
 			cm.setReturnType(calculateType(returnParameter));
 		}
-		if (operation.getBodyCondition() != null && operation.getBodyCondition().getSpecification() instanceof OpaqueExpression) {
+		if (hasBodyButNotOclOcl(operation)) {
 			OpaqueExpression oe = (OpaqueExpression) operation.getBodyCondition().getSpecification();
-			if (!(oe.getLanguages().contains("ocl") || oe.getLanguages().contains("OCL"))) {
-				Map<String, String> map = new HashMap<String, String>();
-				EList<String> bodies = oe.getBodies();
-				for (int i = 0; i < bodies.size(); i++) {
-					map.put(oe.getLanguages().get(i), bodies.get(i));
-				}
-				new MappedStatement(cm.getBody(), map);
+			Map<String, String> map = new HashMap<String, String>();
+			EList<String> bodies = oe.getBodies();
+			for (int i = 0; i < bodies.size(); i++) {
+				map.put(oe.getLanguages().get(i), bodies.get(i));
 			}
+			new MappedStatement(cm.getBody(), map);
 		} else if (returnParameter != null) {
 			if (cm.getReturnType() instanceof CollectionTypeReference) {
 				cm.setResultInitialValue(new NewInstanceExpression(cm.getReturnType()));
@@ -230,11 +228,19 @@ public class CodeModelBuilder extends DefaultCodeModelBuilder {
 				cm.setResultInitialValue(new PrimitiveDefaultExpression(((PrimitiveTypeReference) cm.getReturnType()).getKind()));
 			} else {
 				cm.setResultInitialValue(new NullExpression());
-
 			}
 
 		}
 		cm.setDeclaringClass(codeClass);
+	}
+
+	protected boolean hasBodyButNotOclOcl(Operation operation) {
+		if (operation.getBodyCondition() != null && operation.getBodyCondition().getSpecification() instanceof OpaqueExpression) {
+			OpaqueExpression oe = (OpaqueExpression) operation.getBodyCondition().getSpecification();
+			return !(oe.getLanguages().contains("ocl") || oe.getLanguages().contains("OCL"));
+		}else{
+			return false;
+		}
 	}
 
 	@Override
@@ -259,18 +265,18 @@ public class CodeModelBuilder extends DefaultCodeModelBuilder {
 		codeClass.setTypeReference(this.calculateTypeReference(c));
 		codeClass.putData(IRelationalElement.class, RelationalUtil.buildRelationalElement(c));
 		codeClass.putData(IDocumentElement.class, documentUtil.getDocumentNode(c));
-		if(!c.isAbstract() &&  EmfPropertyUtil.getEndToComposite(c)==null){
-			//TODO put in a OcmCodeModelBuilder
+		if (!c.isAbstract() && EmfPropertyUtil.getEndToComposite(c) == null) {
+			// TODO put in a OcmCodeModelBuilder
 			CodeField path = new CodeField(codeClass, "path", new PrimitiveTypeReference(CodePrimitiveTypeKind.STRING));
 			DocumentProperty prop = new DocumentProperty("path", documentUtil.getNamespaceOf(c), PropertyType.STRING, true, false);
 			prop.setPath(true);
 			path.putData(IDocumentElement.class, prop);
-			path.setInitialization("\"/" + codeClass.getName()+"Collection\"");
-			new CodeMethod(codeClass, "getPath",path.getType()).setResultInitialValue("${self}.path");
+			path.setInitialization("\"/" + codeClass.getName() + "Collection\"");
+			new CodeMethod(codeClass, "getPath", path.getType()).setResultInitialValue("${self}.path");
 			CodeMethod setter = new CodeMethod("setPath");
 			setter.addParam("path", path.getType());
 			setter.setDeclaringClass(codeClass);
-			new PortableStatement(setter.getBody(),"${self}.path=path");
+			new PortableStatement(setter.getBody(), "${self}.path=path");
 		}
 		return codeClass;
 	}

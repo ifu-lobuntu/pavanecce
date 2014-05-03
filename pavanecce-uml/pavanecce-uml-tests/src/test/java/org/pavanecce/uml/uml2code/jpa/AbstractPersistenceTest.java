@@ -7,7 +7,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.pavanecce.common.util.ConstructionCaseExample;
 
-public class AbstractPersistenceTest extends Assert {
+public abstract class AbstractPersistenceTest extends Assert {
 
 	protected static ConstructionCaseExample example;
 

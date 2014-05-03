@@ -7,14 +7,15 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.pavanecce.common.util.ConstructionCaseExample;
+import org.pavanecce.uml.uml2code.AbstractCodeGenerator;
 import org.pavanecce.uml.uml2code.codemodel.CodeModelBuilder;
-import org.pavanecce.uml.uml2code.java.AssociationCollectionCodeDecorator;
 import org.pavanecce.uml.uml2code.java.JavaCodeGenerator;
 import org.pavanecce.uml.uml2code.jpa.AbstractJavaCodeDecorator;
 
 public class AssociationCollectionTests extends Assert {
 	static ConstructionCaseExample example = new ConstructionCaseExample("AssociationCollections") {
-		public void setup(CodeModelBuilder codeModelBuilder, JavaCodeGenerator codeGenerator, AbstractJavaCodeDecorator... decorators) throws Exception {
+		@Override
+		public void setup(CodeModelBuilder codeModelBuilder, AbstractCodeGenerator codeGenerator, AbstractJavaCodeDecorator... decorators) throws Exception {
 			super.setup(codeModelBuilder, codeGenerator, decorators);
 			initScriptingEngine();
 		};

@@ -236,13 +236,17 @@ public abstract class AbstractCodeGenerator extends AbstractTextGenerator {
 			MethodCallStatement ms = (MethodCallStatement) statement;
 			invokeMethod(ms.getArguments(), ms.getMethodName());
 		} else if (statement instanceof AssignmentStatement) {
-			sb.append(((AssignmentStatement) statement).getVariableName());
-			sb.append(" = ");
-			interpretExpression(((AssignmentStatement) statement).getValue());
+			appendAssignmentStatement((AssignmentStatement) statement);
 		} else {
 			sb.append("Not Supported: " + statement.getClass());
 		}
 		return this;
+	}
+
+	protected void appendAssignmentStatement(AssignmentStatement statement2) {
+		sb.append(statement2.getVariableName());
+		sb.append(" = ");
+		interpretExpression(statement2.getValue());
 	}
 
 	protected String applyCommonReplacements(PortableExpression textStatement) {
