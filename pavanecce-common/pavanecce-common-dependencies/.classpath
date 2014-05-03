@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="libs/commons-pool.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/commons-dbcp.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/derby.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/concurrent.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/commons-io.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jackrabbit-api.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jackrabbit-core.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jackrabbit-jcr-commons.jar" sourcepath="libs/jackrabbit-jcr-commons-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jackrabbit-spi-commons.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jackrabbit-spi.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jcl-over-slf4j.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/lucene-core.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/tika-core.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src/main/java"/>
@@ -9,9 +22,9 @@
 	<classpathentry exported="true" kind="lib" path="libs/hibernate-core.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/hibernate-entitymanager.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/hibernate-jpa-2.0-api.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/jackrabbit-ocm.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jackrabbit-ocm.jar" sourcepath="libs/jackrabbit-ocm-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/javassist.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/jcr.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jcr.jar" sourcepath="libs/jcr-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/jython.jar" sourcepath="libs/jython-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/jboss-logging.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/dom4j.jar"/>

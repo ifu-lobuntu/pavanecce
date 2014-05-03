@@ -8,7 +8,7 @@ import javax.persistence.ManyToOne;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Bean;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
-import org.pavanecce.cmmn.jbpm.ocm.GrandParentBeanConverterImpl;
+import org.pavanecce.common.ocm.GrandParentBeanConverterImpl;
 
 @Entity
 @Node(jcrType="t:wall",discriminator=false)

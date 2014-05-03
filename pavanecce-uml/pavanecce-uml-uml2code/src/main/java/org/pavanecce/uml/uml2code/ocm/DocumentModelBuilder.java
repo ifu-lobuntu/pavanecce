@@ -15,14 +15,16 @@ import org.pavanecce.common.code.metamodel.documentdb.IDocumentProperty;
 import org.pavanecce.uml.uml2code.AbstractBuilder;
 import org.pavanecce.uml.uml2code.codemodel.DocumentUtil;
 
-public class CndFileGenerator  extends AbstractBuilder<DocumentNamespace, DocumentNodeType> {
+public class DocumentModelBuilder  extends AbstractBuilder<DocumentNamespace, DocumentNodeType> {
 	DocumentNamespace rootNamespace;
 	private DocumentUtil documentUtil;
 	
 
 	@Override
 	public DocumentNamespace visitModel(Model model) {
-		return rootNamespace;
+		DocumentNamespace result = documentUtil.buildNamespace(model);
+		rootNamespace.addChild(result);
+		return result;
 	}
 
 	@Override
@@ -33,12 +35,16 @@ public class CndFileGenerator  extends AbstractBuilder<DocumentNamespace, Docume
 
 	@Override
 	public DocumentNamespace visitPackage(Package model, DocumentNamespace parent) {
-		return documentUtil.buildNamespace(model);
+		DocumentNamespace result = documentUtil.buildNamespace(model);
+		parent.addChild(result);
+		return result;
 	}
 
 	@Override
 	public DocumentNodeType visitClass(Class cl, DocumentNamespace parent) {
-		return documentUtil.getDocumentNode(cl);
+		DocumentNodeType result = documentUtil.getDocumentNode(cl);
+		parent.addNodeType(result);
+		return result;
 	}
 
 	@Override
@@ -53,6 +59,10 @@ public class CndFileGenerator  extends AbstractBuilder<DocumentNamespace, Docume
 
 	@Override
 	public void visitOperation(Operation o, DocumentNodeType parent) {
+	}
+
+	public DocumentNamespace getDocumentModel() {
+		return rootNamespace;
 	}
 
 }

@@ -1,18 +1,19 @@
 package org.pavanecce.uml.uml2code.codemodel;
 
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.uml2.uml.Class;
-import org.eclipse.uml2.uml.NamedElement;
-import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.Property;
-import org.pavanecce.common.code.metamodel.documentdb.DocumentNamespace;
 import org.pavanecce.common.util.NameConverter;
-import org.pavanecce.uml.common.util.EmfElementFinder;
+import org.pavanecce.uml.common.util.EmfPropertyUtil;
 
 public class DocumentNameUtil {
 
 	public static String name(Property p) {
-		return NameConverter.decapitalize(NameConverter.toValidVariableName(p.getName()));
+		if(EmfPropertyUtil.isMany(p) && p.getType().getName().equalsIgnoreCase(p.getName())){
+			return NameConverter.decapitalize(NameConverter.toValidVariableName(p.getName()))+"Collection";
+			
+		}else{
+			return NameConverter.decapitalize(NameConverter.toValidVariableName(p.getName()));
+		}
 	}
 
 	public static String name(Class c) {

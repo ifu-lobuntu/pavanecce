@@ -28,7 +28,7 @@ public class AssociationCollectionCodeDecorator extends AbstractJavaCodeDecorato
 					AssociationCollectionTypeReference otherType = (AssociationCollectionTypeReference) type.getOtherFieldType();
 					CodeTypeReference elementType = type.getElementTypes().get(0).getType();
 					CodeTypeReference otherElementType = otherType.getElementTypes().get(0).getType();
-					sb.append("  private ManyToManySet<").appendType(otherElementType).append(",").appendType(elementType).append("> ");
+					sb.append("  private transient ManyToManySet<").appendType(otherElementType).append(",").appendType(elementType).append("> ");
 					sb.append(field.getName()).append("Wrapper");
 					sb.append(" = new ").append("ManyToManySet<").appendType(otherElementType).append(",").appendType(elementType).append(">(this){\n");
 					sb.append("      public ").appendType(type).append(" getDelegate(){\n");
@@ -40,7 +40,8 @@ public class AssociationCollectionCodeDecorator extends AbstractJavaCodeDecorato
 							.append(NameConverter.capitalize(type.getOtherFieldName())).append("()").appendLineEnd();
 					sb.append("       }\n");
 					sb.append("       public boolean isLoaded(){\n");
-					sb.append("         return false").appendLineEnd();
+					//TODO switching this optimization off until we figure out how to "flush"
+					sb.append("         return ").append(type.isChild()?"true":"true").appendLineEnd();
 					sb.append("      }\n");
 					sb.append("       public boolean isInstanceOfChild(Object o){\n");
 					sb.append("         return o instanceof ").appendType(elementType).appendLineEnd();
@@ -49,7 +50,7 @@ public class AssociationCollectionCodeDecorator extends AbstractJavaCodeDecorato
 				} else {
 					CodeTypeReference otherType = type.getOtherFieldType();
 					CodeTypeReference elementType = type.getElementTypes().get(0).getType();
-					sb.append("  private OneToManySet<").appendType(otherType).append(",").appendType(elementType).append("> ");
+					sb.append("  private transient OneToManySet<").appendType(otherType).append(",").appendType(elementType).append("> ");
 					sb.append(field.getName()).append("Wrapper");
 					sb.append(" = new ").append("OneToManySet<").appendType(otherType).append(",").appendType(elementType).append(">(this){\n");
 					sb.append("      public ").appendType(type).append(" getDelegate(){\n");
@@ -66,7 +67,8 @@ public class AssociationCollectionCodeDecorator extends AbstractJavaCodeDecorato
 					sb.append("        child.zz_internalSet").append(NameConverter.capitalize(type.getOtherFieldName())).append("(parent)").appendLineEnd();
 					sb.append("      }\n");
 					sb.append("      public boolean isLoaded(){\n");
-					sb.append("         return false").appendLineEnd();
+					//TODO switching this optimization off until we figure out how to "flush"
+					sb.append("         return ").append(type.isChild()?"true":"true").appendLineEnd();
 					sb.append("      }\n");
 					sb.append("      public boolean isInstanceOfChild(Object o){\n");
 					sb.append("         return o instanceof ").appendType(elementType).appendLineEnd();

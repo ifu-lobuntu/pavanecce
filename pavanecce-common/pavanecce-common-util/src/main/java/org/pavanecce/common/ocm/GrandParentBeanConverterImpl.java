@@ -1,4 +1,4 @@
-package org.pavanecce.cmmn.jbpm.ocm;
+package org.pavanecce.common.ocm;
 
 import javax.jcr.Node;
 import javax.jcr.Session;

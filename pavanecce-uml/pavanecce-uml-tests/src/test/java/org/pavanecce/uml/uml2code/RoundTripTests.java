@@ -76,7 +76,7 @@ public class RoundTripTests extends AbstractJavaCompilingTest {
 		Set<SourceClass> sourceClasses = new HashSet<SourceClass>();
 		for (Class<?> class1 : dependencies) {
 			sourceClasses.add(jfd.getClassDescriptor(class1));
-			javaCodeGenerator.map(new CodeTypeReference(false, ("tmp." + class1.getName()).split("\\.")), class1.getName());
+			getJavaCodeGenerator().map(new CodeTypeReference(false, ("tmp." + class1.getName()).split("\\.")), class1.getName());
 		}
 		SimpleUmlGenerator sug = new SimpleUmlGenerator();
 		Resource tmpResource = rst.createResource(URI.createFileURI("test-input/tmp.uml"));
@@ -97,7 +97,7 @@ public class RoundTripTests extends AbstractJavaCompilingTest {
 		Set<Entry<String, Classifier>> entrySet = sug.getClassMap().entrySet();
 		for (Entry<String, Classifier> entry : entrySet) {
 			String[] split = entry.getValue().getQualifiedName().split("\\:\\:");
-			javaCodeGenerator.map(new CodeTypeReference(false, split), entry.getKey());
+			getJavaCodeGenerator().map(new CodeTypeReference(false, split), entry.getKey());
 		}
 
 		return result;

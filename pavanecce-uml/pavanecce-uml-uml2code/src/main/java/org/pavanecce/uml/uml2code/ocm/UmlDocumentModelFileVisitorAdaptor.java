@@ -11,19 +11,19 @@ import org.pavanecce.uml.uml2code.AbstractUmlVisitorAdaptor;
 /**
  * 
  */
-public class UmlCndFileVisitorAdaptor extends AbstractUmlVisitorAdaptor<DocumentNamespace, DocumentNodeType, CndFileGenerator> {
+public class UmlDocumentModelFileVisitorAdaptor extends AbstractUmlVisitorAdaptor<DocumentNamespace, DocumentNodeType, DocumentModelBuilder> {
 
 	protected DocumentNamespace codeModel = new DocumentNamespace("root","root");
 
-	public UmlCndFileVisitorAdaptor() {
+	public UmlDocumentModelFileVisitorAdaptor() {
 		super();
 	}
 	@Override
-	public void startVisiting(CndFileGenerator builder, Model model) {
+	public void startVisiting(DocumentModelBuilder builder, Model model) {
 		super.startVisiting(builder, model);
 	}
 
-	public UmlCndFileVisitorAdaptor(Map<String, Classifier> interfacesToImplement) {
+	public UmlDocumentModelFileVisitorAdaptor(Map<String, Classifier> interfacesToImplement) {
 		super(interfacesToImplement);
 	}
 
@@ -32,7 +32,7 @@ public class UmlCndFileVisitorAdaptor extends AbstractUmlVisitorAdaptor<Document
 	}
 
 	@Override
-	protected void doArtificialInterfaceImplementation(DocumentNodeType codeClass, Classifier toImplement, CndFileGenerator builder) {
+	protected void doArtificialInterfaceImplementation(DocumentNodeType codeClass, Classifier toImplement, DocumentModelBuilder builder) {
 
 	}
 }

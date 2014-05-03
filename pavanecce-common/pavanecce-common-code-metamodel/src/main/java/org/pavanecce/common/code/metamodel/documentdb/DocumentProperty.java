@@ -6,14 +6,20 @@ public class DocumentProperty implements IDocumentElement, IDocumentProperty {
 	private DocumentNamespace namespace;
 	private String name;
 	private PropertyType propertyType;
+	private boolean multiple;
+	private boolean isPath;
 
-	public DocumentProperty(String name, DocumentNamespace buildNamespace, boolean required) {
+	public DocumentProperty(String name, DocumentNamespace namespace, PropertyType type, boolean required, boolean isMany) {
 		this.name = name;
-		this.namespace = buildNamespace;
+		this.namespace = namespace;
 		this.required = true;
+		this.multiple=isMany;
+		this.propertyType=type;
 	}
-
-	public boolean isRequired() {
+	public boolean isMultiple() {
+		return multiple;
+	}
+	public boolean isMandatory() {
 		return required;
 	}
 
@@ -29,12 +35,15 @@ public class DocumentProperty implements IDocumentElement, IDocumentProperty {
 		return namespace.getPrefix() + ":" + getName();
 	}
 
-	public void setPropertyType(PropertyType propertyType) {
-		this.propertyType = propertyType;
-	}
-
 	@Override
 	public PropertyType getPropertyType() {
 		return propertyType;
 	}
+	public void setPath(boolean b) {
+		this.isPath=b;
+	}
+	public boolean isPath() {
+		return isPath;
+	}
 }
+

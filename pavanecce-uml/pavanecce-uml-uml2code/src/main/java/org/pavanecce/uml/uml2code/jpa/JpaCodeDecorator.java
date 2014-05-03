@@ -169,7 +169,7 @@ public class JpaCodeDecorator extends AbstractJavaCodeDecorator {
 			if (columnMap.size() > 0) {
 				sb.append("  @JoinColumns(value=");
 				appendJoinColumns(sb, columnMap);
-				sb.append(")\n");
+				sb.append("  )\n");
 			}
 		} else if (element instanceof RelationalLinkTable) {
 			RelationalLinkTable relationalLink = (RelationalLinkTable) element;

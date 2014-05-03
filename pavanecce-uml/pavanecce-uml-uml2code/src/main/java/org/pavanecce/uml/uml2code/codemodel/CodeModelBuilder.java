@@ -6,6 +6,8 @@ import static org.pavanecce.common.util.NameConverter.toValidVariableName;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.JTable.PrintMode;
+
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Interface;
@@ -29,7 +31,10 @@ import org.pavanecce.common.code.metamodel.CodePrimitiveTypeKind;
 import org.pavanecce.common.code.metamodel.CodeTypeReference;
 import org.pavanecce.common.code.metamodel.CollectionTypeReference;
 import org.pavanecce.common.code.metamodel.PrimitiveTypeReference;
+import org.pavanecce.common.code.metamodel.documentdb.DocumentProperty;
 import org.pavanecce.common.code.metamodel.documentdb.IDocumentElement;
+import org.pavanecce.common.code.metamodel.documentdb.IDocumentProperty;
+import org.pavanecce.common.code.metamodel.documentdb.PropertyType;
 import org.pavanecce.common.code.metamodel.expressions.BinaryOperatorExpression;
 import org.pavanecce.common.code.metamodel.expressions.IsNullExpression;
 import org.pavanecce.common.code.metamodel.expressions.NewInstanceExpression;
@@ -164,16 +169,17 @@ public class CodeModelBuilder extends DefaultCodeModelBuilder {
 		AssociationCollectionTypeReference result;
 		String otherFieldName = NameConverter.decapitalize(otherEnd.getName());
 
+		Property thisEnd = (Property) me;
 		if (me.isUnique() && me.isOrdered()) {
-			result = new AssociationCollectionTypeReference(CodeCollectionKind.ORDERED_SET, otherFieldName);
+			result = new AssociationCollectionTypeReference(CodeCollectionKind.ORDERED_SET, otherFieldName,thisEnd.isComposite());
 		} else if (me.isUnique()) {
-			result = new AssociationCollectionTypeReference(CodeCollectionKind.SET, otherFieldName);
+			result = new AssociationCollectionTypeReference(CodeCollectionKind.SET, otherFieldName,thisEnd.isComposite());
 		} else if (me.isOrdered()) {
-			result = new AssociationCollectionTypeReference(CodeCollectionKind.SEQUENCE, otherFieldName);
+			result = new AssociationCollectionTypeReference(CodeCollectionKind.SEQUENCE, otherFieldName,thisEnd.isComposite());
 		} else {
-			result = new AssociationCollectionTypeReference(CodeCollectionKind.BAG, otherFieldName);
+			result = new AssociationCollectionTypeReference(CodeCollectionKind.BAG, otherFieldName,thisEnd.isComposite());
 		}
-		result.addToElementTypes(calculateTypeReference(((Property) me).getType()));
+		result.addToElementTypes(calculateTypeReference(thisEnd.getType()));
 
 		return result;
 	}
@@ -253,6 +259,19 @@ public class CodeModelBuilder extends DefaultCodeModelBuilder {
 		codeClass.setTypeReference(this.calculateTypeReference(c));
 		codeClass.putData(IRelationalElement.class, RelationalUtil.buildRelationalElement(c));
 		codeClass.putData(IDocumentElement.class, documentUtil.getDocumentNode(c));
+		if(!c.isAbstract() &&  EmfPropertyUtil.getEndToComposite(c)==null){
+			//TODO put in a OcmCodeModelBuilder
+			CodeField path = new CodeField(codeClass, "path", new PrimitiveTypeReference(CodePrimitiveTypeKind.STRING));
+			DocumentProperty prop = new DocumentProperty("path", documentUtil.getNamespaceOf(c), PropertyType.STRING, true, false);
+			prop.setPath(true);
+			path.putData(IDocumentElement.class, prop);
+			path.setInitialization("\"/" + codeClass.getName()+"Collection\"");
+			new CodeMethod(codeClass, "getPath",path.getType()).setResultInitialValue("${self}.path");
+			CodeMethod setter = new CodeMethod("setPath");
+			setter.addParam("path", path.getType());
+			setter.setDeclaringClass(codeClass);
+			new PortableStatement(setter.getBody(),"${self}.path=path");
+		}
 		return codeClass;
 	}
 }

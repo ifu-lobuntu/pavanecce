@@ -3,64 +3,122 @@ package org.pavanecce.uml.uml2code.ocm;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.pavanecce.common.code.metamodel.documentdb.ChildDocument;
+import org.pavanecce.common.code.metamodel.documentdb.ChildDocumentCollection;
 import org.pavanecce.common.code.metamodel.documentdb.DocumentNamespace;
 import org.pavanecce.common.code.metamodel.documentdb.DocumentNodeType;
+import org.pavanecce.common.code.metamodel.documentdb.IChildDocument;
 import org.pavanecce.common.code.metamodel.documentdb.IDocumentProperty;
-import org.pavanecce.common.code.metamodel.documentdb.ReferencedDocument;
-import org.pavanecce.common.code.metamodel.documentdb.ReferencedDocumentCollection;
+import org.pavanecce.common.code.metamodel.documentdb.IReferencedDocumentProperty;
 import org.pavanecce.uml.uml2code.AbstractTextGenerator;
 
 public class CndTextGenerator extends AbstractTextGenerator {
 	public String generate(DocumentNamespace n) {
 		pushNewStringBuilder();
 		append("<mix='http://www.jcp.org/jcr/mix/1.0'>").endLine();
-		appendNamespaces(n);
-		for (DocumentNodeType documentNode : n.getNodeTypes()) {
-			append("[").append(documentNode.getFullName()).append("] > ");
-			Set<DocumentNodeType> superNodeTypes = documentNode.getSuperNodeTypes();
-			if(superNodeTypes==null || superNodeTypes.isEmpty()){
-				append(" mix:lifecycle, mix:referenceable").endLine();
-			}else{
-				Iterator<DocumentNodeType> iterator = superNodeTypes.iterator();
-				while (iterator.hasNext()) {
-					DocumentNodeType type = (DocumentNodeType) iterator.next();
-					append(" ").append(type.getFullName());
-					if(iterator.hasNext()){
-						append(", ");
-					}else{
-						endLine();
+		appendChildNamespaces(n);// Assume the ROOT namespace is just a
+									// container
+		appendNodeTypes(n);
+		return popStringBuilder().toString();
+	}
+
+	protected void appendNodeTypes(DocumentNamespace n) {
+		if (n.getNodeTypes() != null) {
+			for (DocumentNodeType documentNode : n.getNodeTypes()) {
+				append("[").append(documentNode.getFullName()).append("] > ");
+				Set<DocumentNodeType> superNodeTypes = documentNode.getSuperNodeTypes();
+				if (superNodeTypes == null || superNodeTypes.isEmpty()) {
+					append(" mix:lifecycle, mix:referenceable").endLine();
+				} else {
+					Iterator<DocumentNodeType> iterator = superNodeTypes.iterator();
+					while (iterator.hasNext()) {
+						DocumentNodeType type = (DocumentNodeType) iterator.next();
+						append(" ").append(type.getFullName());
+						if (iterator.hasNext()) {
+							append(", ");
+						} else {
+							endLine();
+						}
+					}
+				}
+				if (documentNode.getProperties() != null) {
+					for (IDocumentProperty p : documentNode.getProperties()) {
+						appendProperty(p);
+					}
+				}
+				if (documentNode.getChildren() != null) {
+					for (IChildDocument p : documentNode.getChildren()) {
+						appendChild(p);
+					}
+				}
+				endLine();
+				if (documentNode.getChildren() != null) {
+					for (IChildDocument p : documentNode.getChildren()) {
+						if (p instanceof ChildDocumentCollection) {
+							appendCollectionHolderType((ChildDocumentCollection) p);
+						}
 					}
 				}
 			}
-			for (IDocumentProperty p : documentNode.getProperties()) {
-				append("  - ").append(p.getFullName()).append(" (").appendType(p);
+		}
+		Set<DocumentNamespace> children = n.getChildren();
+		if (children != null) {
+			for (DocumentNamespace child : children) {
+				appendNodeTypes(child);
 			}
 		}
-		return popStringBuilder().toString();
 	}
-	private CndTextGenerator appendType(IDocumentProperty p) {
-		append(" ( ").append(p.getPropertyType().name()).append(" ) ");
-		if(p instanceof ReferencedDocumentCollection){
-			append(" multiple > ").append(((ReferencedDocumentCollection) p).getType().getFullName());
-		}else if(p instanceof ReferencedDocument){
-			append(((ReferencedDocument) p).getType().getFullName());
+
+	private void appendCollectionHolderType(ChildDocumentCollection p) {
+		append("[").append(p.getFullName()).append("]").endLine();
+		String typeName = p.getType().getFullName();
+		append("  + ").append(typeName).append(" (").append(typeName).append(" ) = ").append(typeName).append(" multiple").endLine();
+		endLine();
+	}
+
+	private CndTextGenerator multiplicity(IDocumentProperty p) {
+		if (p.isMultiple()) {
+			append(" multiple");
+		} else if (p.isMandatory()) {
+			append(" mandatory");
 		}
 		return this;
 	}
+
+	private void appendChild(IChildDocument p) {
+		String typeName = p.getType().getFullName();
+		String fullName = ((IChildDocument) p).getFullName();
+		if (p instanceof ChildDocument) {
+			append("  + ").append(fullName).append(" (").append(typeName).append(" )").endLine();
+		} else {
+			append("  + ").append(fullName).append(" (").append(fullName).append(" ) = ").append(fullName).endLine();
+		}
+	}
+
+	private void appendProperty(IDocumentProperty p) {
+		append("  - ").append(p.getFullName()).append(" ( ").append(p.getPropertyType().name()).append(" ) ").multiplicity(p);
+		if (p instanceof IReferencedDocumentProperty) {
+			append(" < ").append(((IReferencedDocumentProperty) p).getType().getFullName());
+		}
+		endLine();
+	}
+
 	@Override
 	public CndTextGenerator append(String string) {
 		return (CndTextGenerator) super.append(string);
 	}
-	public CndTextGenerator endLine(){
+
+	public CndTextGenerator endLine() {
 		append("\n");
 		return this;
 	}
 
-	protected void appendNamespaces(DocumentNamespace n) {
-		for (DocumentNamespace child : n.getChildren()) {
-			append("<").append(child.getPrefix()).append("='").append(child.getName()).append("'>").endLine();
-			appendNamespaces(child);
+	protected void appendChildNamespaces(DocumentNamespace n) {
+		if (n.getChildren() != null) {
+			for (DocumentNamespace child : n.getChildren()) {
+				append("<").append(child.getPrefix()).append("='").append(child.getName()).append("'>").endLine();
+				appendChildNamespaces(child);
+			}
 		}
 	}
 }
-

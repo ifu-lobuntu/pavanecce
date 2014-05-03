@@ -28,7 +28,7 @@ public class AssociationCollectionTests extends Assert {
 	@BeforeClass
 	public static void setup() throws Exception {
 		JavaCodeGenerator codeGenerator = new JavaCodeGenerator();
-		example.setup(new CodeModelBuilder(true), codeGenerator, new AssociationCollectionCodeDecorator());
+		example.setup(new CodeModelBuilder(true), codeGenerator);
 	}
 
 	@Test

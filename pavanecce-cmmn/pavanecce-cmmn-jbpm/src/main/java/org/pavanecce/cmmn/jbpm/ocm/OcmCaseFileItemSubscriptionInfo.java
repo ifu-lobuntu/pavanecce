@@ -1,11 +1,13 @@
 package org.pavanecce.cmmn.jbpm.ocm;
 
+import org.apache.jackrabbit.ocm.manager.enumconverter.EnumTypeConverter;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Bean;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
 import org.pavanecce.cmmn.jbpm.instance.CaseFileItemSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.instance.CaseSubscriptionInfo;
+import org.pavanecce.common.ocm.GrandParentBeanConverterImpl;
 
 @Node(discriminator = false, jcrType = "i:caseFileItemSubscription")
 public class OcmCaseFileItemSubscriptionInfo implements CaseFileItemSubscriptionInfo {
@@ -15,7 +17,7 @@ public class OcmCaseFileItemSubscriptionInfo implements CaseFileItemSubscription
 	private OcmCaseSubscriptionInfo caseSubscription;
 	@Field(jcrName = "i:itemName")
 	private String itemName;
-	@Field(jcrName = "i:transition",converter=EnumConverter.class)
+	@Field(jcrName = "i:transition",converter=EnumTypeConverter.class)
 	private CaseFileItemTransition transition;
 	@Field(jcrName = "i:processId")
 	private long processId;

@@ -32,7 +32,7 @@ public class RelationalUtil {
 					if (EmfPropertyUtil.isInverse(p)) {
 						result = new RelationalInverseLink(p.getOtherEnd().getName(), true, true, false);
 					} else {
-						result = new RelationalLinkTable(NameConverter.toUpperCase(p.getAssociation().getName()), buildColumnMap(p),
+						result = new RelationalLinkTable(NameConverter.toUnderscoreStyle(p.getAssociation().getName()), buildColumnMap(p),
 								buildColumnMap(p.getOtherEnd()));
 					}
 				} else {

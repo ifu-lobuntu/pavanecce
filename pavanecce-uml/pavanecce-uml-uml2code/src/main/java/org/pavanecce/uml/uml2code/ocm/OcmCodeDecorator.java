@@ -46,9 +46,9 @@ public class OcmCodeDecorator extends AbstractJavaCodeDecorator {
 	public void appendAdditionalMethods(JavaCodeGenerator sb, CodeClassifier cc) {
 		IDocumentElement element = cc.getData(IDocumentElement.class);
 		if (element instanceof DocumentNodeType) {
-			DocumentNodeType relationalTable = (DocumentNodeType) element;
-			if (!hasPkField(cc, relationalTable)) {
-				String pkFieldName = getPkFieldName(relationalTable);
+			DocumentNodeType nodeType = (DocumentNodeType) element;
+			if (!hasPkField(cc, nodeType)) {
+				String pkFieldName = getPkFieldName(nodeType);
 				sb.append("  public String get");
 				sb.append(NameConverter.capitalize(pkFieldName));
 				sb.append("(){\n");
@@ -65,6 +65,7 @@ public class OcmCodeDecorator extends AbstractJavaCodeDecorator {
 				sb.appendLineEnd();
 				sb.append("  }\n");
 			}
+			//TODO path,name fields
 		}
 	}
 
@@ -72,14 +73,13 @@ public class OcmCodeDecorator extends AbstractJavaCodeDecorator {
 	public void appendAdditionalImports(JavaCodeGenerator sb, CodeClassifier cc) {
 		sb.append("import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node").appendLineEnd();
 		sb.append("import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field").appendLineEnd();
-		sb.append("import javax.persistence.Table;\n");
 		SortedSet<String> imports = new TreeSet<String>();
 		Set<Entry<String, CodeField>> entrySet = cc.getFields().entrySet();
 		for (Entry<String, CodeField> entry : entrySet) {
 			CodeField field = entry.getValue();
 			IDocumentElement data = field.getData(IDocumentElement.class);
 			if (data instanceof ChildDocumentCollection) {
-				imports.add("org.apache.jackrabbit.ocm.mapper.impl.annotation.Field");
+				imports.add("org.apache.jackrabbit.ocm.mapper.impl.annotation.Collection");
 			} else if (data instanceof ReferencedDocumentCollection) {
 				imports.add("org.apache.jackrabbit.ocm.mapper.impl.annotation.Collection");
 				imports.add("org.apache.jackrabbit.ocm.manager.collectionconverter.impl.BeanReferenceCollectionConverterImpl");
@@ -89,13 +89,13 @@ public class OcmCodeDecorator extends AbstractJavaCodeDecorator {
 			} else if (data instanceof ChildDocument) {
 				imports.add("org.apache.jackrabbit.ocm.mapper.impl.annotation.Bean");
 			} else if (data instanceof DocumentProperty) {
-				imports.add("org.apache.jackrabbit.ocm.mapper.impl.annotation.Field");
 				if (data instanceof DocumentEnumProperty) {
 					imports.add("org.apache.jackrabbit.ocm.manager.enumconverter.EnumTypeConverter");
 				}
 			} else if (data instanceof ParentDocument) {
+				imports.add("org.apache.jackrabbit.ocm.mapper.impl.annotation.Bean");
 				if (((ParentDocument) data).isChildIsMany()) {
-					imports.add("org.pavanecce.cmmn.jbpm.ocm.GrandParentBeanConverterImpl");
+					imports.add("org.pavanecce.common.ocm.GrandParentBeanConverterImpl");
 				} else {
 					imports.add("org.apache.jackrabbit.ocm.manager.beanconverter.impl.ParentBeanConverterImpl");
 				}
@@ -113,7 +113,7 @@ public class OcmCodeDecorator extends AbstractJavaCodeDecorator {
 	public void decorateClassDeclaration(JavaCodeGenerator sb, CodeClass cc) {
 		IDocumentElement element = cc.getData(IDocumentElement.class);
 		if (element instanceof DocumentNodeType) {
-			sb.append("@Node(name=\"").append(((DocumentNodeType) element).getFullName()).append("\", discriminator = false))\n");
+			sb.append("@Node(jcrType = \"").append(((DocumentNodeType) element).getFullName()).append("\", discriminator = false)\n");
 		}
 	}
 
@@ -136,16 +136,21 @@ public class OcmCodeDecorator extends AbstractJavaCodeDecorator {
 			sb.append("  @Bean(jcrName = \"").append(ref.getFullName()).append("\", converter = ReferenceBeanConverterImpl.class)\n");
 		} else if (element instanceof ChildDocumentCollection) {
 			ChildDocumentCollection children = (ChildDocumentCollection) element;
-			sb.append("  @Collection(jcrName = \"").append(children.getFullName()).append("\", jcrElementName = \")").append(children.getType().getFullName()).append("\")\n");
+			sb.append("  @Collection(jcrName = \"").append(children.getFullName()).append("\", jcrElementName = \"").append(children.getType().getFullName()).append("\")\n");
 		} else if (element instanceof ReferencedDocumentCollection) {
 			ReferencedDocumentCollection refs = (ReferencedDocumentCollection) element;
 			sb.append("  @Collection(jcrName = \"").append(refs.getFullName()).append("\", collectionConverter =  BeanReferenceCollectionConverterImpl.class)\n");
 		} else if (element instanceof DocumentEnumProperty) {
 			DocumentEnumProperty prop = (DocumentEnumProperty) element;
 			sb.append("  @Field(jcrName = \"").append(prop.getFullName()).append("\", converter = EnumTypeConverter.class)\n");
-		}else{
+		} else if (element instanceof DocumentProperty) {
 			DocumentProperty prop = (DocumentProperty) element;
-			sb.append("  @Field(jcrName = \"").append(prop.getFullName()).append("\")\n");
+			sb.append("  @Field(jcrName = \"").append(prop.getFullName());
+			sb.append("\"");
+			if(prop.isPath()){
+				sb.append(", path = true");
+			}
+			sb.append(")\n");
 		}
 	}
 }

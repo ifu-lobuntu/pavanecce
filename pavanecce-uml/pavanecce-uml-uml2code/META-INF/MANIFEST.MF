@@ -8,6 +8,7 @@ Export-Package: org.pavanecce.uml.uml2code,
  org.pavanecce.uml.uml2code.java,
  org.pavanecce.uml.uml2code.javascript,
  org.pavanecce.uml.uml2code.jpa,
+ org.pavanecce.uml.uml2code.ocm,
  org.pavanecce.uml.uml2code.python
 Require-Bundle: org.eclipse.uml2.uml,
  org.eclipse.uml2.uml.resources,

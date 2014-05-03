@@ -1,6 +1,5 @@
 target
 libs
 cachedir
-btm1.log
-btm2.log
+*.tlog
 test-input

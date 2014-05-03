@@ -49,10 +49,10 @@ import org.phidias.compile.ResourceResolver;
 public abstract class AbstractJavaCompilingTest extends Assert {
 
 	protected IFileLocator fileLocator = new AdaptableFileLocator();
-	protected JavaCodeGenerator javaCodeGenerator;
+	private JavaCodeGenerator javaCodeGenerator;
 	private ScriptEngine javaScriptEngine;
-	protected ScriptContext javaScriptContext;
-	protected ClassLoader classLoader;
+	private ScriptContext javaScriptContext;
+	private ClassLoader classLoader;
 
 	public AbstractJavaCompilingTest() {
 		super();
@@ -60,7 +60,7 @@ public abstract class AbstractJavaCompilingTest extends Assert {
 
 	protected TextFileGenerator generateJava(CodeModel codeModel) {
 		TextWorkspace tw = new TextWorkspace("thisgoesnowhere");
-		File outputRoot = calculateOutputRoot();
+		File outputRoot = calculateTextOutputRoot();
 		TextFileGenerator tfg = new TextFileGenerator(outputRoot);
 		TextProjectDefinition tfd = new TextProjectDefinition(ProjectNameStrategy.SUFFIX_ONLY, "org.pavanecce.uml.test.domain");
 		VersionNumber vn = new VersionNumber("0.0.1");
@@ -75,7 +75,7 @@ public abstract class AbstractJavaCompilingTest extends Assert {
 	protected void createText(CodePackage codeModel, SourceFolder sf) {
 		Collection<CodeClassifier> values = codeModel.getClassifiers().values();
 		for (CodeClassifier codeClassifier : values) {
-			String javaSource = javaCodeGenerator.toClassifierDeclaration(codeClassifier);
+			String javaSource = getJavaCodeGenerator().toClassifierDeclaration(codeClassifier);
 			List<String> path = codeClassifier.getPackage().getPath();
 			path.add(codeClassifier.getName() + ".java");
 			sf.findOrCreateTextFile(path).setTextSource(new CharArrayTextSource(javaSource.toCharArray()));
@@ -87,7 +87,7 @@ public abstract class AbstractJavaCompilingTest extends Assert {
 
 	protected void createText(SourceFolder sf, Collection<CodeClassifier> values) {
 		for (CodeClassifier codeClassifier : values) {
-			String javaSource = javaCodeGenerator.toClassifierDeclaration(codeClassifier);
+			String javaSource = getJavaCodeGenerator().toClassifierDeclaration(codeClassifier);
 			List<String> path = codeClassifier.getPackage().getPath();
 			path.add(codeClassifier.getName() + ".java");
 			sf.findOrCreateTextFile(path).setTextSource(new CharArrayTextSource(javaSource.toCharArray()));
@@ -95,28 +95,26 @@ public abstract class AbstractJavaCompilingTest extends Assert {
 	}
 
 	public void setup() throws Exception {
-		javaCodeGenerator = new EmfJavaCodeGenerator();
+		FileUtil.deleteAllChildren(calculateTextOutputRoot());
+		setJavaCodeGenerator(new EmfJavaCodeGenerator());
 	}
 
-	protected void initScriptingEngine() {
-		Thread.currentThread().setContextClassLoader(classLoader);
+	public  void initScriptingEngine() {
+		Thread.currentThread().setContextClassLoader(getClassLoader());
 		ScriptEngineManager manager = new ScriptEngineManager();
-
 		setJavaScriptEngine(manager.getEngineByName("js"));
-		javaScriptContext = getJavaScriptEngine().getContext();
+		setJavaScriptContext(getJavaScriptEngine().getContext());
 	}
 
-	private File calculateOutputRoot() {
+	private File calculateTextOutputRoot() {
 		File f = new File(System.getProperty("user.home"), "tmp/" + getTestName() + "/java");
 		f.mkdirs();
-		FileUtil.deleteAllChildren(f);
 		return f;
 	}
 
-	private File calculateClasspath() {
+	public File calculateBinaryOutputRoot() {
 		File cp = new File(System.getProperty("user.home"), "tmp/" + getTestName() + "/classes");
 		cp.mkdirs();
-		FileUtil.deleteAllChildren(cp);
 		return cp;
 	}
 
@@ -204,7 +202,8 @@ public abstract class AbstractJavaCompilingTest extends Assert {
 
 	protected ClassLoader compile(Set<File> set) throws IOException {
 		ClassLoader newClassLoader = null;
-		File destination = calculateClasspath();
+		File destination = calculateBinaryOutputRoot();
+		FileUtil.deleteAllChildren(destination);
 		newClassLoader = new URLClassLoader(new URL[] { destination.toURI().toURL() }, getClass().getClassLoader());
 		if (Thread.currentThread().getContextClassLoader() instanceof URLClassLoader) {
 			System.out.println("!!!!!!!!!!!!!!!!!!!!Compiling in STandalone architecture!!!!!!!!!!!!!!!!!!");
@@ -250,16 +249,6 @@ public abstract class AbstractJavaCompilingTest extends Assert {
 		}
 	}
 
-	public void addMappedClasses(TestPersistenceUnitInfo pui, CodePackage codePackage) {
-		for (CodeClassifier cc : codePackage.getClassifiers().values()) {
-			pui.getManagedClassNames().add(javaCodeGenerator.toQualifiedName(cc.getTypeReference()));
-		}
-		Collection<CodePackage> values = codePackage.getChildren().values();
-		for (CodePackage child : values) {
-			addMappedClasses(pui, child);
-		}
-
-	}
 
 	public ScriptEngine getJavaScriptEngine() {
 		return javaScriptEngine;
@@ -267,6 +256,30 @@ public abstract class AbstractJavaCompilingTest extends Assert {
 
 	public void setJavaScriptEngine(ScriptEngine javaScriptEngine) {
 		this.javaScriptEngine = javaScriptEngine;
+	}
+
+	public ClassLoader getClassLoader() {
+		return classLoader;
+	}
+
+	public void setClassLoader(ClassLoader classLoader) {
+		this.classLoader = classLoader;
+	}
+
+	public JavaCodeGenerator getJavaCodeGenerator() {
+		return javaCodeGenerator;
+	}
+
+	public void setJavaCodeGenerator(JavaCodeGenerator javaCodeGenerator) {
+		this.javaCodeGenerator = javaCodeGenerator;
+	}
+
+	public ScriptContext getJavaScriptContext() {
+		return javaScriptContext;
+	}
+
+	public void setJavaScriptContext(ScriptContext javaScriptContext) {
+		this.javaScriptContext = javaScriptContext;
 	}
 
 }

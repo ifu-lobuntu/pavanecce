@@ -19,19 +19,21 @@ public class OcmFactory {
 	private EventListener eventListener;
 	private static ThreadLocal<ObjectContentManager> currentObjectContentManager = new ThreadLocal<ObjectContentManager>();
 
-	public OcmFactory(Repository repository, String username, String password, Mapper mapper, EventListener  eventListener) {
+	public OcmFactory(Repository repository, String username, String password, Mapper mapper, EventListener eventListener) {
 		super();
 		this.repository = repository;
 		this.username = username;
 		this.password = password;
 		this.mapper = mapper;
-		this.eventListener =eventListener;
+		this.eventListener = eventListener;
 	}
 
 	public ObjectContentManager createObjectContentManager() {
 		try {
 			Session session = repository.login(new SimpleCredentials(username, password.toCharArray()));
-			session.getWorkspace().getObservationManager().addEventListener(eventListener, getEventMask(), "/", true, null, null, false);
+			if (eventListener != null) {
+				session.getWorkspace().getObservationManager().addEventListener(eventListener, getEventMask(), "/", true, null, null, false);
+			}
 			ObjectContentManagerImpl result = new ObjectContentManagerImpl(session, mapper);
 			currentObjectContentManager.set(result);
 			return result;
@@ -41,13 +43,14 @@ public class OcmFactory {
 			throw new RuntimeException(e);
 		}
 	}
+
 	public Mapper getMapper() {
 		return mapper;
 	}
 
 	protected int getEventMask() {
-		return Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED |Event.PERSIST;
- 	}
+		return Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED | Event.PERSIST;
+	}
 
 	public ObjectContentManager getCurrentObjectContentManager() {
 		ObjectContentManager objectContentManager = currentObjectContentManager.get();

@@ -1,9 +1,12 @@
 package org.pavanecce.common.code.metamodel.documentdb;
 
-public class ReferencedDocument extends DocumentAssociation implements IDocumentProperty {
+public class ReferencedDocument extends DocumentAssociation implements IDocumentProperty,IReferencedDocumentProperty {
 
-	public ReferencedDocument(DocumentNamespace namespace, String name, DocumentNodeType type) {
+	private boolean mandatory;
+
+	public ReferencedDocument(DocumentNamespace namespace, String name, DocumentNodeType type, boolean mandatory) {
 		super(namespace, name, type);
+		this.mandatory = mandatory;
 	}
 
 	@Override
@@ -11,4 +14,12 @@ public class ReferencedDocument extends DocumentAssociation implements IDocument
 		return PropertyType.REFERENCE;
 	}
 
+	public boolean isMandatory() {
+		return mandatory;
+	}
+
+	@Override
+	public boolean isMultiple() {
+		return false;
+	}
 }
