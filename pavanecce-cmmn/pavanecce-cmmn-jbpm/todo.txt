@@ -1,4 +1,4 @@
-Tested
+Done and Tested
 Throwing CREATE events from JCR
 Throwing CREATE events from Hibernate
 Throwing Human Task Completion events from TaskService
@@ -21,6 +21,7 @@ Throwing Human Task FAULT events from TaskService
 Throwing Human Task SUSPEND events from TaskService
 
 Todo
+Generate OCM and JPA test Java classes from UML along with CaseFileItemDefinition includes
 ParameterMapping
 Timer Event
 User Event

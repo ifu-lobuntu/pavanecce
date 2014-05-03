@@ -1,18 +1,24 @@
-Tested
-Any Collection Expression
-Collect Collection Expresssion
-Select Collection Expression
+Done and Tested
+Iterations:
+Any, Collect, Select, One, Exists
 bodyConditions
+Implement compiled tests using Javascript
+Implement Javascript tests
 
 Todo
 Preconditions and postconditions
-Implement compiled tests using Javascript
-Implement Javascript tests
 Iterate Collection Expression
 Method Call
-
-Bag Operationss
+Iterations:
+ forAll
+ isUnique
+ any
+ reject
+ sortedBy
+ collectNested
+Bag Operations
 Sequence Operations
 Set Operations
-etc
-etc
+OrderedSet operations
+Math operations (sum, etc)
+For VDML we will put in avg,stdv,etc.
