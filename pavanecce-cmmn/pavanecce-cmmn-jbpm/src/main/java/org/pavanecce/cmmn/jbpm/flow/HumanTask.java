@@ -8,6 +8,7 @@ import org.drools.core.process.core.Work;
 import org.drools.core.process.core.datatype.impl.type.StringDataType;
 import org.drools.core.process.core.impl.ParameterDefinitionImpl;
 import org.drools.core.process.core.impl.WorkImpl;
+import org.jbpm.services.task.wih.util.PeopleAssignmentHelper;
 
 public class HumanTask extends TaskNode {
 	/**
@@ -37,6 +38,7 @@ public class HumanTask extends TaskNode {
 		// TODO: ...
 		work.setParameterDefinitions(parameterDefinitions);
 		setWork(work);
+
 	}
 
 	public String getPerformerRef() {
@@ -61,6 +63,14 @@ public class HumanTask extends TaskNode {
 
 	public void setPerformer(Role performer) {
 		this.performer = performer;
+	}
+	@Override
+	public Work getWork() {
+		Work result = super.getWork();
+		//Think about this - case owner??
+		result.setParameter(PeopleAssignmentHelper.BUSINESSADMINISTRATOR_ID,getPerformer().getName());
+
+		return result;
 	}
 
 

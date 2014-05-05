@@ -106,6 +106,7 @@ public enum JpaRelationalDataType implements JpaDataTypeStrategy {
 		public void beforeField(String padding, JavaCodeGenerator sb, CodeField field, RelationalColumn col) {
 			sb.append(padding);
 			sb.append("@Basic()\n");
+			sb.append(padding);
 			sb.append("@Column(name=\"");
 			sb.append(col.getColumnName());
 			sb.append("\")\n");

@@ -7,6 +7,8 @@ public class AbstractTextGenerator {
 
 	protected StringBuilder sb;
 	protected Deque<StringBuilder> sbStack = new ArrayDeque<StringBuilder>();
+	protected Deque<String> paddingStack = new ArrayDeque<String>();
+	protected String padding;
 
 	public AbstractTextGenerator() {
 		super();
@@ -18,8 +20,7 @@ public class AbstractTextGenerator {
 	}
 
 	protected StringBuilder popStringBuilder() {
-		StringBuilder sb;
-		sb = sbStack.pop();
+		StringBuilder sb = sbStack.pop();
 		this.sb = sbStack.peek();
 		return sb;
 	}
@@ -29,6 +30,16 @@ public class AbstractTextGenerator {
 		sbStack.push(sb);
 		this.sb = sb;
 		return sb;
+	}
+
+	protected void popPadding() {
+		paddingStack.pop();
+		this.padding = paddingStack.peek();
+	}
+
+	protected void pushPadding(String padding) {
+		paddingStack.push(padding);
+		this.padding = padding;
 	}
 
 }

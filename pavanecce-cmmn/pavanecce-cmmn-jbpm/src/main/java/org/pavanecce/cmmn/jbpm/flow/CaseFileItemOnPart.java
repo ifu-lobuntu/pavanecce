@@ -2,6 +2,9 @@ package org.pavanecce.cmmn.jbpm.flow;
 
 import java.io.Serializable;
 
+import org.pavanecce.cmmn.jbpm.instance.CaseEvent;
+import org.pavanecce.cmmn.jbpm.instance.CaseFileItemEvent;
+
 public class CaseFileItemOnPart extends OnPart implements Serializable {
 	private static final long serialVersionUID = -9167236068103073693L;
 	private CaseFileItemTransition standardEvent;
@@ -56,6 +59,10 @@ public class CaseFileItemOnPart extends OnPart implements Serializable {
 
 	public void setRelatedCaseFileItem(CaseFileItem relatedCaseFileItem) {
 		this.relatedCaseFileItem = relatedCaseFileItem;
+	}
+	@Override
+	public CaseEvent createEvent(Object peek) {
+		return new CaseFileItemEvent(sourceCaseFileItem.getName(), getStandardEvent(), null, peek);
 	}
 
 }

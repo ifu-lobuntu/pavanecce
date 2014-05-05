@@ -4,6 +4,7 @@ import static org.kie.api.runtime.EnvironmentName.OBJECT_MARSHALLING_STRATEGIES;
 
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
@@ -26,6 +27,7 @@ import org.kie.api.marshalling.ObjectMarshallingStrategy;
 import org.kie.api.runtime.Environment;
 import org.kie.api.runtime.manager.RuntimeEngine;
 import org.kie.api.runtime.manager.RuntimeManager;
+import org.kie.api.task.model.TaskSummary;
 import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemDefinitionType;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemOnPart;
@@ -51,18 +53,18 @@ import org.pavanecce.cmmn.jbpm.ocm.OcmCaseSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.ocm.OcmCollectionPlaceHolderResolveStrategy;
 import org.pavanecce.cmmn.jbpm.ocm.OcmPlaceHolderResolveStrategy;
 import org.pavanecce.cmmn.jbpm.ocm.OcmSubscriptionManager;
-import org.pavanecce.cmmn.jbpm.test.domain.ConstructionCase;
-import org.pavanecce.cmmn.jbpm.test.domain.House;
-import org.pavanecce.cmmn.jbpm.test.domain.HousePlan;
-import org.pavanecce.cmmn.jbpm.test.domain.RoofPlan;
-import org.pavanecce.cmmn.jbpm.test.domain.Wall;
-import org.pavanecce.cmmn.jbpm.test.domain.WallPlan;
-import org.pavanecce.cmmn.jbpm.test.domain.WallQuote;
 import org.pavanecce.common.ObjectPersistence;
 import org.pavanecce.common.jpa.JpaObjectPersistence;
 import org.pavanecce.common.ocm.OcmFactory;
 import org.pavanecce.common.ocm.OcmObjectPersistence;
 
+import test.ConstructionCase;
+import test.House;
+import test.HousePlan;
+import test.RoofPlan;
+import test.RoomPlan;
+import test.Wall;
+import test.WallPlan;
 import bitronix.tm.resource.jdbc.PoolingDataSource;
 
 public abstract class AbstractJbpmCaseTestCase extends JbpmJUnitBaseTestCase {
@@ -87,6 +89,14 @@ public abstract class AbstractJbpmCaseTestCase extends JbpmJUnitBaseTestCase {
 		super.tearDown();
 		getPersistence().close();
 	}
+	protected void assertTaskTypeCreated(List<TaskSummary> list, String expected) {
+		for (TaskSummary taskSummary : list) {
+			if(taskSummary.getName().equals(expected)){
+				return;
+			}
+		}
+		fail("Task not created: " + expected);
+	}
 
 	public ObjectPersistence getPersistence() {
 		try {
@@ -107,8 +117,8 @@ public abstract class AbstractJbpmCaseTestCase extends JbpmJUnitBaseTestCase {
 	}
 
 	protected Class<?>[] getClasses() {
-		return new Class<?>[] { ConstructionCase.class, HousePlan.class, House.class, Wall.class, WallPlan.class, RoofPlan.class, WallQuote.class,
-				OcmCaseSubscriptionInfo.class, OcmCaseFileItemSubscriptionInfo.class };
+		return new Class<?>[] { ConstructionCase.class, HousePlan.class, House.class, Wall.class, WallPlan.class, RoofPlan.class, OcmCaseSubscriptionInfo.class, OcmCaseFileItemSubscriptionInfo.class,
+				RoomPlan.class };
 	}
 
 	protected PoolingDataSource setupPoolingDataSource() {
@@ -152,11 +162,11 @@ public abstract class AbstractJbpmCaseTestCase extends JbpmJUnitBaseTestCase {
 
 	protected ObjectMarshallingStrategy[] getPlaceholdStrategies(Environment env) {
 		if (isJpa) {
-			return new ObjectMarshallingStrategy[] { new ProcessInstanceResolverStrategy(), new JPAPlaceholderResolverStrategy(env),
-					new CollectionPlaceHolderResolveStrategy(env), new SerializablePlaceholderResolverStrategy(ClassObjectMarshallingStrategyAcceptor.DEFAULT) };
+			return new ObjectMarshallingStrategy[] { new ProcessInstanceResolverStrategy(), new JPAPlaceholderResolverStrategy(env), new CollectionPlaceHolderResolveStrategy(env),
+					new SerializablePlaceholderResolverStrategy(ClassObjectMarshallingStrategyAcceptor.DEFAULT) };
 		} else {
-			return new ObjectMarshallingStrategy[] { new ProcessInstanceResolverStrategy(), new OcmPlaceHolderResolveStrategy(env),
-					new JPAPlaceholderResolverStrategy(env), new CollectionPlaceHolderResolveStrategy(env), new OcmCollectionPlaceHolderResolveStrategy(env),
+			return new ObjectMarshallingStrategy[] { new ProcessInstanceResolverStrategy(), new OcmPlaceHolderResolveStrategy(env), new JPAPlaceholderResolverStrategy(env),
+					new CollectionPlaceHolderResolveStrategy(env), new OcmCollectionPlaceHolderResolveStrategy(env),
 					new SerializablePlaceholderResolverStrategy(ClassObjectMarshallingStrategyAcceptor.DEFAULT) };
 
 		}
@@ -166,7 +176,7 @@ public abstract class AbstractJbpmCaseTestCase extends JbpmJUnitBaseTestCase {
 		if (isJpa) {
 			return new HibernateSubscriptionManager();
 		} else {
-			return  (AbstractSubscriptionManager<?, ?>) getOcmFactory().getEventListener();
+			return (AbstractSubscriptionManager<?, ?>) getOcmFactory().getEventListener();
 		}
 	}
 
@@ -179,8 +189,8 @@ public abstract class AbstractJbpmCaseTestCase extends JbpmJUnitBaseTestCase {
 				session = tr.login(new SimpleCredentials("admin", "admin".toCharArray()));
 				session.getRootNode().addNode("cases");
 				session.getRootNode().addNode("subscriptions");
-				CndImporter.registerNodeTypes(new InputStreamReader(JcrTestCase.class.getResourceAsStream("/META-INF/pava-definitions.cnd")), session);
-				CndImporter.registerNodeTypes(new InputStreamReader(JcrTestCase.class.getResourceAsStream("/build.cnd")), session);
+				CndImporter.registerNodeTypes(new InputStreamReader(JcrTestCase.class.getResourceAsStream("/META-INF/definitions.cnd")), session);
+				CndImporter.registerNodeTypes(new InputStreamReader(JcrTestCase.class.getResourceAsStream("/test.cnd")), session);
 				session.save();
 				session.logout();
 				ocmFactory = new OcmFactory(tr, "admin", "admin", new AnnotationMapperImpl(Arrays.<Class> asList(getClasses())), new OcmSubscriptionManager());

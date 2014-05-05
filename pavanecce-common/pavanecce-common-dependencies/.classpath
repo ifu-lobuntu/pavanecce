@@ -25,7 +25,7 @@
 	<classpathentry exported="true" kind="lib" path="libs/btm.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/h2.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/hibernate-commons-annotations.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/hibernate-core.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/hibernate-core.jar" sourcepath="libs/hibernate-core-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/hibernate-entitymanager.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/hibernate-jpa-2.0-api.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/jackrabbit-ocm.jar" sourcepath="libs/jackrabbit-ocm-sources.jar"/>

@@ -28,34 +28,38 @@ public class AssociationCollectionCodeDecorator extends AbstractJavaCodeDecorato
 					AssociationCollectionTypeReference otherType = (AssociationCollectionTypeReference) type.getOtherFieldType();
 					CodeTypeReference elementType = type.getElementTypes().get(0).getType();
 					CodeTypeReference otherElementType = otherType.getElementTypes().get(0).getType();
+					sb.append("  @SuppressWarnings(\"serial\")");
 					sb.append("  private transient ManyToManySet<").appendType(otherElementType).append(",").appendType(elementType).append("> ");
 					sb.append(field.getName()).append("Wrapper");
 					sb.append(" = new ").append("ManyToManySet<").appendType(otherElementType).append(",").appendType(elementType).append(">(this){\n");
 					sb.append("      public ").appendType(type).append(" getDelegate(){\n");
 					sb.append("        return ").append(field.getName()).appendLineEnd();
 					sb.append("      }\n");
+					sb.append("      @SuppressWarnings(\"unchecked\")");
 					sb.append("      protected ManyToManyCollection<").appendType(elementType).append(",").appendType(otherElementType).append("> getOtherEnd(").appendType(elementType)
 							.append(" other){\n");
 					sb.append("        return ").append("(ManyToManyCollection<").appendType(elementType).append(",").appendType(otherElementType).append(">)other.get")
 							.append(NameConverter.capitalize(type.getOtherFieldName())).append("()").appendLineEnd();
-					sb.append("       }\n");
-					sb.append("       public boolean isLoaded(){\n");
+					sb.append("      }\n");
+					sb.append("      public boolean isLoaded(){\n");
 					//TODO switching this optimization off until we figure out how to "flush"
 					sb.append("         return ").append(type.isChild()?"true":"true").appendLineEnd();
 					sb.append("      }\n");
-					sb.append("       public boolean isInstanceOfChild(Object o){\n");
+					sb.append("      public boolean isInstanceOfChild(Object o){\n");
 					sb.append("         return o instanceof ").appendType(elementType).appendLineEnd();
 					sb.append("      }\n");
 					sb.append("  };\n");
 				} else {
 					CodeTypeReference otherType = type.getOtherFieldType();
 					CodeTypeReference elementType = type.getElementTypes().get(0).getType();
+					sb.append("  @SuppressWarnings(\"serial\")");
 					sb.append("  private transient OneToManySet<").appendType(otherType).append(",").appendType(elementType).append("> ");
 					sb.append(field.getName()).append("Wrapper");
 					sb.append(" = new ").append("OneToManySet<").appendType(otherType).append(",").appendType(elementType).append(">(this){\n");
 					sb.append("      public ").appendType(type).append(" getDelegate(){\n");
 					sb.append("        return ").append(field.getName()).appendLineEnd();
 					sb.append("      }\n");
+					sb.append("      @SuppressWarnings(\"unchecked\")");
 					sb.append("      protected OneToManySet<").appendType(otherType).append(",").appendType(elementType).append("> getChildren(").appendType(otherType).append(" parent){\n");
 					sb.append("        return ").append("(OneToManySet<").appendType(otherType).append(",").appendType(elementType).append(">)parent.get")
 							.append(NameConverter.capitalize(field.getName())).append("()").appendLineEnd();

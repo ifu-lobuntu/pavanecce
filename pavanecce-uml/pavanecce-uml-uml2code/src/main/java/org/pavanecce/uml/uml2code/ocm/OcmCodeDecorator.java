@@ -175,14 +175,19 @@ public class OcmCodeDecorator extends AbstractJavaCodeDecorator {
 			sb.append("  @Field(jcrName = \"").append(prop.getFullName()).append("\", converter = EnumTypeConverter.class)\n");
 		} else if (element instanceof DocumentProperty) {
 			DocumentProperty prop = (DocumentProperty) element;
-			sb.append("  @Field(jcrName = \"").append(prop.getFullName());
-			sb.append("\"");
-			if (prop.isPath()) {
-				sb.append(", path = true");
+			sb.append("  @Field(");
+			if (prop.isUuid()) {
+				sb.append("uuid = true)\n");
+			} else {
+				sb.append("jcrName = \"").append(prop.getFullName());
+				sb.append("\"");
+				if (prop.isPath()) {
+					sb.append(", path = true");
+				}
+				sb.append(", jcrType = \"");
+				sb.append(prop.getPropertyType().name());
+				sb.append("\")\n");
 			}
-			sb.append(", jcrType = \"");
-			sb.append(prop.getPropertyType().name());
-			sb.append("\")\n");
 		}
 	}
 }

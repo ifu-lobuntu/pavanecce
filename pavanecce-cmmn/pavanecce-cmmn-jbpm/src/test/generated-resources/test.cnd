@@ -1,0 +1,45 @@
+<mix='http://www.jcp.org/jcr/mix/1.0'>
+<test='http://test/'>
+[test:wallPlan] >  mix:lifecycle, mix:referenceable
+  - test:roomPlans ( REFERENCE )  multiple < test:roomPlan
+  - test:house ( REFERENCE )  < test:house
+
+[test:house] >  mix:lifecycle, mix:referenceable
+  - test:wallPlans ( REFERENCE )  multiple < test:wallPlan
+  - test:description ( STRING )  mandatory
+  - test:roofPlan ( REFERENCE )  < test:roofPlan
+  + test:walls (test:walls ) = test:walls
+
+[test:walls]
+  + test:wall (test:wall ) = test:wall multiple
+
+[test:roomPlan] >  mix:lifecycle, mix:referenceable
+  - test:wallPlans ( REFERENCE )  multiple < test:wallPlan
+  - test:name ( STRING )  mandatory
+
+[test:wall] >  mix:lifecycle, mix:referenceable
+
+[test:roofPlan] >  mix:lifecycle, mix:referenceable
+  - test:house ( REFERENCE )  < test:house
+
+[test:constructionCase] >  mix:lifecycle, mix:referenceable
+  - test:picture ( BINARY ) 
+  - test:numberOfWalls ( LONG ) 
+  - test:active ( BOOLEAN ) 
+  - test:name ( STRING )  mandatory
+  - test:pricePerSquareMetre ( DOUBLE ) 
+  - test:startDate ( DATE ) 
+  + test:house (test:house )
+  + test:housePlan (test:housePlan )
+
+[test:housePlan] >  mix:lifecycle, mix:referenceable
+  + test:roomPlans (test:roomPlans ) = test:roomPlans
+  + test:wallPlans (test:wallPlans ) = test:wallPlans
+  + test:roofPlan (test:roofPlan )
+
+[test:roomPlans]
+  + test:roomPlan (test:roomPlan ) = test:roomPlan multiple
+
+[test:wallPlans]
+  + test:wallPlan (test:wallPlan ) = test:wallPlan multiple
+

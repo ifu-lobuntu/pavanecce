@@ -39,14 +39,14 @@ public class AssociationCollectionTests extends Assert {
 		eval("var roomPlan=new RoomPlan();");
 		eval("var wallPlan1=new WallPlan();");
 		eval("var wallPlan2=new WallPlan();");
-		eval("roomPlan.getWallPlan().add(wallPlan1);");
-		eval("roomPlan.getWallPlan().add(wallPlan2);");
-		assertEquals(2, eval("roomPlan.getWallPlan().size();"));
-		assertEquals(1, eval("wallPlan1.getRoomPlan().size();"));
-		assertEquals(1, eval("wallPlan1.getRoomPlan().size();"));
-		eval("roomPlan.getWallPlan().remove(wallPlan1);");
-		assertEquals(1, eval("roomPlan.getWallPlan().size();"));
-		assertEquals(0, eval("wallPlan1.getRoomPlan().size();"));
+		eval("roomPlan.getWallPlans().add(wallPlan1);");
+		eval("roomPlan.getWallPlans().add(wallPlan2);");
+		assertEquals(2, eval("roomPlan.getWallPlans().size();"));
+		assertEquals(1, eval("wallPlan1.getRoomPlans().size();"));
+		assertEquals(1, eval("wallPlan1.getRoomPlans().size();"));
+		eval("roomPlan.getWallPlans().remove(wallPlan1);");
+		assertEquals(1, eval("roomPlan.getWallPlans().size();"));
+		assertEquals(0, eval("wallPlan1.getRoomPlans().size();"));
 	}
 
 	@Test
@@ -56,19 +56,19 @@ public class AssociationCollectionTests extends Assert {
 		eval("var housePlan=new HousePlan();");
 		eval("var wallPlan1=new WallPlan();");
 		eval("var wallPlan2=new WallPlan();");
-		eval("housePlan.getWallPlan().add(wallPlan1);");
-		eval("housePlan.getWallPlan().add(wallPlan2);");
-		assertEquals(2, eval("housePlan.getWallPlan().size();"));
+		eval("housePlan.getWallPlans().add(wallPlan1);");
+		eval("housePlan.getWallPlans().add(wallPlan2);");
+		assertEquals(2, eval("housePlan.getWallPlans().size();"));
 		assertSame(eval("housePlan"), eval("wallPlan1.getHousePlan();"));
 		assertSame(eval("housePlan"), eval("wallPlan2.getHousePlan();"));
-		eval("housePlan.getWallPlan().remove(wallPlan1);");
-		assertEquals(1, eval("housePlan.getWallPlan().size();"));
+		eval("housePlan.getWallPlans().remove(wallPlan1);");
+		assertEquals(1, eval("housePlan.getWallPlans().size();"));
 		assertNull(eval("wallPlan1.getHousePlan();"));
 		//Test the other side
 		eval("wallPlan1.setHousePlan(housePlan);");
-		assertEquals(2, eval("housePlan.getWallPlan().size();"));
+		assertEquals(2, eval("housePlan.getWallPlans().size();"));
 		eval("wallPlan1.setHousePlan(null);");
-		assertEquals(1, eval("housePlan.getWallPlan().size();"));
+		assertEquals(1, eval("housePlan.getWallPlans().size();"));
 	}
 
 	private Object eval(String string) throws ScriptException {

@@ -19,11 +19,12 @@ import org.kie.internal.task.api.model.NotificationEvent;
 import org.pavanecce.cmmn.jbpm.flow.builder.CMMNBuilder;
 import org.pavanecce.cmmn.jbpm.instance.CaseInstance;
 import org.pavanecce.cmmn.jbpm.instance.CaseTaskLifecycleListener;
-import org.pavanecce.cmmn.jbpm.test.domain.ConstructionCase;
-import org.pavanecce.cmmn.jbpm.test.domain.House;
-import org.pavanecce.cmmn.jbpm.test.domain.HousePlan;
-import org.pavanecce.cmmn.jbpm.test.domain.Wall;
-import org.pavanecce.cmmn.jbpm.test.domain.WallPlan;
+
+import test.ConstructionCase;
+import test.House;
+import test.HousePlan;
+import test.Wall;
+import test.WallPlan;
 
 public class BuilderTest extends AbstractJbpmCaseTestCase {
 

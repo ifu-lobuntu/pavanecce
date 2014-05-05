@@ -8,6 +8,7 @@ public class DocumentProperty implements IDocumentElement, IDocumentProperty {
 	private PropertyType propertyType;
 	private boolean multiple;
 	private boolean isPath;
+	private boolean isUuid;
 
 	public DocumentProperty(String name, DocumentNamespace namespace, PropertyType type, boolean required, boolean isMany) {
 		this.name = name;
@@ -44,6 +45,12 @@ public class DocumentProperty implements IDocumentElement, IDocumentProperty {
 	}
 	public boolean isPath() {
 		return isPath;
+	}
+	public boolean isUuid() {
+		return isUuid;
+	}
+	public void setUuid(boolean isUuid) {
+		this.isUuid = isUuid;
 	}
 }
 

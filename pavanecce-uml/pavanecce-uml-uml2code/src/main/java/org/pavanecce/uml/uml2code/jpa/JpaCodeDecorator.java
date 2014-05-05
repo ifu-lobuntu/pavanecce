@@ -16,8 +16,10 @@ import org.pavanecce.common.code.metamodel.CodeTypeReference;
 import org.pavanecce.common.code.metamodel.CollectionTypeReference;
 import org.pavanecce.common.code.metamodel.PrimitiveTypeReference;
 import org.pavanecce.common.code.metamodel.relationaldb.IRelationalElement;
+import org.pavanecce.common.code.metamodel.relationaldb.IdStrategy;
 import org.pavanecce.common.code.metamodel.relationaldb.RelationalColumn;
 import org.pavanecce.common.code.metamodel.relationaldb.RelationalInverseLink;
+import org.pavanecce.common.code.metamodel.relationaldb.RelationalKey;
 import org.pavanecce.common.code.metamodel.relationaldb.RelationalLink;
 import org.pavanecce.common.code.metamodel.relationaldb.RelationalLinkTable;
 import org.pavanecce.common.code.metamodel.relationaldb.RelationalTable;
@@ -39,7 +41,7 @@ public class JpaCodeDecorator extends AbstractJavaCodeDecorator {
 	}
 
 	@Override
-	public void appendAdditionalFields(JavaCodeGenerator  sb, CodeClassifier cc) {
+	public void appendAdditionalFields(JavaCodeGenerator sb, CodeClassifier cc) {
 		IRelationalElement element = cc.getData(IRelationalElement.class);
 		if (element instanceof RelationalTable) {
 			RelationalTable relationalTable = (RelationalTable) element;
@@ -128,6 +130,11 @@ public class JpaCodeDecorator extends AbstractJavaCodeDecorator {
 				imports.add("javax.persistence.ManyToMany");
 				imports.add("javax.persistence.JoinTable");
 				imports.add("javax.persistence.JoinColumn");
+			} else if (data instanceof RelationalKey) {
+				imports.add("javax.persistence.Id");
+				if (((RelationalKey) data).getStrategy() == IdStrategy.AUTO_ID) {
+					imports.add("javax.persistence.GeneratedValue");
+				}
 			} else if (data instanceof RelationalColumn) {
 				JpaDataTypeStrategy jpaDataTypeStrategy = dataTypeStrategies.get(field.getType());
 				if (jpaDataTypeStrategy != null) {
@@ -203,6 +210,12 @@ public class JpaCodeDecorator extends AbstractJavaCodeDecorator {
 				sb.append(",cascade=CascadeType.ALL");
 			}
 			sb.append(")\n");
+		} else if (element instanceof RelationalKey) {
+			sb.append("  @Id()\n");
+			if (((RelationalKey) element).getStrategy() == IdStrategy.AUTO_ID) {
+				sb.append("  @GeneratedValue()\n");
+			}
+
 		} else if (element instanceof RelationalColumn) {
 			JpaDataTypeStrategy jpaDataTypeStrategy = dataTypeStrategies.get(field.getType());
 			if (jpaDataTypeStrategy != null) {

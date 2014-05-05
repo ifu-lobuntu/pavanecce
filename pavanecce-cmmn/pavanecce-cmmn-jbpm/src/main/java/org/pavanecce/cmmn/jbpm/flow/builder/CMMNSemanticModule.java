@@ -21,6 +21,7 @@ public class CMMNSemanticModule extends DefaultSemanticModule{
 		super.addHandler("outputs",new CaseParameterHandler());
 		super.addHandler("planItem", new PlanItemHandler());
 		super.addHandler("humanTask", new HumanTaskHandler());
+		super.addHandler("bindingRefinement", new BindingRefinementHandler());
 		super.addHandler("planItemOnPart", new PlanItemOnPartHandler());
 		super.addHandler("caseFileItemOnPart", new CaseFileItemOnPartHandler());
         this.handlersByClass.put( SimpleSentry.class, sentryHandler);

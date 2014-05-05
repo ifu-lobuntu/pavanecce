@@ -1,5 +1,7 @@
 package org.pavanecce.common.util;
 
+import java.io.IOException;
+
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
@@ -72,18 +74,27 @@ public class ConstructionCaseExample extends AbstractPotentiallyJavaCompilingTes
 		house = (Class) getModel().createOwnedType("House", UMLPackage.eINSTANCE.getClass_());
 		createOneToOne(constructionCase, house, AggregationKind.COMPOSITE_LITERAL,true);
 		housePlan = (Class) getModel().createOwnedType("HousePlan", UMLPackage.eINSTANCE.getClass_());
+		house.createOwnedAttribute("description", primitiveTypes.getOwnedType("String"));
 		roofPlan = (Class) getModel().createOwnedType("RoofPlan", UMLPackage.eINSTANCE.getClass_());
 		createOneToOne(constructionCase, housePlan, AggregationKind.COMPOSITE_LITERAL,true);
 		createOneToOne(housePlan, roofPlan, AggregationKind.COMPOSITE_LITERAL,false);
 		createOneToOne(house, roofPlan, AggregationKind.NONE_LITERAL,false);
 		wall = (Class) getModel().createOwnedType("Wall", UMLPackage.eINSTANCE.getClass_());
-		wallPlan = (Class) getModel().createOwnedType("WallPlan", UMLPackage.eINSTANCE.getClass_());
 		createOneToMany(house, wall, CollectionKind.SET_LITERAL, AggregationKind.COMPOSITE_LITERAL);
+		wallPlan = (Class) getModel().createOwnedType("WallPlan", UMLPackage.eINSTANCE.getClass_());
+		createOneToOne(wallPlan, wall, AggregationKind.NONE_LITERAL,false);
 		createOneToMany(housePlan, wallPlan, CollectionKind.SET_LITERAL, AggregationKind.COMPOSITE_LITERAL);
+		createOneToMany(house, wallPlan, CollectionKind.SET_LITERAL, AggregationKind.NONE_LITERAL);
 		roomPlan = (Class) getModel().createOwnedType("RoomPlan", UMLPackage.eINSTANCE.getClass_());
 		roomPlan.createOwnedAttribute("name", primitiveTypes.getOwnedType("String"));
 		createOneToMany(housePlan, roomPlan, CollectionKind.SET_LITERAL, AggregationKind.COMPOSITE_LITERAL);
 		createManyToMany(roomPlan, wallPlan, CollectionKind.SET_LITERAL);
+		try {
+			model.eResource().save(null);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	protected void createConstructionCase() {
@@ -106,7 +117,7 @@ public class ConstructionCaseExample extends AbstractPotentiallyJavaCompilingTes
 	}
 
 	private void createOneToMany(Class from, Class to, CollectionKind collectionKind, AggregationKind aggregationKind) {
-		createAssociation(from, to, collectionKind, aggregationKind, ONE, ZERO_OR_MANY);
+		createAssociation(from, to, collectionKind, aggregationKind, aggregationKind==AggregationKind.COMPOSITE_LITERAL? ONE:ZERO_OR_ONE, ZERO_OR_MANY);
 	}
 
 	private void createManyToMany(Class from, Class to, CollectionKind collectionKind) {
@@ -114,21 +125,29 @@ public class ConstructionCaseExample extends AbstractPotentiallyJavaCompilingTes
 	}
 
 	private void createOneToOne(Class from, Class to, AggregationKind aggregationKind, boolean required) {
-		createAssociation(from, to, CollectionKind.SET_LITERAL, aggregationKind, ONE, required?ONE:ZERO_OR_ONE);
+		createAssociation(from, to, CollectionKind.SET_LITERAL, aggregationKind, aggregationKind==AggregationKind.COMPOSITE_LITERAL? ONE:ZERO_OR_ONE, required?ONE:ZERO_OR_ONE);
 		
 	}
 
 	protected void createAssociation(Class from, Class to, CollectionKind collectionKind, AggregationKind aggregationKind, Multiplicity fromMultiplicity, Multiplicity toMultiplicity) {
 		Association ass = (Association) from.getPackage().createOwnedType(from.getName() + to.getName(), UMLPackage.eINSTANCE.getAssociation());
-		Property toEnd = ass.createNavigableOwnedEnd(NameConverter.decapitalize(to.getName()), to);
+		Property toEnd = ass.createNavigableOwnedEnd(calcName(to, toMultiplicity), to);
 		toEnd.setUpper(toMultiplicity.upper);
 		toEnd.setLower(toMultiplicity.lower);
 		toEnd.setAggregation(aggregationKind);
 		toEnd.setIsUnique(collectionKind == CollectionKind.SET_LITERAL || collectionKind == CollectionKind.ORDERED_SET_LITERAL);
 		toEnd.setIsOrdered(collectionKind == CollectionKind.SEQUENCE_LITERAL || collectionKind == CollectionKind.ORDERED_SET_LITERAL);
-		Property fromEnd = ass.createNavigableOwnedEnd(NameConverter.decapitalize(from.getName()), from);
+		Property fromEnd = ass.createNavigableOwnedEnd(calcName(from,fromMultiplicity), from);
 		fromEnd.setUpper(fromMultiplicity.upper);
 		fromEnd.setLower(fromMultiplicity.lower);
+	}
+
+	protected String calcName(Class to, Multiplicity toMultiplicity) {
+		String name = NameConverter.decapitalize(to.getName());
+		if(toMultiplicity==ZERO_OR_MANY){
+			name=name+"s";
+		}
+		return name;
 	}
 
 	public void generateCode(AbstractCodeGenerator codeGenerator, AbstractJavaCodeDecorator... decorators) throws Exception {
@@ -150,7 +169,7 @@ public class ConstructionCaseExample extends AbstractPotentiallyJavaCompilingTes
 		setAdaptor(new UmlCodeModelVisitorAdaptor());
 		this.getAdaptor().startVisiting(builder, getModel());
 		this.getAdaptor().startVisiting(new OclCodeBuilder(), getModel());
-		this.textFileGenerator = super.generateSourceCode(this.getAdaptor().getCodeModel());
+		this.textFileGenerator = generateSourceCode(this.getAdaptor().getCodeModel());
 		if (getCodeGenerator() instanceof JavaCodeGenerator) {
 			setClassLoader(super.compile(textFileGenerator.getNewFiles()));
 		}
@@ -172,11 +191,11 @@ public class ConstructionCaseExample extends AbstractPotentiallyJavaCompilingTes
 		return resourceSetFactory;
 	}
 
-	public Class getRoomPlan() {
+	public Class getRoomPlans() {
 		return roomPlan;
 	}
 
-	public Class getWallPlan() {
+	public Class getWallPlans() {
 		return wallPlan;
 	}
 

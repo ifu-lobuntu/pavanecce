@@ -149,14 +149,14 @@ public abstract class AbstractPersistenceTest extends Assert {
 		eval("constructionCase.setHouse(house);");
 		eval("var wall=new Wall();");
 		eval("wall.setHouse(house);");
-		eval("house.getWall().add(wall);");
+		eval("house.getWalls().add(wall);");
 		eval("p.start();");
 		eval("p.persist(constructionCase);");
 		eval("p.commit();");
 		eval("p.close();");
 		eval("p.start();");
 		eval("house=p.find(House,house.getId());");
-		assertEquals(1, eval("house.getWall().size()"));
+		assertEquals(1, eval("house.getWalls().size()"));
 	}
 
 	@Test
@@ -176,27 +176,27 @@ public abstract class AbstractPersistenceTest extends Assert {
 		eval("constructionCase.setHousePlan(housePlan);");
 		eval("var wallPlan1=new WallPlan();");
 		eval("var wallPlan2=new WallPlan();");
-		eval("housePlan.getWallPlan().add(wallPlan1);");
-		eval("housePlan.getWallPlan().add(wallPlan2);");
+		eval("housePlan.getWallPlans().add(wallPlan1);");
+		eval("housePlan.getWallPlans().add(wallPlan2);");
 		eval("var roomPlan1=new RoomPlan();");
 		eval("var roomPlan2=new RoomPlan();");
-		eval("housePlan.getRoomPlan().add(roomPlan1);");
-		eval("housePlan.getRoomPlan().add(roomPlan2);");
+		eval("housePlan.getRoomPlans().add(roomPlan1);");
+		eval("housePlan.getRoomPlans().add(roomPlan2);");
 		eval("p.start();");
 		// HACK this is a limitation in OCM that it cannot store references to
 		// Objects that have not been persisted yet
 		eval("p.persist(constructionCase);");
-		eval("roomPlan1.getWallPlan().add(wallPlan1);");
-		eval("roomPlan1.getWallPlan().add(wallPlan2);");
-		assertEquals(1, eval("wallPlan1.getRoomPlan().size()"));
+		eval("roomPlan1.getWallPlans().add(wallPlan1);");
+		eval("roomPlan1.getWallPlans().add(wallPlan2);");
+		assertEquals(1, eval("wallPlan1.getRoomPlans().size()"));
 		eval("p.update(constructionCase);");
 		eval("p.commit();");
 		eval("p.close();");
 		eval("p.start();");
 		eval("roomPlan1=p.find(RoomPlan,roomPlan1.getId());");
-		assertEquals(2, eval("roomPlan1.getWallPlan().size()"));
+		assertEquals(2, eval("roomPlan1.getWallPlans().size()"));
 		eval("wallPlan1=p.find(WallPlan,wallPlan1.getId());");
-		assertEquals(1, eval("wallPlan1.getRoomPlan().size()"));
+		assertEquals(1, eval("wallPlan1.getRoomPlans().size()"));
 	}
 
 	private Object eval(String string) throws ScriptException {

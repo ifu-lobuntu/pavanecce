@@ -3,7 +3,7 @@ package org.pavanecce.cmmn.jbpm.instance;
 import org.kie.api.task.model.Task;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemTransition;
 
-public class PlanItemEvent {
+public class PlanItemEvent  extends CaseEvent{
 	private String caseFileItemName;
 	private PlanItemTransition transition;
 	private Task value;

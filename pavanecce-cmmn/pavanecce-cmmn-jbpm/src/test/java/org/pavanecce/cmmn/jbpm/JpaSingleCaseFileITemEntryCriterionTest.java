@@ -1,13 +1,14 @@
 package org.pavanecce.cmmn.jbpm;
 
 import org.junit.Test;
-import org.pavanecce.cmmn.jbpm.test.domain.ConstructionCase;
-import org.pavanecce.cmmn.jbpm.test.domain.House;
-import org.pavanecce.cmmn.jbpm.test.domain.HousePlan;
-import org.pavanecce.cmmn.jbpm.test.domain.RoofPlan;
-import org.pavanecce.cmmn.jbpm.test.domain.Wall;
-import org.pavanecce.cmmn.jbpm.test.domain.WallPlan;
 import org.pavanecce.common.jpa.JpaObjectPersistence;
+
+import test.ConstructionCase;
+import test.House;
+import test.HousePlan;
+import test.RoofPlan;
+import test.Wall;
+import test.WallPlan;
 
 public class JpaSingleCaseFileITemEntryCriterionTest extends SingleCaseFileItemEntryCriterionTests {
 	{
@@ -30,7 +31,7 @@ public class JpaSingleCaseFileITemEntryCriterionTest extends SingleCaseFileItemE
 		house.setRoofPlan(housePlan.getRoofPlan());
 		p.persist(constructionCase);
 		p.commit();
-		constructionCase = p.find(ConstructionCase.class, constructionCase.getUuid());
+		constructionCase = p.find(ConstructionCase.class, constructionCase.getId());
 		assertEquals("MyConstructionCase", constructionCase.getName());
 		assertEquals("MyHouse", constructionCase.getHouse().getDescription());
 		assertNotNull(constructionCase.getHousePlan());

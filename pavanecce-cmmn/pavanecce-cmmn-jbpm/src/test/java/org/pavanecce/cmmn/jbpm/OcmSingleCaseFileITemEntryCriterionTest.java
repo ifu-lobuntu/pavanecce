@@ -8,13 +8,14 @@ import javax.jcr.NodeIterator;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.pavanecce.cmmn.jbpm.test.domain.ConstructionCase;
-import org.pavanecce.cmmn.jbpm.test.domain.House;
-import org.pavanecce.cmmn.jbpm.test.domain.HousePlan;
-import org.pavanecce.cmmn.jbpm.test.domain.RoofPlan;
-import org.pavanecce.cmmn.jbpm.test.domain.Wall;
-import org.pavanecce.cmmn.jbpm.test.domain.WallPlan;
 import org.pavanecce.common.ocm.OcmObjectPersistence;
+
+import test.ConstructionCase;
+import test.House;
+import test.HousePlan;
+import test.RoofPlan;
+import test.Wall;
+import test.WallPlan;
 
 public class OcmSingleCaseFileITemEntryCriterionTest extends SingleCaseFileItemEntryCriterionTests {
 	{
@@ -58,12 +59,12 @@ public class OcmSingleCaseFileITemEntryCriterionTest extends SingleCaseFileItemE
 		new Wall(house);
 		new Wall(house);
 		new RoofPlan(housePlan);
-		house.setRoofPlan(housePlan.getRoofPlan());
 		p.persist(constructionCase);
 		//TODO figure out why this is necessary
+		house.setRoofPlan(housePlan.getRoofPlan());
 		p.update(house);
 		p.commit();
-		constructionCase=p.find(ConstructionCase.class, constructionCase.getUuid());
+		constructionCase=p.find(ConstructionCase.class, constructionCase.getId());
 		assertEquals("MyConstructionCase", constructionCase.getName());
 		assertEquals("MyHouse", constructionCase.getHouse().getDescription());
 		assertNotNull(constructionCase.getHousePlan());

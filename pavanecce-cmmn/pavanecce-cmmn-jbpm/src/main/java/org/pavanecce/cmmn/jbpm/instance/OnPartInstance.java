@@ -60,4 +60,8 @@ public class OnPartInstance extends EventNodeInstance {
 		((org.jbpm.workflow.instance.NodeInstanceContainer) getNodeInstanceContainer()).setCurrentLevel(getLevel());
 		triggerCompleted(org.jbpm.workflow.core.Node.CONNECTION_DEFAULT_TYPE, false);
 	}
+
+	public CaseEvent getCaseEvent() {
+		return getOnPart().createEvent(getEventStack().peek());
+	}
 }

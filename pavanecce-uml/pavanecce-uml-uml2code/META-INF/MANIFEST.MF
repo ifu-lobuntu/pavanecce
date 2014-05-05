@@ -4,6 +4,7 @@ Bundle-Name: org.pavanecce.uml.uml2code
 Bundle-SymbolicName: org.pavanecce.uml.uml2code
 Bundle-Version: 0.0.1.qualifier
 Export-Package: org.pavanecce.uml.uml2code,
+ org.pavanecce.uml.uml2code.cmmn,
  org.pavanecce.uml.uml2code.codemodel,
  org.pavanecce.uml.uml2code.java,
  org.pavanecce.uml.uml2code.javascript,

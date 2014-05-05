@@ -87,6 +87,7 @@ public class HibernateSubscriptionManager extends AbstractSubscriptionManager<Jp
 			JpaCaseSubscriptionInfo inf = (JpaCaseSubscriptionInfo) event.getSession().get(JpaCaseSubscriptionInfo.class, key);
 			Set<DirtyOneToOne> dirtyOneToOnes=new HashSet<HibernateSubscriptionManager.DirtyOneToOne>();
 			if (inf != null) {
+				System.out.println();
 				for (CaseFileItemSubscriptionInfo is : inf.getCaseFileItemSubscriptions()) {
 					if (is.getTransition() == CaseFileItemTransition.UPDATE) {
 						fireUpdateEventIfDirty(event, is);
@@ -171,6 +172,8 @@ public class HibernateSubscriptionManager extends AbstractSubscriptionManager<Jp
 	protected void fireCollectionEvents(FlushEntityEvent event, CaseFileItemSubscriptionInfo is, int i) {
 		Collection<?> newState = (Collection<?>) event.getPropertyValues()[i];
 		Collection<?> oldState = null;
+		//TODO this forces a read - try to optimize
+		newState.size();
 		if (newState instanceof PersistentCollection) {
 			Serializable storedSnapshot = ((PersistentCollection) newState).getStoredSnapshot();
 			if (storedSnapshot instanceof Map) {

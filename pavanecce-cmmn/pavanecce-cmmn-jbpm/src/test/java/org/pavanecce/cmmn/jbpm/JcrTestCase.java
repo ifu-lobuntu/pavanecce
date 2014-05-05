@@ -25,15 +25,16 @@ import org.apache.jackrabbit.ocm.mapper.impl.annotation.AnnotationMapperImpl;
 import org.pavanecce.cmmn.jbpm.ocm.OcmCaseFileItemSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.ocm.OcmCaseSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.ocm.OcmSubscriptionManager;
-import org.pavanecce.cmmn.jbpm.test.domain.ConstructionCase;
-import org.pavanecce.cmmn.jbpm.test.domain.House;
-import org.pavanecce.cmmn.jbpm.test.domain.HousePlan;
-import org.pavanecce.cmmn.jbpm.test.domain.RoofPlan;
-import org.pavanecce.cmmn.jbpm.test.domain.Wall;
-import org.pavanecce.cmmn.jbpm.test.domain.WallPlan;
 import org.pavanecce.common.ocm.OcmFactory;
 import org.pavanecce.common.ocm.OcmObjectPersistence;
 import org.pavanecce.common.util.FileUtil;
+
+import test.ConstructionCase;
+import test.House;
+import test.HousePlan;
+import test.RoofPlan;
+import test.Wall;
+import test.WallPlan;
 
 public class JcrTestCase {
 	long time = System.currentTimeMillis();
@@ -81,7 +82,7 @@ public class JcrTestCase {
 			oop.commit();
 			logDuration("6");
 			oop.start();
-			ConstructionCase found = oop.find(ConstructionCase.class, constructionCase.getUuid());
+			ConstructionCase found = oop.find(ConstructionCase.class, constructionCase.getId());
 			assertNotNull(found.getHousePlan());
 			assertNotNull(found.getHousePlan().getRoofPlan());
 			assertEquals(3, found.getHousePlan().getWallPlans().size());

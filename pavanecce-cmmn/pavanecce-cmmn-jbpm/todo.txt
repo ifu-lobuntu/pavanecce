@@ -14,18 +14,28 @@ Throwing DELETE events from JCR
 Throwing DELETE events from Hibernate
 Throwing UPDATE events from JCR
 Throwing UPDATE events from Hibernate
+Generate OCM and JPA test Java classes from UML along with CaseFileItemDefinition includes
+Throwing Human Task FAULT events from TaskService
+Throwing Human Task COMPLETE events from TaskService
+Throwing Human Task SUSPEND events from TaskService
+Throwing Human Task RESUME events from TaskService
+Throwing Human Task TERMINATE events from TaskService
 
 To test
-Throwing Human Task CREATE events from TaskService
-Throwing Human Task FAULT events from TaskService
-Throwing Human Task SUSPEND events from TaskService
+All the above events but for exit criteria
 
 Todo
-Generate OCM and JPA test Java classes from UML along with CaseFileItemDefinition includes
 ParameterMapping
 Timer Event
 User Event
 Milestone
+
+
+Throwing Human Task EXIT events from TaskService - happens when exit criteria are achieved
+Throwing Human Task CREATE,DISABLE,ENABLE,REENABLE events from TaskService - this is tricky because the task node instance does not exist in jBPM
+Scoping of subscriptions
+Make recursive subscriptions parameterizable
+
 Process/Case Task
 Planning
 Planning with quotes for subsequent activities
@@ -34,7 +44,9 @@ milestone with cost breakdwon
 
 Throwing Process/Case Task COMPLETE event
 Throwing Process/Case Task CREATE event
+Stage SUSPEND
 Throwing casePlanModel CLOSE event
+CLOSED state and event
 ItemControl.automaticActivationRule
 ItemControl.repititionRule
 ItemControl.requiredRule
@@ -42,12 +54,10 @@ DiscretionaryItem
 ApplicabilityRule
 Assigning tasks at runtime
 casePlanModel exit criteria
-CLOSED state and event
 Autocompletion
 bindingRefinement
 plan fragment
 Stage exit and event
-Stage SUSPEND
 
 Difficult
 With JCR Property.CHANGE events, try to get the original value and only fire events for ADD_/REMOVE_REFERENCE when they applicable - JCR limitation

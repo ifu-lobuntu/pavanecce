@@ -14,7 +14,8 @@ public class CodeClass extends CodeClassifier {
 	private SortedSet<CodeTypeReference> implementedInterfaces = new TreeSet<CodeTypeReference>();
 	private int uniqueNumber;
 	private Collection<OclStandardLibrary> librariesToImport;
-	private SortedMap<String,CodeConstructor> constructors = new TreeMap<String,CodeConstructor>();
+	private SortedMap<String, CodeConstructor> constructors = new TreeMap<String, CodeConstructor>();
+
 	public CodeClass(String name, CodePackage _package) {
 		super(name, _package);
 		_package.getClassifiers().put(name, this);
@@ -23,10 +24,11 @@ public class CodeClass extends CodeClassifier {
 	public CodeTypeReference getSuperClass() {
 		return superClass;
 	}
+
 	@Override
 	public SortedSet<CodeTypeReference> getImports() {
 		SortedSet<CodeTypeReference> imports = super.getImports();
-		if(getSuperClass()!=null){
+		if (getSuperClass() != null) {
 			imports.add(getSuperClass());
 		}
 		for (CodeTypeReference ii : this.getImplementedInterfaces()) {
@@ -34,8 +36,13 @@ public class CodeClass extends CodeClassifier {
 		}
 		return imports;
 	}
+
 	public void setSuperClass(CodeTypeReference superClass) {
 		this.superClass = superClass;
+	}
+
+	public SortedMap<String, CodeConstructor> getConstructors() {
+		return constructors;
 	}
 
 	public SortedSet<CodeTypeReference> getImplementedInterfaces() {
@@ -46,25 +53,25 @@ public class CodeClass extends CodeClassifier {
 		implementedInterfaces.add(ref);
 	}
 
-
 	public int getUniqueNumber() {
 		return uniqueNumber++;
 	}
 
 	public void addStdLibToImports(OclStandardLibrary l) {
-		if(librariesToImport==null){
-			librariesToImport=new HashSet<OclStandardLibrary>();
+		if (librariesToImport == null) {
+			librariesToImport = new HashSet<OclStandardLibrary>();
 		}
 		librariesToImport.add(l);
 	}
+
 	public Collection<OclStandardLibrary> getLibrariesToImport() {
-		return librariesToImport==null?Collections.<OclStandardLibrary>emptySet():librariesToImport;
+		return librariesToImport == null ? Collections.<OclStandardLibrary> emptySet() : librariesToImport;
 	}
 
 	public CodeConstructor findOrCreateConstructor(List<CodeParameter> parameters) {
 		CodeConstructor result = constructors.get(CodeBehaviour.generateIdentifier("", parameters));
-		if(result==null){
-			result=new CodeConstructor(this);
+		if (result == null) {
+			result = new CodeConstructor(this);
 		}
 		return result;
 	}

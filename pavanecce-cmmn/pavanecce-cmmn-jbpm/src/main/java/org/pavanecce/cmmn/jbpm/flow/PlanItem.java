@@ -10,7 +10,9 @@ import org.drools.core.process.core.ParameterDefinition;
 import org.drools.core.process.core.Work;
 import org.drools.core.process.core.impl.ParameterDefinitionImpl;
 import org.drools.core.process.core.impl.WorkImpl;
+import org.jbpm.services.task.wih.util.PeopleAssignmentHelper;
 import org.jbpm.workflow.core.impl.ConnectionImpl;
+import org.jbpm.workflow.core.node.DataAssociation;
 import org.jbpm.workflow.core.node.WorkItemNode;
 import org.kie.api.definition.process.Connection;
 
@@ -38,6 +40,10 @@ public class PlanItem extends WorkItemNode implements CMMNElement {
 	public Map<String, Sentry> getExitCriteria() {
 		return Collections.unmodifiableMap(exitCriteria);
 	}
+	@Override
+	public List<DataAssociation> getInAssociations() {
+		return definition.getInAssociations();
+	}
 
 	public void addEntryCriterionRef(String s) {
 		entryCriteria.put(s, null);
@@ -46,7 +52,6 @@ public class PlanItem extends WorkItemNode implements CMMNElement {
 	public void addExitCriterionRef(String s) {
 		exitCriteria.put(s, null);
 	}
-
 	public void putEntryCriterion(String s, Sentry c) {
 		entryCriteria.put(s, c);
 		if (c != null) {

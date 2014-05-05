@@ -14,9 +14,9 @@ public abstract class AbstractOneTests extends AbstractOclTest {
 		Parameter result = find.createOwnedParameter("result", example.getType("Boolean"));
 		result.setDirection(ParameterDirectionKind.RETURN_LITERAL);
 		result.setUpper(1);
-		OpaqueExpression ocl = (OpaqueExpression) find.createBodyCondition("body").createSpecification("spec", example.getRoomPlan(), UMLPackage.eINSTANCE.getOpaqueExpression());
+		OpaqueExpression ocl = (OpaqueExpression) find.createBodyCondition("body").createSpecification("spec", example.getRoomPlans(), UMLPackage.eINSTANCE.getOpaqueExpression());
 		ocl.getLanguages().add("ocl");
-		ocl.getBodies().add("housePlan.roomPlan->one(rp|rp.name=nameToFind)");
+		ocl.getBodies().add("housePlan.roomPlans->one(rp|rp.name=nameToFind)");
 	}
 
 
@@ -32,9 +32,9 @@ public abstract class AbstractOneTests extends AbstractOclTest {
 		eval("roomPlan2.setName('roomPlan2');");
 		eval("var roomPlan3=new RoomPlan();");
 		eval("roomPlan3.setName('roomPlan2');");
-		eval("housePlan.getRoomPlan().add(roomPlan1);");
-		eval("housePlan.getRoomPlan().add(roomPlan2);");
-		eval("housePlan.getRoomPlan().add(roomPlan3);");
+		eval("housePlan.getRoomPlans().add(roomPlan1);");
+		eval("housePlan.getRoomPlans().add(roomPlan2);");
+		eval("housePlan.getRoomPlans().add(roomPlan3);");
 		assertEquals(true, eval("constructionCase.existsOneRoomPlan('roomPlan1');"));
 		assertEquals(false, eval("constructionCase.existsOneRoomPlan('roomPlan2');"));
 	}

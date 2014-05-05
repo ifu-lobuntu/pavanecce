@@ -52,13 +52,13 @@
         <class>org.pavanecce.cmmn.jbpm.jpa.JpaCaseFileItemSubscriptionInfo</class>
         <class>org.pavanecce.cmmn.jbpm.jpa.JpaCaseSubscriptionInfo</class>
         <!-- Customer entities -->
-        <class>org.pavanecce.cmmn.jbpm.test.domain.HousePlan</class>
-        <class>org.pavanecce.cmmn.jbpm.test.domain.RoofPlan</class>
-        <class>org.pavanecce.cmmn.jbpm.test.domain.House</class>
-        <class>org.pavanecce.cmmn.jbpm.test.domain.WallPlan</class>
-        <class>org.pavanecce.cmmn.jbpm.test.domain.WallQuote</class>
-        <class>org.pavanecce.cmmn.jbpm.test.domain.Wall</class>
-        <class>org.pavanecce.cmmn.jbpm.test.domain.ConstructionCase</class>
+        <class>test.HousePlan</class>
+        <class>test.RoomPlan</class>
+        <class>test.RoofPlan</class>
+        <class>test.House</class>
+        <class>test.WallPlan</class>
+        <class>test.Wall</class>
+        <class>test.ConstructionCase</class>
         
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
 

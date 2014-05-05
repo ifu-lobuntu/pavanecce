@@ -2,7 +2,7 @@ package org.pavanecce.cmmn.jbpm.instance;
 
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
 
-public class CaseFileItemEvent {
+public class CaseFileItemEvent extends CaseEvent{
 	String caseFileItemName;
 	CaseFileItemTransition transition;
 	Object value;

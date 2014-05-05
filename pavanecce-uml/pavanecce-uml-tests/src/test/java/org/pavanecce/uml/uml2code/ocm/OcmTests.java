@@ -17,14 +17,27 @@ import org.apache.jackrabbit.ocm.mapper.impl.annotation.AnnotationMapperImpl;
 import org.apache.jackrabbit.ocm.reflection.ReflectionUtils;
 import org.junit.BeforeClass;
 import org.pavanecce.common.code.metamodel.CodeClassifier;
+import org.pavanecce.common.code.metamodel.CodeModel;
 import org.pavanecce.common.code.metamodel.CodePackage;
 import org.pavanecce.common.code.metamodel.documentdb.DocumentNamespace;
 import org.pavanecce.common.ocm.OcmFactory;
 import org.pavanecce.common.ocm.OcmObjectPersistence;
+import org.pavanecce.common.text.filegeneration.TextFileGenerator;
+import org.pavanecce.common.text.filegeneration.TextNodeVisitorAdapter;
+import org.pavanecce.common.text.workspace.ProjectNameStrategy;
+import org.pavanecce.common.text.workspace.SourceFolder;
+import org.pavanecce.common.text.workspace.SourceFolderDefinition;
+import org.pavanecce.common.text.workspace.SourceFolderNameStrategy;
+import org.pavanecce.common.text.workspace.TextProject;
+import org.pavanecce.common.text.workspace.TextProjectDefinition;
+import org.pavanecce.common.text.workspace.TextWorkspace;
 import org.pavanecce.common.util.ConstructionCaseExample;
 import org.pavanecce.common.util.FileUtil;
+import org.pavanecce.common.util.VersionNumber;
 import org.pavanecce.uml.uml2code.java.JavaCodeGenerator;
 import org.pavanecce.uml.uml2code.jpa.AbstractPersistenceTest;
+import org.pavanecce.uml.uml2code.jpa.JpaCodeDecorator;
+import org.python.core.exceptions;
 
 public class OcmTests extends AbstractPersistenceTest {
 
@@ -36,13 +49,8 @@ public class OcmTests extends AbstractPersistenceTest {
 		example = new ConstructionCaseExample("OcmPersistence");
 		example.generateCode(new JavaCodeGenerator(), new OcmCodeDecorator());
 		List<Class> classes = getClasses();
-		UmlDocumentModelFileVisitorAdaptor a = new UmlDocumentModelFileVisitorAdaptor();
-		DocumentModelBuilder docBuilder = new DocumentModelBuilder();
-		a.startVisiting(docBuilder, example.getModel());
-		CndTextGenerator cndTextGenerator = new CndTextGenerator();
-		DocumentNamespace documentModel = docBuilder.getDocumentModel();
-		File testCndFile = new File(example.calculateBinaryOutputRoot(),"test.cnd");
-		FileUtil.write(testCndFile, cndTextGenerator.generate(documentModel));
+		File outputRoot = example.calculateBinaryOutputRoot();
+		File testCndFile = generateCndFile(outputRoot);
 		Repository tr = new TransientRepository();
 		Session session = tr.login(new SimpleCredentials("admin", "admin".toCharArray()));
 		CndImporter.registerNodeTypes(new FileReader(testCndFile), session);
@@ -54,6 +62,16 @@ public class OcmTests extends AbstractPersistenceTest {
 		OcmObjectPersistence hibernatePersistence = new OcmObjectPersistence(ocmFactory);
 		example.initScriptingEngine();
 		example.getJavaScriptContext().setAttribute("p", hibernatePersistence, ScriptContext.ENGINE_SCOPE);
+	}
+	protected static File generateCndFile(File outputRoot) {
+		UmlDocumentModelFileVisitorAdaptor a = new UmlDocumentModelFileVisitorAdaptor();
+		DocumentModelBuilder docBuilder = new DocumentModelBuilder();
+		a.startVisiting(docBuilder, example.getModel());
+		CndTextGenerator cndTextGenerator = new CndTextGenerator();
+		DocumentNamespace documentModel = docBuilder.getDocumentModel();
+		File testCndFile = new File(outputRoot,"test.cnd");
+		FileUtil.write(testCndFile, cndTextGenerator.generate(documentModel));
+		return testCndFile;
 	}
 
 	@SuppressWarnings("rawtypes")

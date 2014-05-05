@@ -71,7 +71,7 @@ public class CaseTaskLifecycleListener extends JbpmServicesEventListener<Task> i
     }
 
     public void afterTaskExitedEvent(@Observes(notifyObserver= Reception.IF_EXISTS) @AfterTaskExitedEvent Task ti) {
-    	signalEvent(ti, PlanItemTransition.TERMINATE);
+    	signalEvent(ti, PlanItemTransition.TERMINATE);//In CMMN exit is when exit criteria occur
     }
 
     @Override

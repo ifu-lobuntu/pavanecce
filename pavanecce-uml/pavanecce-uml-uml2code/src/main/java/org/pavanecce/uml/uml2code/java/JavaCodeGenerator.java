@@ -1,6 +1,7 @@
 package org.pavanecce.uml.uml2code.java;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.Map.Entry;
 import org.pavanecce.common.code.metamodel.CodeClass;
 import org.pavanecce.common.code.metamodel.CodeClassifier;
 import org.pavanecce.common.code.metamodel.CodeCollectionKind;
+import org.pavanecce.common.code.metamodel.CodeConstructor;
 import org.pavanecce.common.code.metamodel.CodeElementType;
 import org.pavanecce.common.code.metamodel.CodeEnumeration;
 import org.pavanecce.common.code.metamodel.CodeExpression;
@@ -162,6 +164,18 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 			appendLineEnd();
 		}
 		appendAdditionalFields(cc);
+		if(cc instanceof CodeClass){
+			for (CodeConstructor c : ((CodeClass) cc).getConstructors().values()) {
+				sb.append("  ");
+				sb.append(toVisibility(c.getVisibility()));
+				sb.append(cc.getName());
+				sb.append("(");
+				appendParameters(c.getParameters());
+				sb.append("){\n");
+				appendCodeBlock("  ", c.getBody());
+				sb.append("  }\n");
+			}
+		}
 		for (Entry<String, CodeMethod> methodEntry : cc.getMethods().entrySet()) {
 			for (AbstractJavaCodeDecorator d : this.decorators) {
 				d.decorateMethodDeclaration(this, methodEntry.getValue());
@@ -247,7 +261,21 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 		sb.append(" ");
 		sb.append(method.getName());
 		sb.append("(");
-		Iterator<CodeParameter> iterator = method.getParameters().iterator();
+		List<CodeParameter> parameters = method.getParameters();
+		appendParameters(parameters);
+		sb.append(")");
+		if (method.getDeclaringClass() instanceof CodeInterface) {
+			sb.append(";\n");
+		} else {
+			sb.append("{\n");
+			appendMethodBody(method);
+			sb.append("  }\n");
+		}
+		return this;
+	}
+
+	protected void appendParameters(List<CodeParameter> parameters) {
+		Iterator<CodeParameter> iterator = parameters.iterator();
 		while (iterator.hasNext()) {
 			CodeParameter codeParameter = (CodeParameter) iterator.next();
 			CodeTypeReference paramType = codeParameter.getType();
@@ -258,15 +286,6 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 				sb.append(", ");
 			}
 		}
-		sb.append(")");
-		if (method.getDeclaringClass() instanceof CodeInterface) {
-			sb.append(";\n");
-		} else {
-			sb.append("{\n");
-			appendMethodBody(method);
-			sb.append("  }\n");
-		}
-		return this;
 	}
 
 	public String toVisibility(CodeVisibilityKind k) {

@@ -11,7 +11,7 @@ import org.pavanecce.cmmn.jbpm.instance.CaseInstance;
 import org.pavanecce.cmmn.jbpm.instance.CaseSubscriptionInfo;
 
 @Entity
-public class JpaCaseFileItemSubscriptionInfo implements CaseFileItemSubscriptionInfo{
+public class JpaCaseFileItemSubscriptionInfo implements CaseFileItemSubscriptionInfo {
 	@Id
 	@GeneratedValue
 	private Long id;
@@ -32,7 +32,6 @@ public class JpaCaseFileItemSubscriptionInfo implements CaseFileItemSubscription
 
 	}
 
-
 	public String getRelatedItemName() {
 		return relatedItemName;
 	}
@@ -40,7 +39,6 @@ public class JpaCaseFileItemSubscriptionInfo implements CaseFileItemSubscription
 	public void setRelatedItemName(String relatedItemName) {
 		this.relatedItemName = relatedItemName;
 	}
-
 
 	@Override
 	public JpaCaseSubscriptionInfo getCaseSubscription() {
@@ -100,4 +98,8 @@ public class JpaCaseFileItemSubscriptionInfo implements CaseFileItemSubscription
 		return processId;
 	}
 
+	@Override
+	public String toString() {
+		return itemName + "[" + transition +"]";
+	}
 }

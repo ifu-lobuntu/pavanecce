@@ -23,6 +23,7 @@ import org.eclipse.uml2.uml.TypedElement;
 import org.pavanecce.common.code.metamodel.AssociationCollectionTypeReference;
 import org.pavanecce.common.code.metamodel.CodeClass;
 import org.pavanecce.common.code.metamodel.CodeCollectionKind;
+import org.pavanecce.common.code.metamodel.CodeConstructor;
 import org.pavanecce.common.code.metamodel.CodeField;
 import org.pavanecce.common.code.metamodel.CodeMethod;
 import org.pavanecce.common.code.metamodel.CodePackage;
@@ -44,11 +45,14 @@ import org.pavanecce.common.code.metamodel.expressions.PortableExpression;
 import org.pavanecce.common.code.metamodel.expressions.PrimitiveDefaultExpression;
 import org.pavanecce.common.code.metamodel.expressions.ReadFieldExpression;
 import org.pavanecce.common.code.metamodel.relationaldb.IRelationalElement;
+import org.pavanecce.common.code.metamodel.relationaldb.IdStrategy;
+import org.pavanecce.common.code.metamodel.relationaldb.RelationalKey;
 import org.pavanecce.common.code.metamodel.statements.AssignmentStatement;
 import org.pavanecce.common.code.metamodel.statements.CodeIfStatement;
 import org.pavanecce.common.code.metamodel.statements.MappedStatement;
 import org.pavanecce.common.code.metamodel.statements.MethodCallStatement;
 import org.pavanecce.common.code.metamodel.statements.PortableStatement;
+import org.pavanecce.common.code.metamodel.statements.SetResultStatement;
 import org.pavanecce.common.util.NameConverter;
 import org.pavanecce.uml.common.util.EmfClassifierUtil;
 import org.pavanecce.uml.common.util.EmfParameterUtil;
@@ -264,7 +268,21 @@ public class CodeModelBuilder extends DefaultCodeModelBuilder {
 		codeClass.setTypeReference(this.calculateTypeReference(c));
 		codeClass.putData(IRelationalElement.class, RelationalUtil.buildRelationalElement(c));
 		codeClass.putData(IDocumentElement.class, documentUtil.getDocumentNode(c));
-		if (!c.isAbstract() && EmfPropertyUtil.getEndToComposite(c) == null) {
+		Property endToComposite = EmfPropertyUtil.getEndToComposite(c);
+		new CodeConstructor(codeClass);
+		CodeField id = new CodeField(codeClass, "id",new PrimitiveTypeReference(CodePrimitiveTypeKind.STRING));
+		id.putData(IRelationalElement.class, new RelationalKey(IdStrategy.AUTO_ID));
+		DocumentProperty uuid = new DocumentProperty("id", documentUtil.buildNamespace(c), PropertyType.STRING, false, false);
+		uuid.setUuid(true);
+		id.setInitialization(new NullExpression());
+		id.putData(IDocumentElement.class, uuid);// (IdStrategy.AUTO_ID));
+		CodeMethod getId = new CodeMethod(codeClass, "getId",new PrimitiveTypeReference(CodePrimitiveTypeKind.STRING));
+		getId.setResultInitialValue(new ReadFieldExpression("id"));
+		CodeMethod setId = new CodeMethod("setId");
+		setId.addParam("id", new PrimitiveTypeReference(CodePrimitiveTypeKind.STRING));
+		setId.setDeclaringClass(codeClass);
+		new AssignmentStatement(setId.getBody(), "${self}.id", new PortableExpression("id"));
+		if (!c.isAbstract() && endToComposite == null) {
 			// TODO put in a OcmCodeModelBuilder
 			CodeField path = new CodeField(codeClass, "path", new PrimitiveTypeReference(CodePrimitiveTypeKind.STRING));
 			DocumentProperty prop = new DocumentProperty("path", documentUtil.getNamespaceOf(c), PropertyType.STRING, true, false);
@@ -276,6 +294,15 @@ public class CodeModelBuilder extends DefaultCodeModelBuilder {
 			setter.addParam("path", path.getType());
 			setter.setDeclaringClass(codeClass);
 			new PortableStatement(setter.getBody(), "${self}.path=path");
+			CodeConstructor constr = new CodeConstructor();
+			constr.addParam("path", new PrimitiveTypeReference(CodePrimitiveTypeKind.STRING));
+			new AssignmentStatement(constr.getBody(), "${self}.path", new PortableExpression("path"));
+			constr.setDeclaringClass(codeClass);
+		}else if(endToComposite!=null){
+			CodeConstructor constr = new CodeConstructor();
+			constr.addParam("owner", calculateType(endToComposite));
+			constr.setDeclaringClass(codeClass);
+			new MethodCallStatement(constr.getBody(),"${self}.set" +toValidVariableName(capitalize(endToComposite.getName())), new PortableExpression("owner"));
 		}
 		return codeClass;
 	}
