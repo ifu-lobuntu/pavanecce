@@ -79,14 +79,7 @@ public class CodeModelBuilder extends DefaultCodeModelBuilder {
 		cf.putData(IRelationalElement.class, RelationalUtil.buildRelationalElement(p));
 		cf.putData(IDocumentElement.class, documentUtil.buildDocumentElement(p));
 		String capitalized = toValidVariableName(capitalize(p.getName()));
-		String getterName = "get" + capitalized;
-		if (cf.getType() instanceof PrimitiveTypeReference && ((PrimitiveTypeReference) cf.getType()).getKind() == CodePrimitiveTypeKind.BOOLEAN) {
-			if (p.getName().startsWith("is")) {
-				getterName = p.getName();
-			} else {
-				getterName = "is" + capitalize(p.getName());
-			}
-		}
+		String getterName = generateGetterName(p, cf, capitalized);
 
 		CodeMethod getter = new CodeMethod(codeClass, getterName, cf.getType());
 		if (useAssociationCollections && p.getOtherEnd() != null && p.getOtherEnd().isNavigable() && EmfPropertyUtil.isMany(p) && p.isUnique()) {
@@ -128,6 +121,12 @@ public class CodeModelBuilder extends DefaultCodeModelBuilder {
 		} else {
 			new AssignmentStatement(setter.getBody(),"${self}." + fieldName, new PortableExpression(param.getName()));
 		}
+	}
+
+	protected String generateGetterName(Property p, CodeField cf, String capitalized) {
+		String getterName = "get" + capitalized;
+
+		return getterName;
 	}
 
 	private CodeTypeReference calculateType(TypedElement te) {

@@ -26,20 +26,32 @@ public class OcmCodeDecorator extends AbstractJavaCodeDecorator {
 	public void appendAdditionalFields(JavaCodeGenerator sb, CodeClassifier cc) {
 		IDocumentElement element = cc.getData(IDocumentElement.class);
 		if (element instanceof DocumentNodeType) {
-			DocumentNodeType relationalTable = (DocumentNodeType) element;
-			if (!hasPkField(cc, relationalTable)) {
+			DocumentNodeType nodeType = (DocumentNodeType) element;
+			if (!hasPkField(cc, nodeType)) {
 				sb.append("  @Field(uuid=true)\n");
-				sb.append("  String ").append(getPkFieldName(relationalTable)).appendLineEnd();
+				sb.append("  String ").append(getPkFieldName(nodeType)).appendLineEnd();
+			}
+			if (!hasPathField(cc, nodeType)) {
+				sb.append("  @Field(path=true)\n");
+				sb.append("  String ").append(getPathFieldName(nodeType)).appendLineEnd();
 			}
 		}
 	}
 
-	protected boolean hasPkField(CodeClassifier cc, DocumentNodeType relationalTable) {
-		return cc.getFields().get(getPkFieldName(relationalTable)) != null;
+	protected boolean hasPkField(CodeClassifier cc, DocumentNodeType nodeType) {
+		return cc.getFields().get(getPkFieldName(nodeType)) != null;
 	}
 
-	protected String getPkFieldName(DocumentNodeType relationalTable) {
-		return relationalTable.getUuidField() == null ? "id" : relationalTable.getUuidField();
+	protected boolean hasPathField(CodeClassifier cc, DocumentNodeType nodeType) {
+		return cc.getFields().get(getPathFieldName(nodeType)) != null;
+	}
+
+	private String getPathFieldName(DocumentNodeType nodeType) {
+		return nodeType.getPathField() == null ? "path" : nodeType.getPathField();
+	}
+
+	protected String getPkFieldName(DocumentNodeType nodeType) {
+		return nodeType.getUuidField() == null ? "id" : nodeType.getUuidField();
 	}
 
 	@Override
@@ -65,7 +77,25 @@ public class OcmCodeDecorator extends AbstractJavaCodeDecorator {
 				sb.appendLineEnd();
 				sb.append("  }\n");
 			}
-			//TODO path,name fields
+			if (!hasPathField(cc, nodeType)) {
+				String pathFieldName = getPathFieldName(nodeType);
+				sb.append("  public String get");
+				sb.append(NameConverter.capitalize(pathFieldName));
+				sb.append("(){\n");
+				sb.append("    return this.");
+				sb.append(pathFieldName);
+				sb.appendLineEnd();
+				sb.append("  }\n");
+				sb.append("  public void set");
+				sb.append(NameConverter.capitalize(pathFieldName));
+				sb.append("(String value){\n");
+				sb.append("    this.");
+				sb.append(pathFieldName);
+				sb.append("=value");
+				sb.appendLineEnd();
+				sb.append("  }\n");
+			}
+			// TODO name fields
 		}
 	}
 
@@ -147,10 +177,12 @@ public class OcmCodeDecorator extends AbstractJavaCodeDecorator {
 			DocumentProperty prop = (DocumentProperty) element;
 			sb.append("  @Field(jcrName = \"").append(prop.getFullName());
 			sb.append("\"");
-			if(prop.isPath()){
+			if (prop.isPath()) {
 				sb.append(", path = true");
 			}
-			sb.append(")\n");
+			sb.append(", jcrType = \"");
+			sb.append(prop.getPropertyType().name());
+			sb.append("\")\n");
 		}
 	}
 }

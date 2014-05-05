@@ -110,9 +110,9 @@ public final class PropertyMap extends PackageableElementMap{
 	}
 	public String getter(){
 		String name = toValidVariableName(property.getName());
-		if(name.indexOf("is") == 0){
-			return name;
-		}
+//		if(name.indexOf("is") == 0){
+//			return name;
+//		}
 		return "get" + capitalize(name);
 	}
 	public String setter(){

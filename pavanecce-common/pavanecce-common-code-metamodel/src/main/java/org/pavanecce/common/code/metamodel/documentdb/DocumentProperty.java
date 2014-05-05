@@ -12,7 +12,7 @@ public class DocumentProperty implements IDocumentElement, IDocumentProperty {
 	public DocumentProperty(String name, DocumentNamespace namespace, PropertyType type, boolean required, boolean isMany) {
 		this.name = name;
 		this.namespace = namespace;
-		this.required = true;
+		this.required = required;
 		this.multiple=isMany;
 		this.propertyType=type;
 	}

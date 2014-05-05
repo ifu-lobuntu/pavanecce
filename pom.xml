@@ -16,7 +16,7 @@
 			<id>eclipse</id>
 			<modules>
 				<module>pavanecce-common</module>
-				<!--module>pavanecce-cmmn</module -->
+				<module>pavanecce-cmmn</module>
 				<module>pavanecce-uml</module>
 				<module>pavanecce-eclipse</module>
 			</modules>

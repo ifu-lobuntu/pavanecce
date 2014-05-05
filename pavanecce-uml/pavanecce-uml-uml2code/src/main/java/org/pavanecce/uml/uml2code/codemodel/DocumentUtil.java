@@ -46,7 +46,7 @@ public class DocumentUtil {
 				if (p.getOtherEnd() != null && p.getOtherEnd().isComposite()) {
 					result = new ParentDocument(getNamespaceOf(p), DocumentNameUtil.name(p), getDocumentNode((Class) p.getType()),EmfPropertyUtil.isMany(p.getOtherEnd()));
 				} else if (p.isComposite()) {
-					result = new ChildDocument(getNamespaceOf(p), DocumentNameUtil.name(p), getDocumentNode((Class) p.getType()));
+					result = new ChildDocument(getNamespaceOf(p), DocumentNameUtil.name(p), getDocumentNode((Class) p.getType()), EmfPropertyUtil.isRequired(p));
 				} else {
 					result = new ReferencedDocument(getNamespaceOf(p), DocumentNameUtil.name(p), getDocumentNode((Class) p.getType()), EmfPropertyUtil.isRequired(p));
 				}
@@ -64,6 +64,9 @@ public class DocumentUtil {
 		if (EmfClassifierUtil.comformsToLibraryType(type, "Integer")) {
 			return PropertyType.LONG;
 		}
+		if (EmfClassifierUtil.comformsToLibraryType(type, "Long")) {
+			return PropertyType.LONG;
+		}
 		if (EmfClassifierUtil.comformsToLibraryType(type, "Boolean")) {
 			return PropertyType.BOOLEAN;
 		}
@@ -72,6 +75,12 @@ public class DocumentUtil {
 		}
 		if (EmfClassifierUtil.comformsToLibraryType(type, "Date")) {
 			return PropertyType.DATE;
+		}
+		if (EmfClassifierUtil.comformsToLibraryType(type, "DateTime")) {
+			return PropertyType.DATE;
+		}
+		if (EmfClassifierUtil.comformsToLibraryType(type, "BinaryLargeObject")) {
+			return PropertyType.BINARY;
 		}
 		return PropertyType.BINARY;
 	}
