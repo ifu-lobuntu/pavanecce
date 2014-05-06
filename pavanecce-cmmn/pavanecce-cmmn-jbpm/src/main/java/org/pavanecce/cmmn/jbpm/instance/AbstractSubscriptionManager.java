@@ -91,7 +91,7 @@ public abstract class AbstractSubscriptionManager<T extends CaseSubscriptionInfo
 		}
 		Case theCase = (Case) process.getProcess();
 		storeVariable(process, caseFileItem, currentInstance);
-		Set<CaseFileItemOnPart> onCaseFileItemParts = theCase.findCaseFileItemOnPartsFor(caseFileItem);
+		Collection<CaseFileItemOnPart> onCaseFileItemParts = theCase.findCaseFileItemOnPartsFor(caseFileItem);
 		for (CaseFileItemOnPart part : onCaseFileItemParts) {
 			switch (part.getStandardEvent()) {
 			case ADD_CHILD:
@@ -119,7 +119,7 @@ public abstract class AbstractSubscriptionManager<T extends CaseSubscriptionInfo
 		 * therefore need to listen for that event too
 		 */
 		for (CaseFileItem childItem : caseFileItem.getChildren()) {
-			Set<CaseFileItemOnPart> on = theCase.findCaseFileItemOnPartsFor(childItem);
+			Collection<CaseFileItemOnPart> on = theCase.findCaseFileItemOnPartsFor(childItem);
 			for (CaseFileItemOnPart part : on) {
 				if (part.getStandardEvent() == CaseFileItemTransition.CREATE || part.getStandardEvent() == CaseFileItemTransition.DELETE) {
 					buildCaseFileItemSubscriptionInfo(process, childItem, info, part);

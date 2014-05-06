@@ -8,4 +8,7 @@ import org.jbpm.workflow.core.node.DataAssociation;
 public interface PlanItemDefinition extends Serializable,CMMNElement {
 
 	List<DataAssociation> getInAssociations();
+
+	List<CaseParameter> getInputs();
+
 }

@@ -328,11 +328,4 @@ public abstract class SingleCaseFileItemEntryCriterionTests extends AbstractJbpm
 		getPersistence().commit();
 	}
 
-	protected RuntimeManager createRuntimeManager(Strategy strategy, String identifier, String... process) {
-		Map<String, ResourceType> resources = new HashMap<String, ResourceType>();
-		for (String p : process) {
-			resources.put(p, CMMNBuilder.CMMN_RESOURCE_TYPE);
-		}
-		return createRuntimeManager(strategy, resources, identifier);
-	}
 }

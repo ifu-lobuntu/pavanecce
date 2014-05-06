@@ -4,13 +4,12 @@ import java.io.Serializable;
 
 import org.kie.api.task.model.Task;
 import org.pavanecce.cmmn.jbpm.instance.CaseEvent;
-import org.pavanecce.cmmn.jbpm.instance.CaseFileItemEvent;
 import org.pavanecce.cmmn.jbpm.instance.PlanItemEvent;
 
 public class PlanItemOnPart extends OnPart implements Serializable {
 	private static final long serialVersionUID = -9167236068103073693L;
 	private PlanItemTransition standardEvent;
-	private PlanItem planItem;
+	private PlanItem planSourceItem;
 	private String sourceRef;
 
 	public PlanItemTransition getStandardEvent() {
@@ -19,11 +18,11 @@ public class PlanItemOnPart extends OnPart implements Serializable {
 	public void setStandardEvent(PlanItemTransition transition) {
 		this.standardEvent = transition;
 	}
-	public PlanItem getPlanItem() {
-		return planItem;
+	public PlanItem getSourcePlanItem() {
+		return planSourceItem;
 	}
-	public void setPlanItem(PlanItem planItem) {
-		this.planItem = planItem;
+	public void setSourcePlanItem(PlanItem planItem) {
+		this.planSourceItem = planItem;
 	}
 	public void setSourceRef(String value) {
 		this.sourceRef=value;
@@ -33,11 +32,11 @@ public class PlanItemOnPart extends OnPart implements Serializable {
 	}
 	@Override
 	public String getType() {
-		return getType(this.planItem.getName(),standardEvent);
+		return getType(this.planSourceItem.getName(),standardEvent);
 	}
 	@Override
 	public CaseEvent createEvent(Object peek) {
-		return new PlanItemEvent(planItem.getName(), getStandardEvent(), (Task) peek);
+		return new PlanItemEvent(planSourceItem.getName(), getStandardEvent(), (Task) peek);
 	}
 
 }

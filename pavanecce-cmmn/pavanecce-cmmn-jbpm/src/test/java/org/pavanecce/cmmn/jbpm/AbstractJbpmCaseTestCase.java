@@ -4,7 +4,9 @@ import static org.kie.api.runtime.EnvironmentName.OBJECT_MARSHALLING_STRATEGIES;
 
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
@@ -17,34 +19,43 @@ import org.drools.core.marshalling.impl.SerializablePlaceholderResolverStrategy;
 import org.drools.persistence.jpa.marshaller.JPAPlaceholderResolverStrategy;
 import org.jbpm.marshalling.impl.ProcessInstanceResolverStrategy;
 import org.jbpm.marshalling.impl.ProcessMarshallerRegistry;
+import org.jbpm.process.builder.ProcessNodeBuilderRegistry;
 import org.jbpm.process.instance.ProcessInstanceFactoryRegistry;
 import org.jbpm.ruleflow.core.RuleFlowProcess;
 import org.jbpm.test.JbpmJUnitBaseTestCase;
 import org.jbpm.workflow.instance.impl.NodeInstanceFactoryRegistry;
 import org.jbpm.workflow.instance.impl.factory.CreateNewNodeFactory;
 import org.jbpm.workflow.instance.impl.factory.ReuseNodeFactory;
+import org.kie.api.io.ResourceType;
 import org.kie.api.marshalling.ObjectMarshallingStrategy;
 import org.kie.api.runtime.Environment;
 import org.kie.api.runtime.manager.RuntimeEngine;
+import org.kie.api.runtime.manager.RuntimeEnvironment;
 import org.kie.api.runtime.manager.RuntimeManager;
+import org.kie.api.task.TaskService;
 import org.kie.api.task.model.TaskSummary;
+import org.kie.internal.task.api.ContentMarshallerContext;
+import org.kie.internal.task.api.InternalTaskService;
 import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemDefinitionType;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemOnPart;
+import org.pavanecce.cmmn.jbpm.flow.HumanTaskPlanItem;
 import org.pavanecce.cmmn.jbpm.flow.JoiningSentry;
 import org.pavanecce.cmmn.jbpm.flow.OnPart;
-import org.pavanecce.cmmn.jbpm.flow.PlanItem;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemOnPart;
 import org.pavanecce.cmmn.jbpm.flow.Sentry;
 import org.pavanecce.cmmn.jbpm.flow.SimpleSentry;
+import org.pavanecce.cmmn.jbpm.flow.StagePlanItem;
+import org.pavanecce.cmmn.jbpm.flow.builder.CMMNBuilder;
 import org.pavanecce.cmmn.jbpm.flow.builder.DefaultTypeMap;
 import org.pavanecce.cmmn.jbpm.flow.builder.DefinitionsHandler;
 import org.pavanecce.cmmn.jbpm.instance.AbstractSubscriptionManager;
 import org.pavanecce.cmmn.jbpm.instance.CaseInstanceFactory;
 import org.pavanecce.cmmn.jbpm.instance.CaseInstanceMarshaller;
+import org.pavanecce.cmmn.jbpm.instance.HumanTaskPlanItemInstance;
 import org.pavanecce.cmmn.jbpm.instance.OnPartInstance;
-import org.pavanecce.cmmn.jbpm.instance.PlanItemInstance;
 import org.pavanecce.cmmn.jbpm.instance.SentryInstance;
+import org.pavanecce.cmmn.jbpm.instance.StagePlanItemInstance;
 import org.pavanecce.cmmn.jbpm.instance.SubscriptionManager;
 import org.pavanecce.cmmn.jbpm.jpa.CollectionPlaceHolderResolveStrategy;
 import org.pavanecce.cmmn.jbpm.jpa.HibernateSubscriptionManager;
@@ -71,6 +82,7 @@ public abstract class AbstractJbpmCaseTestCase extends JbpmJUnitBaseTestCase {
 	ObjectPersistence persistence;
 	protected boolean isJpa = false;
 	private OcmFactory ocmFactory;
+	private RuntimeEngine runtimeEngine;
 
 	public AbstractJbpmCaseTestCase() {
 		super();
@@ -87,11 +99,14 @@ public abstract class AbstractJbpmCaseTestCase extends JbpmJUnitBaseTestCase {
 	@Override
 	public void tearDown() throws Exception {
 		super.tearDown();
+		runtimeEngine=null;
 		getPersistence().close();
+		
 	}
+
 	protected void assertTaskTypeCreated(List<TaskSummary> list, String expected) {
 		for (TaskSummary taskSummary : list) {
-			if(taskSummary.getName().equals(expected)){
+			if (taskSummary.getName().equals(expected)) {
 				return;
 			}
 		}
@@ -136,12 +151,30 @@ public abstract class AbstractJbpmCaseTestCase extends JbpmJUnitBaseTestCase {
 		return pds;
 	}
 
+	@Override
+	protected RuntimeEngine getRuntimeEngine() {
+		if(this.runtimeEngine==null){
+			this.runtimeEngine=super.getRuntimeEngine();
+		}
+		return this.runtimeEngine;
+	}
+	protected final RuntimeManager createRuntimeManager(Strategy strategy, String identifier, String... process) {
+		Map<String, ResourceType> resources = new HashMap<String, ResourceType>();
+		for (String p : process) {
+			resources.put(p, CMMNBuilder.CMMN_RESOURCE_TYPE);
+		}
+		return createRuntimeManager(strategy, resources, identifier);
+	}
 	protected RuntimeManager createRuntimeManager(String... processFile) {
 		DefinitionsHandler.registerTypeMap(CaseFileItemDefinitionType.UML_CLASS, new DefaultTypeMap());
+		ProcessNodeBuilderRegistry.INSTANCE.register(StagePlanItem.class, new PlanItemBuilder());		
+		ProcessNodeBuilderRegistry.INSTANCE.register(HumanTaskPlanItem.class, new PlanItemBuilder());		
+		ProcessNodeBuilderRegistry.INSTANCE.register(SimpleSentry.class, new SentryBuilder());		
+		ProcessNodeBuilderRegistry.INSTANCE.register(JoiningSentry.class, new SentryBuilder());		
 		ProcessInstanceFactoryRegistry.INSTANCE.register(Case.class, new CaseInstanceFactory());
 		CaseInstanceMarshaller m = new CaseInstanceMarshaller();
 		ProcessMarshallerRegistry.INSTANCE.register(RuleFlowProcess.RULEFLOW_TYPE, m);
-		RuntimeManager createRuntimeManager = super.createRuntimeManager(processFile);
+		RuntimeManager rm = super.createRuntimeManager(processFile);
 		RuntimeEngine runtimeEngine = getRuntimeEngine();
 		Environment env = runtimeEngine.getKieSession().getEnvironment();
 		env.set(OBJECT_MARSHALLING_STRATEGIES, getPlaceholdStrategies(env));
@@ -156,8 +189,23 @@ public abstract class AbstractJbpmCaseTestCase extends JbpmJUnitBaseTestCase {
 		nodeInstanceFactoryRegistry.register(OnPart.class, new ReuseNodeFactory(OnPartInstance.class));
 		nodeInstanceFactoryRegistry.register(CaseFileItemOnPart.class, new ReuseNodeFactory(OnPartInstance.class));
 		nodeInstanceFactoryRegistry.register(PlanItemOnPart.class, new ReuseNodeFactory(OnPartInstance.class));
-		nodeInstanceFactoryRegistry.register(PlanItem.class, new CreateNewNodeFactory(PlanItemInstance.class));
-		return createRuntimeManager;
+		nodeInstanceFactoryRegistry.register(StagePlanItem.class, new CreateNewNodeFactory(StagePlanItemInstance.class));
+		nodeInstanceFactoryRegistry.register(HumanTaskPlanItem.class, new CreateNewNodeFactory(HumanTaskPlanItemInstance.class));
+		TaskService ts = runtimeEngine.getTaskService();
+		if (ts instanceof InternalTaskService) {
+			((InternalTaskService) ts).addMarshallerContext(rm.getIdentifier(), new ContentMarshallerContext(env, getClass().getClassLoader()));
+		}
+		return rm;
+	}
+
+	protected RuntimeManager createRuntimeManager(Strategy strategy, Map<String, ResourceType> resources, RuntimeEnvironment environment, String identifier) {
+		// Environment env = environment.getEnvironment();
+		// env.set(OBJECT_MARSHALLING_STRATEGIES, getPlaceholdStrategies(env));
+		// env.set(SubscriptionManager.ENV_NAME, getSubscriptionManager());
+		// if (!isJpa) {
+		// env.set(OcmFactory.OBJECT_CONTENT_MANAGER_FACTORY, getOcmFactory());
+		// }
+		return super.createRuntimeManager(strategy, resources, environment, identifier);
 	}
 
 	protected ObjectMarshallingStrategy[] getPlaceholdStrategies(Environment env) {

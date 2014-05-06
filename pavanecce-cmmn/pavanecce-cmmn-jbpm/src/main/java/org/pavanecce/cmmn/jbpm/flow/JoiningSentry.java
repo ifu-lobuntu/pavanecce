@@ -9,19 +9,18 @@ import org.jbpm.workflow.core.Constraint;
 import org.jbpm.workflow.core.node.Join;
 import org.kie.api.definition.process.Connection;
 
-public class JoiningSentry extends Join implements CMMNElement,Sentry {
+public class JoiningSentry extends Join implements CMMNElement, Sentry {
 	private static final long serialVersionUID = -3568385090236274366L;
 	private List<OnPart> onParts = new ArrayList<OnPart>();
 	private String elementId;
 	private Constraint condition;
-	private Set<PlanItem> planItemsExiting=new HashSet<PlanItem>();
+	private Set<PlanItem> planItemsExiting = new HashSet<PlanItem>();
 
 	public JoiningSentry() {
 		setType(TYPE_AND);
 	}
 
-	@Override
-	public Constraint getConstraint(Connection connection) {
+	public Constraint getCondition() {
 		return condition;
 	}
 
@@ -32,6 +31,7 @@ public class JoiningSentry extends Join implements CMMNElement,Sentry {
 	public void setCondition(Constraint condition) {
 		this.condition = condition;
 	}
+
 	@Override
 	public void validateAddIncomingConnection(String type, Connection connection) {
 		super.validateAddIncomingConnection(type, connection);
@@ -52,9 +52,9 @@ public class JoiningSentry extends Join implements CMMNElement,Sentry {
 	public void addPlanItemExiting(PlanItem planItem) {
 		planItemsExiting.add(planItem);
 	}
+
 	public Set<PlanItem> getPlanItemsExiting() {
 		return planItemsExiting;
 	}
-
 
 }

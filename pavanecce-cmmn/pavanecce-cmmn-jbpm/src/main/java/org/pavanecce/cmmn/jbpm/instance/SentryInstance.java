@@ -9,6 +9,8 @@ import java.util.Set;
 import org.drools.core.process.instance.WorkItem;
 import org.drools.core.process.instance.WorkItemManager;
 import org.jbpm.process.instance.ProcessInstance;
+import org.jbpm.process.instance.impl.ConstraintEvaluator;
+import org.jbpm.workflow.core.Constraint;
 import org.jbpm.workflow.core.Node;
 import org.jbpm.workflow.core.impl.NodeImpl;
 import org.jbpm.workflow.instance.NodeInstanceContainer;
@@ -57,6 +59,14 @@ public class SentryInstance extends JoinInstance {
 
 	@Override
 	public void triggerCompleted() {
+		Sentry sentry=(Sentry) getNode();
+		Constraint c = sentry.getCondition();
+		if(c instanceof ConstraintEvaluator ){
+			Connection conn = getNode().getIncomingConnections(NodeImpl.CONNECTION_DEFAULT_TYPE).get(0);
+			if(!((ConstraintEvaluator) c).evaluate(this, conn, c)){
+				return;
+			}
+		}
 		NodeInstanceContainer nic = (org.jbpm.workflow.instance.NodeInstanceContainer) getNodeInstanceContainer();
 		nic.setCurrentLevel(getLevel());
 		maybeTriggerExit(nic);

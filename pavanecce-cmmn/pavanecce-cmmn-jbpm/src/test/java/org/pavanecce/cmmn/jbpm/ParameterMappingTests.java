@@ -7,8 +7,10 @@ import java.util.Map;
 
 import org.jbpm.services.task.utils.ContentMarshallerHelper;
 import org.jbpm.shared.services.impl.events.JbpmServicesEventListener;
+import org.jbpm.test.JbpmJUnitBaseTestCase.Strategy;
 import org.junit.Test;
 import org.kie.api.io.ResourceType;
+import org.kie.api.runtime.manager.RuntimeEnvironment;
 import org.kie.api.runtime.manager.RuntimeManager;
 import org.kie.api.task.model.Content;
 import org.kie.api.task.model.Task;
@@ -91,11 +93,5 @@ public class ParameterMappingTests extends AbstractJbpmCaseTestCase {
 		getPersistence().commit();
 	}
 
-	protected RuntimeManager createRuntimeManager(Strategy strategy, String identifier, String... process) {
-		Map<String, ResourceType> resources = new HashMap<String, ResourceType>();
-		for (String p : process) {
-			resources.put(p, CMMNBuilder.CMMN_RESOURCE_TYPE);
-		}
-		return createRuntimeManager(strategy, resources, identifier);
-	}
+
 }

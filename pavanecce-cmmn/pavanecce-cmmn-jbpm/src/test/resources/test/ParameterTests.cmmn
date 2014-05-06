@@ -13,23 +13,21 @@
 		<cmmn:casePlanModel name="ParameterTests">
 			<cmmn:planItem definitionRef="theTask" name="TheTask" id="theTaskId" entryCriteriaRefs="waitingForWallPlanCreatedSentryId">
 			</cmmn:planItem>
-			<cmmn:planItem definitionRef="theTask" name="TheSecondTask" id="secondTaskId" entryCriteriaRefs="dud" >
-			</cmmn:planItem>
 			<cmmn:sentry id="waitingForWallPlanCreatedSentryId" name="WaitingForWallPlanCreatedSentry">
 				<cmmn:caseFileItemOnPart sourceRef="wallPlanFileItemId" id="onWallPlanCreatedPartId">
 					<cmmn:standardEvent>create</cmmn:standardEvent>
 				</cmmn:caseFileItemOnPart>
-			</cmmn:sentry>
-			<cmmn:sentry id="dud" name="dud">
-				<cmmn:caseFileItemOnPart sourceRef="roofPlanFileItemId" id="onDud">
-					<cmmn:standardEvent>create</cmmn:standardEvent>
-				</cmmn:caseFileItemOnPart>
+				<cmmn:ifPart>
+					<cmmn:condition language="http://www.java.com/java">
+						<cmmn:body>return housePlan.getWallPlans().size()>0;</cmmn:body>
+					</cmmn:condition>
+				</cmmn:ifPart>
 			</cmmn:sentry>
 			<cmmn:humanTask id="theTask" name="The Task" performerRef="builderRoleId" isBlocking="true">
 				<cmmn:defaultControl />
 				<cmmn:inputs name="wallPlan" bindingRef="wallPlanFileItemId">
-					<cmmn:bindingRefinement language="http://www.omg.org/ocl">
-						<cmmn:body>currentEvent</cmmn:body>
+					<cmmn:bindingRefinement language="http://www.java.com/java">
+						<cmmn:body>class MyClass{ public Object go(Object event){return event;}}; return new MyClass().go( currentEvent.getValue());</cmmn:body>
 					</cmmn:bindingRefinement>
 				</cmmn:inputs>
 				<cmmn:outputs name="wall" bindingRef="wallFileItemId"></cmmn:outputs>

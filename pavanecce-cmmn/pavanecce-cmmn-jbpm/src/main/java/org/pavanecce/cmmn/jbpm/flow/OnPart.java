@@ -9,12 +9,12 @@ import org.jbpm.process.core.context.variable.Variable;
 import org.jbpm.process.core.context.variable.VariableScope;
 import org.jbpm.process.core.event.EventFilter;
 import org.jbpm.process.core.event.EventTypeFilter;
+import org.jbpm.process.instance.impl.ReturnValueConstraintEvaluator;
 import org.jbpm.workflow.core.node.EventNode;
 import org.pavanecce.cmmn.jbpm.instance.CaseEvent;
 
 public abstract class OnPart extends EventNode implements Serializable, CMMNElement {
 	private static final long serialVersionUID = 1403604027414552700L;
-
 	@Override
 	public abstract String getType();
 
@@ -25,6 +25,7 @@ public abstract class OnPart extends EventNode implements Serializable, CMMNElem
 		return Arrays.asList((EventFilter) f);
 
 	}
+
 
 	@Override
 	public String getElementId() {

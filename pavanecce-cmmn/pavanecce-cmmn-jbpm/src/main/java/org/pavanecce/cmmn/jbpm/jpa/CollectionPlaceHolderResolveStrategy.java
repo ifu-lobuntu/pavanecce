@@ -73,9 +73,6 @@ public class CollectionPlaceHolderResolveStrategy extends JPAPlaceholderResolver
 	public Class<?> findCommonSuperclass(Collection<?> c) {
 		Iterator<?> iterator = c.iterator();
 		Object next = iterator.next();
-		if(next==null){
-			System.out.println();
-		}
 		Class<?> result = next.getClass();
 		for (Object object : c) {
 			while (!result.isInstance(object)) {

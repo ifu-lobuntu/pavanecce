@@ -89,7 +89,6 @@ public class BuilderTest extends AbstractJbpmCaseTestCase {
 		taskService.complete(list.get(0).getId(), "Builder", new HashMap<String, Object>());
 		list = taskService.getTasksAssignedAsPotentialOwner("Builder", "en-UK");
 		assertEquals(1, list.size());
-		System.out.println(list.get(0).getStatus());
 		taskService.start(list.get(0).getId(), "Builder");
 		taskService.complete(list.get(0).getId(), "Builder", new HashMap<String, Object>());
 
@@ -168,11 +167,4 @@ public class BuilderTest extends AbstractJbpmCaseTestCase {
 		getPersistence().commit();
 	}
 
-	protected RuntimeManager createRuntimeManager(Strategy strategy, String identifier, String... process) {
-		Map<String, ResourceType> resources = new HashMap<String, ResourceType>();
-		for (String p : process) {
-			resources.put(p, CMMNBuilder.CMMN_RESOURCE_TYPE);
-		}
-		return createRuntimeManager(strategy, resources, identifier);
-	}
 }

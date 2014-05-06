@@ -87,7 +87,6 @@ public class HibernateSubscriptionManager extends AbstractSubscriptionManager<Jp
 			JpaCaseSubscriptionInfo inf = (JpaCaseSubscriptionInfo) event.getSession().get(JpaCaseSubscriptionInfo.class, key);
 			Set<DirtyOneToOne> dirtyOneToOnes=new HashSet<HibernateSubscriptionManager.DirtyOneToOne>();
 			if (inf != null) {
-				System.out.println();
 				for (CaseFileItemSubscriptionInfo is : inf.getCaseFileItemSubscriptions()) {
 					if (is.getTransition() == CaseFileItemTransition.UPDATE) {
 						fireUpdateEventIfDirty(event, is);

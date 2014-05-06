@@ -56,15 +56,11 @@
 				performerRef="builderRoleId" isBlocking="true">
 				<cmmn:defaultControl>
 				</cmmn:defaultControl>
-				<cmmn:inputs name="wallPlan" bindingRef="wallPlanFileItemId"></cmmn:inputs>
-				<cmmn:outputs name="wall" bindingRef="wallFileItemId"></cmmn:outputs>
 			</cmmn:humanTask>
 			<cmmn:humanTask id="layBricksId" name="LayBricks"
 				performerRef="builderRoleId" isBlocking="true">
 				<cmmn:defaultControl>
 				</cmmn:defaultControl>
-				<cmmn:inputs name="wallPlan" bindingRef="wallPlanDefinitionId"></cmmn:inputs>
-				<cmmn:outputs name="wall" bindingRef="wallDefinitionId"></cmmn:outputs>
 			</cmmn:humanTask>
 		</cmmn:casePlanModel>
 		<cmmn:caseRoles name="Painter" id="painterRoleId" />

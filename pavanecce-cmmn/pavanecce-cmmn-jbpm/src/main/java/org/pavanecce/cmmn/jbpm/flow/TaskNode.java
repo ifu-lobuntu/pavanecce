@@ -28,7 +28,7 @@ public class TaskNode extends WorkItemNode implements PlanItemDefinition {
 	public List<CaseParameter> getOutputParameters() {
 		return outputParameters;
 	}
-	public List<CaseParameter> getInputParameters() {
+	public List<CaseParameter> getInputs() {
 		return inputParameters;
 	}
 }

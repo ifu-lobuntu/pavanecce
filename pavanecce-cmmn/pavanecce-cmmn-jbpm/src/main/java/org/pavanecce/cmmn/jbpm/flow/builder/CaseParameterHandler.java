@@ -6,6 +6,7 @@ import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
 import org.pavanecce.cmmn.jbpm.flow.HumanTask;
 import org.pavanecce.cmmn.jbpm.flow.TaskNode;
+import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -25,20 +26,28 @@ public class CaseParameterHandler extends AbstractCaseElementHandler implements 
 		if(xmlPackageReader.getParent() instanceof Case){
 			Case p = (Case) xmlPackageReader.getParent();
 			if(localName.equals("output")){
-				p.addInputParameter(cp);
-			}else{
 				p.addOutputParameter(cp);
+			}else{
+				p.addInputParameter(cp);
 			}
 		}else if(xmlPackageReader.getParent() instanceof HumanTask){
 			HumanTask ht = (HumanTask) xmlPackageReader.getParent();
 			if(localName.equals("outputs")){
-				ht.addInputParameter(cp);
-			}else{
 				ht.addOutputParameter(cp);
+			}else{
+				ht.addInputParameter(cp);
 			}
 		}
 		return cp;
 	}
+	@Override
+	public Object end(String uri, String localName, ExtensibleXmlParser xmlPackageReader) throws SAXException {
+		Element el = xmlPackageReader.endElementBuilder();
+		CaseParameter caseParameter = (CaseParameter) xmlPackageReader.getCurrent();
+		caseParameter.setBindingRefinement(SentryHandler.extractExpression(el, "bindingRefinement"));
+		return caseParameter;
+	}
+	
 
 	@Override
 	public Class<?> generateNodeFor() {

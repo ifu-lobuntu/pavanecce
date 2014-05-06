@@ -25,4 +25,10 @@ public class Milestone extends MilestoneNode implements PlanItemDefinition {
 		return Collections.emptyList();
 	}
 
+	@Override
+	public List<CaseParameter> getInputs() {
+		return Collections.emptyList();
+	}
+	
+
 }

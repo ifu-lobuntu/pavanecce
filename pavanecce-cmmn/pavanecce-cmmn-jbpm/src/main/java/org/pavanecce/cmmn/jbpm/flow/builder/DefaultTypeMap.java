@@ -9,7 +9,8 @@ public class DefaultTypeMap implements TypeMap{
 	@Override
 	public String getType(String sourceType) {
 		String[] split = sourceType.split("\\#");
-		return split[split.length-1].replace("/", ".");
+		String result = split[split.length-1];
+		return result.replace("/", ".").replace("::", ".");
 	}
 	public void putType(String s,String t){
 		types.put(s, t);

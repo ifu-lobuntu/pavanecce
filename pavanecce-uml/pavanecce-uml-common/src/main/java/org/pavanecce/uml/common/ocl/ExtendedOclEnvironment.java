@@ -69,12 +69,14 @@ public final class ExtendedOclEnvironment extends DefaultParentOclEnvironment {
 	public ExtendedOclEnvironment(Element context, DefaultParentOclEnvironment parent) {
 		super(parent.getLibrary().getResourceSet());
 		this.factory = new ExtendedOclEnvironmentFactory(context, parent.getLibrary());
-		Variable self = UMLFactory.eINSTANCE.createVariable();
-		self.setName("self");
 		Classifier selfClassifier = EmfBehaviorUtil.getSelf(context);
-		self.setType(selfClassifier);
-		setSelfVariable(self);
-		addElement("self", self, false);
+		if (selfClassifier != null) {
+			Variable self = UMLFactory.eINSTANCE.createVariable();
+			self.setName("self");
+			self.setType(selfClassifier);
+			setSelfVariable(self);
+			addElement("self", self, false);
+		}
 		if (selfClassifier instanceof Behavior) {
 			Classifier contextObject = EmfBehaviorUtil.getContext(context);
 			if (contextObject != null && contextObject != selfClassifier) {
@@ -298,8 +300,7 @@ public final class ExtendedOclEnvironment extends DefaultParentOclEnvironment {
 		return additionalAttributes;
 	}
 
-	public void setFactory(
-			EnvironmentFactory<Package, Classifier, Operation, Property, EnumerationLiteral, Parameter, State, CallOperationAction, SendSignalAction, Constraint, Class, EObject> d) {
+	public void setFactory(EnvironmentFactory<Package, Classifier, Operation, Property, EnumerationLiteral, Parameter, State, CallOperationAction, SendSignalAction, Constraint, Class, EObject> d) {
 		super.setFactory(d);
 	}
 
@@ -376,8 +377,7 @@ public final class ExtendedOclEnvironment extends DefaultParentOclEnvironment {
 		}
 	}
 
-	private void addDurationObservations(Collection<org.eclipse.ocl.expressions.Variable<Classifier, Parameter>> variables, Element element, Type duration,
-			String businesStateMachine) {
+	private void addDurationObservations(Collection<org.eclipse.ocl.expressions.Variable<Classifier, Parameter>> variables, Element element, Type duration, String businesStateMachine) {
 		Stereotype s = StereotypesHelper.getStereotype(element, businesStateMachine);
 		if (s != null) {
 			@SuppressWarnings("unchecked")

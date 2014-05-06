@@ -23,12 +23,22 @@ Throwing Human Task TERMINATE events from TaskService
 
 To test
 All the above events but for exit criteria
+Sentry.Conditions
 
 Todo
-ParameterMapping
+Input ParameterMapping and bindingRefinement
+  Generate JCR node types (CND) for tasks - REFERENCE to casefileitem
+  Make sure Jahia will create it in the correct way
+Implement OCLProcessDialect that extends JavaProcessDialect
+  focus on ReturnValueBuilder first, then the others
+  consider reversing Java classes to UML
+Output ParameterMapping, bindingRefinement and scoped subscriptions
 Timer Event
 User Event
 Milestone
+Process/Case Task
+ItemControl.repetitionRule
+ItemControl.requiredRule
 
 
 Throwing Human Task EXIT events from TaskService - happens when exit criteria are achieved
@@ -36,7 +46,6 @@ Throwing Human Task CREATE,DISABLE,ENABLE,REENABLE events from TaskService - thi
 Scoping of subscriptions
 Make recursive subscriptions parameterizable
 
-Process/Case Task
 Planning
 Planning with quotes for subsequent activities
 milestone with cost breakdwon
@@ -48,16 +57,14 @@ Stage SUSPEND
 Throwing casePlanModel CLOSE event
 CLOSED state and event
 ItemControl.automaticActivationRule
-ItemControl.repititionRule
-ItemControl.requiredRule
 DiscretionaryItem
 ApplicabilityRule
 Assigning tasks at runtime
 casePlanModel exit criteria
 Autocompletion
-bindingRefinement
 plan fragment
 Stage exit and event
+
 
 Difficult
 With JCR Property.CHANGE events, try to get the original value and only fire events for ADD_/REMOVE_REFERENCE when they applicable - JCR limitation

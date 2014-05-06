@@ -43,8 +43,8 @@ public class CaseFileItemOnPartHandler extends BaseAbstractHandler implements Ha
 	@Override
 	public Object end(String uri, String localName, ExtensibleXmlParser xmlPackageReader) throws SAXException {
 		CaseFileItemOnPart part = (CaseFileItemOnPart) xmlPackageReader.getCurrent();
-		NodeList elementsByTagName = xmlPackageReader.endElementBuilder().getElementsByTagName("standardEvent");
-		part.setStandardEvent(CaseFileItemTransition.resolveByName(elementsByTagName.item(0).getFirstChild().getNodeValue()));
+		NodeList standardEvents = xmlPackageReader.endElementBuilder().getElementsByTagName("standardEvent");
+		part.setStandardEvent(CaseFileItemTransition.resolveByName(standardEvents.item(0).getFirstChild().getNodeValue()));
 		return xmlPackageReader.getCurrent();
 	}
 

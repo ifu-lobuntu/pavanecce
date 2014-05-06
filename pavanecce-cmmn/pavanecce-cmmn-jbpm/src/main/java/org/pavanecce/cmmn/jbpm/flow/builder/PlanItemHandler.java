@@ -2,22 +2,27 @@ package org.pavanecce.cmmn.jbpm.flow.builder;
 
 import org.drools.core.xml.ExtensibleXmlParser;
 import org.drools.core.xml.Handler;
-import org.jbpm.workflow.core.NodeContainer;
-import org.pavanecce.cmmn.jbpm.flow.PlanItem;
+import org.pavanecce.cmmn.jbpm.flow.PlanItemContainer;
+import org.pavanecce.cmmn.jbpm.flow.PlanItemInfo;
+import org.pavanecce.cmmn.jbpm.flow.Stage;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 public class PlanItemHandler extends AbstractPlanModelElementHandler implements Handler {
+	public PlanItemHandler(){
+		super();
+		super.validParents.add(Stage.class);
+	}
 
 	@Override
 	public Object start(String uri, String localName, Attributes attrs, ExtensibleXmlParser xmlPackageReader) throws SAXException {
 		xmlPackageReader.startElementBuilder(localName, attrs);
-		PlanItem planItem = new PlanItem();
+		PlanItemInfo planItem = new PlanItemInfo();
 		planItem.setId(IdGenerator.next(xmlPackageReader));
-		((NodeContainer)xmlPackageReader.getParent()).addNode(planItem);
+		planItem.setContainer(((PlanItemContainer) xmlPackageReader.getParent()));
 		planItem.setName(attrs.getValue("name"));
 		String entry = attrs.getValue("entryCriteriaRefs");
-		if(entry!=null){
+		if (entry != null) {
 			for (String string : entry.split("\\ ")) {
 				planItem.putEntryCriterion(string, null);
 			}
@@ -25,7 +30,7 @@ public class PlanItemHandler extends AbstractPlanModelElementHandler implements 
 		planItem.setElementId(attrs.getValue("id"));
 		planItem.setDefinitionRef(attrs.getValue("definitionRef"));
 		String exit = attrs.getValue("exitCriteriaRefs");
-		if(exit!=null){
+		if (exit != null) {
 			for (String string : exit.split("\\ ")) {
 				planItem.putExitCriterion(string, null);
 			}
@@ -40,7 +45,7 @@ public class PlanItemHandler extends AbstractPlanModelElementHandler implements 
 
 	@Override
 	public Class<?> generateNodeFor() {
-		return PlanItem.class;
+		return PlanItemInfo.class;
 	}
 
 }

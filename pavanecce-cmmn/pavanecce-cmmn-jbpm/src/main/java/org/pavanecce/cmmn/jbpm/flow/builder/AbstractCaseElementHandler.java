@@ -12,6 +12,7 @@ import org.pavanecce.cmmn.jbpm.flow.HumanTask;
 import org.pavanecce.cmmn.jbpm.flow.PlanItem;
 import org.pavanecce.cmmn.jbpm.flow.Role;
 import org.pavanecce.cmmn.jbpm.flow.Sentry;
+import org.pavanecce.cmmn.jbpm.flow.Stage;
 import org.xml.sax.SAXException;
 
 public abstract class AbstractCaseElementHandler extends BaseAbstractHandler implements Handler{
@@ -27,6 +28,7 @@ public abstract class AbstractCaseElementHandler extends BaseAbstractHandler imp
 		this.validPeers.add(HumanTask.class);
 		this.validPeers.add(Variable.class);
 		this.validPeers.add(Role.class);
+		this.validPeers.add(Stage.class);
 		this.validPeers.add(CaseParameter.class);
 	}
 	@Override

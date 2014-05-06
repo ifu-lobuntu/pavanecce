@@ -13,7 +13,6 @@ public class CaseFileItemOnPart extends OnPart implements Serializable {
 	private String sourceRef;
 	private String relationRef;
 
-
 	public CaseFileItemTransition getStandardEvent() {
 		return standardEvent;
 	}
@@ -21,7 +20,6 @@ public class CaseFileItemOnPart extends OnPart implements Serializable {
 	public void setStandardEvent(CaseFileItemTransition type) {
 		this.standardEvent = type;
 	}
-
 
 	public CaseFileItem getSourceCaseFileItem() {
 		return sourceCaseFileItem;
@@ -31,7 +29,6 @@ public class CaseFileItemOnPart extends OnPart implements Serializable {
 		this.sourceCaseFileItem = caseFileItem;
 	}
 
-
 	public void setSourceRef(String value) {
 		this.sourceRef = value;
 	}
@@ -39,6 +36,14 @@ public class CaseFileItemOnPart extends OnPart implements Serializable {
 	@Override
 	public String getType() {
 		return getType(this.sourceCaseFileItem.getName(), standardEvent);
+	}
+
+	public String getIdentifier() {
+		if (this.relatedCaseFileItem != null) {
+			return getType(this.sourceCaseFileItem.getName() + "." + relatedCaseFileItem.getName(), standardEvent);
+		} else {
+			return getType(this.sourceCaseFileItem.getName(), standardEvent);
+		}
 	}
 
 	public String getSourceRef() {
@@ -60,6 +65,7 @@ public class CaseFileItemOnPart extends OnPart implements Serializable {
 	public void setRelatedCaseFileItem(CaseFileItem relatedCaseFileItem) {
 		this.relatedCaseFileItem = relatedCaseFileItem;
 	}
+
 	@Override
 	public CaseEvent createEvent(Object peek) {
 		return new CaseFileItemEvent(sourceCaseFileItem.getName(), getStandardEvent(), null, peek);
