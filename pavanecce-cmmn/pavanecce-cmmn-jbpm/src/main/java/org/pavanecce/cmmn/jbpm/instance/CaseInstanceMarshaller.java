@@ -4,25 +4,17 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 import org.drools.core.marshalling.impl.MarshallerReaderContext;
 import org.drools.core.marshalling.impl.MarshallerWriteContext;
 import org.drools.core.marshalling.impl.PersisterEnums;
 import org.jbpm.marshalling.impl.AbstractProcessInstanceMarshaller;
-import org.jbpm.process.core.context.exclusive.ExclusiveGroup;
-import org.jbpm.process.core.context.variable.VariableScope;
-import org.jbpm.process.instance.ContextInstance;
-import org.jbpm.process.instance.context.exclusive.ExclusiveGroupInstance;
-import org.jbpm.process.instance.context.variable.VariableScopeInstance;
 import org.jbpm.workflow.instance.impl.NodeInstanceImpl;
 import org.jbpm.workflow.instance.impl.WorkflowProcessInstanceImpl;
 import org.jbpm.workflow.instance.node.CompositeContextNodeInstance;
-import org.jbpm.workflow.instance.node.DynamicNodeInstance;
 import org.kie.api.runtime.process.NodeInstance;
 import org.kie.api.runtime.process.WorkflowProcessInstance;
 

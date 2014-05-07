@@ -24,8 +24,8 @@ public final class PropertyMap extends PackageableElementMap{
 	private Property property;
 	protected ClassifierMap actualTypeMap = null;
 	protected ClassifierMap baseTypeMap = null;
-	public PropertyMap(UmlToCodeMaps CodeUtil,Property property){
-		super(CodeUtil, property);
+	public PropertyMap(UmlToCodeMaps codeUtil,Property property){
+		super(codeUtil, property);
 		if(property.getAssociationEnd() != null){
 			// qualifier - might have backing attribute
 			Classifier c = (Classifier) EmfElementFinder.getContainer(property.getAssociationEnd());
@@ -37,11 +37,11 @@ public final class PropertyMap extends PackageableElementMap{
 		this.setProperty(property);
 		Classifier type = (Classifier) property.getType();
 		if(type == null){
-			type = CodeUtil.getLibrary().getOcl().getLibrary().getStringType();
+			type = codeUtil.getLibrary().getStringType();
 		}
-		baseTypeMap = CodeUtil.buildClassifierMap(type);
+		baseTypeMap = codeUtil.buildClassifierMap(type);
 		if(EmfPropertyUtil.isMany(property)){
-			actualTypeMap = CodeUtil.buildClassifierMap(type, getCollectionKind(property));
+			actualTypeMap = codeUtil.buildClassifierMap(type, getCollectionKind(property));
 		}else{
 			actualTypeMap = baseTypeMap;
 		}

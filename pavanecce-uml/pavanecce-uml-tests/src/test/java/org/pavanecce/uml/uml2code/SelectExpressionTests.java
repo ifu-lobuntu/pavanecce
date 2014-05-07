@@ -42,7 +42,7 @@ public class SelectExpressionTests extends AbstractOcl2CodeModelTest {
 		BufferedReader getDefaultIntegerBody = new BufferedReader(new StringReader(methodBody));
 		assertEquals("    Set<Integer> result = new HashSet<Integer>();", getDefaultIntegerBody.readLine());
 		assertEquals("    for(Integer x : collectionLiteral0()){", getDefaultIntegerBody.readLine());
-		assertEquals("      if(( ( x % 3 ) = 1 )){", getDefaultIntegerBody.readLine());
+		assertEquals("      if(( ( x % 3 ) == 1 )){", getDefaultIntegerBody.readLine());
 		assertEquals("        result.add( x );", getDefaultIntegerBody.readLine());
 		assertEquals("      }", getDefaultIntegerBody.readLine());
 		assertEquals("    }", getDefaultIntegerBody.readLine());

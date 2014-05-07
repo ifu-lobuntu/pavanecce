@@ -40,10 +40,10 @@ public class OclContextFactory {
 		this.parentEnvironment = new DefaultParentOclEnvironment(rst);
 	}
 
-	public FreeExpressionContext getFreeOclExpressionContext(Package next, String valueSpec) {
+	public FreeExpressionContext getFreeOclExpressionContext(Package next, Map<String, Classifier> vars, String valueSpec) {
 		FreeExpressionContext result = freeExpressions.get(valueSpec);
 		if (result == null) {
-			OCL ocl = createOcl(next, Collections.<String, Classifier> emptyMap());
+			OCL ocl = createOcl(next, vars);
 			Helper helper = ocl.createOCLHelper();
 			result = new FreeExpressionContext(valueSpec, helper);
 			freeExpressions.put(valueSpec, result);
@@ -129,7 +129,7 @@ public class OclContextFactory {
 		return type;
 	}
 
-	public OclLibrary getLibrary() {
+	public OclRuntimeLibrary getLibrary() {
 		return this.parentEnvironment.getLibrary();
 	}
 }

@@ -104,6 +104,7 @@ public class DefinitionsHandler extends BaseAbstractHandler implements Handler {
 		if (UndefinedDataType.getInstance().equals(variable.getType()) && itemDefinitions != null && definitionRef != null) {
 			DataType dataType = new ObjectDataType();
 			CaseFileItemDefinition itemDefinition = itemDefinitions.get(definitionRef);
+			variable.setDefinition(itemDefinition);
 			if (itemDefinition != null) {
 				TypeMap typeMap = TYPE_MAP_REGISTRY.get(itemDefinition.getDefinitionType());
 				String type = typeMap.getType(itemDefinition.getStructureRef());

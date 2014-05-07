@@ -8,76 +8,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>${artifactId}</artifactId>
 	<packaging>${packaging}</packaging>
+	<properties>
+		<embeddedGroupIds>
+			javax,org.javassist,org.python,javax,org.hibernate,org.codehaus.btm,com.h2database,org.apache,org.apache,org.jboss.logging,dom4j,antlr,org.slf4j,org.apache.jackrabbit,commons-io,concurrent,org.apache.derby,commons-dbcp,commons-pool,commons-lang,commons-beanutils,commons-collections,xalan,cglib,asm,org.jbpm,org.kie,org.drools,com.thoughtworks.xstream
+
+		</embeddedGroupIds>
+	</properties>
 	<profiles>
-		<profile>
-			<id>init</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.eclipse.tycho</groupId>
-						<artifactId>tycho-maven-plugin</artifactId>
-						<version>${tycho.version}</version>
-						<extensions>true</extensions>
-					</plugin>
-
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-dependency-plugin</artifactId>
-						<inherited>false</inherited>
-						<executions>
-							<execution>
-								<id>copy-dependencies</id>
-								<phase>generate-resources</phase>
-								<goals>
-									<goal>copy-dependencies</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${project.basedir}/libs</outputDirectory>
-									<stripVersion>true</stripVersion>
-									<failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
-									<overWriteReleases>false</overWriteReleases>
-									<overWriteSnapshots>false</overWriteSnapshots>
-									<overWriteIfNewer>true</overWriteIfNewer>
-									<includeGroupIds>org.javassist,org.python,javax,org.hibernate,org.codehaus.btm,com.h2database,org.apache,org.apache,org.jboss.logging,dom4j,antlr,org.slf4j,org.apache.jackrabbit,commons-io,concurrent,org.apache.derby,commons-dbcp,commons-pool,commons-lang,commons-beanutils,commons-collections,xalan,cglib,asm</includeGroupIds>
-									<excludeArtifactIds></excludeArtifactIds>
-									<excludeTransitive>false</excludeTransitive>
-									<excludeScope>provided</excludeScope>
-								</configuration>
-							</execution>
-							<execution>
-								<id>copy-dependencies-sources</id>
-								<phase>generate-sources</phase>
-								<goals>
-									<goal>copy-dependencies</goal>
-								</goals>
-								<configuration>
-									<classifier>sources</classifier>
-									<failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
-
-									<outputDirectory>${project.basedir}/libs</outputDirectory>
-									<stripVersion>true</stripVersion>
-									<overWriteReleases>false</overWriteReleases>
-									<overWriteSnapshots>false</overWriteSnapshots>
-									<overWriteIfNewer>true</overWriteIfNewer>
-									<includeGroupIds>org.javassist,org.python,javax,org.hibernate,org.codehaus.btm,com.h2database,org.apache,org.apache,org.jboss.logging,dom4j,antlr,org.slf4j,org.apache.jackrabbit,commons-io,concurrent,org.apache.derby,commons-dbcp,commons-pool,commons-lang,commons-beanutils,commons-collections,xalan,cglib,asm</includeGroupIds>
-									<excludeArtifactIds></excludeArtifactIds>
-									<excludeTransitive>false</excludeTransitive>
-									<excludeScope>provided</excludeScope>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-
-			<properties>
-				<artifactId>pavanecce-common-dependencies</artifactId>
-				<packaging>eclipse-plugin</packaging>
-			</properties>
-		</profile>
 		<profile>
 			<id>standalone</id>
 			<activation>
@@ -124,7 +61,7 @@
 									<overWriteReleases>false</overWriteReleases>
 									<overWriteSnapshots>false</overWriteSnapshots>
 									<overWriteIfNewer>true</overWriteIfNewer>
-									<includeGroupIds>org.javassist,org.python,javax,org.hibernate,org.codehaus.btm,com.h2database,org.apache,org.jboss.logging,dom4j,antlr,org.slf4j,org.apache.jackrabbit,commons-io,concurrent,org.apache.derby,commons-dbcp,commons-pool,commons-lang,commons-beanutils,commons-collections,xalan,cglib,asm</includeGroupIds>
+									<includeGroupIds>${embeddedGroupIds}</includeGroupIds>
 									<excludeArtifactIds></excludeArtifactIds>
 									<excludeTransitive>false</excludeTransitive>
 									<excludeScope>provided</excludeScope>
@@ -145,7 +82,7 @@
 									<overWriteReleases>false</overWriteReleases>
 									<overWriteSnapshots>false</overWriteSnapshots>
 									<overWriteIfNewer>true</overWriteIfNewer>
-									<includeGroupIds>org.javassist,org.python,javax,org.hibernate,org.codehaus.btm,com.h2database,org.apache,org.jboss.logging,dom4j,antlr,org.slf4j,org.apache.jackrabbit,commons-io,concurrent,org.apache.derby,commons-dbcp,commons-pool,commons-lang,commons-beanutils,commons-collections,xalan,cglib,asm</includeGroupIds>
+									<includeGroupIds>${embeddedGroupIds}</includeGroupIds>
 									<excludeArtifactIds></excludeArtifactIds>
 									<excludeTransitive>false</excludeTransitive>
 									<excludeScope>provided</excludeScope>
@@ -159,6 +96,35 @@
 		</profile>
 	</profiles>
 	<dependencies>
+		<dependency>
+			<groupId>org.jbpm</groupId>
+			<artifactId>jbpm-flow-builder</artifactId>
+			<version>6.0.0.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jbpm</groupId>
+			<artifactId>jbpm-test</artifactId>
+			<version>6.0.0.Final</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.jboss.solder</groupId>
+					<artifactId>solder-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.jbpm</groupId>
+					<artifactId>jbpm-bpmn2</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.jboss.solder</groupId>
+					<artifactId>solder-impl</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.jboss.netty</groupId>
+					<artifactId>netty</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
 		<dependency>
 			<groupId>org.javassist</groupId>
 			<artifactId>javassist</artifactId>
@@ -207,9 +173,14 @@
 			<version>3.1.4.GA</version>
 		</dependency>
 		<dependency>
-		<groupId>xalan</groupId>
-		<artifactId>xalan</artifactId>
-		<version>2.5.1</version>
+			<groupId>javax</groupId>
+			<artifactId>javaee-api</artifactId>
+			<version>7.0</version>
+		</dependency>
+		<dependency>
+			<groupId>xalan</groupId>
+			<artifactId>xalan</artifactId>
+			<version>2.5.1</version>
 		</dependency>
 	</dependencies>
 </project>

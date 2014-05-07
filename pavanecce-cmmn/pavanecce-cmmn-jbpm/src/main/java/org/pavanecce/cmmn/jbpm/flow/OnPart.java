@@ -9,7 +9,6 @@ import org.jbpm.process.core.context.variable.Variable;
 import org.jbpm.process.core.context.variable.VariableScope;
 import org.jbpm.process.core.event.EventFilter;
 import org.jbpm.process.core.event.EventTypeFilter;
-import org.jbpm.process.instance.impl.ReturnValueConstraintEvaluator;
 import org.jbpm.workflow.core.node.EventNode;
 import org.pavanecce.cmmn.jbpm.instance.CaseEvent;
 

@@ -24,18 +24,18 @@ import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.SendSignalAction;
 import org.eclipse.uml2.uml.State;
 import org.pavanecce.uml.common.util.emulated.DefaultParentOclEnvironment;
-import org.pavanecce.uml.common.util.emulated.OclLibrary;
+import org.pavanecce.uml.common.util.emulated.OclRuntimeLibrary;
 
 public final class ExtendedOclEnvironmentFactory extends UMLEnvironmentFactory{
 	private Collection<Variable> variables = new HashSet<Variable>();
 	private Element context;
-	OclLibrary library;
-	public ExtendedOclEnvironmentFactory(Element context, Registry registry,OclLibrary oclLibrary){
+	OclRuntimeLibrary library;
+	public ExtendedOclEnvironmentFactory(Element context, Registry registry,OclRuntimeLibrary oclLibrary){
 		super(registry, oclLibrary.getResourceSet());
 		this.context=context;
 		this.library=oclLibrary;
 	}
-	public ExtendedOclEnvironmentFactory(Element context, OclLibrary oclLibrary){
+	public ExtendedOclEnvironmentFactory(Element context, OclRuntimeLibrary oclLibrary){
 		super(oclLibrary.getResourceSet());
 		this.context=context;
 		this.library=oclLibrary;

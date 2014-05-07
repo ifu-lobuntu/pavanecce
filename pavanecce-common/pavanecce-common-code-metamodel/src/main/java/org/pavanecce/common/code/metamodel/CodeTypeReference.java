@@ -75,9 +75,8 @@ public class CodeTypeReference implements Comparable<CodeTypeReference> {
 
 	@Override
 	public int compareTo(CodeTypeReference o) {
-		int packageDiff = packageReference.compareTo(o.packageReference);
-		if (packageDiff != 0) {
-			return packageDiff;
+		if (packageReference.compareTo(o.packageReference) != 0) {
+			return packageReference.compareTo(o.packageReference);
 		} else {
 			return lastName.compareTo(o.lastName);
 		}

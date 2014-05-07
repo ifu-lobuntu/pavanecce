@@ -4,13 +4,13 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.ocl.uml.UMLEnvironment;
 
 public class DefaultParentOclEnvironment extends UMLEnvironment{
-	protected OclLibrary library;
+	protected OclRuntimeLibrary library;
 	public DefaultParentOclEnvironment(ResourceSet rst){
 		
 		super(rst.getPackageRegistry(),rst);
-		this.library=new OclLibrary(rst, getOCLStandardLibrary());
+		this.library=new OclRuntimeLibrary(rst, getOCLStandardLibrary());
 	}
-	public OclLibrary getLibrary(){
+	public OclRuntimeLibrary getLibrary(){
 		return library;
 	}
 

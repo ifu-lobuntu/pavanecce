@@ -1,4 +1,4 @@
-package org.pavanecce.cmmn.jbpm;
+package org.pavanecce.cmmn.jbpm.flow.builder;
 
 import org.drools.compiler.compiler.ReturnValueDescr;
 import org.drools.compiler.lang.descr.ProcessDescr;

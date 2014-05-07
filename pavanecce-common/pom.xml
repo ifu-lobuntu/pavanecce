@@ -8,40 +8,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>pavanecce-common-parent</artifactId>
 	<packaging>pom</packaging>
-	<profiles>
-		<profile>
-			<id>init</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<modules>
-				<module>pavanecce-common-dependencies</module>
-			</modules>
-		</profile>
-		<profile>
-			<id>standalone</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<modules>
-				<module>pavanecce-common-util</module>
-				<module>pavanecce-common-text-workspace</module>
-				<module>pavanecce-common-code-metamodel</module>
-			</modules>
-		</profile>
-		<profile>
-			<id>eclipse</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<modules>
-				<module>pavanecce-system-dependencies</module>
-				<module>pavanecce-common-dependencies</module>
-				<module>pavanecce-common-util</module>
-				<module>pavanecce-common-text-workspace</module>
-				<module>pavanecce-common-code-metamodel</module>
-			</modules>
-		</profile>
-	</profiles>
+	<modules>
+		<module>pavanecce-system-dependencies</module>
+		<module>pavanecce-common-dependencies</module>
+		<module>pavanecce-common-util</module>
+		<module>pavanecce-common-text-workspace</module>
+		<module>pavanecce-common-code-metamodel</module>
+	</modules>
 </project>
 

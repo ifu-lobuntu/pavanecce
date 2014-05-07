@@ -12,6 +12,7 @@ import java.util.TreeSet;
 import org.pavanecce.common.code.metamodel.expressions.NewInstanceExpression;
 
 public class CodeClassifier extends CodeElement {
+	private CodeVisibilityKind visibility=CodeVisibilityKind.PUBLIC;
 	private CodePackage _package;
 	private SortedMap<String, CodeField> fields = new TreeMap<String, CodeField>();
 	private SortedMap<String, CodeMethod> methods = new TreeMap<String, CodeMethod>();
@@ -106,5 +107,13 @@ public class CodeClassifier extends CodeElement {
 
 	public void setTypeReference(CodeTypeReference typeReference) {
 		this.typeReference = typeReference;
+	}
+
+	public CodeVisibilityKind getVisibility() {
+		return visibility;
+	}
+
+	public void setVisibility(CodeVisibilityKind visibility) {
+		this.visibility = visibility;
 	}
 }

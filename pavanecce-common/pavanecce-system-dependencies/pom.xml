@@ -10,75 +10,6 @@
 	<packaging>${packaging}</packaging>
 	<profiles>
 		<profile>
-			<id>init</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.eclipse.tycho</groupId>
-						<artifactId>tycho-maven-plugin</artifactId>
-						<version>${tycho.version}</version>
-						<extensions>true</extensions>
-					</plugin>
-
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-dependency-plugin</artifactId>
-						<inherited>false</inherited>
-						<executions>
-							<execution>
-								<id>copy-dependencies</id>
-								<phase>generate-resources</phase>
-								<goals>
-									<goal>copy-dependencies</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${project.basedir}/libs</outputDirectory>
-									<stripVersion>true</stripVersion>
-									<failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
-									<overWriteReleases>false</overWriteReleases>
-									<overWriteSnapshots>false</overWriteSnapshots>
-									<overWriteIfNewer>true</overWriteIfNewer>
-									<includeGroupIds>org.javassist,org.python,javax,org.hibernate,org.codehaus.btm,com.h2database,org.apache,org.apache,org.jboss.logging,dom4j,antlr,org.slf4j</includeGroupIds>
-									<excludeArtifactIds></excludeArtifactIds>
-									<excludeTransitive>false</excludeTransitive>
-									<excludeScope>provided</excludeScope>
-								</configuration>
-							</execution>
-							<execution>
-								<id>copy-dependencies-sources</id>
-								<phase>generate-sources</phase>
-								<goals>
-									<goal>copy-dependencies</goal>
-								</goals>
-								<configuration>
-									<classifier>sources</classifier>
-									<failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
-
-									<outputDirectory>${project.basedir}/libs</outputDirectory>
-									<stripVersion>true</stripVersion>
-									<overWriteReleases>false</overWriteReleases>
-									<overWriteSnapshots>false</overWriteSnapshots>
-									<overWriteIfNewer>true</overWriteIfNewer>
-									<includeGroupIds>org.javassist,org.python,javax,org.hibernate,org.codehaus.btm,com.h2database,org.apache,org.apache,org.jboss.logging,dom4j,antlr,org.slf4j</includeGroupIds>
-									<excludeArtifactIds></excludeArtifactIds>
-									<excludeTransitive>false</excludeTransitive>
-									<excludeScope>provided</excludeScope>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-
-			<properties>
-				<artifactId>pavanecce-system-dependencies</artifactId>
-				<packaging>eclipse-plugin</packaging>
-			</properties>
-		</profile>
-		<profile>
 			<id>standalone</id>
 			<activation>
 				<activeByDefault>false</activeByDefault>
@@ -124,7 +55,7 @@
 									<overWriteReleases>false</overWriteReleases>
 									<overWriteSnapshots>false</overWriteSnapshots>
 									<overWriteIfNewer>true</overWriteIfNewer>
-									<includeGroupIds>org.javassist,org.python,javax,org.hibernate,org.codehaus.btm,com.h2database,org.apache,org.jboss.logging,dom4j,antlr,org.slf4j</includeGroupIds>
+									<includeGroupIds>javax</includeGroupIds>
 									<excludeArtifactIds></excludeArtifactIds>
 									<excludeTransitive>false</excludeTransitive>
 									<excludeScope>provided</excludeScope>
@@ -145,7 +76,7 @@
 									<overWriteReleases>false</overWriteReleases>
 									<overWriteSnapshots>false</overWriteSnapshots>
 									<overWriteIfNewer>true</overWriteIfNewer>
-									<includeGroupIds>org.javassist,org.python,javax,org.hibernate,org.codehaus.btm,com.h2database,org.apache,org.jboss.logging,dom4j,antlr,org.slf4j</includeGroupIds>
+										<includeGroupIds>javax</includeGroupIds>
 									<excludeArtifactIds></excludeArtifactIds>
 									<excludeTransitive>false</excludeTransitive>
 									<excludeScope>provided</excludeScope>

@@ -68,6 +68,7 @@ public final class ExtendedOclEnvironment extends DefaultParentOclEnvironment {
 
 	public ExtendedOclEnvironment(Element context, DefaultParentOclEnvironment parent) {
 		super(parent.getLibrary().getResourceSet());
+		super.setParent(parent);
 		this.factory = new ExtendedOclEnvironmentFactory(context, parent.getLibrary());
 		Classifier selfClassifier = EmfBehaviorUtil.getSelf(context);
 		if (selfClassifier != null) {
@@ -90,6 +91,10 @@ public final class ExtendedOclEnvironment extends DefaultParentOclEnvironment {
 		this.library = parent.getLibrary();
 		this.variables = new HashSet<Variable>();
 		setProblemHandler(new CustomOclProblemHandler(getParser()));
+	}
+	public Classifier getContextClassifier() {
+		org.eclipse.ocl.expressions.Variable<Classifier, Parameter> selfVariable = getSelfVariable();
+		return selfVariable ==null?super.getOCLStandardLibrary().getOclAny():selfVariable.getType();
 	}
 
 	@Override

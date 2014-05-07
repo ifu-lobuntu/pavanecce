@@ -50,6 +50,7 @@ public class TextFileGenerator extends DefaultTextFileVisitor {
 			File dir = getDirectoryFor(textFile.getParent());
 			dir.mkdirs();
 			File osFile = new File(dir, textFile.getName());
+			System.out.println("writing " + osFile);
 			if (!osFile.exists() || textFile.overwrite()) {
 				FileWriter fw = new FileWriter(osFile);
 				fw.write(textFile.getContent());

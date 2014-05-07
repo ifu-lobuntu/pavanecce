@@ -277,7 +277,7 @@ public class ArtificialElementFactory implements IPropertyEmulation {
 		return getLibrary().getDurationBasedCost();
 	}
 
-	private OclLibrary getLibrary() {
+	private OclRuntimeLibrary getLibrary() {
 		return oclContextFactory.getLibrary();
 	}
 }

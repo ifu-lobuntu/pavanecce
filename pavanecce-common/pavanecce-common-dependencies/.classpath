@@ -1,5 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="libs/javaee-api.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/hibernate-jpa-2.0-api.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/xstream.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/kie-api.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/kie-ci.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/kie-internal.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/drools-compiler.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/drools-core.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/drools-persistence-jpa.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jbpm-audit.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jbpm-flow-builder.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jbpm-flow.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jbpm-human-task-core.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jbpm-human-task-workitems.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jbpm-persistence-jpa.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jbpm-runtime-manager.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jbpm-shared-services.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jbpm-test.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/asm.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/commons-lang.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/commons-beanutils.jar"/>
@@ -27,7 +45,6 @@
 	<classpathentry exported="true" kind="lib" path="libs/hibernate-commons-annotations.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/hibernate-core.jar" sourcepath="libs/hibernate-core-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/hibernate-entitymanager.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/hibernate-jpa-2.0-api.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/jackrabbit-ocm.jar" sourcepath="libs/jackrabbit-ocm-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/javassist.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/jcr.jar" sourcepath="libs/jcr-sources.jar"/>

@@ -21,7 +21,7 @@ import org.eclipse.uml2.uml.Type;
 import org.eclipse.uml2.uml.resource.UMLResource;
 import org.pavanecce.uml.common.util.StereotypeNames;
 
-public class OclLibrary{
+public class OclRuntimeLibrary{
 	protected ResourceSet resourceSet;
 	private Interface emailAddressType;
 	private DataType dateType;
@@ -55,7 +55,7 @@ public class OclLibrary{
 	// protected UMLEnvironment parentEnvironment;
 	protected Map<String,Operation> additionalOperations = new HashMap<String,Operation>();
 	private OCLStandardLibrary<Classifier> oclLibrary;
-	public OclLibrary(ResourceSet resourceSet,OCLStandardLibrary<Classifier> oclLibrary){
+	public OclRuntimeLibrary(ResourceSet resourceSet,OCLStandardLibrary<Classifier> oclLibrary){
 		super();
 		this.resourceSet = resourceSet;
 		this.oclLibrary = oclLibrary;

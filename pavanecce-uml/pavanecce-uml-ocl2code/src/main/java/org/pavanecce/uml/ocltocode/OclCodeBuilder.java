@@ -1,10 +1,8 @@
 package org.pavanecce.uml.ocltocode;
 
-import java.io.File;
 import java.util.Collections;
 import java.util.SortedSet;
 
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.OpaqueExpression;
@@ -19,8 +17,6 @@ import org.pavanecce.common.code.metamodel.CodeParameter;
 import org.pavanecce.common.code.metamodel.statements.AssignmentStatement;
 import org.pavanecce.uml.common.ocl.OpaqueExpressionContext;
 import org.pavanecce.uml.common.util.emulated.OclContextFactory;
-import org.pavanecce.uml.common.util.emulated.PropertyEmulationLibrary;
-import org.pavanecce.uml.common.util.emulated.UriToFileConverter;
 import org.pavanecce.uml.ocltocode.common.UmlToCodeMaps;
 import org.pavanecce.uml.ocltocode.creators.ExpressionCreator;
 import org.pavanecce.uml.ocltocode.maps.OperationMap;
@@ -36,13 +32,7 @@ public class OclCodeBuilder extends DefaultCodeModelBuilder {
 		super.initialize(models, codeModel);
 		ResourceSet rst = models.iterator().next().eResource().getResourceSet();
 		this.oclContextFactory = new OclContextFactory(rst);
-		this.codeMaps = new UmlToCodeMaps(false, new PropertyEmulationLibrary(rst,new UriToFileConverter() {
-			
-			@Override
-			public File resolveUri(URI uri) {
-				return new File(uri.toFileString());
-			}
-		}));
+		this.codeMaps = new UmlToCodeMaps(oclContextFactory.getLibrary(),oclContextFactory.getTypeResolver());
 
 	}
 

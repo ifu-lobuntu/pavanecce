@@ -1,4 +1,4 @@
-package org.pavanecce.cmmn.jbpm;
+package org.pavanecce.cmmn.jbpm.test;
 
 import static org.kie.api.runtime.EnvironmentName.OBJECT_MARSHALLING_STRATEGIES;
 
@@ -30,7 +30,6 @@ import org.kie.api.io.ResourceType;
 import org.kie.api.marshalling.ObjectMarshallingStrategy;
 import org.kie.api.runtime.Environment;
 import org.kie.api.runtime.manager.RuntimeEngine;
-import org.kie.api.runtime.manager.RuntimeEnvironment;
 import org.kie.api.runtime.manager.RuntimeManager;
 import org.kie.api.task.TaskService;
 import org.kie.api.task.model.TaskSummary;
@@ -49,6 +48,8 @@ import org.pavanecce.cmmn.jbpm.flow.StagePlanItem;
 import org.pavanecce.cmmn.jbpm.flow.builder.CMMNBuilder;
 import org.pavanecce.cmmn.jbpm.flow.builder.DefaultTypeMap;
 import org.pavanecce.cmmn.jbpm.flow.builder.DefinitionsHandler;
+import org.pavanecce.cmmn.jbpm.flow.builder.PlanItemBuilder;
+import org.pavanecce.cmmn.jbpm.flow.builder.SentryBuilder;
 import org.pavanecce.cmmn.jbpm.instance.AbstractSubscriptionManager;
 import org.pavanecce.cmmn.jbpm.instance.CaseInstanceFactory;
 import org.pavanecce.cmmn.jbpm.instance.CaseInstanceMarshaller;
@@ -69,39 +70,39 @@ import org.pavanecce.common.jpa.JpaObjectPersistence;
 import org.pavanecce.common.ocm.OcmFactory;
 import org.pavanecce.common.ocm.OcmObjectPersistence;
 
-import test.ConstructionCase;
-import test.House;
-import test.HousePlan;
-import test.RoofPlan;
-import test.RoomPlan;
-import test.Wall;
-import test.WallPlan;
+//import test.ConstructionCase;
+//import test.House;
+//import test.HousePlan;
+//import test.RoofPlan;
+//import test.RoomPlan;
+//import test.Wall;
+//import test.WallPlan;
 import bitronix.tm.resource.jdbc.PoolingDataSource;
 
-public abstract class AbstractJbpmCaseTestCase extends JbpmJUnitBaseTestCase {
+public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 	ObjectPersistence persistence;
 	protected boolean isJpa = false;
 	private OcmFactory ocmFactory;
 	private RuntimeEngine runtimeEngine;
 
-	public AbstractJbpmCaseTestCase() {
+	public AbstractCmmnCaseTestCase() {
 		super();
 	}
 
-	public AbstractJbpmCaseTestCase(boolean setupDataSource, boolean sessionPersistence) {
+	public AbstractCmmnCaseTestCase(boolean setupDataSource, boolean sessionPersistence) {
 		super(setupDataSource, sessionPersistence);
 	}
 
-	public AbstractJbpmCaseTestCase(boolean setupDataSource, boolean sessionPersistence, String persistenceUnitName) {
+	public AbstractCmmnCaseTestCase(boolean setupDataSource, boolean sessionPersistence, String persistenceUnitName) {
 		super(setupDataSource, sessionPersistence, persistenceUnitName);
 	}
 
 	@Override
 	public void tearDown() throws Exception {
 		super.tearDown();
-		runtimeEngine=null;
+		runtimeEngine = null;
 		getPersistence().close();
-		
+
 	}
 
 	protected void assertTaskTypeCreated(List<TaskSummary> list, String expected) {
@@ -131,11 +132,6 @@ public abstract class AbstractJbpmCaseTestCase extends JbpmJUnitBaseTestCase {
 		}
 	}
 
-	protected Class<?>[] getClasses() {
-		return new Class<?>[] { ConstructionCase.class, HousePlan.class, House.class, Wall.class, WallPlan.class, RoofPlan.class, OcmCaseSubscriptionInfo.class, OcmCaseFileItemSubscriptionInfo.class,
-				RoomPlan.class };
-	}
-
 	protected PoolingDataSource setupPoolingDataSource() {
 		PoolingDataSource pds = new PoolingDataSource();
 		pds.setClassName("org.h2.jdbcx.JdbcDataSource");
@@ -153,24 +149,30 @@ public abstract class AbstractJbpmCaseTestCase extends JbpmJUnitBaseTestCase {
 
 	@Override
 	protected RuntimeEngine getRuntimeEngine() {
-		if(this.runtimeEngine==null){
-			this.runtimeEngine=super.getRuntimeEngine();
+		if (this.runtimeEngine == null) {
+			this.runtimeEngine = super.getRuntimeEngine();
 		}
 		return this.runtimeEngine;
 	}
-	protected final RuntimeManager createRuntimeManager(Strategy strategy, String identifier, String... process) {
+
+	protected RuntimeManager createRuntimeManager(Strategy strategy, String identifier, String... process) {
 		Map<String, ResourceType> resources = new HashMap<String, ResourceType>();
 		for (String p : process) {
-			resources.put(p, CMMNBuilder.CMMN_RESOURCE_TYPE);
+			if (p.endsWith(".cmmn")) {
+				resources.put(p, CMMNBuilder.CMMN_RESOURCE_TYPE);
+			} else if (p.endsWith(".bpmn")) {
+				resources.put(p, ResourceType.BPMN2);
+			}
 		}
 		return createRuntimeManager(strategy, resources, identifier);
 	}
+
 	protected RuntimeManager createRuntimeManager(String... processFile) {
 		DefinitionsHandler.registerTypeMap(CaseFileItemDefinitionType.UML_CLASS, new DefaultTypeMap());
-		ProcessNodeBuilderRegistry.INSTANCE.register(StagePlanItem.class, new PlanItemBuilder());		
-		ProcessNodeBuilderRegistry.INSTANCE.register(HumanTaskPlanItem.class, new PlanItemBuilder());		
-		ProcessNodeBuilderRegistry.INSTANCE.register(SimpleSentry.class, new SentryBuilder());		
-		ProcessNodeBuilderRegistry.INSTANCE.register(JoiningSentry.class, new SentryBuilder());		
+		ProcessNodeBuilderRegistry.INSTANCE.register(StagePlanItem.class, new PlanItemBuilder());
+		ProcessNodeBuilderRegistry.INSTANCE.register(HumanTaskPlanItem.class, new PlanItemBuilder());
+		ProcessNodeBuilderRegistry.INSTANCE.register(SimpleSentry.class, new SentryBuilder());
+		ProcessNodeBuilderRegistry.INSTANCE.register(JoiningSentry.class, new SentryBuilder());
 		ProcessInstanceFactoryRegistry.INSTANCE.register(Case.class, new CaseInstanceFactory());
 		CaseInstanceMarshaller m = new CaseInstanceMarshaller();
 		ProcessMarshallerRegistry.INSTANCE.register(RuleFlowProcess.RULEFLOW_TYPE, m);
@@ -196,16 +198,6 @@ public abstract class AbstractJbpmCaseTestCase extends JbpmJUnitBaseTestCase {
 			((InternalTaskService) ts).addMarshallerContext(rm.getIdentifier(), new ContentMarshallerContext(env, getClass().getClassLoader()));
 		}
 		return rm;
-	}
-
-	protected RuntimeManager createRuntimeManager(Strategy strategy, Map<String, ResourceType> resources, RuntimeEnvironment environment, String identifier) {
-		// Environment env = environment.getEnvironment();
-		// env.set(OBJECT_MARSHALLING_STRATEGIES, getPlaceholdStrategies(env));
-		// env.set(SubscriptionManager.ENV_NAME, getSubscriptionManager());
-		// if (!isJpa) {
-		// env.set(OcmFactory.OBJECT_CONTENT_MANAGER_FACTORY, getOcmFactory());
-		// }
-		return super.createRuntimeManager(strategy, resources, environment, identifier);
 	}
 
 	protected ObjectMarshallingStrategy[] getPlaceholdStrategies(Environment env) {
@@ -237,8 +229,8 @@ public abstract class AbstractJbpmCaseTestCase extends JbpmJUnitBaseTestCase {
 				session = tr.login(new SimpleCredentials("admin", "admin".toCharArray()));
 				session.getRootNode().addNode("cases");
 				session.getRootNode().addNode("subscriptions");
-				CndImporter.registerNodeTypes(new InputStreamReader(JcrTestCase.class.getResourceAsStream("/META-INF/definitions.cnd")), session);
-				CndImporter.registerNodeTypes(new InputStreamReader(JcrTestCase.class.getResourceAsStream("/test.cnd")), session);
+				CndImporter.registerNodeTypes(new InputStreamReader(AbstractCmmnCaseTestCase.class.getResourceAsStream("/META-INF/definitions.cnd")), session);
+				CndImporter.registerNodeTypes(new InputStreamReader(AbstractCmmnCaseTestCase.class.getResourceAsStream("/test.cnd")), session);
 				session.save();
 				session.logout();
 				ocmFactory = new OcmFactory(tr, "admin", "admin", new AnnotationMapperImpl(Arrays.<Class> asList(getClasses())), new OcmSubscriptionManager());
@@ -253,4 +245,6 @@ public abstract class AbstractJbpmCaseTestCase extends JbpmJUnitBaseTestCase {
 		}
 		return ocmFactory;
 	}
+
+	protected abstract Class[] getClasses();
 }

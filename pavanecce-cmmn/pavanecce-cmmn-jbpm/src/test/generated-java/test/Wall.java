@@ -1,16 +1,16 @@
 package test;
-import test.House;
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Bean;
-import org.pavanecce.common.ocm.GrandParentBeanConverterImpl;
 import javax.persistence.Entity;
-import javax.persistence.Table;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Bean;
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
+import org.pavanecce.common.ocm.GrandParentBeanConverterImpl;
 @Node(jcrType = "test:wall", discriminator = false)
 @Entity(name="Wall")
 @Table(name="wall")

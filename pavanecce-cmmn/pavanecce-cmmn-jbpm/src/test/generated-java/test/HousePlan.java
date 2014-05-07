@@ -1,26 +1,23 @@
 package test;
-import java.util.Set;
 import java.util.HashSet;
-import test.ConstructionCase;
-import test.RoofPlan;
-import test.RoomPlan;
-import test.WallPlan;
-import org.pavanecce.common.collections.OneToManySet;
-import org.pavanecce.common.collections.OneToManySet;
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
-import org.apache.jackrabbit.ocm.manager.beanconverter.impl.ParentBeanConverterImpl;
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Bean;
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Collection;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import java.util.Set;
+
 import javax.persistence.CascadeType;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+import org.apache.jackrabbit.ocm.manager.beanconverter.impl.ParentBeanConverterImpl;
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Bean;
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Collection;
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
+import org.pavanecce.common.collections.OneToManySet;
 @Node(jcrType = "test:housePlan", discriminator = false)
 @Entity(name="HousePlan")
 @Table(name="house_plan")

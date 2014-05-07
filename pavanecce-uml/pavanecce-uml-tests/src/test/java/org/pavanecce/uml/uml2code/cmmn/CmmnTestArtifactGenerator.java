@@ -21,12 +21,14 @@ import org.pavanecce.uml.uml2code.ocm.OcmTests;
 
 public class CmmnTestArtifactGenerator extends OcmTests {
 	public static void main(String[] args) throws Exception{
-		final File outputRoot = new File("/home/ampie/Code/pavanecce/pavanecce-cmmn/");
+//		final File outputRoot = new File("/home/ampie/Code/pavanecce/pavanecce-cmmn/");
+		final File outputRoot = new File("/home/ampie/Code/pavanecce/pavanecce-uml");
 		example = new ConstructionCaseExample(""){
 			protected TextFileGenerator generateSourceCode(CodeModel codeModel) {
 				TextWorkspace tw = new TextWorkspace("thisgoesnowhere");
 				TextFileGenerator tfg = new TextFileGenerator(outputRoot);
-				TextProjectDefinition tfd = new TextProjectDefinition(ProjectNameStrategy.SUFFIX_ONLY, "pavanecce-cmmn-jbpm");
+//				TextProjectDefinition tfd = new TextProjectDefinition(ProjectNameStrategy.SUFFIX_ONLY, "pavanecce-cmmn-jbpm");
+				TextProjectDefinition tfd = new TextProjectDefinition(ProjectNameStrategy.SUFFIX_ONLY, "pavanecce-uml-jbpm");
 				VersionNumber vn = new VersionNumber("0.0.1");
 				TextProject tp = tw.findOrCreateTextProject(tfd, "", vn);
 				SourceFolder sf = tp.findOrCreateSourceFolder(new SourceFolderDefinition(SourceFolderNameStrategy.QUALIFIER_ONLY, "src/test/generated-java"), "", vn);
@@ -36,6 +38,7 @@ public class CmmnTestArtifactGenerator extends OcmTests {
 				return tfg;
 			}
 		};
+		example.generateCode(new JavaCodeGenerator(), new JpaCodeDecorator());
 //		example.generateCode(new JavaCodeGenerator(), new OcmCodeDecorator(), new JpaCodeDecorator());
 //		generateCndFile(new File(outputRoot, "pavanecce-cmmn-jbpm/src/test/generated-resources"));
 		CmmnTextGenerator cmmn = new CmmnTextGenerator();

@@ -147,7 +147,7 @@ public class OperationMap extends PackageableElementMap {
 			for(Parameter p:parameters){
 				Classifier type = (Classifier) p.getType();
 				if(type==null){
-					type=codeUtil.getLibrary().getOcl().getLibrary().getDefaultType();
+					type=codeUtil.getLibrary().getDefaultType();
 				}
 				params.put(p, codeUtil.buildClassifierMap(type, p));
 			}

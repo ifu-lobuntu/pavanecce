@@ -13,7 +13,7 @@ public class AssociationClassEndMap{
 	private PropertyMap otherEndToAssocationClassMap;
 	public AssociationClassEndMap(UmlToCodeMaps ojUtil,Property p){
 		map = ojUtil.buildStructuralFeatureMap(p);
-		EmulatedPropertyHolderForAssociation ephfa = (EmulatedPropertyHolderForAssociation) ojUtil.getLibrary().getEmulatedPropertyHolder(p.getAssociation());
+		EmulatedPropertyHolderForAssociation ephfa = (EmulatedPropertyHolderForAssociation) ojUtil.getEmulatedPropertyHolder(p.getAssociation());
 		assocationClassToOtherEndMap = ojUtil.buildStructuralFeatureMap(ephfa.getEmulatedAttribute(p));
 		endToAssocationClassMap = ojUtil.buildStructuralFeatureMap(ephfa.getEndToAssociation(p));
 		assocationClassToThisEndMap = ojUtil.buildStructuralFeatureMap(ephfa.getEmulatedAttribute(p.getOtherEnd()));

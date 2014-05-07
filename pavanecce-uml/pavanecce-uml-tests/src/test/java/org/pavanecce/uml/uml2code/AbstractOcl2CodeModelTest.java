@@ -14,7 +14,7 @@ import org.eclipse.uml2.uml.resource.UMLResource;
 import org.junit.Before;
 import org.pavanecce.uml.common.util.UmlResourceSetFactory;
 import org.pavanecce.uml.common.util.emulated.DefaultParentOclEnvironment;
-import org.pavanecce.uml.common.util.emulated.OclLibrary;
+import org.pavanecce.uml.common.util.emulated.OclRuntimeLibrary;
 import org.pavanecce.uml.ocltocode.OclCodeBuilder;
 import org.pavanecce.uml.uml2code.codemodel.CodeModelBuilder;
 import org.pavanecce.uml.uml2code.codemodel.UmlCodeModelVisitorAdaptor;
@@ -25,7 +25,7 @@ public abstract class AbstractOcl2CodeModelTest {
 	protected Model model;
 	protected UmlCodeModelVisitorAdaptor adaptor;
 	protected UmlResourceSetFactory resourceSetFactory=new UmlResourceSetFactory(new AdaptableFileLocator());
-	protected OclLibrary library;
+	protected OclRuntimeLibrary library;
 	protected OclCodeBuilder oclCodeBuilder;
 	
 	public AbstractOcl2CodeModelTest() {

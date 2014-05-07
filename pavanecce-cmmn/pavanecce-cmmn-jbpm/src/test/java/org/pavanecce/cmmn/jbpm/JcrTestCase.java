@@ -126,7 +126,7 @@ public class JcrTestCase {
 		URL ddl = JcrTestCase.class.getResource("/jackrabbit.ddl");
 		BufferedReader br = new BufferedReader(new InputStreamReader(ddl.openStream()));
 		String line = null;
-		org.apache.derby.jdbc.Driver42.class.getName();
+		org.apache.derby.jdbc.Driver40.class.getName();
 		Connection conn = DriverManager.getConnection("jdbc:derby:memory:myDB;create=true");
 		while ((line = br.readLine()) != null) {
 			line = line.trim();

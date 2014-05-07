@@ -1,0 +1,27 @@
+      <cmmn:caseFileModel>
+        <cmmn:caseFileItem name="house" id="houseFileItemId" definitionRef="houseDefinitionId" targetRefs="roofPlanFileItemId wallPlanFileItemId " multiplicity="ExactlyOne">
+          <cmmn:children>
+            <cmmn:caseFileItem name="walls" id="wallFileItemId" definitionRef="wallDefinitionId" targetRefs="wallPlanFileItemId " multiplicity="ZeroOrMore">
+              <cmmn:children>
+              </cmmn:children>
+            </cmmn:caseFileItem>
+          </cmmn:children>
+        </cmmn:caseFileItem>
+        <cmmn:caseFileItem name="housePlan" id="housePlanFileItemId" definitionRef="housePlanDefinitionId" multiplicity="ExactlyOne">
+          <cmmn:children>
+            <cmmn:caseFileItem name="roofPlan" id="roofPlanFileItemId" definitionRef="roofPlanDefinitionId" targetRefs="houseFileItemId " multiplicity="ZeroOrOne">
+              <cmmn:children>
+              </cmmn:children>
+            </cmmn:caseFileItem>
+            <cmmn:caseFileItem name="wallPlans" id="wallPlanFileItemId" definitionRef="wallPlanDefinitionId" targetRefs="wallFileItemId houseFileItemId roomPlanFileItemId " multiplicity="ZeroOrMore">
+              <cmmn:children>
+              </cmmn:children>
+            </cmmn:caseFileItem>
+            <cmmn:caseFileItem name="roomPlans" id="roomPlanFileItemId" definitionRef="roomPlanDefinitionId" targetRefs="wallPlanFileItemId " multiplicity="ZeroOrMore">
+              <cmmn:children>
+              </cmmn:children>
+            </cmmn:caseFileItem>
+          </cmmn:children>
+        </cmmn:caseFileItem>
+      </cmmn:caseFileModel>
+

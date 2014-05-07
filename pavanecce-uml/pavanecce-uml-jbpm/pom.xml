@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<parent>
 		<groupId>org.pavanecce</groupId>
@@ -6,8 +6,70 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>pavanecce-uml-jbpm</artifactId>
-	<packaging>jar</packaging>
+	<artifactId>${artifactId}</artifactId>
+	<packaging>${packaging}</packaging>
+
+	<profiles>
+		<profile>
+			<id>standalone</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<artifactId>pavanecce-uml-jbpm</artifactId>
+				<packaging>jar</packaging>
+			</properties>
+			<dependencies>
+				<dependency>
+					<groupId>${project.parent.groupId}</groupId>
+					<artifactId>pavanecce-uml-ocl2code</artifactId>
+					<version>${project.parent.version}</version>
+				</dependency>
+				<dependency>
+					<groupId>${project.parent.groupId}</groupId>
+					<artifactId>pavanecce-common-util</artifactId>
+					<version>${project.parent.version}</version>
+					<type>${packaging}</type>
+				</dependency>
+				<dependency>
+					<groupId>${project.parent.groupId}</groupId>
+					<artifactId>pavanecce-cmmn-jbpm</artifactId>
+					<version>${project.parent.version}</version>
+					<type>${packaging}</type>
+				</dependency>
+				<dependency>
+					<groupId>org.pavanecce</groupId>
+					<artifactId>pavanecce-uml-dependencies</artifactId>
+					<version>${project.parent.version}</version>
+					<type>${packaging}</type>
+				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>eclipse</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<properties>
+				<artifactId>org.pavanecce.uml.jbpm</artifactId>
+				<packaging>eclipse-plugin</packaging>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<inherited>true</inherited>
+					</plugin>
+					<plugin>
+						<groupId>org.eclipse.tycho</groupId>
+						<artifactId>tycho-maven-plugin</artifactId>
+						<version>${tycho.version}</version>
+						<extensions>true</extensions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 	<build>
 		<plugins>
 			<plugin>
@@ -37,135 +99,5 @@
 			</testResource>
 		</testResources>
 	</build>
-	<dependencies>
-		<dependency>
-			<groupId>org.jbpm</groupId>
-			<artifactId>jbpm-flow-builder</artifactId>
-			<version>6.0.0.Final</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jbpm</groupId>
-			<artifactId>jbpm-test</artifactId>
-			<version>6.0.0.Final</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.jboss.solder</groupId>
-					<artifactId>solder-api</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.jbpm</groupId>
-					<artifactId>jbpm-bpmn2</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.jboss.solder</groupId>
-					<artifactId>solder-impl</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.jboss.netty</groupId>
-					<artifactId>netty</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<!-- Jackrabbit dependencies -->
-		<dependency>
-			<groupId>javax.jcr</groupId>
-			<artifactId>jcr</artifactId>
-			<version>2.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.jackrabbit</groupId>
-			<artifactId>jackrabbit-api</artifactId>
-			<version>${jackrabbit.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.jackrabbit</groupId>
-			<artifactId>jackrabbit-core</artifactId>
-			<version>${jackrabbit.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.apache.derby</groupId>
-					<artifactId>derby</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.jackrabbit</groupId>
-			<artifactId>jackrabbit-jcr-commons</artifactId>
-			<version>${jackrabbit.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.jackrabbit</groupId>
-			<artifactId>jackrabbit-jcr-rmi</artifactId>
-			<version>${jackrabbit.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.jackrabbit</groupId>
-			<artifactId>jackrabbit-spi</artifactId>
-			<version>${jackrabbit.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.jackrabbit</groupId>
-			<artifactId>jackrabbit-spi-commons</artifactId>
-			<version>${jackrabbit.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.jackrabbit</groupId>
-			<artifactId>jackrabbit-webdav</artifactId>
-			<version>${jackrabbit.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.jackrabbit</groupId>
-			<artifactId>jackrabbit-jcr-server</artifactId>
-			<version>${jackrabbit.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache</groupId>
-			<artifactId>jackrabbit-ocm</artifactId>
-			<version>2.0.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-ext</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.derby</groupId>
-			<artifactId>derby</artifactId>
-			<version>10.10.1.1</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.pavanecce</groupId>
-			<artifactId>pavanecce-common-util</artifactId>
-			<version>${project.parent.version}</version>
-			<type>${packaging}</type>
-		</dependency>
-		<dependency>
-			<groupId>org.pavanecce</groupId>
-			<artifactId>pavanecce-uml-ocl2code</artifactId>
-			<version>${project.parent.version}</version>
-			<type>${packaging}</type>
-		</dependency>		<dependency>
-			<groupId>org.pavanecce</groupId>
-			<artifactId>pavanecce-uml-dependencies</artifactId>
-			<version>${project.parent.version}</version>
-			<type>${packaging}</type>
-		</dependency>
-	</dependencies>
-	<properties>
-		<slf4j.version>1.6.6</slf4j.version>
-		<jackrabbit.version>2.4.5-jahia2</jackrabbit.version>
-	</properties>
 </project>
 

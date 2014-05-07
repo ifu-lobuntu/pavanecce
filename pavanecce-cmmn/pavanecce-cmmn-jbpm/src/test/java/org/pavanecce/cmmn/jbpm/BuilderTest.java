@@ -7,18 +7,16 @@ import java.util.Map;
 
 import org.jbpm.shared.services.impl.events.JbpmServicesEventListener;
 import org.junit.Test;
-import org.kie.api.io.ResourceType;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.manager.RuntimeEngine;
-import org.kie.api.runtime.manager.RuntimeManager;
 import org.kie.api.task.TaskService;
 import org.kie.api.task.model.Task;
 import org.kie.api.task.model.TaskSummary;
 import org.kie.internal.task.api.EventService;
 import org.kie.internal.task.api.model.NotificationEvent;
-import org.pavanecce.cmmn.jbpm.flow.builder.CMMNBuilder;
 import org.pavanecce.cmmn.jbpm.instance.CaseInstance;
 import org.pavanecce.cmmn.jbpm.instance.CaseTaskLifecycleListener;
+import org.pavanecce.cmmn.jbpm.test.AbstractCmmnCaseTestCase;
 
 import test.ConstructionCase;
 import test.House;
@@ -26,7 +24,7 @@ import test.HousePlan;
 import test.Wall;
 import test.WallPlan;
 
-public class BuilderTest extends AbstractJbpmCaseTestCase {
+public class BuilderTest extends AbstractConstructionTestCase {
 
 	public BuilderTest() {
 		super(true, true, "org.jbpm.persistence.jpa");

@@ -40,9 +40,10 @@ import org.pavanecce.uml.common.util.EmfPackageUtil;
 import org.pavanecce.uml.common.util.EmfPropertyUtil;
 import org.pavanecce.uml.common.util.EmfWorkspace;
 import org.pavanecce.uml.common.util.TagNames;
-import org.pavanecce.uml.common.util.emulated.IPropertyEmulation;
+import org.pavanecce.uml.common.util.emulated.ArtificialElementFactory;
+import org.pavanecce.uml.common.util.emulated.EmulatedPropertyHolderForAssociation;
 import org.pavanecce.uml.common.util.emulated.OclContextFactory;
-import org.pavanecce.uml.common.util.emulated.PropertyEmulationLibrary;
+import org.pavanecce.uml.common.util.emulated.OclRuntimeLibrary;
 import org.pavanecce.uml.ocltocode.maps.AssociationClassEndMap;
 import org.pavanecce.uml.ocltocode.maps.ClassifierMap;
 import org.pavanecce.uml.ocltocode.maps.OperationMap;
@@ -54,8 +55,7 @@ import org.pavanecce.uml.uml2code.UmlToCodeReferenceMap;
 public class UmlToCodeMaps extends UmlToCodeReferenceMap {
 	public static int instanceCount;
 	//CLean this duplication up
-	private PropertyEmulationLibrary library;
-	private IPropertyEmulation propertyEmulation;
+	private OclRuntimeLibrary library;
 	
 	private Map<NamedElement, StateMap> stateMaps = new HashMap<NamedElement, StateMap>();
 	private Map<NamedElement, OperationMap> operationMaps = new HashMap<NamedElement, OperationMap>();
@@ -64,34 +64,22 @@ public class UmlToCodeMaps extends UmlToCodeReferenceMap {
 	private Map<Namespace, CodeTypeReference> statePathnames = new HashMap<Namespace, CodeTypeReference>();
 	private CodeTypeReference environmentPathname;
 	private boolean regenMappedTypes;
+	private ArtificialElementFactory artificialElementFactory=null;
+	TypeResolver<Classifier, Operation, Property> typeResolver;
 
-	public UmlToCodeMaps(IPropertyEmulation propertyEmulation) {
+	public UmlToCodeMaps(OclRuntimeLibrary library,TypeResolver<Classifier, Operation, Property> typeResolver ) {
 		super();
-		this.propertyEmulation = propertyEmulation;
+		this.library = library;
+		this.typeResolver=typeResolver;
 		instanceCount++;
 	}
 
-	public IPropertyEmulation getPropertyEmulation() {
-		return propertyEmulation;
-	}
-
-	public UmlToCodeMaps(boolean regenMappedTypes) {
-		super();
-		this.regenMappedTypes = regenMappedTypes;
-		instanceCount++;
-	}
-
-	public UmlToCodeMaps(boolean b, PropertyEmulationLibrary propertyEmulationLibrary) {
-		this(b);
-		this.propertyEmulation=propertyEmulationLibrary;
-		this.library=propertyEmulationLibrary;
-	}
 
 	public CodeTypeReference environmentPathname() {
 		return environmentPathname;
 	}
 
-	public PropertyEmulationLibrary getLibrary() {
+	public OclRuntimeLibrary getLibrary() {
 		return library;
 	}
 
@@ -137,7 +125,7 @@ public class UmlToCodeMaps extends UmlToCodeReferenceMap {
 				Parameter param = (Parameter) typedAndOrdered;
 				if (param.getOwner() instanceof StateMachine) {
 					StateMachine b = (StateMachine) param.getOwner();
-					prop = library.getEmulatedPropertyHolder(b).getEmulatedAttribute(param);
+					prop = artificialElementFactory.getEmulatedPropertyHolder(b).getEmulatedAttribute(param);
 				}
 			}
 			map = new PropertyMap(this, prop);
@@ -199,8 +187,6 @@ public class UmlToCodeMaps extends UmlToCodeReferenceMap {
 
 	public ClassifierMap buildClassifierMap(Classifier c, CollectionKind kind) {
 		if (kind != null) {
-			OclContextFactory ocl = library.getOcl();
-			TypeResolver<Classifier, Operation, Property> typeResolver = ocl.getTypeResolver();
 			Classifier actualType = (Classifier) typeResolver.resolveCollectionType(kind, c);
 			return buildClassifierMap(actualType);
 		} else {
@@ -341,5 +327,10 @@ public class UmlToCodeMaps extends UmlToCodeReferenceMap {
 
 	public String toCodeLiteral(EnumerationLiteral lit) {
 		return NameConverter.toUnderscoreStyle(lit.getName()).toString();
+	}
+
+
+	public EmulatedPropertyHolderForAssociation getEmulatedPropertyHolder(Association association) {
+		return (EmulatedPropertyHolderForAssociation) artificialElementFactory.getEmulatedPropertyHolder(association);
 	}
 }
