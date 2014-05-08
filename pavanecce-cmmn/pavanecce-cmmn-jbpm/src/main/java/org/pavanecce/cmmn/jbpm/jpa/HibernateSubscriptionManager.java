@@ -1,5 +1,13 @@
 package org.pavanecce.cmmn.jbpm.jpa;
 
+import static org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition.ADD_CHILD;
+import static org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition.ADD_REFERENCE;
+import static org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition.CREATE;
+import static org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition.DELETE;
+import static org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition.REMOVE_CHILD;
+import static org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition.REMOVE_REFERENCE;
+import static org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition.UPDATE;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
@@ -15,49 +23,33 @@ import org.hibernate.event.spi.FlushEntityEvent;
 import org.hibernate.event.spi.FlushEntityEventListener;
 import org.hibernate.event.spi.FlushEvent;
 import org.hibernate.event.spi.FlushEventListener;
-import org.hibernate.event.spi.PostUpdateEvent;
-import org.hibernate.event.spi.PostUpdateEventListener;
-import org.hibernate.event.spi.PreCollectionUpdateEvent;
-import org.hibernate.event.spi.PreCollectionUpdateEventListener;
+import org.hibernate.event.spi.PostDeleteEvent;
+import org.hibernate.event.spi.PostDeleteEventListener;
+import org.hibernate.event.spi.PostInsertEvent;
+import org.hibernate.event.spi.PostInsertEventListener;
 import org.hibernate.type.OneToOneType;
 import org.kie.api.runtime.Environment;
 import org.kie.api.runtime.EnvironmentName;
-import org.pavanecce.cmmn.jbpm.flow.CaseFileItem;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
 import org.pavanecce.cmmn.jbpm.instance.AbstractSubscriptionManager;
 import org.pavanecce.cmmn.jbpm.instance.CaseFileItemSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.instance.CaseInstance;
 import org.pavanecce.cmmn.jbpm.instance.CaseSubscriptionKey;
+import org.pavanecce.cmmn.jbpm.instance.OnPartInstanceSubscription;
 import org.pavanecce.cmmn.jbpm.instance.SubscriptionManager;
 import org.pavanecce.common.jpa.JpaObjectPersistence;
 
 public class HibernateSubscriptionManager extends AbstractSubscriptionManager<JpaCaseSubscriptionInfo, JpaCaseFileItemSubscriptionInfo> implements
-		SubscriptionManager, PostUpdateEventListener, PreCollectionUpdateEventListener, FlushEntityEventListener, FlushEventListener {
+		SubscriptionManager, PostInsertEventListener, PostDeleteEventListener, FlushEntityEventListener, FlushEventListener {
 
 	private static final long serialVersionUID = -9103789384930931973L;
-
-	@Override
-	public void subscribe(CaseInstance process, CaseFileItem item, Object target) {
+	public JpaObjectPersistence getObjectPersistence(CaseInstance process) {
 		Environment env = process.getKnowledgeRuntime().getEnvironment();
 		EntityManagerFactory emf = (EntityManagerFactory) env.get(EnvironmentName.ENTITY_MANAGER_FACTORY);
 		JpaObjectPersistence p = new JpaObjectPersistence(emf);
-		subscribeToUnknownNumberOfObjects(process, item, target, p);
+		return p;
 	}
 
-	@Override
-	public void unsubscribe(CaseInstance process, CaseFileItem caseFileItem, Object target) {
-		Environment env = process.getKnowledgeRuntime().getEnvironment();
-		EntityManagerFactory emf = (EntityManagerFactory) env.get(EnvironmentName.ENTITY_MANAGER_FACTORY);
-		JpaObjectPersistence p = new JpaObjectPersistence(emf);
-		unsubscribeFromUnknownNumberOfObjects(process, p, caseFileItem, target);
-	}
-
-	@Override
-	public void onPostUpdate(PostUpdateEvent event) {
-	}
-
-	public void onPreUpdateCollection(PreCollectionUpdateEvent event) {
-	}
 
 	@Override
 	protected JpaCaseFileItemSubscriptionInfo createCaseFileItemSubscriptionInfo() {
@@ -87,14 +79,10 @@ public class HibernateSubscriptionManager extends AbstractSubscriptionManager<Jp
 			JpaCaseSubscriptionInfo inf = (JpaCaseSubscriptionInfo) event.getSession().get(JpaCaseSubscriptionInfo.class, key);
 			Set<DirtyOneToOne> dirtyOneToOnes=new HashSet<HibernateSubscriptionManager.DirtyOneToOne>();
 			if (inf != null) {
-				for (CaseFileItemSubscriptionInfo is : inf.getCaseFileItemSubscriptions()) {
-					if (is.getTransition() == CaseFileItemTransition.UPDATE) {
-						fireUpdateEventIfDirty(event, is);
-					} else {
-						fireStructuralEvents(event, is,dirtyOneToOnes);
-					}
-				}
+				Set<? extends JpaCaseFileItemSubscriptionInfo> caseFileItemSubscriptions = inf.getCaseFileItemSubscriptions();
+				fireEventsFor(event, dirtyOneToOnes, caseFileItemSubscriptions);
 			}
+			fireEventsFor(event, dirtyOneToOnes, getExplicitlyScopedSubscriptionsFor(event.getEntity(),ADD_CHILD, ADD_REFERENCE,REMOVE_CHILD,REMOVE_REFERENCE,UPDATE));
 			/**
 			 * For inverse OneToOnes to always allow for positive dirty comparison, whenever a change is made it needs to be reflected in the loadedState
 			 */
@@ -104,8 +92,17 @@ public class HibernateSubscriptionManager extends AbstractSubscriptionManager<Jp
 		}
 	}
 
-	protected void fireStructuralEvents(FlushEntityEvent event, CaseFileItemSubscriptionInfo is,Set<DirtyOneToOne> dirtyOneToOnes) {
-		
+	protected void fireEventsFor(FlushEntityEvent event, Set<DirtyOneToOne> dirtyOneToOnes, Collection<? extends CaseFileItemSubscriptionInfo> caseFileItemSubscriptions) {
+		for (CaseFileItemSubscriptionInfo is : caseFileItemSubscriptions) {
+			if (is.getTransition() == CaseFileItemTransition.UPDATE) {
+				fireUpdateEventIfDirty(event, is);
+			} else {
+				fireStructuralEvents(event, is,dirtyOneToOnes);
+			}
+		}
+	}
+
+	private void fireStructuralEvents(FlushEntityEvent event, CaseFileItemSubscriptionInfo is,Set<DirtyOneToOne> dirtyOneToOnes) {
 		for (int i = 0; i < event.getEntityEntry().getLoadedState().length; i++) {
 			String propertyName = event.getEntityEntry().getPersister().getPropertyNames()[i];
 			if (isMatchingCreateOrDelete(is, propertyName) || isMatchingAddOrRemove(is, propertyName)) {
@@ -133,7 +130,7 @@ public class HibernateSubscriptionManager extends AbstractSubscriptionManager<Jp
 		}
 		
 	}
-	protected DirtyOneToOne fireSingletonEvents(FlushEntityEvent event, CaseFileItemSubscriptionInfo is, int i) {
+	private DirtyOneToOne fireSingletonEvents(FlushEntityEvent event, CaseFileItemSubscriptionInfo is, int i) {
 //		Object oldValue = event.hasDatabaseSnapshot() ? event.getDatabaseSnapshot()[i] : event.getEntityEntry().getLoadedState()[i];
 		Object oldValue = event.getEntityEntry().getLoadedState()[i];
 		Object owner = event.getEntity();
@@ -168,7 +165,7 @@ public class HibernateSubscriptionManager extends AbstractSubscriptionManager<Jp
 		}
 	}
 
-	protected void fireCollectionEvents(FlushEntityEvent event, CaseFileItemSubscriptionInfo is, int i) {
+	private void fireCollectionEvents(FlushEntityEvent event, CaseFileItemSubscriptionInfo is, int i) {
 		Collection<?> newState = (Collection<?>) event.getPropertyValues()[i];
 		Collection<?> oldState = null;
 		//TODO this forces a read - try to optimize
@@ -203,7 +200,7 @@ public class HibernateSubscriptionManager extends AbstractSubscriptionManager<Jp
 		}
 	}
 
-	protected void fireUpdateEventIfDirty(FlushEntityEvent event, CaseFileItemSubscriptionInfo is) {
+	private void fireUpdateEventIfDirty(FlushEntityEvent event, CaseFileItemSubscriptionInfo is) {
 		for (int i = 0; i < event.getEntityEntry().getLoadedState().length; i++) {
 			if (!event.getEntityEntry().getPersister().getPropertyTypes()[i].isEntityType()
 					&& !event.getEntityEntry().getPersister().getPropertyTypes()[i].isCollectionType()
@@ -219,4 +216,20 @@ public class HibernateSubscriptionManager extends AbstractSubscriptionManager<Jp
 	public void onFlush(FlushEvent event) throws HibernateException {
 		flushEntityManagers();
 	}
+
+	@Override
+	public void onPostDelete(PostDeleteEvent event) {
+		for (OnPartInstanceSubscription s : getExplicitlyScopedSubscriptionsFor(event.getEntity(),DELETE)) {
+			fireEvent(s, null, event.getEntity());
+		}
+		
+	}
+
+	@Override
+	public void onPostInsert(PostInsertEvent event) {
+		for (OnPartInstanceSubscription s : getExplicitlyScopedSubscriptionsFor(event.getEntity(),CREATE)) {
+			fireEvent(s, null, event.getEntity());
+		}
+	}
+
 }

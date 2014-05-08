@@ -25,18 +25,22 @@ public class EndToAssociationClass extends AbstractEmulatedProperty{
 		return property.isDerivedUnion();
 	}
 
+	@Override
 	public int getUpper(){
 		return property.getUpper();
 	}
 
+	@Override
 	public int getLower(){
 		return property.getLower();
 	}
 
+	@Override
 	public ValueSpecification getUpperValue(){
 		return property.getUpperValue();
 	}
 
+	@Override
 	public ValueSpecification getLowerValue(){
 		return property.getLowerValue();
 	}
@@ -45,6 +49,7 @@ public class EndToAssociationClass extends AbstractEmulatedProperty{
 		return property.getQualifiers();
 	}
 
+	@Override
 	public boolean isMultivalued(){
 		return property.isMultivalued();
 	}
@@ -61,6 +66,7 @@ public class EndToAssociationClass extends AbstractEmulatedProperty{
 			return property==property.getAssociation().getMemberEnds().get(0);
 		}
 	}
+	@Override
 	public String getName(){
 		return NameConverter.decapitalize(property.getAssociation().getName()) + "_" + property.getName();
 	}
@@ -74,7 +80,7 @@ public class EndToAssociationClass extends AbstractEmulatedProperty{
 	}
 	@Override
 	public Type getType(){
-		return (Type) property.getAssociation();
+		return property.getAssociation();
 	}
 	public int getIndexInAssocation(){
 		return property.getAssociation().getMemberEnds().indexOf(property);

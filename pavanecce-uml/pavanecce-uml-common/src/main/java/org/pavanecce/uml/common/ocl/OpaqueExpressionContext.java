@@ -19,6 +19,7 @@ public class OpaqueExpressionContext extends AbstractOclContext{
 		getExpression();
 	}
 
+	@Override
 	protected String retrieveBody(){
 		return EmfValueSpecificationUtil.getOclBody(opaqueExpression);
 	}

@@ -93,7 +93,7 @@ public class OclRuntimeLibrary{
 			Resource resource = resourceSet.getResource(URI.createURI(UMLResource.UML_PRIMITIVE_TYPES_LIBRARY_URI, true), true);
 			TreeIterator<EObject> it = resource.getAllContents();
 			while(it.hasNext()){
-				EObject eObject = (EObject) it.next();
+				EObject eObject = it.next();
 				if(eObject instanceof DataType && ((DataType) eObject).getName().equals(name)){
 					value = (DataType) eObject;
 					break;
@@ -157,7 +157,7 @@ public class OclRuntimeLibrary{
 				Model model = (Model) contents.get(0);
 				TreeIterator<EObject> eAllContents = model.eAllContents();
 				while(eAllContents.hasNext()){
-					EObject eObject = (EObject) eAllContents.next();
+					EObject eObject = eAllContents.next();
 					if(eObject instanceof Classifier && ((Classifier) eObject).getName().equals(classifierName)){
 						return (T) eObject;
 					}

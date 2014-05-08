@@ -8,6 +8,7 @@ import org.eclipse.ocl.uml.OperationCallExp;
 import org.eclipse.uml2.uml.Classifier;
 import org.eclipse.uml2.uml.Operation;
 import org.eclipse.uml2.uml.PrimitiveType;
+import org.pavanecce.common.code.metamodel.CodeBehaviour;
 import org.pavanecce.common.code.metamodel.CodeClass;
 import org.pavanecce.common.code.metamodel.CodeExpression;
 import org.pavanecce.common.code.metamodel.CodeMethod;
@@ -54,13 +55,13 @@ public class CollectionOperCallCreator {
 			if (referedOp.getName().equals("count")) {
 				return buildCount(exp, source, args, isStatic, params);
 			} else if (referedOp.getName().equals("excludes")) {
-				return buildExcludes(exp, source, args);
+				return buildLibMethodCall(source, ".excludes", args);
 			} else if (referedOp.getName().equals("excludesAll")) {
-				return buildExcludesAll(exp, source, args);
+				return buildLibMethodCall(source, ".excludesAll", args);
 			} else if (referedOp.getName().equals("includes")) {
-				return buildIncludes(exp, source, args);
+				return buildLibMethodCall(source, ".includes", args);
 			} else if (referedOp.getName().equals("includesAll")) {
-				return buildIncludesAll(exp, source, args);
+				return buildLibMethodCall(source, ".includesAll", args);
 			} else if (referedOp.getName().equals("isEmpty")) {
 				return new MethodCallExpression(source, "isEmpty");
 			} else if (referedOp.getName().equals("notEmpty")) {
@@ -312,16 +313,16 @@ public class CollectionOperCallCreator {
 		CollectionKind collectionKind = getCollectionKind(exp);
 		String operName = "";
 		if (collectionKind == CollectionKind.SET_LITERAL) {
-			operName = "setFlatten";
+			operName = ".setFlatten";
 		} else if (collectionKind == CollectionKind.BAG_LITERAL) {
-			operName = "bagFlatten";
+			operName = ".bagFlatten";
 		} else if (collectionKind == CollectionKind.SEQUENCE_LITERAL) {
-			operName = "sequenceFlatten";
+			operName = ".sequenceFlatten";
 		} else if (collectionKind == CollectionKind.ORDERED_SET_LITERAL) {
-			operName = "orderedsetFlatten";
+			operName = ".orderedsetFlatten";
 		}
 		myClass.addStdLibToImports(OclStandardLibrary.COLLECTIONS);
-		return new MethodCallExpression(OclStandardLibrary.COLLECTIONS.getPhysicalName() + "." + operName, source);
+		return new MethodCallExpression(OclStandardLibrary.COLLECTIONS.getPhysicalName() + operName, source);
 	}
 
 	private CodeExpression buildSubList(OperationCallExp exp, CodeExpression source, List<CodeExpression> args) {
@@ -375,23 +376,16 @@ public class CollectionOperCallCreator {
 	}
 
 	private PortableExpression callMethod(CodeMethod oper) {
-		return new PortableExpression(oper.getName() + "(" + CodeMethod.paramsToActuals(oper) + ")");
+		return new PortableExpression(oper.getName() + "(" + CodeBehaviour.paramsToActuals(oper) + ")");
 	}
 
-	private CodeExpression buildExcludes(OperationCallExp exp, CodeExpression source, List<CodeExpression> args) {
-		return new NotExpression(new MethodCallExpression(source, "contains", args.get(0)));
+	protected CodeExpression buildLibMethodCall(CodeExpression source, String string, List<CodeExpression> args) {
+		myClass.addStdLibToImports(OclStandardLibrary.COLLECTIONS);
+		return new MethodCallExpression(OclStandardLibrary.COLLECTIONS.getPhysicalName() + string, source, args.get(0));
 	}
-
-	private CodeExpression buildExcludesAll(OperationCallExp exp, CodeExpression source, List<CodeExpression> args) {
-		return new MethodCallExpression(OclStandardLibrary.COLLECTIONS.getPhysicalName() + ".excludesAll", args.get(0));
-	}
-
-	private CodeExpression buildIncludes(OperationCallExp exp, CodeExpression source, List<CodeExpression> args) {
-		return new MethodCallExpression(source, "contains", args.get(0));
-	}
-
-	private CodeExpression buildIncludesAll(OperationCallExp exp, CodeExpression source, List<CodeExpression> args) {
-		return new MethodCallExpression(source, "containsAll", args.get(0));
+	protected CodeExpression buildLibMethodCall(CodeExpression source, String string) {
+		myClass.addStdLibToImports(OclStandardLibrary.COLLECTIONS);
+		return new MethodCallExpression(OclStandardLibrary.COLLECTIONS.getPhysicalName() + string, source);
 	}
 
 	private CodeExpression buildCount(OperationCallExp exp, CodeExpression source, List<CodeExpression> args, boolean isStatic, List<CodeParameter> params) {

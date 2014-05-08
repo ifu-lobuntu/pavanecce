@@ -27,6 +27,7 @@ public class UmlDocumentModelFileVisitorAdaptor extends AbstractUmlVisitorAdapto
 		super(interfacesToImplement);
 	}
 
+	@Override
 	public DocumentNamespace getCodeModel() {
 		return codeModel;
 	}

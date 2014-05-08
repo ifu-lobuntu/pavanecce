@@ -34,6 +34,7 @@ public class JavaJdtMethod extends JdtAnnotated implements SourceMethod {
 		init(binding.getAnnotations());
 	}
 
+	@Override
 	public String[] getParameterNames() {
 		if (binding.getJavaElement() instanceof IMethod) {
 			IMethod javaElement = (IMethod) binding.getJavaElement();

@@ -1,10 +1,20 @@
 package test;
-import java.util.HashSet;
 import java.util.Set;
-
+import java.util.HashSet;
+import test.HousePlan;
+import test.WallPlan;
+import org.pavanecce.common.collections.ManyToManySet;
+import org.pavanecce.common.collections.ManyToManyCollection;
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
+import org.apache.jackrabbit.ocm.manager.collectionconverter.impl.BeanReferenceCollectionConverterImpl;
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Bean;
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Collection;
+import org.pavanecce.common.ocm.GrandParentBeanConverterImpl;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.persistence.Basic;
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -12,16 +22,6 @@ import javax.persistence.JoinColumns;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
-import org.apache.jackrabbit.ocm.manager.collectionconverter.impl.BeanReferenceCollectionConverterImpl;
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Bean;
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Collection;
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
-import org.pavanecce.common.collections.ManyToManyCollection;
-import org.pavanecce.common.collections.ManyToManySet;
-import org.pavanecce.common.ocm.GrandParentBeanConverterImpl;
 @Node(jcrType = "test:roomPlan", discriminator = false)
 @Entity(name="RoomPlan")
 @Table(name="room_plan")
@@ -40,12 +40,12 @@ public class RoomPlan{
   @Basic()
   @Column(name="name")
   private String name = "";
-  private transient ManyToManySet<RoomPlan,WallPlan> wallPlansWrapper = new ManyToManySet<RoomPlan,WallPlan>(this){
+  @SuppressWarnings("serial")  private transient ManyToManySet<RoomPlan,WallPlan> wallPlansWrapper = new ManyToManySet<RoomPlan,WallPlan>(this){
       public Set<WallPlan> getDelegate(){
         return wallPlans;
       }
       @SuppressWarnings("unchecked")
-	protected ManyToManyCollection<WallPlan,RoomPlan> getOtherEnd(WallPlan other){
+      protected ManyToManyCollection<WallPlan,RoomPlan> getOtherEnd(WallPlan other){
         return (ManyToManyCollection<WallPlan,RoomPlan>)other.getRoomPlans();
       }
       public boolean isLoaded(){
@@ -65,6 +65,9 @@ public class RoomPlan{
   private Set<WallPlan> wallPlans = new HashSet<WallPlan>();
   @Field(path=true)
   String path;
+  @Field(jcrName = "test:uuid", jcrType = "String")
+  @javax.persistence.Basic()
+  private String uuid=getUuid();
   public RoomPlan(){
   }
   public RoomPlan(HousePlan owner){
@@ -113,5 +116,20 @@ public class RoomPlan{
   }
   public void setPath(String value){
     this.path=value;
+  }
+  public int hashCode(){
+    return getUuid().hashCode();
+  }
+  public boolean equals(Object o){
+    return o instanceof RoomPlan && ((RoomPlan)o).getUuid().equals(getUuid());
+  }
+  public String getUuid(){
+    if(uuid==null){
+      uuid=java.util.UUID.randomUUID().toString();
+    }
+    return uuid;
+  }
+  public void setUuid(String uuid){
+    this.uuid=uuid;
   }
 }

@@ -45,6 +45,7 @@ public class CaseFileItemDefinitionHandler extends BaseAbstractHandler implement
 		}
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
     public Object start(final String uri, final String localName,
 			            final Attributes attrs, final ExtensibleXmlParser parser)
@@ -66,12 +67,14 @@ public class CaseFileItemDefinitionHandler extends BaseAbstractHandler implement
 		return caseFileItemDefinition;
 	}
 
+	@Override
 	public Object end(final String uri, final String localName,
 			          final ExtensibleXmlParser parser) throws SAXException {
 		parser.endElementBuilder();
 		return parser.getCurrent();
 	}
 
+	@Override
 	public Class<?> generateNodeFor() {
 		return CaseFileItemDefinition.class;
 	}

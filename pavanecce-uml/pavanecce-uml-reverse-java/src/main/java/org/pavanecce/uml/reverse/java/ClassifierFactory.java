@@ -145,7 +145,7 @@ public class ClassifierFactory {
 			classifier = createInterface(sourceType);
 			for (SourceClass intf : sourceType.getInterfaces()) {
 				if (!intf.getQualifiedName().startsWith("java.lang")) {
-					((Interface) classifier).getGeneralization((Interface) getClassifierFor(intf), true);
+					((Interface) classifier).getGeneralization(getClassifierFor(intf), true);
 				}
 			}
 		} else if (sourceType.isEntity()) {
@@ -249,7 +249,7 @@ public class ClassifierFactory {
 		for (SourceVariable e : enumConstants) {
 			if (e.isEnumConstant()) {
 				if (enumeration.getMember(e.getName()) == null) {
-					((Enumeration) enumeration).createOwnedLiteral(e.getName());
+					enumeration.createOwnedLiteral(e.getName());
 				}
 			}
 		}

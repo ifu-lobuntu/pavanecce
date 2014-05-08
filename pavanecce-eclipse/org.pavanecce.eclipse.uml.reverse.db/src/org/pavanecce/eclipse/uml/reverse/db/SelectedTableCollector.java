@@ -12,7 +12,7 @@ public class SelectedTableCollector {
 	public static Collection<PersistentTable> collectEffectivelySelectedTables(Iterator<?> iterator) {
 		Collection<PersistentTable> result = new HashSet<PersistentTable>();
 		while (iterator.hasNext()) {
-			addTablesOnly(result, (Object) iterator.next());
+			addTablesOnly(result, iterator.next());
 		}
 		return result;
 	}

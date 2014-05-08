@@ -17,6 +17,7 @@ import org.eclipse.datatools.connectivity.drivers.IDriverMgmtConstants;
 import org.eclipse.datatools.connectivity.drivers.IPropertySet;
 import org.eclipse.datatools.connectivity.drivers.PropertySetImpl;
 import org.eclipse.datatools.connectivity.drivers.jdbc.IJDBCConnectionProfileConstants;
+import org.eclipse.datatools.connectivity.drivers.jdbc.IJDBCDriverDefinitionConstants;
 import org.eclipse.datatools.connectivity.sqm.core.connection.ConnectionInfo;
 import org.eclipse.datatools.modelbase.sql.schema.Database;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -52,13 +53,13 @@ public class ReverseDatabaseTests {
 		}
 		Properties baseProperties = new Properties();
 		baseProperties.setProperty(IDriverMgmtConstants.PROP_DEFN_JARLIST, "/home/ampie/.m2/repository/mysql/mysql-connector-java/5.1.23/mysql-connector-java-5.1.23.jar");
-		baseProperties.setProperty(IJDBCConnectionProfileConstants.DRIVER_CLASS_PROP_ID, "com.mysql.jdbc.Driver"); //$NON-NLS-1$
-		baseProperties.setProperty(IJDBCConnectionProfileConstants.URL_PROP_ID, "jdbc:mysql://localhost:3306/test");
-		baseProperties.setProperty(IJDBCConnectionProfileConstants.USERNAME_PROP_ID, "root");
-		baseProperties.setProperty(IJDBCConnectionProfileConstants.PASSWORD_PROP_ID, "ainnikki");
-		baseProperties.setProperty(IJDBCConnectionProfileConstants.DATABASE_VENDOR_PROP_ID, "MySql");
-		baseProperties.setProperty(IJDBCConnectionProfileConstants.DATABASE_VERSION_PROP_ID, "5.1");
-		baseProperties.setProperty(IJDBCConnectionProfileConstants.DATABASE_NAME_PROP_ID, "test");
+		baseProperties.setProperty(IJDBCDriverDefinitionConstants.DRIVER_CLASS_PROP_ID, "com.mysql.jdbc.Driver"); //$NON-NLS-1$
+		baseProperties.setProperty(IJDBCDriverDefinitionConstants.URL_PROP_ID, "jdbc:mysql://localhost:3306/test");
+		baseProperties.setProperty(IJDBCDriverDefinitionConstants.USERNAME_PROP_ID, "root");
+		baseProperties.setProperty(IJDBCDriverDefinitionConstants.PASSWORD_PROP_ID, "ainnikki");
+		baseProperties.setProperty(IJDBCDriverDefinitionConstants.DATABASE_VENDOR_PROP_ID, "MySql");
+		baseProperties.setProperty(IJDBCDriverDefinitionConstants.DATABASE_VERSION_PROP_ID, "5.1");
+		baseProperties.setProperty(IJDBCDriverDefinitionConstants.DATABASE_NAME_PROP_ID, "test");
 		baseProperties.setProperty(IJDBCConnectionProfileConstants.SAVE_PASSWORD_PROP_ID, String.valueOf(true));
 		baseProperties.setProperty(IDriverMgmtConstants.PROP_DEFN_TYPE, "org.eclipse.datatools.enablement.mysql.5_1.driverTemplate");
 		IPropertySet ips = new PropertySetImpl("Our Driver Name", OUR_DRIVER_ID);

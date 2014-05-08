@@ -10,6 +10,7 @@ public class CompareVarDeclsByType implements Comparator<Property> {
 		super();
 	}
 
+	@Override
 	public int compare(Property var1, Property var2) {
 		if (var1 != null && var2 != null) {
 			return var1.getType().getName().compareTo(var2.getType().getName());

@@ -1,7 +1,6 @@
 package org.pavanecce.uml.uml2code.java;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -23,6 +22,8 @@ import org.pavanecce.common.code.metamodel.CodePrimitiveTypeKind;
 import org.pavanecce.common.code.metamodel.CodeTypeReference;
 import org.pavanecce.common.code.metamodel.CodeVisibilityKind;
 import org.pavanecce.common.code.metamodel.CollectionTypeReference;
+import org.pavanecce.common.code.metamodel.LibraryTypeReference;
+import org.pavanecce.common.code.metamodel.OclStandardLibrary;
 import org.pavanecce.common.code.metamodel.PrimitiveTypeReference;
 import org.pavanecce.common.code.metamodel.expressions.BinaryOperatorExpression;
 import org.pavanecce.common.code.metamodel.expressions.IsNullExpression;
@@ -37,8 +38,10 @@ import org.pavanecce.common.code.metamodel.expressions.StaticFieldExpression;
 import org.pavanecce.common.code.metamodel.expressions.StaticMethodCallExpression;
 import org.pavanecce.common.code.metamodel.expressions.TypeExpression;
 import org.pavanecce.common.code.metamodel.statements.AssignmentStatement;
+import org.pavanecce.common.util.OclCollections;
+import org.pavanecce.common.util.OclMath;
+import org.pavanecce.common.util.OclPrimitives;
 import org.pavanecce.uml.uml2code.AbstractCodeGenerator;
-import org.pavanecce.uml.uml2code.AbstractTextGenerator;
 import org.pavanecce.uml.uml2code.jpa.AbstractJavaCodeDecorator;
 
 public class JavaCodeGenerator extends AbstractCodeGenerator {
@@ -70,6 +73,7 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 		return this;
 	}
 
+	@Override
 	protected void appendAssignmentStatement(AssignmentStatement statement2) {
 		if (statement2.getVariableName().startsWith("${self}")) {
 			sb.append("this");
@@ -101,6 +105,20 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 				}
 			} else {
 				return javaPrimitive;
+			}
+		} else if (type instanceof LibraryTypeReference) {
+			Enum<?> kind = ((LibraryTypeReference) type).getKind();
+			if (kind instanceof OclStandardLibrary) {
+				switch ((OclStandardLibrary) kind) {
+				case COLLECTIONS:
+					return OclCollections.class.getName();
+				case MATH:
+					return OclMath.class.getName();
+				case PRIMITIVES:
+					return OclPrimitives.class.getName();
+				case FORMATTER:
+					return ">????";
+				}
 			}
 		} else if (type instanceof CollectionTypeReference) {
 			CollectionTypeReference ctr = (CollectionTypeReference) type;
@@ -233,7 +251,7 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 	}
 
 	protected JavaCodeGenerator appendClassDeclaration(CodeClass cc) {
-		if(cc.getVisibility()==CodeVisibilityKind.PUBLIC){
+		if (cc.getVisibility() == CodeVisibilityKind.PUBLIC) {
 			sb.append("public ");
 		}
 		sb.append("class ");
@@ -303,7 +321,7 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 	protected void appendParameters(List<CodeParameter> parameters) {
 		Iterator<CodeParameter> iterator = parameters.iterator();
 		while (iterator.hasNext()) {
-			CodeParameter codeParameter = (CodeParameter) iterator.next();
+			CodeParameter codeParameter = iterator.next();
 			CodeTypeReference paramType = codeParameter.getType();
 			appendType(paramType);
 			sb.append(" ");
@@ -314,6 +332,7 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 		}
 	}
 
+	@Override
 	public String toVisibility(CodeVisibilityKind k) {
 		switch (k) {
 		case PRIVATE:
@@ -359,7 +378,9 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 	public JavaCodeGenerator appendType(CodeTypeReference returnType) {
 		if (returnType.isMapped()) {
 			String mappedName = getMappedName(returnType);
-			if (mappedName != null) {
+			if (mappedName == null) {
+				// ???
+			} else {
 				mappedName = mappedName.substring(mappedName.lastIndexOf(".") + 1, mappedName.length());
 			}
 			sb.append(mappedName);
@@ -404,6 +425,7 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 		return "this";
 	}
 
+	@Override
 	public JavaCodeGenerator interpretExpression(CodeExpression exp) {
 		if (exp instanceof PortableExpression) {
 			sb.append(super.applyCommonReplacements((PortableExpression) exp));
@@ -444,9 +466,20 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 				sb.append(".equals(");
 				interpretExpression(boe.getArg2());
 				sb.append(")");
+			} else if (operator.equals("${notEquals}")) {
+				sb.append("!");
+				interpretExpression(boe.getArg1());
+				sb.append(".equals(");
+				interpretExpression(boe.getArg2());
+				sb.append(")");
 			} else {
-				if(operator.equals("=")){
-					operator="==";
+				if (operator.equals("=")) {
+					operator = "==";
+				} else if (operator.startsWith("${")) {
+					operator = operator.replace("${or}", "||");
+					operator = operator.replace("${and}", "&&");
+					operator = operator.replace("${or}", "||");
+					operator = operator.replace("${or}", "||");
 				}
 				sb.append("( ");
 				interpretExpression(boe.getArg1());
@@ -562,6 +595,7 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 		return type.getLastName();
 	}
 
+	@Override
 	public JavaCodeGenerator append(String string) {
 		super.append(string);
 		return this;

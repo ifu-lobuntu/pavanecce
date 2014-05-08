@@ -41,8 +41,7 @@
 			<cmmn:planItem definitionRef="theTask" name="PlanItemEnteredWhenRoofPlanRemovedAsReference" id="planItemEnteredWhenRoofPlanRemovedAsReferenceId"
 				entryCriteriaRefs="waitingForRoofPlanRemovedAsReferenceSentryId">
 			</cmmn:planItem>
-			<cmmn:planItem definitionRef="theTask" name="PlanItemEnteredWhenHouseUpdated" id="planItemEnteredHouseUpdatedId"
-				entryCriteriaRefs="waitingForHouseUpdatedSentryId">
+			<cmmn:planItem definitionRef="theTask" name="PlanItemEnteredWhenHouseUpdated" id="planItemEnteredHouseUpdatedId" entryCriteriaRefs="waitingForHouseUpdatedSentryId">
 			</cmmn:planItem>
 			<cmmn:sentry id="waitingForHouseUpdatedSentryId" name="WaitingForHouseUpdatedSentry">
 				<cmmn:caseFileItemOnPart sourceRef="houseFileItemId" id="OnHouseUpdatedPart">
@@ -119,6 +118,16 @@
 		<cmmn:input bindingRef="housePlanFileItemId" id="housePlanInputId" name="housePlan">
 		</cmmn:input>
 		<cmmn:input bindingRef="houseFileItemId" id="houseInputId" name="house">
+		</cmmn:input>
+		<cmmn:input bindingRef="wallPlanFileItemId" id="wallPlanInputId" name="housePlan">
+			<cmmn:bindingRefinement language="http://www.java.com/java">
+				<cmmn:body>return housePlan.getWallPlans();</cmmn:body>
+			</cmmn:bindingRefinement>
+		</cmmn:input>
+		<cmmn:input bindingRef="roofPlanFileItemId" id="roofPlanInputId" name="roofPlan">
+			<cmmn:bindingRefinement language="http://www.java.com/java">
+				<cmmn:body>return housePlan.getRoofPlan();</cmmn:body>
+			</cmmn:bindingRefinement>
 		</cmmn:input>
 	</cmmn:case>
 </cmmn:definitions>

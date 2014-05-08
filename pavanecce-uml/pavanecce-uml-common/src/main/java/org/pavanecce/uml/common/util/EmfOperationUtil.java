@@ -19,7 +19,7 @@ public class EmfOperationUtil {
 		Set<String> inheritedConcreteOperationNames = new TreeSet<String>();
 		for(Generalization g:bc.getGeneralizations()){
 			if(g.getGeneral() instanceof BehavioredClassifier){
-				for(Operation o:getEffectiveOperations((BehavioredClassifier) g.getGeneral())){
+				for(Operation o:getEffectiveOperations(g.getGeneral())){
 					boolean mustImplement = o.isAbstract() && g.getGeneral().isAbstract() && !bc.isAbstract();
 					if(!mustImplement){
 						// Remember, an interface may be implemented both by the superclass as well as 'bc'

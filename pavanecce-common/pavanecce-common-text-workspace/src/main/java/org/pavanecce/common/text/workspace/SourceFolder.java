@@ -22,6 +22,7 @@ public class SourceFolder extends TextDirectory {
 		return this;
 	}
 	
+	@Override
 	public String getProjectRelativePath() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("/");

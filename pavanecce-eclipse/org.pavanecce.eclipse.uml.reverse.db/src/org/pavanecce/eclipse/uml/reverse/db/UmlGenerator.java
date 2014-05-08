@@ -245,7 +245,7 @@ public class UmlGenerator {
 				currentFk = maybeFlushForeignKey(cls, indexProperties, currentFk, usedColumns, im);
 				if (im.getColumn().isPartOfForeignKey()) {
 					BaseTable baseTable = (BaseTable) im.getColumn().getTable();
-					Collection<? extends ForeignKey> foreignKeys = (Collection<? extends ForeignKey>) baseTable.getForeignKeys();
+					Collection<? extends ForeignKey> foreignKeys = baseTable.getForeignKeys();
 					for (ForeignKey fk : foreignKeys) {
 						if (fk.getMembers().contains(im.getColumn())) {
 							boolean isInIndex = true;

@@ -6,6 +6,7 @@ public interface PlanItem extends CMMNElement, Node {
 
 	public abstract void setElementId(String elementId);
 
+	@Override
 	public abstract String getElementId();
 
 	PlanItemInfo getPlanInfo();

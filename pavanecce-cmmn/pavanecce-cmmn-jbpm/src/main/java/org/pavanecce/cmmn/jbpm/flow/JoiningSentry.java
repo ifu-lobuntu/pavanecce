@@ -20,14 +20,17 @@ public class JoiningSentry extends Join implements CMMNElement, Sentry {
 		setType(TYPE_AND);
 	}
 
+	@Override
 	public Constraint getCondition() {
 		return condition;
 	}
 
+	@Override
 	public void addOnPart(OnPart onPart) {
 		this.onParts.add(onPart);
 	}
 
+	@Override
 	public void setCondition(Constraint condition) {
 		this.condition = condition;
 	}
@@ -37,22 +40,27 @@ public class JoiningSentry extends Join implements CMMNElement, Sentry {
 		super.validateAddIncomingConnection(type, connection);
 	}
 
+	@Override
 	public List<OnPart> getOnParts() {
 		return onParts;
 	}
 
+	@Override
 	public String getElementId() {
 		return elementId;
 	}
 
+	@Override
 	public void setElementId(String elementId) {
 		this.elementId = elementId;
 	}
 
+	@Override
 	public void addPlanItemExiting(PlanItem planItem) {
 		planItemsExiting.add(planItem);
 	}
 
+	@Override
 	public Set<PlanItem> getPlanItemsExiting() {
 		return planItemsExiting;
 	}

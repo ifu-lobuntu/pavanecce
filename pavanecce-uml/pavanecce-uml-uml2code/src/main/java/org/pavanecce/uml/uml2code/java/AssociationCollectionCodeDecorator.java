@@ -35,7 +35,7 @@ public class AssociationCollectionCodeDecorator extends AbstractJavaCodeDecorato
 					sb.append("      public ").appendType(type).append(" getDelegate(){\n");
 					sb.append("        return ").append(field.getName()).appendLineEnd();
 					sb.append("      }\n");
-					sb.append("      @SuppressWarnings(\"unchecked\")");
+					sb.append("      @SuppressWarnings(\"unchecked\")\n");
 					sb.append("      protected ManyToManyCollection<").appendType(elementType).append(",").appendType(otherElementType).append("> getOtherEnd(").appendType(elementType)
 							.append(" other){\n");
 					sb.append("        return ").append("(ManyToManyCollection<").appendType(elementType).append(",").appendType(otherElementType).append(">)other.get")
@@ -59,7 +59,7 @@ public class AssociationCollectionCodeDecorator extends AbstractJavaCodeDecorato
 					sb.append("      public ").appendType(type).append(" getDelegate(){\n");
 					sb.append("        return ").append(field.getName()).appendLineEnd();
 					sb.append("      }\n");
-					sb.append("      @SuppressWarnings(\"unchecked\")");
+					sb.append("      @SuppressWarnings(\"unchecked\")\n");
 					sb.append("      protected OneToManySet<").appendType(otherType).append(",").appendType(elementType).append("> getChildren(").appendType(otherType).append(" parent){\n");
 					sb.append("        return ").append("(OneToManySet<").appendType(otherType).append(",").appendType(elementType).append(">)parent.get")
 							.append(NameConverter.capitalize(field.getName())).append("()").appendLineEnd();
@@ -71,7 +71,7 @@ public class AssociationCollectionCodeDecorator extends AbstractJavaCodeDecorato
 					sb.append("        child.zz_internalSet").append(NameConverter.capitalize(type.getOtherFieldName())).append("(parent)").appendLineEnd();
 					sb.append("      }\n");
 					sb.append("      public boolean isLoaded(){\n");
-					//TODO switching this optimization off until we figure out how to "flush"
+					//TODO switching this optimization off until we figure out how to "flush" - hibernate optimizes this internally anyway
 					sb.append("         return ").append(type.isChild()?"true":"true").appendLineEnd();
 					sb.append("      }\n");
 					sb.append("      public boolean isInstanceOfChild(Object o){\n");

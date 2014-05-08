@@ -104,6 +104,7 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 			List<NodeInstance> nodeInstances = new ArrayList<NodeInstance>(compositeNodeInstance.getNodeInstances());
 			Collections.sort(nodeInstances, new Comparator<NodeInstance>() {
 
+				@Override
 				public int compare(NodeInstance o1, NodeInstance o2) {
 					return (int) (o1.getId() - o2.getId());
 				}

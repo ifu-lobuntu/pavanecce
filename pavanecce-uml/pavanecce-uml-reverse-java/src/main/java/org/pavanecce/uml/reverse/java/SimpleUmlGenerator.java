@@ -33,6 +33,7 @@ public class SimpleUmlGenerator extends AbstractUmlGenerator {
 
 	}
 
+	@Override
 	protected boolean canReverse(Package library) {
 		return library instanceof Model;
 	}

@@ -123,7 +123,7 @@ public class ManyToManyCollectionTests {
 		manyFrom1.many.add(manyTo1);
 		Iterator<ManyFrom> iterator = manyTo1.many.iterator();
 		while (iterator.hasNext()) {
-			ManyFrom manyFrom = (ManyFrom) iterator.next();
+			ManyFrom manyFrom = iterator.next();
 			if (manyFrom == manyFrom1) {
 				iterator.remove();
 			}

@@ -174,14 +174,14 @@ public final class PropertyMap extends PackageableElementMap{
 		}
 	}
 	public String qualifierProperty(){
-		Property property = (Property) (this.property instanceof EndToAssociationClass ? ((EndToAssociationClass) this.property).getOriginalProperty()
-				: this.property);
+		Property property = this.property instanceof EndToAssociationClass ? ((EndToAssociationClass) this.property).getOriginalProperty()
+				: this.property;
 		Classifier owner = EmfPropertyUtil.getOwningClassifier(property);
 		return "z_keyOf" + capitalize(toValidVariableName(property.getName())) + "On" + owner.getName();
 	}
 	public String qualifierPropertySetter(){
-		Property property = (Property) (this.property instanceof EndToAssociationClass ? ((EndToAssociationClass) this.property).getOriginalProperty()
-				: this.property);
+		Property property = this.property instanceof EndToAssociationClass ? ((EndToAssociationClass) this.property).getOriginalProperty()
+				: this.property;
 		Classifier owner = EmfPropertyUtil.getOwningClassifier(property);
 		return "setZ_keyOf" + capitalize(toValidVariableName(property.getName())) + "On" + (owner).getName();
 	}
@@ -216,7 +216,7 @@ public final class PropertyMap extends PackageableElementMap{
 		}
 	}
 	public Property getProperty(){
-		return (Property) property;
+		return property;
 	}
 	public Classifier getDefiningClassifier(){
 		return (Classifier) EmfElementFinder.getContainer(property);

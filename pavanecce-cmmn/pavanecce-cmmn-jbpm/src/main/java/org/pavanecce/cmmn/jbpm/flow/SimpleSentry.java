@@ -18,13 +18,16 @@ public class SimpleSentry extends CatchLinkNode implements Sentry {
 
 
 	
+	@Override
 	public void addOnPart(OnPart onPart) {
 		this.onParts.add(onPart);
 	}
 
+	@Override
 	public void setCondition(Constraint condition) {
 		this.condition = condition;
 	}
+	@Override
 	public Constraint getCondition() {
 		return condition;
 	}
@@ -34,22 +37,27 @@ public class SimpleSentry extends CatchLinkNode implements Sentry {
 		super.validateAddIncomingConnection(type, connection);
 	}
 
+	@Override
 	public List<OnPart> getOnParts() {
 		return onParts;
 	}
 
+	@Override
 	public String getElementId() {
 		return elementId;
 	}
 
+	@Override
 	public void setElementId(String elementId) {
 		this.elementId = elementId;
 	}
 
+	@Override
 	public void addPlanItemExiting(PlanItem planItem) {
 		planItemsExiting.add(planItem);
 	}
 
+	@Override
 	public Set<PlanItem> getPlanItemsExiting() {
 		return planItemsExiting;
 	}

@@ -20,20 +20,25 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.drools.core.common.InternalKnowledgeRuntime;
+import org.drools.core.spi.ProcessContext;
 import org.jbpm.process.core.ContextContainer;
 import org.jbpm.process.core.context.variable.VariableScope;
 import org.jbpm.process.instance.AbstractProcessInstanceFactory;
 import org.jbpm.process.instance.InternalProcessRuntime;
 import org.jbpm.process.instance.ProcessInstance;
 import org.jbpm.process.instance.context.variable.VariableScopeInstance;
+import org.jbpm.process.instance.impl.ConstraintEvaluator;
 import org.kie.api.definition.process.Process;
 import org.kie.internal.process.CorrelationKey;
 import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
+import org.pavanecce.common.ObjectPersistence;
 
 public class CaseInstanceFactory extends AbstractProcessInstanceFactory implements Externalizable {
 	// Temporary HACK - find the right place to map caseKeys with
@@ -41,18 +46,21 @@ public class CaseInstanceFactory extends AbstractProcessInstanceFactory implemen
 	private static Map<String, InternalKnowledgeRuntime> knowledgeRuntimes = new HashMap<String, InternalKnowledgeRuntime>();
 	private static final long serialVersionUID = 510l;
 
+	@Override
 	public ProcessInstance createProcessInstance() {
 		return new CaseInstance();
 	}
 
+	@Override
 	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 	}
 
+	@Override
 	public void writeExternal(ObjectOutput out) throws IOException {
 	}
 
-	public ProcessInstance createProcessInstance(Process process, CorrelationKey correlationKey, InternalKnowledgeRuntime kruntime,
-			Map<String, Object> parameters) {
+	@Override
+	public ProcessInstance createProcessInstance(Process process, CorrelationKey correlationKey, InternalKnowledgeRuntime kruntime, Map<String, Object> parameters) {
 		CaseInstance processInstance = (CaseInstance) createProcessInstance();
 		processInstance.setKnowledgeRuntime(kruntime);
 		processInstance.setProcess(process);
@@ -69,11 +77,35 @@ public class CaseInstanceFactory extends AbstractProcessInstanceFactory implemen
 		// set input parameters
 		if (parameters != null) {
 			if (variableScope != null) {
-				for (CaseParameter caseParameter : theCase.getInputParameters()) {
+				List<CaseParameter> inputParameters = theCase.getInputParameters();
+				for (CaseParameter caseParameter : inputParameters) {
 					Object var = parameters.get(caseParameter.getName());
 					variableScopeInstance.setVariable(caseParameter.getVariable().getName(), var);
-					SubscriptionManager subscriptionManager = (SubscriptionManager) kruntime.getEnvironment().get(SubscriptionManager.ENV_NAME);
-					subscriptionManager.subscribe(processInstance, caseParameter.getVariable(), var);
+				}
+				SubscriptionManager subscriptionManager = (SubscriptionManager) kruntime.getEnvironment().get(SubscriptionManager.ENV_NAME);
+				if (subscriptionManager != null) {
+					ObjectPersistence persistence = subscriptionManager.getObjectPersistence(processInstance);
+					for (CaseParameter caseParameter : inputParameters) {
+						if (caseParameter.getBindingRefinementEvaluator() == null) {
+							Object var = parameters.get(caseParameter.getName());
+							subscriptionManager.subscribe(processInstance, caseParameter.getVariable(), var, persistence);
+						} else {
+							ProcessContext ctx = new ProcessContext(kruntime);
+							ctx.setProcessInstance(processInstance);
+							try {
+								Object subscribeTo = caseParameter.getBindingRefinementEvaluator().evaluate(ctx);
+								if ((subscribeTo instanceof Collection && ((Collection<?>) subscribeTo).isEmpty()) || subscribeTo == null) {
+									// Attempt subscribing to parent for creates and deletes
+									Object parentToSubscribeTo = caseParameter.getBindingRefinementParentEvaluator().evaluate(ctx);
+									subscriptionManager.subscribeToParent(processInstance, caseParameter.getVariable(), parentToSubscribeTo, persistence);
+								} else {
+									subscriptionManager.subscribe(processInstance, caseParameter.getVariable(), subscribeTo, persistence);
+								}
+							} catch (Exception e) {
+								throw new RuntimeException(e);
+							}
+						}
+					}
 				}
 			} else {
 				throw new IllegalArgumentException("This process does not support parameters!");

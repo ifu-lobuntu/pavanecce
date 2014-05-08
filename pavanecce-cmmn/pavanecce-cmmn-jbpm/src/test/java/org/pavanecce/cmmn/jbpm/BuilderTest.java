@@ -5,18 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jbpm.shared.services.impl.events.JbpmServicesEventListener;
 import org.junit.Test;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.manager.RuntimeEngine;
 import org.kie.api.task.TaskService;
-import org.kie.api.task.model.Task;
 import org.kie.api.task.model.TaskSummary;
-import org.kie.internal.task.api.EventService;
-import org.kie.internal.task.api.model.NotificationEvent;
 import org.pavanecce.cmmn.jbpm.instance.CaseInstance;
-import org.pavanecce.cmmn.jbpm.instance.CaseTaskLifecycleListener;
-import org.pavanecce.cmmn.jbpm.test.AbstractCmmnCaseTestCase;
 
 import test.ConstructionCase;
 import test.House;
@@ -30,24 +24,22 @@ public class BuilderTest extends AbstractConstructionTestCase {
 		super(true, true, "org.jbpm.persistence.jpa");
 	}
 
-
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testSimpleEntryCriteria() throws Exception {
 		createRuntimeManager("test/hello.cmmn");
 		RuntimeEngine runtimeEngine = getRuntimeEngine();
 		KieSession ksession = runtimeEngine.getKieSession();
-		EventService<JbpmServicesEventListener<NotificationEvent>,JbpmServicesEventListener<Task>> eventService = (EventService<JbpmServicesEventListener<NotificationEvent>,JbpmServicesEventListener<Task>>) runtimeEngine.getTaskService();
-		eventService.registerTaskLifecycleEventListener(new CaseTaskLifecycleListener(ksession));
 		TaskService taskService = runtimeEngine.getTaskService();
 		Map<String, Object> params = new HashMap<String, Object>();
 		getPersistence().start();
 
 		ConstructionCase cc = new ConstructionCase("/cases/case1");
 		HousePlan housePlan = new HousePlan(cc);
+		House house = new House (cc);
 		getPersistence().persist(cc);
 		getPersistence().commit();
-		params.put("housePlan", Arrays.asList(housePlan));
+		params.put("housePlan", housePlan);
+		params.put("house", house);
 		getPersistence().start();
 		CaseInstance processInstance = (CaseInstance) ksession.startProcess("hello", params);
 		getPersistence().commit();
@@ -101,14 +93,11 @@ public class BuilderTest extends AbstractConstructionTestCase {
 		// assertProcessInstanceCompleted(processInstance.getId(), ksession);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testBuildWallExitCritera() throws Exception {
 		createRuntimeManager("test/bye.cmmn");
 		RuntimeEngine runtimeEngine = getRuntimeEngine();
 		KieSession ksession = runtimeEngine.getKieSession();
-		EventService<JbpmServicesEventListener<NotificationEvent>,JbpmServicesEventListener<Task>> eventService = (EventService<JbpmServicesEventListener<NotificationEvent>,JbpmServicesEventListener<Task>>) runtimeEngine.getTaskService();
-		eventService.registerTaskLifecycleEventListener(new CaseTaskLifecycleListener(ksession));
 		TaskService taskService = runtimeEngine.getTaskService();
 		Map<String, Object> params = new HashMap<String, Object>();
 		getPersistence().start();
@@ -118,8 +107,8 @@ public class BuilderTest extends AbstractConstructionTestCase {
 		House house = new House(cc);
 		getPersistence().persist(cc);
 		getPersistence().commit();
-		params.put("housePlan", Arrays.asList(housePlan));
-		params.put("house", Arrays.asList(house));
+		params.put("housePlan", housePlan);
+		params.put("house", house);
 		getPersistence().start();
 		CaseInstance processInstance = (CaseInstance) ksession.startProcess("bye", params);
 		getPersistence().commit();
@@ -129,7 +118,7 @@ public class BuilderTest extends AbstractConstructionTestCase {
 		assertNodeTriggered(processInstance.getId(), "OnWallCreateOnlyPart");
 		assertNodeTriggered(processInstance.getId(), "OnWallPlanCreatePart");
 		assertNodeTriggered(processInstance.getId(), "OnRoofPlanCreatePart");
-		addWallPlan( housePlan);
+		addWallPlan(housePlan);
 		assertNodeTriggered(processInstance.getId(), "BuildWallPlanItem");
 		// // let Builder execute LayFoundationPlanItem
 		List<TaskSummary> list = taskService.getTasksAssignedAsPotentialOwner("Builder", "en-UK");
@@ -151,14 +140,14 @@ public class BuilderTest extends AbstractConstructionTestCase {
 		// assertProcessInstanceCompleted(processInstance.getId(), ksession);
 	}
 
-	private void addWallPlan(HousePlan housePlan) throws Exception{
+	private void addWallPlan(HousePlan housePlan) throws Exception {
 		housePlan = getPersistence().find(HousePlan.class, housePlan.getId());
 		new WallPlan(housePlan);
 		getPersistence().update(housePlan);
 		getPersistence().commit();
 	}
 
-	private void addWall(House house) throws Exception{
+	private void addWall(House house) throws Exception {
 		house = getPersistence().find(House.class, house.getId());
 		new Wall(house);
 		getPersistence().update(house);

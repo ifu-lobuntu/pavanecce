@@ -235,7 +235,7 @@ public class EmfClassifierUtil {
 				}
 			}
 			for (Classifier c : getSubClasses(baseType)) {
-				addConcreteSubclasses(results, (Classifier) c, models, concreteOnly);
+				addConcreteSubclasses(results, c, models, concreteOnly);
 			}
 		}
 	}

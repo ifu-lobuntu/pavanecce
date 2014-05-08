@@ -73,6 +73,7 @@ public class JavaScriptGenerator extends AbstractCodeGenerator {
 
 	}
 
+	@Override
 	protected void appendAssignmentStatement(AssignmentStatement statement2) {
 		if (statement2.getVariableName().startsWith("${self}")) {
 			sb.append("this.set(\"");
@@ -186,7 +187,7 @@ public class JavaScriptGenerator extends AbstractCodeGenerator {
 		sb.append(" : function(");
 		Iterator<CodeParameter> iterator = method.getParameters().iterator();
 		while (iterator.hasNext()) {
-			CodeParameter codeParameter = (CodeParameter) iterator.next();
+			CodeParameter codeParameter = iterator.next();
 			sb.append(codeParameter.getName());
 			if (iterator.hasNext()) {
 				sb.append(", ");

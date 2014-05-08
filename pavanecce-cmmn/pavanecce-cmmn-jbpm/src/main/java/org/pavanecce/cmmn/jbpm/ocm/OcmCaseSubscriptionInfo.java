@@ -44,14 +44,17 @@ public class OcmCaseSubscriptionInfo implements CaseSubscriptionInfo<OcmCaseFile
 		this.caseFileItemSubscriptions = caseFileItemSubscriptions;
 	}
 
+	@Override
 	public Set<? extends OcmCaseFileItemSubscriptionInfo> getCaseFileItemSubscriptions() {
 		return caseFileItemSubscriptions;
 	}
 
+	@Override
 	public void addCaseFileItemSubscription(OcmCaseFileItemSubscriptionInfo a) {
 		caseFileItemSubscriptions.add(a);
 	}
 
+	@Override
 	public void removeCaseFileItemSubscription(OcmCaseFileItemSubscriptionInfo a) {
 		caseFileItemSubscriptions.remove(a);
 	}

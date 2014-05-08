@@ -46,7 +46,7 @@ public class SentryInstance extends JoinInstance {
 
 	protected Collection<CaseEvent> getEvents() {
 		Collection<CaseEvent> result = new HashSet<CaseEvent>();
-		Collection<Connection> values = getNode().getIncomingConnections(NodeImpl.CONNECTION_DEFAULT_TYPE);
+		Collection<Connection> values = getNode().getIncomingConnections(Node.CONNECTION_DEFAULT_TYPE);
 		for (Connection connection : values) {
 			if (connection.getFrom() instanceof OnPart) {
 				NodeInstance ni = findNodeInstance((NodeInstanceContainer) getNodeInstanceContainer(), (OnPart) connection.getFrom());
@@ -62,7 +62,7 @@ public class SentryInstance extends JoinInstance {
 		Sentry sentry=(Sentry) getNode();
 		Constraint c = sentry.getCondition();
 		if(c instanceof ConstraintEvaluator ){
-			Connection conn = getNode().getIncomingConnections(NodeImpl.CONNECTION_DEFAULT_TYPE).get(0);
+			Connection conn = getNode().getIncomingConnections(Node.CONNECTION_DEFAULT_TYPE).get(0);
 			if(!((ConstraintEvaluator) c).evaluate(this, conn, c)){
 				return;
 			}
@@ -79,7 +79,7 @@ public class SentryInstance extends JoinInstance {
 		} finally {
 			deque.pop();
 		}
-		Collection<Connection> values = getNode().getIncomingConnections(NodeImpl.CONNECTION_DEFAULT_TYPE);
+		Collection<Connection> values = getNode().getIncomingConnections(Node.CONNECTION_DEFAULT_TYPE);
 		for (Connection connection : values) {
 			if (connection.getFrom() instanceof OnPart) {
 				NodeInstance ni = findNodeInstance((NodeInstanceContainer) getNodeInstanceContainer(), (OnPart) connection.getFrom());
@@ -110,7 +110,7 @@ public class SentryInstance extends JoinInstance {
 				// Task planItem
 				WorkItemNodeInstance wini = (WorkItemNodeInstance) found;
 				WorkItem workItem = wini.getWorkItem();
-				workItem.setState(WorkItem.COMPLETED);
+				workItem.setState(org.kie.api.runtime.process.WorkItem.COMPLETED);
 				wini.signalEvent("workItemCompleted", workItem);
 				((WorkItemManager) ((ProcessInstance) getProcessInstance()).getKnowledgeRuntime().getWorkItemManager()).internalAbortWorkItem(workItem.getId());
 				hasTriggered = true;

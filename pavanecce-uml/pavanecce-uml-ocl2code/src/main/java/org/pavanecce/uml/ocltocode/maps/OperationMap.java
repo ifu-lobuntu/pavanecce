@@ -203,9 +203,9 @@ public class OperationMap extends PackageableElementMap {
 	}
 	public CodeTypeReference messageStructurePath(){
 		if(operation instanceof Operation){
-			return codeUtil.classifierPathname(((Operation) operation));
+			return codeUtil.classifierPathname((operation));
 		}else{
-			return codeUtil.classifierPathname((Classifier) operation);
+			return codeUtil.classifierPathname(operation);
 		}
 	}
 	public List<Parameter> getArgumentParameters(){

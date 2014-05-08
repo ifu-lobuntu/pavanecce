@@ -80,6 +80,7 @@ public class CodePackageReference implements Comparable<CodePackageReference> {
 
 	}
 
+	@Override
 	public boolean equals(Object other) {
 		if (other instanceof CodePackageReference) {
 			return compareTo((CodePackageReference) other) == 0;

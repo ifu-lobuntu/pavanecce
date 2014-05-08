@@ -24,7 +24,7 @@ public abstract class OnPart extends EventNode implements Serializable, CMMNElem
 		return Arrays.asList((EventFilter) f);
 
 	}
-
+	public abstract Enum<?> getStandardEvent();
 
 	@Override
 	public String getElementId() {

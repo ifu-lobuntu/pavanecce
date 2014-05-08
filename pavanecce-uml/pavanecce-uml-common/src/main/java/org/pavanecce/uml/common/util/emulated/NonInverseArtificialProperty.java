@@ -18,6 +18,7 @@ public class NonInverseArtificialProperty extends AbstractEmulatedProperty {
 	public int getUpper(){
 		return 1;
 	}
+	@Override
 	public Classifier getOwner(){
 		return (Classifier) super.getOwner();
 	}

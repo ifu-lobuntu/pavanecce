@@ -78,7 +78,7 @@ public class JpaObjectPersistence implements ObjectPersistence {
 		getEntityManager().persist(o);
 	}
 
-	UserTransaction getTransaction() throws NamingException {
+	public UserTransaction getTransaction() throws NamingException {
 		if (transaction == null) {
 			transaction = (UserTransaction) new InitialContext().lookup("java:comp/UserTransaction");
 		}

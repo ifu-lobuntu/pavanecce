@@ -13,6 +13,7 @@ public class Milestone extends MilestoneNode implements PlanItemDefinition {
 	private static final long serialVersionUID = -1756918726860177355L;
 	private String elementId;
 
+	@Override
 	public String getElementId() {
 		return elementId;
 	}
@@ -20,15 +21,6 @@ public class Milestone extends MilestoneNode implements PlanItemDefinition {
 	public void setElementId(String elementId) {
 		this.elementId = elementId;
 	}
-	@Override
-	public List<DataAssociation> getInAssociations() {
-		return Collections.emptyList();
-	}
 
-	@Override
-	public List<CaseParameter> getInputs() {
-		return Collections.emptyList();
-	}
-	
 
 }

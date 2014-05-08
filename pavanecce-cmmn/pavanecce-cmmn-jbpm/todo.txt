@@ -24,6 +24,7 @@ Throwing Human Task TERMINATE events from TaskService
 To test
 All the above events but for exit criteria
 Sentry.Conditions
+Manually scoped event subscriptions
 
 Todo
 Input ParameterMapping and bindingRefinement
@@ -48,7 +49,7 @@ Make recursive subscriptions parameterizable
 
 Planning
 Planning with quotes for subsequent activities
-milestone with cost breakdwon
+milestone with cost breakdown
 
 
 Throwing Process/Case Task COMPLETE event

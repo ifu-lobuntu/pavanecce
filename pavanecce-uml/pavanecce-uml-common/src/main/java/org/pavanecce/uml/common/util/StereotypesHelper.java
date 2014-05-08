@@ -50,7 +50,7 @@ public class StereotypesHelper{
 			Iterator<Stereotype> iter = c.getAppliedStereotypes().iterator();
 			Stereotype s = null;
 			while(iter.hasNext()){
-				s = (Stereotype) iter.next();
+				s = iter.next();
 				if(s.getName().equalsIgnoreCase(name)){
 					if(!c.isStereotypeApplied(s)){
 						throw new IllegalStateException("Stereotype application corrupt:" + c + ":" + s);

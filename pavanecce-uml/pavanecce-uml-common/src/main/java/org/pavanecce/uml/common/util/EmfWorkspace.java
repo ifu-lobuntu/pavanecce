@@ -33,7 +33,7 @@ public class EmfWorkspace {
 	}
 
 	public static String getResourceId(Resource eResource) {
-		EObject v = (EObject) eResource.getContents().get(0);
+		EObject v = eResource.getContents().get(0);
 		EAnnotation ann = null;
 		if (v instanceof EModelElement) {
 			ann = ((EModelElement) v).getEAnnotation(StereotypeNames.VDFP_ANNOTATION);

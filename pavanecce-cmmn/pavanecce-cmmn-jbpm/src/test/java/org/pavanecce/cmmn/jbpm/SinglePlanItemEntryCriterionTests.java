@@ -13,7 +13,6 @@ import org.kie.internal.task.api.EventService;
 import org.kie.internal.task.api.model.NotificationEvent;
 import org.pavanecce.cmmn.jbpm.instance.CaseInstance;
 import org.pavanecce.cmmn.jbpm.instance.CaseTaskLifecycleListener;
-import org.pavanecce.cmmn.jbpm.test.AbstractCmmnCaseTestCase;
 
 import test.ConstructionCase;
 import test.House;
@@ -85,6 +84,7 @@ public class SinglePlanItemEntryCriterionTests extends AbstractConstructionTestC
 		assertTaskTypeCreated(list, "PlanItemEnteredWhenTaskSuspended");
 	}
 
+	@Override
 	protected void assertTaskTypeCreated(List<TaskSummary> list, String expected) {
 		for (TaskSummary taskSummary : list) {
 			if(taskSummary.getName().equals(expected)){
@@ -133,10 +133,6 @@ public class SinglePlanItemEntryCriterionTests extends AbstractConstructionTestC
 
 	protected void givenThatTheTestCaseIsStarted() {
 		createRuntimeManager("test/SinglePlanItemEntryCriterionTests.cmmn");
-		@SuppressWarnings("unchecked")
-		EventService<JbpmServicesEventListener<NotificationEvent>, JbpmServicesEventListener<Task>> eventService = (EventService<JbpmServicesEventListener<NotificationEvent>, JbpmServicesEventListener<Task>>) getRuntimeEngine()
-				.getTaskService();
-		eventService.registerTaskLifecycleEventListener(new CaseTaskLifecycleListener(getRuntimeEngine().getKieSession()));
 		Map<String, Object> params = new HashMap<String, Object>();
 		getPersistence().start();
 

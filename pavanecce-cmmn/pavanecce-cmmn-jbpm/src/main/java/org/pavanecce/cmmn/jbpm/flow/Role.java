@@ -22,6 +22,7 @@ public class Role implements Serializable ,CMMNElement{
 		this.elementId=value;
 		
 	}
+	@Override
 	public String getElementId() {
 		return elementId;
 	}

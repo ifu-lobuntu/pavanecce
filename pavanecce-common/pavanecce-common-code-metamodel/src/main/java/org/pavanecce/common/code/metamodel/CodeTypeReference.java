@@ -58,6 +58,7 @@ public class CodeTypeReference implements Comparable<CodeTypeReference> {
 		return packageReference.hashCode() + lastName.hashCode();
 	}
 
+	@Override
 	public boolean equals(Object other) {
 		if (other instanceof CodeTypeReference) {
 			return compareTo((CodeTypeReference) other) == 0;
@@ -75,10 +76,26 @@ public class CodeTypeReference implements Comparable<CodeTypeReference> {
 
 	@Override
 	public int compareTo(CodeTypeReference o) {
-		if (packageReference.compareTo(o.packageReference) != 0) {
-			return packageReference.compareTo(o.packageReference);
+		int packageComparison = packageComparison(o);
+		if (packageComparison != 0) {
+			return packageComparison;
 		} else {
 			return lastName.compareTo(o.lastName);
+		}
+	}
+	protected int packageComparison(CodeTypeReference o) {
+		if(packageReference==null){
+			if(o.packageReference!=null){
+				return -1;
+			}else{
+				return 0;
+			}
+		}else{
+			if(o.packageReference!=null){
+				return packageReference.compareTo(o.packageReference);
+			}else{
+				return 1;
+			}
 		}
 	}
 

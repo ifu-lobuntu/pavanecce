@@ -108,7 +108,7 @@ public class OcmObjectPersistence implements ObjectPersistence {
 	}
 
 	public Object find(String identifier) {
-		return getSession().getObjectByUuid((String) identifier);
+		return getSession().getObjectByUuid(identifier);
 	}
 
 	public Node findNode(String identifier) {

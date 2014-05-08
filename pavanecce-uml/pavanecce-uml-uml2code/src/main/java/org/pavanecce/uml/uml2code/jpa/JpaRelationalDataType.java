@@ -14,6 +14,7 @@ public enum JpaRelationalDataType implements JpaDataTypeStrategy {
 			imports.add("javax.persistence.Basic");
 			imports.add("javax.persistence.Column");
 		}
+		@Override
 		public void beforeField(String padding, JavaCodeGenerator sb, CodeField field, RelationalColumn column) {
 			sb.append(padding);
 			sb.append("@Basic(");
@@ -39,6 +40,7 @@ public enum JpaRelationalDataType implements JpaDataTypeStrategy {
 			imports.add("javax.persistence.TemporalType");
 			imports.add("javax.persistence.Column");
 		}
+		@Override
 		public void beforeField(String padding, JavaCodeGenerator sb, CodeField field, RelationalColumn col) {
 			sb.append(padding);
 			sb.append("@Temporal(TemporalType.TIMESTAMP)\n");
@@ -60,6 +62,7 @@ public enum JpaRelationalDataType implements JpaDataTypeStrategy {
 			imports.add("javax.persistence.TemporalType");
 			imports.add("javax.persistence.Column");
 		}
+		@Override
 		public void beforeField(String padding, JavaCodeGenerator sb, CodeField field, RelationalColumn col) {
 			sb.append(padding);
 			sb.append("@Temporal(TemporalType.DATE)\n");
@@ -82,6 +85,7 @@ public enum JpaRelationalDataType implements JpaDataTypeStrategy {
 			imports.add("javax.persistence.Column");
 		}
 
+		@Override
 		public void beforeField(String padding, JavaCodeGenerator sb, CodeField field, RelationalColumn col) {
 			sb.append(padding);
 			sb.append("@Temporal(TemporalType.TIME)\n");
@@ -103,6 +107,7 @@ public enum JpaRelationalDataType implements JpaDataTypeStrategy {
 			imports.add("javax.persistence.Column");
 		}
 
+		@Override
 		public void beforeField(String padding, JavaCodeGenerator sb, CodeField field, RelationalColumn col) {
 			sb.append(padding);
 			sb.append("@Basic()\n");
@@ -124,6 +129,7 @@ public enum JpaRelationalDataType implements JpaDataTypeStrategy {
 			imports.add("javax.persistence.Column");
 		}
 
+		@Override
 		public void beforeField(String padding, JavaCodeGenerator sb, CodeField field, RelationalColumn col) {
 			sb.append(padding);
 			sb.append("@Basic()\n");
@@ -145,6 +151,7 @@ public enum JpaRelationalDataType implements JpaDataTypeStrategy {
 			imports.add("javax.persistence.Column");
 		}
 
+		@Override
 		public void beforeField(String padding, JavaCodeGenerator sb, CodeField field, RelationalColumn col) {
 			sb.append(padding);
 			sb.append("@Basic()\n");
@@ -166,6 +173,7 @@ public enum JpaRelationalDataType implements JpaDataTypeStrategy {
 			imports.add("javax.persistence.Column");
 		}
 
+		@Override
 		public void beforeField(String padding, JavaCodeGenerator sb, CodeField field, RelationalColumn col) {
 			sb.append(padding);
 			sb.append("@Lob()\n");
@@ -188,6 +196,7 @@ public enum JpaRelationalDataType implements JpaDataTypeStrategy {
 			imports.add("javax.persistence.Lob");
 		}
 
+		@Override
 		public void beforeField(String padding, JavaCodeGenerator sb, CodeField field, RelationalColumn col) {
 			sb.append(padding);
 			sb.append("@Lob()\n");

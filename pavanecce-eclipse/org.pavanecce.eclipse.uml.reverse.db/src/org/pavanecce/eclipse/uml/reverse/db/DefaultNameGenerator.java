@@ -20,6 +20,7 @@ public class DefaultNameGenerator implements INameGenerator{
 	public String calcTypeName(PersistentTable returnType){
 		return calcTypeName(returnType.getName());
 	}
+	@Override
 	public String calcPackagename(PersistentTable returnType){
 		return returnType.getSchema().getName();
 	}

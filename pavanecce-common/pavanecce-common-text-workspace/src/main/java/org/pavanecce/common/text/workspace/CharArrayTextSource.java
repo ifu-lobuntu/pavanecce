@@ -12,6 +12,7 @@ public class CharArrayTextSource implements TextSource{
 	public CharArrayTextSource(char[] charArray){
 		this.charArray = charArray;
 	}
+	@Override
 	public char[] toCharArray(){
 		if(charArray != null){
 			return charArray;
@@ -19,6 +20,7 @@ public class CharArrayTextSource implements TextSource{
 			return writer.toCharArray();
 		}
 	}
+	@Override
 	public boolean hasContent(){
 		return true;
 	}

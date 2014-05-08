@@ -32,14 +32,17 @@ public class JpaCaseSubscriptionInfo implements CaseSubscriptionInfo<JpaCaseFile
 		this.id = new JpaCaseSubscriptionKey(o);
 	}
 
+	@Override
 	public Set<? extends JpaCaseFileItemSubscriptionInfo> getCaseFileItemSubscriptions() {
 		return caseFileItemSubscriptions;
 	}
 
+	@Override
 	public void addCaseFileItemSubscription(JpaCaseFileItemSubscriptionInfo a) {
 		caseFileItemSubscriptions.add(a);
 	}
 
+	@Override
 	public void removeCaseFileItemSubscription(JpaCaseFileItemSubscriptionInfo a) {
 		caseFileItemSubscriptions.remove(a);
 	}

@@ -1,17 +1,18 @@
 package test;
+import test.House;
+import test.HousePlan;
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
+import org.apache.jackrabbit.ocm.manager.beanconverter.impl.ParentBeanConverterImpl;
+import org.apache.jackrabbit.ocm.manager.beanconverter.impl.ReferenceBeanConverterImpl;
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Bean;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
-import org.apache.jackrabbit.ocm.manager.beanconverter.impl.ParentBeanConverterImpl;
-import org.apache.jackrabbit.ocm.manager.beanconverter.impl.ReferenceBeanConverterImpl;
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Bean;
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
 @Node(jcrType = "test:roofPlan", discriminator = false)
 @Entity(name="RoofPlan")
 @Table(name="roof_plan")
@@ -31,6 +32,9 @@ public class RoofPlan{
   private String id = null;
   @Field(path=true)
   String path;
+  @Field(jcrName = "test:uuid", jcrType = "String")
+  @javax.persistence.Basic()
+  private String uuid=getUuid();
   public RoofPlan(){
   }
   public RoofPlan(HousePlan owner){
@@ -90,5 +94,20 @@ public class RoofPlan{
   }
   public void setPath(String value){
     this.path=value;
+  }
+  public int hashCode(){
+    return getUuid().hashCode();
+  }
+  public boolean equals(Object o){
+    return o instanceof RoofPlan && ((RoofPlan)o).getUuid().equals(getUuid());
+  }
+  public String getUuid(){
+    if(uuid==null){
+      uuid=java.util.UUID.randomUUID().toString();
+    }
+    return uuid;
+  }
+  public void setUuid(String uuid){
+    this.uuid=uuid;
   }
 }

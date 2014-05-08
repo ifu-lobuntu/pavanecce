@@ -45,6 +45,7 @@ public class OclProcessDialectTests extends AbstractCmmnCaseTestCase {
 		super(true, true, "org.jbpm.persistence.jpa");
 	}
 
+	@Override
 	protected Class<?>[] getClasses() {
 		return new Class<?>[] { ConstructionCase.class, HousePlan.class, House.class, Wall.class, WallPlan.class, RoofPlan.class, OcmCaseSubscriptionInfo.class, OcmCaseFileItemSubscriptionInfo.class,
 				RoomPlan.class };
@@ -103,6 +104,7 @@ public class OclProcessDialectTests extends AbstractCmmnCaseTestCase {
 		getPersistence().commit();
 	}
 
+	@Override
 	protected RuntimeManager createRuntimeManager(Strategy strategy, String identifier, String... process) {
 		Map<String, ResourceType> resources = new LinkedHashMap<String, ResourceType>();
 		for (String p : process) {
@@ -117,6 +119,7 @@ public class OclProcessDialectTests extends AbstractCmmnCaseTestCase {
 		return createRuntimeManager(strategy, resources, identifier);
 	}
 
+	@Override
 	protected RuntimeManager createRuntimeManager(String... processFile) {
 
 		ProcessDialectRegistry.setDialect("ocl", new OclProcessDialect());

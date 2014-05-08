@@ -1,21 +1,21 @@
 package test;
 import java.util.Date;
-
+import test.House;
+import test.HousePlan;
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Bean;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Bean;
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
 @Node(jcrType = "test:constructionCase", discriminator = false)
 @Entity(name="ConstructionCase")
 @Table(name="construction_case")
@@ -25,10 +25,10 @@ public class ConstructionCase{
   @Column(name="active")
   private Boolean active = false;
   @Bean(jcrName = "test:house")
-  @OneToOne(mappedBy="constructionCase",cascade=CascadeType.ALL)
+  @OneToOne(mappedBy="constructionCase",cascade=CascadeType.ALL,orphanRemoval=true)
   private House house = null;
   @Bean(jcrName = "test:housePlan")
-  @OneToOne(mappedBy="constructionCase",cascade=CascadeType.ALL)
+  @OneToOne(mappedBy="constructionCase",cascade=CascadeType.ALL,orphanRemoval=true)
   private HousePlan housePlan = null;
   @Field(uuid = true)
   @Id()
@@ -56,6 +56,9 @@ public class ConstructionCase{
   @Temporal(TemporalType.TIMESTAMP)
   @Column(name="start_date")
   private Date startDate = null;
+  @Field(jcrName = "test:uuid", jcrType = "String")
+  @javax.persistence.Basic()
+  private String uuid=getUuid();
   public ConstructionCase(){
   }
   public ConstructionCase(String path){
@@ -164,5 +167,20 @@ public class ConstructionCase{
   }
   public void zz_internalSetStartDate(Date value){
     this.startDate=value;
+  }
+  public int hashCode(){
+    return getUuid().hashCode();
+  }
+  public boolean equals(Object o){
+    return o instanceof ConstructionCase && ((ConstructionCase)o).getUuid().equals(getUuid());
+  }
+  public String getUuid(){
+    if(uuid==null){
+      uuid=java.util.UUID.randomUUID().toString();
+    }
+    return uuid;
+  }
+  public void setUuid(String uuid){
+    this.uuid=uuid;
   }
 }

@@ -6,12 +6,12 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
-import org.pavanecce.cmmn.jbpm.instance.CaseFileItemSubscriptionInfo;
+import org.pavanecce.cmmn.jbpm.instance.PersistedCaseFileItemSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.instance.CaseInstance;
 import org.pavanecce.cmmn.jbpm.instance.CaseSubscriptionInfo;
 
 @Entity
-public class JpaCaseFileItemSubscriptionInfo implements CaseFileItemSubscriptionInfo {
+public class JpaCaseFileItemSubscriptionInfo implements PersistedCaseFileItemSubscriptionInfo {
 	@Id
 	@GeneratedValue
 	private Long id;
@@ -32,15 +32,16 @@ public class JpaCaseFileItemSubscriptionInfo implements CaseFileItemSubscription
 
 	}
 
+	@Override
 	public String getRelatedItemName() {
 		return relatedItemName;
 	}
 
+	@Override
 	public void setRelatedItemName(String relatedItemName) {
 		this.relatedItemName = relatedItemName;
 	}
 
-	@Override
 	public JpaCaseSubscriptionInfo getCaseSubscription() {
 		return caseSubscription;
 	}

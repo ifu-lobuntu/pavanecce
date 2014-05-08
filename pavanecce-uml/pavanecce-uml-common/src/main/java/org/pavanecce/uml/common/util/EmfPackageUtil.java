@@ -135,7 +135,7 @@ public class EmfPackageUtil{
 		Element e=baseType;
 		Element container=null;
 		while((container=(Element) EmfElementFinder.getContainer(e))!=null){
-			e=(Element) container;
+			e=container;
 		}
 		return (Package)e;
 	}

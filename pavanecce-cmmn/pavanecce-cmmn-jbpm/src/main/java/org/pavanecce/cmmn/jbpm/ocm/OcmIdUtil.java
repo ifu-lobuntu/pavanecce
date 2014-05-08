@@ -10,6 +10,7 @@ public class OcmIdUtil extends AbstractIdUtil<String>{
 	
 
 
+	@Override
 	protected boolean isId(AnnotatedElement field) {
 		boolean isId=false;
 		if(field.isAnnotationPresent(org.apache.jackrabbit.ocm.mapper.impl.annotation.Field.class)){

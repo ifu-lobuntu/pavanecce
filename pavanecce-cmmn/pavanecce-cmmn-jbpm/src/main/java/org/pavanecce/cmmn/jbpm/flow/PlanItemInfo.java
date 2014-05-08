@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.jbpm.workflow.core.Node;
 import org.jbpm.workflow.core.NodeContainer;
 import org.jbpm.workflow.core.impl.ConnectionImpl;
 import org.jbpm.workflow.core.impl.NodeImpl;
@@ -34,10 +35,6 @@ public class PlanItemInfo {
 		return Collections.unmodifiableMap(exitCriteria);
 	}
 
-	public List<DataAssociation> getInAssociations() {
-		return definition.getInAssociations();
-	}
-
 	public void addEntryCriterionRef(String s) {
 		entryCriteria.put(s, null);
 	}
@@ -63,7 +60,7 @@ public class PlanItemInfo {
 	public void linkPlanItem() {
 		Set<Entry<String, Sentry>> entrySet = entryCriteria.entrySet();
 		for (Entry<String, Sentry> entry : entrySet) {
-			new ConnectionImpl(entry.getValue(), NodeImpl.CONNECTION_DEFAULT_TYPE, planItem, NodeImpl.CONNECTION_DEFAULT_TYPE);
+			new ConnectionImpl(entry.getValue(), Node.CONNECTION_DEFAULT_TYPE, planItem, Node.CONNECTION_DEFAULT_TYPE);
 		}
 		Set<Entry<String, Sentry>> exitSet = exitCriteria.entrySet();
 		for (Entry<String, Sentry> entry : exitSet) {

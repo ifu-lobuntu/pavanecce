@@ -39,6 +39,7 @@ public class CustomOclProblemHandler extends OCLProblemHandler{
 		diagnostics=null;
 		super.clearDiagnostic();
 	}
+	@Override
 	public BasicDiagnostic getDiagnostic(){
 		return diagnostics;
 	}

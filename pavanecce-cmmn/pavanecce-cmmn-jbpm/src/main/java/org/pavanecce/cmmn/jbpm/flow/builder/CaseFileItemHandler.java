@@ -36,6 +36,7 @@ public class CaseFileItemHandler extends BaseAbstractHandler implements Handler 
 		this.validPeers.add(Node.class);
 	}
 
+	@Override
 	public Object start(final String uri, final String localName, final Attributes attrs, final ExtensibleXmlParser parser) throws SAXException {
 		parser.startElementBuilder(localName, attrs);
 
@@ -67,11 +68,13 @@ public class CaseFileItemHandler extends BaseAbstractHandler implements Handler 
 		return variable;
 	}
 
+	@Override
 	public Object end(final String uri, final String localName, final ExtensibleXmlParser parser) throws SAXException {
 		parser.endElementBuilder();
 		return parser.getCurrent();
 	}
 
+	@Override
 	public Class<?> generateNodeFor() {
 		return CaseFileItem.class;
 	}

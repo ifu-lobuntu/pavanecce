@@ -56,6 +56,7 @@ public abstract class ManyToManySet<P,C> extends ManyToManyCollection<P,C> imple
 		return isConsolidated;
 	}
 
+	@Override
 	public Set<C> getCurrent() {
 		isConsolidated=true;
 		Collection<C> current = getDelegate();

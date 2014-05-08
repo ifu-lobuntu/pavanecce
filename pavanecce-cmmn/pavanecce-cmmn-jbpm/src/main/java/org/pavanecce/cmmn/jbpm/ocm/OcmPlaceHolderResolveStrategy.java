@@ -21,10 +21,12 @@ public class OcmPlaceHolderResolveStrategy extends JPAPlaceholderResolverStrateg
 		this.env = env;
 	}
 
+	@Override
 	public boolean accept(Object object) {
 		return OcmIdUtil.INSTANCE.isEntityObject(object);
 	}
 
+	@Override
 	public void write(ObjectOutputStream os, Object node) throws IOException {
 		Member idMember = OcmIdUtil.INSTANCE.findIdMember(node.getClass());
 		Object id = OcmIdUtil.INSTANCE.getId(idMember, node);
@@ -34,6 +36,7 @@ public class OcmPlaceHolderResolveStrategy extends JPAPlaceholderResolverStrateg
 		os.writeUTF((String) id);
 	}
 
+	@Override
 	public Object read(ObjectInputStream is) throws IOException, ClassNotFoundException {
 		String uuid = is.readUTF();
 		OcmFactory emf = (OcmFactory) env.get(OcmFactory.OBJECT_CONTENT_MANAGER_FACTORY);
@@ -41,6 +44,7 @@ public class OcmPlaceHolderResolveStrategy extends JPAPlaceholderResolverStrateg
 		return em.getObjectByUuid(uuid);
 	}
 
+	@Override
 	public byte[] marshal(Context context, ObjectOutputStream os, Object object) throws IOException {
 		ByteArrayOutputStream buff = new ByteArrayOutputStream();
 		ObjectOutputStream oos = new ObjectOutputStream(buff);
@@ -49,11 +53,13 @@ public class OcmPlaceHolderResolveStrategy extends JPAPlaceholderResolverStrateg
 		return buff.toByteArray();
 	}
 
+	@Override
 	public Object unmarshal(Context context, ObjectInputStream ois, byte[] object, ClassLoader classloader) throws IOException, ClassNotFoundException {
 		DroolsObjectInputStream is = new DroolsObjectInputStream(new ByteArrayInputStream(object), classloader);
 		return read(is);
 	}
 
+	@Override
 	public Context createContext() {
 		// no need for context
 		return null;

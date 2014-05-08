@@ -95,6 +95,7 @@ public class VersionNumber implements Comparable<VersionNumber>{
 			build = Integer.valueOf(split[4]);
 		}
 	}
+	@Override
 	public int compareTo(VersionNumber other){
 		if(major != null && other.major != null && !major.equals(other.major)){
 			return major - other.major;

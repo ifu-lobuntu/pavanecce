@@ -29,7 +29,6 @@ import org.pavanecce.uml.common.util.UmlResourceSetFactory;
 import org.pavanecce.uml.reverse.java.SimpleUmlGenerator;
 import org.pavanecce.uml.reverse.java.sourcemodel.SourceClass;
 import org.pavanecce.uml.reverse.java.sourcemodel.reflect.JavaDescriptorFactory;
-import org.pavanecce.uml.uml2code.codemodel.CodeModelBuilder;
 import org.pavanecce.uml.uml2code.codemodel.EmfCodeModelBuilder;
 import org.pavanecce.uml.uml2code.codemodel.UmlCodeModelVisitorAdaptor;
 import org.pavanecce.uml.uml2code.java.JavaCodeGenerator;
@@ -41,6 +40,7 @@ public class RoundTripTests extends AbstractPotentiallyJavaCompilingTest {
 
 	private UmlResourceSetFactory resourceSetFactory = new UmlResourceSetFactory(fileLocator);
 
+	@Override
 	@Before
 	public void setup() throws Exception {
 		super.setup();

@@ -12,6 +12,7 @@ import org.kie.api.runtime.process.NodeInstance;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItem;
 import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
 import org.pavanecce.cmmn.jbpm.flow.PlanItem;
+import org.pavanecce.cmmn.jbpm.flow.TaskDefinition;
 
 public class HumanTaskPlanItemInstance extends WorkItemNodeInstance {
 	private static final long serialVersionUID = 3200294767777991641L;
@@ -26,10 +27,11 @@ public class HumanTaskPlanItemInstance extends WorkItemNodeInstance {
 		return result;
 	}
 
+	@Override
 	protected WorkItem createWorkItem(WorkItemNode workItemNode) {
 		WorkItem result = super.createWorkItem(workItemNode);
 		PlanItem pi = (PlanItem) getNode();
-		for (CaseParameter cp : pi.getPlanInfo(). getDefinition().getInputs()) {
+		for (CaseParameter cp : ((TaskDefinition) pi.getPlanInfo().getDefinition()).getInputs()) {
 			ReturnValueEvaluator el = cp.getBindingRefinementEvaluator();
 			if (el != null) {
 				try {
@@ -45,7 +47,7 @@ public class HumanTaskPlanItemInstance extends WorkItemNodeInstance {
 				result.setParameter(cp.getName(), varContext.getVariable(variable.getName()));
 			}
 		}
-		//TODO subscribe to out parameters
+		// TODO subscribe to out parameters
 		return result;
 	}
 

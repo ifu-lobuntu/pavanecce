@@ -159,7 +159,7 @@ public abstract class AbstractPotentiallyJavaCompilingTest extends Assert {
 			// StringJavaFileObject(javaSourceName, javaSource) };
 
 			// the OSGi aware file manager
-			Iterable<? extends JavaFileObject> fos = standardFileManager.getJavaFileObjects((File[]) set.toArray(new File[set.size()]));
+			Iterable<? extends JavaFileObject> fos = standardFileManager.getJavaFileObjects(set.toArray(new File[set.size()]));
 			BundleJavaManager bundleFileManager = new BundleJavaManager(TestBundle.bundle, standardFileManager, options);
 			// OPtional::
 			{
@@ -170,10 +170,12 @@ public abstract class AbstractPotentiallyJavaCompilingTest extends Assert {
 				// provided with using the exact logic below.
 
 				ResourceResolver resourceResolver = new ResourceResolver() {
+					@Override
 					public URL getResource(BundleWiring bundleWiring, String name) {
 						return bundleWiring.getBundle().getResource(name);
 					}
 
+					@Override
 					public Collection<String> resolveResources(BundleWiring bundleWiring, String path, String filePattern, int options) {
 
 						// Use whatever magic you like here to provide

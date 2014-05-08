@@ -30,6 +30,7 @@ public class UmlCodeModelVisitorAdaptor extends AbstractUmlVisitorAdaptor<CodePa
 		super(interfacesToImplement);
 	}
 
+	@Override
 	public CodeModel getCodeModel() {
 		return codeModel;
 	}

@@ -47,6 +47,7 @@ public class CaseHandler extends PlanItemContainerHandler implements Handler {
 		}
 	}
 
+	@Override
 	public Object start(final String uri, final String localName, final Attributes attrs, final ExtensibleXmlParser parser) throws SAXException {
 		parser.startElementBuilder(localName, attrs);
 		String id = attrs.getValue("id");
@@ -92,6 +93,7 @@ public class CaseHandler extends PlanItemContainerHandler implements Handler {
 
 
 
+	@Override
 	public Object end(final String uri, final String localName, final ExtensibleXmlParser parser) throws SAXException {
 		parser.endElementBuilder();
 
@@ -121,7 +123,7 @@ public class CaseHandler extends PlanItemContainerHandler implements Handler {
 					}
 				}
 				linkParametersToCaseFileItems(variableScope, ht.getInputs());
-				linkParametersToCaseFileItems(variableScope, ht.getOutputParameters());
+				linkParametersToCaseFileItems(variableScope, ht.getOutputs());
 			}
 		}
 		linkPlanItems(process,parser);
@@ -139,6 +141,7 @@ public class CaseHandler extends PlanItemContainerHandler implements Handler {
 		}
 	}
 
+	@Override
 	public Class<?> generateNodeFor() {
 		return Case.class;
 	}

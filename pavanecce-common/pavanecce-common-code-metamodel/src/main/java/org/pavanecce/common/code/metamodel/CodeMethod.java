@@ -77,11 +77,13 @@ public class CodeMethod extends CodeBehaviour {
 	public boolean returnsResult() {
 		return getReturnType() != null;
 	}
+	@Override
 	public void setDeclaringClass(CodeClassifier declaringClass) {
 		super.setDeclaringClass(declaringClass);
 		declaringClass.getMethods().put(generateIdentifier(), this);
 	}
 
+	@Override
 	public String toString() {
 		if (getDeclaringClass() != null) {
 			return getDeclaringClass().getName() +  "." + generateIdentifier(getName(), getParameters());

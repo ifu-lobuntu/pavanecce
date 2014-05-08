@@ -19,7 +19,7 @@
 				</cmmn:caseFileItemOnPart>
 				<cmmn:ifPart>
 					<cmmn:condition language="http://www.omg.org/ocl">
-						<cmmn:body>housePlan.wallPlans->size() = 1</cmmn:body>
+						<cmmn:body>house.wallPlans->size() = 0 or (housePlan.wallPlans->size() = 1 and house.wallPlans->includesAll(housePlan.wallPlans)) </cmmn:body>
 					</cmmn:condition>
 				</cmmn:ifPart>
 			</cmmn:sentry>

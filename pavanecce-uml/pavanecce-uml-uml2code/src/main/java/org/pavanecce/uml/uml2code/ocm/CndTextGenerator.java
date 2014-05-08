@@ -32,7 +32,7 @@ public class CndTextGenerator extends AbstractTextGenerator {
 				} else {
 					Iterator<DocumentNodeType> iterator = superNodeTypes.iterator();
 					while (iterator.hasNext()) {
-						DocumentNodeType type = (DocumentNodeType) iterator.next();
+						DocumentNodeType type = iterator.next();
 						append(" ").append(type.getFullName());
 						if (iterator.hasNext()) {
 							append(", ");
@@ -51,6 +51,7 @@ public class CndTextGenerator extends AbstractTextGenerator {
 						appendChild(p);
 					}
 				}
+				appendExtraFields();
 				endLine();
 				if (documentNode.getChildren() != null) {
 					for (IChildDocument p : documentNode.getChildren()) {
@@ -67,6 +68,10 @@ public class CndTextGenerator extends AbstractTextGenerator {
 				appendNodeTypes(child);
 			}
 		}
+	}
+
+	public void appendExtraFields() {
+		
 	}
 
 	private void appendCollectionHolderType(ChildDocumentCollection p) {
@@ -87,7 +92,7 @@ public class CndTextGenerator extends AbstractTextGenerator {
 
 	private void appendChild(IChildDocument p) {
 		String typeName = p.getType().getFullName();
-		String fullName = ((IChildDocument) p).getFullName();
+		String fullName = p.getFullName();
 		if (p instanceof ChildDocument) {
 			append("  + ").append(fullName).append(" (").append(typeName).append(" )").endLine();
 		} else {

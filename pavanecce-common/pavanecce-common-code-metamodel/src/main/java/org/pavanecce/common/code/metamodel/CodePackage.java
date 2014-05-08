@@ -51,6 +51,7 @@ public class CodePackage extends CodeElement {
 		appendPath(result);
 		return result;
 	}
+	@Override
 	public String toString(){
 		if(this.parent!=null){
 			return this.parent.toString()+"."+getName();

@@ -68,7 +68,7 @@ public class IntrospectionUtil{
 	@SuppressWarnings("unchecked")
 	public static <T>Class<? extends T> getOriginalClass(T target){
 		Class<T> c = (Class<T>) target.getClass();
-		return (Class<T>) getOriginalClass(c);
+		return getOriginalClass(c);
 	}
 	@SuppressWarnings("unchecked")
 	public static <T>Class<? extends T> getOriginalClass(Class<? extends T> c){
@@ -131,7 +131,7 @@ public class IntrospectionUtil{
 	}
 	public static Class<?>[] getDependencyArray(Class<?> c,String...packages){
 		Set<Class<?>> result = getDependencies(c, packages);
-		return (Class<?>[]) result.toArray(new Class<?>[result.size()]);
+		return result.toArray(new Class<?>[result.size()]);
 	}
 	public static Set<Class<?>> getDependencies(Class<?> c,String...packages){
 		Set<Class<?>> result = new HashSet<Class<?>>();
@@ -267,7 +267,7 @@ public class IntrospectionUtil{
 		}catch(Exception e){
 			throw new RuntimeException(e);
 		}
-		return (Enum<?>[]) result.toArray(new Enum<?>[result.size()]);
+		return result.toArray(new Enum<?>[result.size()]);
 	}
 	public static Field getDeclaredField(Class<?> c,String name){
 		Field[] declaredFields = c.getDeclaredFields();

@@ -25,16 +25,15 @@ import javax.jcr.observation.EventIterator;
 import org.apache.jackrabbit.core.observation.SynchronousEventListener;
 import org.apache.jackrabbit.ocm.mapper.model.BeanDescriptor;
 import org.apache.jackrabbit.ocm.mapper.model.ClassDescriptor;
-import org.pavanecce.cmmn.jbpm.flow.CaseFileItem;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
 import org.pavanecce.cmmn.jbpm.instance.AbstractSubscriptionManager;
 import org.pavanecce.cmmn.jbpm.instance.CaseInstance;
 import org.pavanecce.cmmn.jbpm.instance.CaseSubscriptionKey;
 import org.pavanecce.cmmn.jbpm.instance.SubscriptionManager;
+import org.pavanecce.common.ObjectPersistence;
 import org.pavanecce.common.ocm.OcmFactory;
 
-public class OcmSubscriptionManager extends AbstractSubscriptionManager<OcmCaseSubscriptionInfo, OcmCaseFileItemSubscriptionInfo> implements
-		SubscriptionManager, SynchronousEventListener {
+public class OcmSubscriptionManager extends AbstractSubscriptionManager<OcmCaseSubscriptionInfo, OcmCaseFileItemSubscriptionInfo> implements SubscriptionManager, SynchronousEventListener {
 	private OcmCasePersistence persistence;
 	private OcmFactory factory;
 	private ThreadLocal<Set<Node>> updatedNodes = new ThreadLocal<Set<Node>>();
@@ -42,16 +41,6 @@ public class OcmSubscriptionManager extends AbstractSubscriptionManager<OcmCaseS
 
 	public void setOcmFactory(OcmFactory factory) {
 		this.factory = factory;
-	}
-
-	@Override
-	public void subscribe(CaseInstance process, CaseFileItem item, Object target) {
-		subscribeToUnknownNumberOfObjects(process, item, target, getPersistence());
-	}
-
-	@Override
-	public void unsubscribe(CaseInstance process, CaseFileItem caseFileItem, Object target) {
-		unsubscribeFromUnknownNumberOfObjects(process, getPersistence(), caseFileItem, target);
 	}
 
 	@Override
@@ -152,8 +141,7 @@ public class OcmSubscriptionManager extends AbstractSubscriptionManager<OcmCaseS
 		}
 	}
 
-	protected PropertyNodeInfo determinePropertyNodeInfo(Event event) throws RepositoryException, PathNotFoundException, ItemNotFoundException,
-			AccessDeniedException {
+	protected PropertyNodeInfo determinePropertyNodeInfo(Event event) throws RepositoryException, PathNotFoundException, ItemNotFoundException, AccessDeniedException {
 		String parentPath = event.getPath().substring(0, event.getPath().lastIndexOf("/"));
 		String jcrPropertyName = event.getPath().substring(event.getPath().lastIndexOf("/"));
 		PropertyNodeInfo info = new PropertyNodeInfo();
@@ -302,16 +290,13 @@ public class OcmSubscriptionManager extends AbstractSubscriptionManager<OcmCaseS
 
 							for (OcmCaseFileItemSubscriptionInfo si : i.getCaseFileItemSubscriptions()) {
 								if (si.getTransition() == standardEvent && si.getRelatedItemName() != null && si.getRelatedItemName().equals(propertyName)) {
-									if (currentNode.hasProperty(jcrPropertyName) && event.getType() == Event.PROPERTY_ADDED
-											|| standardEvent == CaseFileItemTransition.ADD_REFERENCE) {
+									if (currentNode.hasProperty(jcrPropertyName) && event.getType() == Event.PROPERTY_ADDED || standardEvent == CaseFileItemTransition.ADD_REFERENCE) {
 										fireReferenceAddedEvents(currentNode, jcrPropertyName, currentObject, si);
-									} else if (!currentNode.hasProperty(jcrPropertyName) && event.getType() == Event.PROPERTY_REMOVED
-											|| standardEvent == CaseFileItemTransition.REMOVE_REFERENCE) {
+									} else if (!currentNode.hasProperty(jcrPropertyName) && event.getType() == Event.PROPERTY_REMOVED || standardEvent == CaseFileItemTransition.REMOVE_REFERENCE) {
 										fireReferenceRemovedEvents(currentObject, si);
 									} else if (currentNode.hasProperty(jcrPropertyName) && event.getType() == Event.PROPERTY_CHANGED) {
 										/*
-										 * Now we're in trouble. We don't know
-										 * what is old and what is new
+										 * Now we're in trouble. We don't know what is old and what is new
 										 */
 										fireReferenceAddedEvents(currentNode, jcrPropertyName, currentObject, si);
 										fireReferenceRemovedEvents(currentObject, si);
@@ -330,8 +315,8 @@ public class OcmSubscriptionManager extends AbstractSubscriptionManager<OcmCaseS
 		}
 	}
 
-	protected void fireReferenceAddedEvents(Node currentNode, String jcrPropertyName, Object currentObject, OcmCaseFileItemSubscriptionInfo si)
-			throws PathNotFoundException, RepositoryException, ValueFormatException {
+	protected void fireReferenceAddedEvents(Node currentNode, String jcrPropertyName, Object currentObject, OcmCaseFileItemSubscriptionInfo si) throws PathNotFoundException, RepositoryException,
+			ValueFormatException {
 		Property prop = currentNode.getProperty(jcrPropertyName);
 		if (isPropertyMultiple(currentNode, jcrPropertyName)) {
 			Value[] values = prop.getValues();
@@ -347,8 +332,7 @@ public class OcmSubscriptionManager extends AbstractSubscriptionManager<OcmCaseS
 
 	protected void fireReferenceRemovedEvents(Object currentObject, OcmCaseFileItemSubscriptionInfo si) {
 		/*
-		 * TODO This is not good enough. Still need to get the old value from
-		 * somewhere
+		 * TODO This is not good enough. Still need to get the old value from somewhere
 		 */
 		Object oldValue = currentObject;
 		fireEvent(si, currentObject, oldValue);
@@ -387,6 +371,11 @@ public class OcmSubscriptionManager extends AbstractSubscriptionManager<OcmCaseS
 			persistence.start();
 		}
 		return persistence;
+	}
+
+	@Override
+	public ObjectPersistence getObjectPersistence(CaseInstance p) {
+		return getPersistence();
 	}
 
 }

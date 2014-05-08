@@ -66,7 +66,7 @@ public class EmfElementFinder {
 			if(p.getOtherEnd() != null && p.isNavigable()){
 				return p.getOtherEnd().getType();
 			}else{
-				return (Element) s.eContainer();
+				return s.eContainer();
 			}
 		}else if(s instanceof InterfaceRealization){
 			return ((InterfaceRealization) s).getImplementingClassifier();

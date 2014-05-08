@@ -15,7 +15,6 @@ import org.kie.internal.task.api.model.NotificationEvent;
 import org.pavanecce.cmmn.jbpm.instance.CaseInstance;
 import org.pavanecce.cmmn.jbpm.instance.CaseTaskLifecycleListener;
 import org.pavanecce.cmmn.jbpm.instance.CaseTaskWorkItemHandler;
-import org.pavanecce.cmmn.jbpm.test.AbstractCmmnCaseTestCase;
 
 import test.ConstructionCase;
 import test.House;
@@ -35,7 +34,7 @@ public class StageTests extends AbstractConstructionTestCase {
 	}
 
 	@Test
-	public void testStage() throws Exception {
+	public void testStageTriggered() throws Exception {
 		// *****GIVEN
 		givenThatTheTestCaseIsStarted();
 		triggerStartOfTask();
@@ -50,17 +49,9 @@ public class StageTests extends AbstractConstructionTestCase {
 	}
 
 	protected void givenThatTheTestCaseIsStarted() {
-		RuntimeManager runtimeManager = createRuntimeManager("test/StageTests.cmmn");
-		@SuppressWarnings("unchecked")
-		EventService<JbpmServicesEventListener<NotificationEvent>, JbpmServicesEventListener<Task>> eventService = (EventService<JbpmServicesEventListener<NotificationEvent>, JbpmServicesEventListener<Task>>) getRuntimeEngine()
-				.getTaskService();
-		eventService.registerTaskLifecycleEventListener(new CaseTaskLifecycleListener(getRuntimeEngine().getKieSession()));
-		CaseTaskWorkItemHandler handler = new CaseTaskWorkItemHandler();
-		handler.setRuntimeManager(runtimeManager);
-		getRuntimeEngine().getKieSession().getWorkItemManager().registerWorkItemHandler("Human Task", handler);
+		createRuntimeManager("test/StageTests.cmmn");
 		Map<String, Object> params = new HashMap<String, Object>();
 		getPersistence().start();
-		
 		ConstructionCase cc = new ConstructionCase("/cases/case1");
 		housePlan = new HousePlan(cc);
 		house = new House(cc);

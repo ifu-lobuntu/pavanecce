@@ -62,6 +62,7 @@ public class CodeField extends CodeElement {
 
 	}
 
+	@Override
 	public String toString() {
 		if (this.type != null) {
 			return getName() + ":" + this.type.toString();

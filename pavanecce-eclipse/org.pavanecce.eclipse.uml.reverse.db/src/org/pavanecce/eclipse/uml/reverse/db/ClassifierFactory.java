@@ -67,7 +67,7 @@ public class ClassifierFactory {
 		this.componentStereotype = findInProfiles(model, "Component");
 		final TreeIterator<EObject> iter = model.eAllContents();
 		while (iter.hasNext()) {
-			EObject eObject = (EObject) iter.next();
+			EObject eObject = iter.next();
 			if (eObject instanceof Class) {
 				maybePutClassInMap((Class) eObject);
 			}
@@ -219,7 +219,7 @@ public class ClassifierFactory {
 			if (model instanceof Component) {
 				childPackage = (Namespace) ((Component) model).createPackagedElement(name, UMLPackage.eINSTANCE.getPackage());
 			} else if (model instanceof Package) {
-				childPackage = ((Package) model).createNestedPackage(name);
+				childPackage = model.createNestedPackage(name);
 				if (getPackageStereotype() != null) {
 					childPackage.applyStereotype(getPackageStereotype());
 					childPackage.setValue(getPackageStereotype(), PERSISTENT_NAME, name);
@@ -255,17 +255,17 @@ public class ClassifierFactory {
 		if (dataType instanceof PredefinedDataType) {
 			Package umlLibrary = getImportedPackage(model, UMLResource.UML_PRIMITIVE_TYPES_LIBRARY_URI);
 			if (dataType instanceof BooleanDataType) {
-				result = (PrimitiveType) umlLibrary.getOwnedType("Boolean");
+				result = umlLibrary.getOwnedType("Boolean");
 			} else if (dataType instanceof CharacterStringDataType) {
-				result = (PrimitiveType) umlLibrary.getOwnedType("String");
+				result = umlLibrary.getOwnedType("String");
 			} else if (dataType instanceof IntegerDataType) {
 				if (dataType.getName().equalsIgnoreCase("bool") || dataType.getName().equalsIgnoreCase("boolean") || dataType.getName().equalsIgnoreCase("bit")) {
-					result = (PrimitiveType) umlLibrary.getOwnedType("Boolean");
+					result = umlLibrary.getOwnedType("Boolean");
 				} else {
-					result = (PrimitiveType) umlLibrary.getOwnedType("Integer");
+					result = umlLibrary.getOwnedType("Integer");
 				}
 			} else if (dataType instanceof FixedPrecisionDataType || dataType instanceof ApproximateNumericDataType) {
-				result = (PrimitiveType) umlLibrary.getOwnedType("Real");
+				result = umlLibrary.getOwnedType("Real");
 			} else if (dataType instanceof DateDataType) {
 				result = findInImports(model, "DateTime");
 			} else if (dataType instanceof TimeDataType) {

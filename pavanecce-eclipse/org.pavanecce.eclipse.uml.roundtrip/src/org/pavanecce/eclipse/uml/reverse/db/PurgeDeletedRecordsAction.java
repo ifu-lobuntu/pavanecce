@@ -70,6 +70,7 @@ public class PurgeDeletedRecordsAction extends Action {
 						@Override
 						public void run() {
 							new Window(Display.getDefault().getActiveShell()) {
+								@Override
 								protected Control createContents(Composite parent) {
 									this.constrainShellSize();
 									ScrolledComposite scrolledComposite = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
@@ -83,10 +84,10 @@ public class PurgeDeletedRecordsAction extends Action {
 							}.open();
 						}
 					});
-					return new Status(Status.OK, CommonEclipsePlugin.PLUGIN_ID, "Records deleted successfully");
+					return new Status(IStatus.OK, CommonEclipsePlugin.PLUGIN_ID, "Records deleted successfully");
 				} catch (Exception e) {
 					e.printStackTrace();
-					return new Status(Status.ERROR, CommonEclipsePlugin.PLUGIN_ID, "Deletion failed", e);
+					return new Status(IStatus.ERROR, CommonEclipsePlugin.PLUGIN_ID, "Deletion failed", e);
 				} finally {
 					monitor.done();
 				}
@@ -146,7 +147,7 @@ public class PurgeDeletedRecordsAction extends Action {
 				try {
 					droppedForeignKeys.add(fk);
 					PersistentTable baseTable = (PersistentTable) fk.getBaseTable();
-					Connection jdbcConn = (Connection) ((JDBCTable) baseTable).getConnection();
+					Connection jdbcConn = ((JDBCTable) baseTable).getConnection();
 					Statement st = jdbcConn.createStatement();
 					String swl = "alter table " + fk.getBaseTable().getSchema().getName() + "." + fk.getBaseTable().getName() + " drop constraint " + fk.getName();
 					out.println(swl);
@@ -262,7 +263,7 @@ public class PurgeDeletedRecordsAction extends Action {
 				try {
 					pm.subTask(fk.getBaseTable().getName() + "->" + fk.getUniqueConstraint().getBaseTable().getName());
 					PersistentTable baseTable = (PersistentTable) fk.getBaseTable();
-					Connection jdbcConn = (Connection) ((JDBCTable) baseTable).getConnection();
+					Connection jdbcConn = ((JDBCTable) baseTable).getConnection();
 					Statement st = jdbcConn.createStatement();
 					PersistentTable referencedTable = getReferencedTable(fk);
 					List<Column> referencedMembers = getReferencedColumns(fk);

@@ -159,6 +159,7 @@ public class JavaJdtClass extends JdtAnnotated implements SourceClass {
 		return methods;
 	}
 
+	@Override
 	public SourceClass getBaseType() {
 		return baseType;
 	}

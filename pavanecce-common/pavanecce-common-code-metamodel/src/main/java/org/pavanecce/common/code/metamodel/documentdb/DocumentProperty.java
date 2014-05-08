@@ -17,9 +17,11 @@ public class DocumentProperty implements IDocumentElement, IDocumentProperty {
 		this.multiple=isMany;
 		this.propertyType=type;
 	}
+	@Override
 	public boolean isMultiple() {
 		return multiple;
 	}
+	@Override
 	public boolean isMandatory() {
 		return required;
 	}
@@ -32,6 +34,7 @@ public class DocumentProperty implements IDocumentElement, IDocumentProperty {
 		return name;
 	}
 
+	@Override
 	public String getFullName() {
 		return namespace.getPrefix() + ":" + getName();
 	}

@@ -51,7 +51,7 @@ public class JavaDescriptorFactory {
 	public SourceCode getSource(IMethodBinding binding) {
 		JavaJdtClass dc = getClassDescriptor(binding.getDeclaringClass());
 		if (dc.getAst() instanceof TypeDeclaration) {
-			JavaJdtClass jdtClss = (JavaJdtClass) dc;
+			JavaJdtClass jdtClss = dc;
 			TypeDeclaration td = (TypeDeclaration) jdtClss.getAst();
 			for (final MethodDeclaration m : td.getMethods()) {
 				IMethod iMethod = (IMethod) binding.getMethodDeclaration().getJavaElement();

@@ -56,6 +56,7 @@ public abstract class OneToManySet<P,C> extends OneToManyCollection<P,C> impleme
 		return isConsolidated;
 	}
 
+	@Override
 	public Set<C> getCurrent() {
 		isConsolidated=true;
 		Collection<C> current = getDelegate();

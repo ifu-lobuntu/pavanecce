@@ -19,10 +19,12 @@ public abstract class TwoWayCollection<C> implements Collection<C>{
 
 	protected abstract Collection<C> getCurrent() ;
 
+	@Override
 	public <T> T[] toArray(T[] a) {
 		return getCurrent().toArray(a);
 	}
 
+	@Override
 	public boolean containsAll(Collection<?> c) {
 		boolean containsAll=true;
 		for (Object object : c) {
@@ -77,7 +79,7 @@ public abstract class TwoWayCollection<C> implements Collection<C>{
 		boolean changed=false;
 		Iterator<C> iterator = iterator();
 		while (iterator.hasNext()) {
-			C c2 = (C) iterator.next();
+			C c2 = iterator.next();
 			if(!c.contains(c2)){
 				changed=true;
 				iterator.remove();

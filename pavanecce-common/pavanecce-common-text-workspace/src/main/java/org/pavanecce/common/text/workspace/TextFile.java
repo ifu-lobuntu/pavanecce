@@ -19,7 +19,7 @@ public class TextFile extends TextOutputNode{
 		if(getParent() instanceof SourceFolder){
 			return getName();
 		}else{
-			return ((TextDirectory) getParent()).getSourceFolderRelativePath() + File.separator + getName();
+			return getParent().getSourceFolderRelativePath() + File.separator + getName();
 		}
 	}
 	/**

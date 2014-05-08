@@ -48,7 +48,7 @@
     
         <!--BAM for task service -->
         <class>org.jbpm.services.task.impl.model.BAMTaskSummaryImpl</class>
-        <!-- CMMN EVent managment -->
+        <!-- CMMN Event managment -->
         <class>org.pavanecce.cmmn.jbpm.jpa.JpaCaseFileItemSubscriptionInfo</class>
         <class>org.pavanecce.cmmn.jbpm.jpa.JpaCaseSubscriptionInfo</class>
         <!-- Customer entities -->
@@ -65,16 +65,17 @@
         <properties>
             <property name="hibernate.max_fetch_depth" value="3"/>
             <property name="hibernate.hbm2ddl.auto" value="create" />
-            <property name="hibernate.show_sql" value="false" />
+            <property name="hibernate.show_sql" value="true" />
             
             <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
             
             <!-- BZ 841786: AS7/EAP 6/Hib 4 uses new (sequence) generators which seem to cause problems -->      
             <property name="hibernate.id.new_generator_mappings" value="false" />            
             <property name="hibernate.transaction.jta.platform" value="org.hibernate.service.jta.platform.internal.BitronixJtaPlatform" />
-            <property name="hibernate.ejb.event.post-update" value="org.pavanecce.cmmn.jbpm.jpa.HibernateSubscriptionManager" />
+            <property name="hibernate.ejb.event.post-insert" value="org.pavanecce.cmmn.jbpm.jpa.HibernateSubscriptionManager" />
             <property name="hibernate.ejb.event.flush-entity" value="org.pavanecce.cmmn.jbpm.jpa.HibernateSubscriptionManager" />
-            <property name="hibernate.ejb.event.pre-collection-update" value="org.pavanecce.cmmn.jbpm.jpa.HibernateSubscriptionManager"/>
+            <property name="hibernate.ejb.event.flush" value="org.pavanecce.cmmn.jbpm.jpa.HibernateSubscriptionManager" />
+            <property name="hibernate.ejb.event.post-delete" value="org.pavanecce.cmmn.jbpm.jpa.HibernateSubscriptionManager"/>
         </properties>        
     </persistence-unit>
 </persistence>    

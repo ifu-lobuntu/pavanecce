@@ -82,7 +82,7 @@ public class BundleJavaManager extends ForwardingJavaFileManager<JavaFileManager
 
 		_log.log("Initializing compilation in OSGi for bundle " + _bundle.getSymbolicName() + "-" + _bundle.getVersion());
 
-		_bundleWiring = (BundleWiring) _bundle.adapt(BundleWiring.class);
+		_bundleWiring = _bundle.adapt(BundleWiring.class);
 
 		_classLoader = _bundleWiring.getClassLoader();
 

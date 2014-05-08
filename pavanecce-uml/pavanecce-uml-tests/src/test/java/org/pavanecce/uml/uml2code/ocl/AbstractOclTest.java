@@ -4,6 +4,7 @@ import javax.script.ScriptException;
 
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.uml2.uml.Type;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.pavanecce.common.util.ConstructionCaseExample;
@@ -20,7 +21,12 @@ public abstract class AbstractOclTest extends Assert {
 		example.after();
 	}
 
-	protected final static <T> EList<T> list(T... t) {
+	protected final static <T> EList<T> emptyList(Class<T> class1) {
+		BasicEList<T> result = new BasicEList<T>();
+		return result;
+	}
+
+	protected final static <T> EList<T> list(@SuppressWarnings("unchecked") T... t) {
 		BasicEList<T> result = new BasicEList<T>();
 		for (T t2 : t) {
 			result.add(t2);

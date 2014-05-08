@@ -7,7 +7,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
-public class CommonEclipsePlugin extends AbstractUIPlugin  {
+public class CommonEclipsePlugin extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "org.pavanecce.eclipse.common";
 
 	private static CommonEclipsePlugin plugin;
@@ -22,7 +22,6 @@ public class CommonEclipsePlugin extends AbstractUIPlugin  {
 			resourceBundle = null;
 		}
 	}
-
 
 	public static CommonEclipsePlugin getDefault() {
 		return plugin;
@@ -45,7 +44,6 @@ public class CommonEclipsePlugin extends AbstractUIPlugin  {
 		return getDefault().getBundle().getSymbolicName();
 	}
 
-
 	public static String getId() {
 		return PLUGIN_ID;
 	}
@@ -64,5 +62,4 @@ public class CommonEclipsePlugin extends AbstractUIPlugin  {
 		return result;
 	}
 
-	
 }

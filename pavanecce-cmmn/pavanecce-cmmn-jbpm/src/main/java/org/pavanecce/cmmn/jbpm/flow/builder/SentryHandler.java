@@ -27,6 +27,7 @@ public class SentryHandler extends AbstractPlanModelElementHandler implements Ha
 		super.validParents.add(Stage.class);
 	}
 
+	@Override
 	public Object start(final String uri, final String localName, final Attributes attrs, final ExtensibleXmlParser parser) throws SAXException {
 		parser.startElementBuilder(localName, attrs);
 		SimpleSentry node = new SimpleSentry();
@@ -35,6 +36,7 @@ public class SentryHandler extends AbstractPlanModelElementHandler implements Ha
 		return node;
 	}
 
+	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Class generateNodeFor() {
 		return Sentry.class;

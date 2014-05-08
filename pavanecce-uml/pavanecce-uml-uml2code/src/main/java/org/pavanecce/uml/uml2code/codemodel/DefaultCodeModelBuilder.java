@@ -38,26 +38,32 @@ public class DefaultCodeModelBuilder extends AbstractBuilder<CodePackage, CodeCl
 		return umlToCodeReferenceMap.packagePathname(pkg);
 	}
 
+	@Override
 	public CodeClass visitClass(Class c, CodePackage codePackage) {
 		return (CodeClass) codePackage.getClassifiers().get(c.getName());
 	}
 
+	@Override
 	public CodePackage visitPackage(Package pkg, CodePackage parent) {
 		return parent.getChildren().get(pkg.getName());
 	}
 
+	@Override
 	public CodePackage visitModel(Model model) {
 		return codeModel.getChildren().get(model.getName());
 	}
 
+	@Override
 	public void visitProperty(Property property, CodeClass codeClass) {
 
 	}
 
+	@Override
 	public void initialize(SortedSet<Model> models, CodePackage codeModel) {
 		this.codeModel = (CodeModel) codeModel;
 	}
 
+	@Override
 	public void visitOperation(Operation operation, CodeClass codeClass) {
 
 	}

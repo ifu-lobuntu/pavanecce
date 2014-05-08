@@ -30,6 +30,7 @@ public class CaseFileItemDefinition implements Serializable ,CMMNElement{
 		this.structureRef = structureRef;
 	}
 
+	@Override
 	public String getElementId() {
 		return id;
 	}

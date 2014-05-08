@@ -1,145 +1,145 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<uml:Model xmi:version="20110701" xmlns:xmi="http://www.omg.org/spec/XMI/20110701" xmlns:uml="http://www.eclipse.org/uml2/4.0.0/UML" xmi:id="_xhED8NXOEeOyurfjAB6g9A" name="test">
-  <packageImport xmi:id="_xhRfUNXOEeOyurfjAB6g9A">
+<uml:Model xmi:version="20110701" xmlns:xmi="http://www.omg.org/spec/XMI/20110701" xmlns:uml="http://www.eclipse.org/uml2/4.0.0/UML" xmi:id="_OP5SINbbEeOWi5Dlhh8NIw" name="test">
+  <packageImport xmi:id="_OSdd8NbbEeOWi5Dlhh8NIw">
     <importedPackage xmi:type="uml:Model" href="pathmap://VDFP_MODELS/libraries/StandardSimpleTypes.uml#_ietxEBt8EeO1Et3dhYErGQ"/>
   </packageImport>
-  <packagedElement xmi:type="uml:Class" xmi:id="_xhRfUdXOEeOyurfjAB6g9A" name="ConstructionCase">
-    <ownedAttribute xmi:id="_xhRfUtXOEeOyurfjAB6g9A" name="name">
+  <packagedElement xmi:type="uml:Class" xmi:id="_OSlZwNbbEeOWi5Dlhh8NIw" name="ConstructionCase">
+    <ownedAttribute xmi:id="_OSmA0NbbEeOWi5Dlhh8NIw" name="name">
       <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
     </ownedAttribute>
-    <ownedAttribute xmi:id="_xhRfU9XOEeOyurfjAB6g9A" name="startDate">
+    <ownedAttribute xmi:id="_OSmA0dbbEeOWi5Dlhh8NIw" name="startDate">
       <type xmi:type="uml:DataType" href="pathmap://VDFP_MODELS/libraries/StandardSimpleTypes.uml#_xck3gBt8EeO1Et3dhYErGQ"/>
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_xhRfVNXOEeOyurfjAB6g9A"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_OSmn4NbbEeOWi5Dlhh8NIw"/>
     </ownedAttribute>
-    <ownedAttribute xmi:id="_xhRfVdXOEeOyurfjAB6g9A" name="active">
+    <ownedAttribute xmi:id="_OSmn4dbbEeOWi5Dlhh8NIw" name="active">
       <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_xhRfVtXOEeOyurfjAB6g9A"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_OSnO8NbbEeOWi5Dlhh8NIw"/>
     </ownedAttribute>
-    <ownedAttribute xmi:id="_xhRfV9XOEeOyurfjAB6g9A" name="numberOfWalls">
+    <ownedAttribute xmi:id="_OSnO8dbbEeOWi5Dlhh8NIw" name="numberOfWalls">
       <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_xhRfWNXOEeOyurfjAB6g9A"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_OSnO8tbbEeOWi5Dlhh8NIw"/>
     </ownedAttribute>
-    <ownedAttribute xmi:id="_xhRfWdXOEeOyurfjAB6g9A" name="pricePerSquareMetre">
+    <ownedAttribute xmi:id="_OSnO89bbEeOWi5Dlhh8NIw" name="pricePerSquareMetre">
       <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Real"/>
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_xhRfWtXOEeOyurfjAB6g9A"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_OSnO9NbbEeOWi5Dlhh8NIw"/>
     </ownedAttribute>
-    <ownedAttribute xmi:id="_xhRfW9XOEeOyurfjAB6g9A" name="picture">
+    <ownedAttribute xmi:id="_OSnO9dbbEeOWi5Dlhh8NIw" name="picture">
       <type xmi:type="uml:DataType" href="pathmap://VDFP_MODELS/libraries/StandardSimpleTypes.uml#_xdIewCHrEeO5Q4_tiCIL_g"/>
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_xhRfXNXOEeOyurfjAB6g9A"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_OSn2ANbbEeOWi5Dlhh8NIw"/>
     </ownedAttribute>
   </packagedElement>
-  <packagedElement xmi:type="uml:Class" xmi:id="_xhSGYNXOEeOyurfjAB6g9A" name="House">
-    <ownedAttribute xmi:id="_xhSGadXOEeOyurfjAB6g9A" name="description">
+  <packagedElement xmi:type="uml:Class" xmi:id="_OSn2AdbbEeOWi5Dlhh8NIw" name="House">
+    <ownedAttribute xmi:id="_OSqSQ9bbEeOWi5Dlhh8NIw" name="description">
       <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
     </ownedAttribute>
   </packagedElement>
-  <packagedElement xmi:type="uml:Association" xmi:id="_xhSGYdXOEeOyurfjAB6g9A" name="ConstructionCaseHouse" memberEnd="_xhSGYtXOEeOyurfjAB6g9A _xhSGZdXOEeOyurfjAB6g9A" navigableOwnedEnd="_xhSGYtXOEeOyurfjAB6g9A _xhSGZdXOEeOyurfjAB6g9A">
-    <ownedEnd xmi:id="_xhSGYtXOEeOyurfjAB6g9A" name="house" type="_xhSGYNXOEeOyurfjAB6g9A" aggregation="composite" association="_xhSGYdXOEeOyurfjAB6g9A">
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_xhSGZNXOEeOyurfjAB6g9A" value="1"/>
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_xhSGY9XOEeOyurfjAB6g9A" value="1"/>
+  <packagedElement xmi:type="uml:Association" xmi:id="_OSn2AtbbEeOWi5Dlhh8NIw" name="ConstructionCaseHouse" memberEnd="_OSprMNbbEeOWi5Dlhh8NIw _OSprM9bbEeOWi5Dlhh8NIw" navigableOwnedEnd="_OSprMNbbEeOWi5Dlhh8NIw _OSprM9bbEeOWi5Dlhh8NIw">
+    <ownedEnd xmi:id="_OSprMNbbEeOWi5Dlhh8NIw" name="house" type="_OSn2AdbbEeOWi5Dlhh8NIw" aggregation="composite" association="_OSn2AtbbEeOWi5Dlhh8NIw">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_OSprMtbbEeOWi5Dlhh8NIw" value="1"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_OSprMdbbEeOWi5Dlhh8NIw" value="1"/>
     </ownedEnd>
-    <ownedEnd xmi:id="_xhSGZdXOEeOyurfjAB6g9A" name="constructionCase" type="_xhRfUdXOEeOyurfjAB6g9A" association="_xhSGYdXOEeOyurfjAB6g9A">
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_xhSGZ9XOEeOyurfjAB6g9A" value="1"/>
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_xhSGZtXOEeOyurfjAB6g9A" value="1"/>
-    </ownedEnd>
-  </packagedElement>
-  <packagedElement xmi:type="uml:Class" xmi:id="_xhSGaNXOEeOyurfjAB6g9A" name="HousePlan"/>
-  <packagedElement xmi:type="uml:Class" xmi:id="_xhSGatXOEeOyurfjAB6g9A" name="RoofPlan"/>
-  <packagedElement xmi:type="uml:Association" xmi:id="_xhSGa9XOEeOyurfjAB6g9A" name="ConstructionCaseHousePlan" memberEnd="_xhSGbNXOEeOyurfjAB6g9A _xhSGb9XOEeOyurfjAB6g9A" navigableOwnedEnd="_xhSGbNXOEeOyurfjAB6g9A _xhSGb9XOEeOyurfjAB6g9A">
-    <ownedEnd xmi:id="_xhSGbNXOEeOyurfjAB6g9A" name="housePlan" type="_xhSGaNXOEeOyurfjAB6g9A" aggregation="composite" association="_xhSGa9XOEeOyurfjAB6g9A">
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_xhSGbtXOEeOyurfjAB6g9A" value="1"/>
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_xhSGbdXOEeOyurfjAB6g9A" value="1"/>
-    </ownedEnd>
-    <ownedEnd xmi:id="_xhSGb9XOEeOyurfjAB6g9A" name="constructionCase" type="_xhRfUdXOEeOyurfjAB6g9A" association="_xhSGa9XOEeOyurfjAB6g9A">
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_xhSGcdXOEeOyurfjAB6g9A" value="1"/>
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_xhSGcNXOEeOyurfjAB6g9A" value="1"/>
+    <ownedEnd xmi:id="_OSprM9bbEeOWi5Dlhh8NIw" name="constructionCase" type="_OSlZwNbbEeOWi5Dlhh8NIw" association="_OSn2AtbbEeOWi5Dlhh8NIw">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_OSqSQdbbEeOWi5Dlhh8NIw" value="1"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_OSqSQNbbEeOWi5Dlhh8NIw" value="1"/>
     </ownedEnd>
   </packagedElement>
-  <packagedElement xmi:type="uml:Association" xmi:id="_xhSGctXOEeOyurfjAB6g9A" name="HousePlanRoofPlan" memberEnd="_xhSGc9XOEeOyurfjAB6g9A _xhSGdtXOEeOyurfjAB6g9A" navigableOwnedEnd="_xhSGc9XOEeOyurfjAB6g9A _xhSGdtXOEeOyurfjAB6g9A">
-    <ownedEnd xmi:id="_xhSGc9XOEeOyurfjAB6g9A" name="roofPlan" type="_xhSGatXOEeOyurfjAB6g9A" aggregation="composite" association="_xhSGctXOEeOyurfjAB6g9A">
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_xhSGddXOEeOyurfjAB6g9A"/>
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_xhSGdNXOEeOyurfjAB6g9A" value="1"/>
+  <packagedElement xmi:type="uml:Class" xmi:id="_OSqSQtbbEeOWi5Dlhh8NIw" name="HousePlan"/>
+  <packagedElement xmi:type="uml:Class" xmi:id="_OSqSRNbbEeOWi5Dlhh8NIw" name="RoofPlan"/>
+  <packagedElement xmi:type="uml:Association" xmi:id="_OSq5UNbbEeOWi5Dlhh8NIw" name="ConstructionCaseHousePlan" memberEnd="_OSq5UdbbEeOWi5Dlhh8NIw _OSq5VNbbEeOWi5Dlhh8NIw" navigableOwnedEnd="_OSq5UdbbEeOWi5Dlhh8NIw _OSq5VNbbEeOWi5Dlhh8NIw">
+    <ownedEnd xmi:id="_OSq5UdbbEeOWi5Dlhh8NIw" name="housePlan" type="_OSqSQtbbEeOWi5Dlhh8NIw" aggregation="composite" association="_OSq5UNbbEeOWi5Dlhh8NIw">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_OSq5U9bbEeOWi5Dlhh8NIw" value="1"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_OSq5UtbbEeOWi5Dlhh8NIw" value="1"/>
     </ownedEnd>
-    <ownedEnd xmi:id="_xhSGdtXOEeOyurfjAB6g9A" name="housePlan" type="_xhSGaNXOEeOyurfjAB6g9A" association="_xhSGctXOEeOyurfjAB6g9A">
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_xhSGeNXOEeOyurfjAB6g9A" value="1"/>
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_xhSGd9XOEeOyurfjAB6g9A" value="1"/>
-    </ownedEnd>
-  </packagedElement>
-  <packagedElement xmi:type="uml:Association" xmi:id="_xhSGedXOEeOyurfjAB6g9A" name="HouseRoofPlan" memberEnd="_xhSGetXOEeOyurfjAB6g9A _xhSGfdXOEeOyurfjAB6g9A" navigableOwnedEnd="_xhSGetXOEeOyurfjAB6g9A _xhSGfdXOEeOyurfjAB6g9A">
-    <ownedEnd xmi:id="_xhSGetXOEeOyurfjAB6g9A" name="roofPlan" type="_xhSGatXOEeOyurfjAB6g9A" association="_xhSGedXOEeOyurfjAB6g9A">
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_xhSGfNXOEeOyurfjAB6g9A"/>
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_xhSGe9XOEeOyurfjAB6g9A" value="1"/>
-    </ownedEnd>
-    <ownedEnd xmi:id="_xhSGfdXOEeOyurfjAB6g9A" name="house" type="_xhSGYNXOEeOyurfjAB6g9A" association="_xhSGedXOEeOyurfjAB6g9A">
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_xhSGf9XOEeOyurfjAB6g9A"/>
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_xhSGftXOEeOyurfjAB6g9A" value="1"/>
+    <ownedEnd xmi:id="_OSq5VNbbEeOWi5Dlhh8NIw" name="constructionCase" type="_OSlZwNbbEeOWi5Dlhh8NIw" association="_OSq5UNbbEeOWi5Dlhh8NIw">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_OSrgYNbbEeOWi5Dlhh8NIw" value="1"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_OSq5VdbbEeOWi5Dlhh8NIw" value="1"/>
     </ownedEnd>
   </packagedElement>
-  <packagedElement xmi:type="uml:Class" xmi:id="_xhSGgNXOEeOyurfjAB6g9A" name="Wall"/>
-  <packagedElement xmi:type="uml:Association" xmi:id="_xhSGgdXOEeOyurfjAB6g9A" name="HouseWall" memberEnd="_xhSGgtXOEeOyurfjAB6g9A _xhSGhdXOEeOyurfjAB6g9A" navigableOwnedEnd="_xhSGgtXOEeOyurfjAB6g9A _xhSGhdXOEeOyurfjAB6g9A">
-    <ownedEnd xmi:id="_xhSGgtXOEeOyurfjAB6g9A" name="walls" type="_xhSGgNXOEeOyurfjAB6g9A" aggregation="composite" association="_xhSGgdXOEeOyurfjAB6g9A">
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_xhSGhNXOEeOyurfjAB6g9A"/>
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_xhSGg9XOEeOyurfjAB6g9A" value="*"/>
+  <packagedElement xmi:type="uml:Association" xmi:id="_OSrgYdbbEeOWi5Dlhh8NIw" name="HousePlanRoofPlan" memberEnd="_OSrgYtbbEeOWi5Dlhh8NIw _OSsHcNbbEeOWi5Dlhh8NIw" navigableOwnedEnd="_OSrgYtbbEeOWi5Dlhh8NIw _OSsHcNbbEeOWi5Dlhh8NIw">
+    <ownedEnd xmi:id="_OSrgYtbbEeOWi5Dlhh8NIw" name="roofPlan" type="_OSqSRNbbEeOWi5Dlhh8NIw" aggregation="composite" association="_OSrgYdbbEeOWi5Dlhh8NIw">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_OSrgZNbbEeOWi5Dlhh8NIw"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_OSrgY9bbEeOWi5Dlhh8NIw" value="1"/>
     </ownedEnd>
-    <ownedEnd xmi:id="_xhSGhdXOEeOyurfjAB6g9A" name="house" type="_xhSGYNXOEeOyurfjAB6g9A" association="_xhSGgdXOEeOyurfjAB6g9A">
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_xhSGh9XOEeOyurfjAB6g9A" value="1"/>
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_xhSGhtXOEeOyurfjAB6g9A" value="1"/>
-    </ownedEnd>
-  </packagedElement>
-  <packagedElement xmi:type="uml:Class" xmi:id="_xhSGiNXOEeOyurfjAB6g9A" name="WallPlan"/>
-  <packagedElement xmi:type="uml:Association" xmi:id="_xhSGidXOEeOyurfjAB6g9A" name="WallPlanWall" memberEnd="_xhSGitXOEeOyurfjAB6g9A _xhStcNXOEeOyurfjAB6g9A" navigableOwnedEnd="_xhSGitXOEeOyurfjAB6g9A _xhStcNXOEeOyurfjAB6g9A">
-    <ownedEnd xmi:id="_xhSGitXOEeOyurfjAB6g9A" name="wall" type="_xhSGgNXOEeOyurfjAB6g9A" association="_xhSGidXOEeOyurfjAB6g9A">
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_xhSGjNXOEeOyurfjAB6g9A"/>
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_xhSGi9XOEeOyurfjAB6g9A" value="1"/>
-    </ownedEnd>
-    <ownedEnd xmi:id="_xhStcNXOEeOyurfjAB6g9A" name="wallPlan" type="_xhSGiNXOEeOyurfjAB6g9A" association="_xhSGidXOEeOyurfjAB6g9A">
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_xhStctXOEeOyurfjAB6g9A"/>
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_xhStcdXOEeOyurfjAB6g9A" value="1"/>
+    <ownedEnd xmi:id="_OSsHcNbbEeOWi5Dlhh8NIw" name="housePlan" type="_OSqSQtbbEeOWi5Dlhh8NIw" association="_OSrgYdbbEeOWi5Dlhh8NIw">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_OSsHctbbEeOWi5Dlhh8NIw" value="1"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_OSsHcdbbEeOWi5Dlhh8NIw" value="1"/>
     </ownedEnd>
   </packagedElement>
-  <packagedElement xmi:type="uml:Association" xmi:id="_xhStc9XOEeOyurfjAB6g9A" name="HousePlanWallPlan" memberEnd="_xhStdNXOEeOyurfjAB6g9A _xhStd9XOEeOyurfjAB6g9A" navigableOwnedEnd="_xhStdNXOEeOyurfjAB6g9A _xhStd9XOEeOyurfjAB6g9A">
-    <ownedEnd xmi:id="_xhStdNXOEeOyurfjAB6g9A" name="wallPlans" type="_xhSGiNXOEeOyurfjAB6g9A" aggregation="composite" association="_xhStc9XOEeOyurfjAB6g9A">
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_xhStdtXOEeOyurfjAB6g9A"/>
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_xhStddXOEeOyurfjAB6g9A" value="*"/>
+  <packagedElement xmi:type="uml:Association" xmi:id="_OSsHc9bbEeOWi5Dlhh8NIw" name="HouseRoofPlan" memberEnd="_OSsHdNbbEeOWi5Dlhh8NIw _OSsugtbbEeOWi5Dlhh8NIw" navigableOwnedEnd="_OSsHdNbbEeOWi5Dlhh8NIw _OSsugtbbEeOWi5Dlhh8NIw">
+    <ownedEnd xmi:id="_OSsHdNbbEeOWi5Dlhh8NIw" name="roofPlan" type="_OSqSRNbbEeOWi5Dlhh8NIw" association="_OSsHc9bbEeOWi5Dlhh8NIw">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_OSsugdbbEeOWi5Dlhh8NIw"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_OSsugNbbEeOWi5Dlhh8NIw" value="1"/>
     </ownedEnd>
-    <ownedEnd xmi:id="_xhStd9XOEeOyurfjAB6g9A" name="housePlan" type="_xhSGaNXOEeOyurfjAB6g9A" association="_xhStc9XOEeOyurfjAB6g9A">
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_xhStedXOEeOyurfjAB6g9A" value="1"/>
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_xhSteNXOEeOyurfjAB6g9A" value="1"/>
-    </ownedEnd>
-  </packagedElement>
-  <packagedElement xmi:type="uml:Association" xmi:id="_xhStetXOEeOyurfjAB6g9A" name="HouseWallPlan" memberEnd="_xhSte9XOEeOyurfjAB6g9A _xhStftXOEeOyurfjAB6g9A" navigableOwnedEnd="_xhSte9XOEeOyurfjAB6g9A _xhStftXOEeOyurfjAB6g9A">
-    <ownedEnd xmi:id="_xhSte9XOEeOyurfjAB6g9A" name="wallPlans" type="_xhSGiNXOEeOyurfjAB6g9A" association="_xhStetXOEeOyurfjAB6g9A">
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_xhStfdXOEeOyurfjAB6g9A"/>
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_xhStfNXOEeOyurfjAB6g9A" value="*"/>
-    </ownedEnd>
-    <ownedEnd xmi:id="_xhStftXOEeOyurfjAB6g9A" name="house" type="_xhSGYNXOEeOyurfjAB6g9A" association="_xhStetXOEeOyurfjAB6g9A">
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_xhStgNXOEeOyurfjAB6g9A"/>
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_xhStf9XOEeOyurfjAB6g9A" value="1"/>
+    <ownedEnd xmi:id="_OSsugtbbEeOWi5Dlhh8NIw" name="house" type="_OSn2AdbbEeOWi5Dlhh8NIw" association="_OSsHc9bbEeOWi5Dlhh8NIw">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_OSsuhNbbEeOWi5Dlhh8NIw"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_OSsug9bbEeOWi5Dlhh8NIw" value="1"/>
     </ownedEnd>
   </packagedElement>
-  <packagedElement xmi:type="uml:Class" xmi:id="_xhStgdXOEeOyurfjAB6g9A" name="RoomPlan">
-    <ownedAttribute xmi:id="_xhStgtXOEeOyurfjAB6g9A" name="name">
+  <packagedElement xmi:type="uml:Class" xmi:id="_OSsuhdbbEeOWi5Dlhh8NIw" name="Wall"/>
+  <packagedElement xmi:type="uml:Association" xmi:id="_OStVkNbbEeOWi5Dlhh8NIw" name="HouseWall" memberEnd="_OStVkdbbEeOWi5Dlhh8NIw _OSt8oNbbEeOWi5Dlhh8NIw" navigableOwnedEnd="_OStVkdbbEeOWi5Dlhh8NIw _OSt8oNbbEeOWi5Dlhh8NIw">
+    <ownedEnd xmi:id="_OStVkdbbEeOWi5Dlhh8NIw" name="walls" type="_OSsuhdbbEeOWi5Dlhh8NIw" aggregation="composite" association="_OStVkNbbEeOWi5Dlhh8NIw">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_OStVk9bbEeOWi5Dlhh8NIw"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_OStVktbbEeOWi5Dlhh8NIw" value="*"/>
+    </ownedEnd>
+    <ownedEnd xmi:id="_OSt8oNbbEeOWi5Dlhh8NIw" name="house" type="_OSn2AdbbEeOWi5Dlhh8NIw" association="_OStVkNbbEeOWi5Dlhh8NIw">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_OSt8otbbEeOWi5Dlhh8NIw" value="1"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_OSt8odbbEeOWi5Dlhh8NIw" value="1"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_OSt8o9bbEeOWi5Dlhh8NIw" name="WallPlan"/>
+  <packagedElement xmi:type="uml:Association" xmi:id="_OSujsNbbEeOWi5Dlhh8NIw" name="WallPlanWall" memberEnd="_OSujsdbbEeOWi5Dlhh8NIw _OSujtNbbEeOWi5Dlhh8NIw" navigableOwnedEnd="_OSujsdbbEeOWi5Dlhh8NIw _OSujtNbbEeOWi5Dlhh8NIw">
+    <ownedEnd xmi:id="_OSujsdbbEeOWi5Dlhh8NIw" name="wall" type="_OSsuhdbbEeOWi5Dlhh8NIw" association="_OSujsNbbEeOWi5Dlhh8NIw">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_OSujs9bbEeOWi5Dlhh8NIw"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_OSujstbbEeOWi5Dlhh8NIw" value="1"/>
+    </ownedEnd>
+    <ownedEnd xmi:id="_OSujtNbbEeOWi5Dlhh8NIw" name="wallPlan" type="_OSt8o9bbEeOWi5Dlhh8NIw" association="_OSujsNbbEeOWi5Dlhh8NIw">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_OSvKwdbbEeOWi5Dlhh8NIw"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_OSvKwNbbEeOWi5Dlhh8NIw" value="1"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_OSvKwtbbEeOWi5Dlhh8NIw" name="HousePlanWallPlan" memberEnd="_OSvKw9bbEeOWi5Dlhh8NIw _OSvx0tbbEeOWi5Dlhh8NIw" navigableOwnedEnd="_OSvKw9bbEeOWi5Dlhh8NIw _OSvx0tbbEeOWi5Dlhh8NIw">
+    <ownedEnd xmi:id="_OSvKw9bbEeOWi5Dlhh8NIw" name="wallPlans" type="_OSt8o9bbEeOWi5Dlhh8NIw" aggregation="composite" association="_OSvKwtbbEeOWi5Dlhh8NIw">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_OSvx0dbbEeOWi5Dlhh8NIw"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_OSvx0NbbEeOWi5Dlhh8NIw" value="*"/>
+    </ownedEnd>
+    <ownedEnd xmi:id="_OSvx0tbbEeOWi5Dlhh8NIw" name="housePlan" type="_OSqSQtbbEeOWi5Dlhh8NIw" association="_OSvKwtbbEeOWi5Dlhh8NIw">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_OSvx1NbbEeOWi5Dlhh8NIw" value="1"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_OSvx09bbEeOWi5Dlhh8NIw" value="1"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_OSwY4NbbEeOWi5Dlhh8NIw" name="HouseWallPlan" memberEnd="_OSwY4dbbEeOWi5Dlhh8NIw _OSwY5NbbEeOWi5Dlhh8NIw" navigableOwnedEnd="_OSwY4dbbEeOWi5Dlhh8NIw _OSwY5NbbEeOWi5Dlhh8NIw">
+    <ownedEnd xmi:id="_OSwY4dbbEeOWi5Dlhh8NIw" name="wallPlans" type="_OSt8o9bbEeOWi5Dlhh8NIw" association="_OSwY4NbbEeOWi5Dlhh8NIw">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_OSwY49bbEeOWi5Dlhh8NIw"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_OSwY4tbbEeOWi5Dlhh8NIw" value="*"/>
+    </ownedEnd>
+    <ownedEnd xmi:id="_OSwY5NbbEeOWi5Dlhh8NIw" name="house" type="_OSn2AdbbEeOWi5Dlhh8NIw" association="_OSwY4NbbEeOWi5Dlhh8NIw">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_OSw_8dbbEeOWi5Dlhh8NIw"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_OSw_8NbbEeOWi5Dlhh8NIw" value="1"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_OSw_8tbbEeOWi5Dlhh8NIw" name="RoomPlan">
+    <ownedAttribute xmi:id="_OSw_89bbEeOWi5Dlhh8NIw" name="name">
       <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
     </ownedAttribute>
   </packagedElement>
-  <packagedElement xmi:type="uml:Association" xmi:id="_xhStg9XOEeOyurfjAB6g9A" name="HousePlanRoomPlan" memberEnd="_xhSthNXOEeOyurfjAB6g9A _xhSth9XOEeOyurfjAB6g9A" navigableOwnedEnd="_xhSthNXOEeOyurfjAB6g9A _xhSth9XOEeOyurfjAB6g9A">
-    <ownedEnd xmi:id="_xhSthNXOEeOyurfjAB6g9A" name="roomPlans" type="_xhStgdXOEeOyurfjAB6g9A" aggregation="composite" association="_xhStg9XOEeOyurfjAB6g9A">
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_xhSthtXOEeOyurfjAB6g9A"/>
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_xhSthdXOEeOyurfjAB6g9A" value="*"/>
+  <packagedElement xmi:type="uml:Association" xmi:id="_OSxnANbbEeOWi5Dlhh8NIw" name="HousePlanRoomPlan" memberEnd="_OSxnAdbbEeOWi5Dlhh8NIw _OSxnBNbbEeOWi5Dlhh8NIw" navigableOwnedEnd="_OSxnAdbbEeOWi5Dlhh8NIw _OSxnBNbbEeOWi5Dlhh8NIw">
+    <ownedEnd xmi:id="_OSxnAdbbEeOWi5Dlhh8NIw" name="roomPlans" type="_OSw_8tbbEeOWi5Dlhh8NIw" aggregation="composite" association="_OSxnANbbEeOWi5Dlhh8NIw">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_OSxnA9bbEeOWi5Dlhh8NIw"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_OSxnAtbbEeOWi5Dlhh8NIw" value="*"/>
     </ownedEnd>
-    <ownedEnd xmi:id="_xhSth9XOEeOyurfjAB6g9A" name="housePlan" type="_xhSGaNXOEeOyurfjAB6g9A" association="_xhStg9XOEeOyurfjAB6g9A">
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_xhStidXOEeOyurfjAB6g9A" value="1"/>
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_xhStiNXOEeOyurfjAB6g9A" value="1"/>
+    <ownedEnd xmi:id="_OSxnBNbbEeOWi5Dlhh8NIw" name="housePlan" type="_OSqSQtbbEeOWi5Dlhh8NIw" association="_OSxnANbbEeOWi5Dlhh8NIw">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_OSyOEdbbEeOWi5Dlhh8NIw" value="1"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_OSyOENbbEeOWi5Dlhh8NIw" value="1"/>
     </ownedEnd>
   </packagedElement>
-  <packagedElement xmi:type="uml:Association" xmi:id="_xhStitXOEeOyurfjAB6g9A" name="RoomPlanWallPlan" memberEnd="_xhSti9XOEeOyurfjAB6g9A _xhStjtXOEeOyurfjAB6g9A" navigableOwnedEnd="_xhSti9XOEeOyurfjAB6g9A _xhStjtXOEeOyurfjAB6g9A">
-    <ownedEnd xmi:id="_xhSti9XOEeOyurfjAB6g9A" name="wallPlans" type="_xhSGiNXOEeOyurfjAB6g9A" association="_xhStitXOEeOyurfjAB6g9A">
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_xhStjdXOEeOyurfjAB6g9A"/>
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_xhStjNXOEeOyurfjAB6g9A" value="*"/>
+  <packagedElement xmi:type="uml:Association" xmi:id="_OSyOEtbbEeOWi5Dlhh8NIw" name="RoomPlanWallPlan" memberEnd="_OSyOE9bbEeOWi5Dlhh8NIw _OSy1IdbbEeOWi5Dlhh8NIw" navigableOwnedEnd="_OSyOE9bbEeOWi5Dlhh8NIw _OSy1IdbbEeOWi5Dlhh8NIw">
+    <ownedEnd xmi:id="_OSyOE9bbEeOWi5Dlhh8NIw" name="wallPlans" type="_OSt8o9bbEeOWi5Dlhh8NIw" association="_OSyOEtbbEeOWi5Dlhh8NIw">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_OSy1INbbEeOWi5Dlhh8NIw"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_OSyOFNbbEeOWi5Dlhh8NIw" value="*"/>
     </ownedEnd>
-    <ownedEnd xmi:id="_xhStjtXOEeOyurfjAB6g9A" name="roomPlans" type="_xhStgdXOEeOyurfjAB6g9A" association="_xhStitXOEeOyurfjAB6g9A">
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_xhStkNXOEeOyurfjAB6g9A"/>
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_xhStj9XOEeOyurfjAB6g9A" value="*"/>
+    <ownedEnd xmi:id="_OSy1IdbbEeOWi5Dlhh8NIw" name="roomPlans" type="_OSw_8tbbEeOWi5Dlhh8NIw" association="_OSyOEtbbEeOWi5Dlhh8NIw">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_OSy1I9bbEeOWi5Dlhh8NIw"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_OSy1ItbbEeOWi5Dlhh8NIw" value="*"/>
     </ownedEnd>
   </packagedElement>
 </uml:Model>

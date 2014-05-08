@@ -17,7 +17,6 @@ public class AbstractEditingDomainAction extends Action {
 		this.selection = selection;
 	}
 
-
 	protected EditingDomain getEditingDomainFor(EObject eo) {
 		for (IWorkbenchWindow w : PlatformUI.getWorkbench().getWorkbenchWindows()) {
 			for (IWorkbenchPage p : w.getPages()) {

@@ -8,6 +8,7 @@ public abstract class TextOutputNode{
 	protected String name;
 	boolean shouldDelete;
 	public static Map<Class<?>,Long> counts = new HashMap<Class<?>,Long>();
+	@Override
 	public void finalize(){
 		counts.put(getClass(), getCount()-1);
 	}
@@ -46,6 +47,7 @@ public abstract class TextOutputNode{
 	public void restore(){
 		shouldDelete = false;
 	}
+	@Override
 	public String toString(){
 		if(parent != null){
 			return getParent().toString() + "/" + getName();

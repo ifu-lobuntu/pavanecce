@@ -20,6 +20,7 @@ import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.StateMachine;
 import org.eclipse.uml2.uml.TimeExpression;
 import org.eclipse.uml2.uml.Transition;
+import org.pavanecce.common.code.metamodel.CodeBehaviour;
 import org.pavanecce.common.code.metamodel.CodeBlock;
 import org.pavanecce.common.code.metamodel.CodeClass;
 import org.pavanecce.common.code.metamodel.CodeExpression;
@@ -171,7 +172,7 @@ public class ExpressionCreator {
 		oper.setResultInitialValue(new NullExpression());
 		new SetResultStatement(oper.getBody(), makeExpression((OCLExpression) in.getIn(), isStatic, bodyParams));
 		// generate the call to the created operation
-		return new PortableExpression(operName + "(" + CodeMethod.paramsToActuals(oper) + ")");
+		return new PortableExpression(operName + "(" + CodeBehaviour.paramsToActuals(oper) + ")");
 	}
 
 	private TernaryExpression makeIfExpression(IfExp in, boolean isStatic, List<CodeParameter> params) {

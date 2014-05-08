@@ -149,7 +149,7 @@ public abstract class AbstractCodeGenerator extends AbstractTextGenerator {
 	protected AbstractCodeGenerator appendQualifiedName(CodePackageReference ref) {
 		Iterator<String> iter = ref.getQualifiedNameInLanguage(getLanguage()).iterator();
 		while (iter.hasNext()) {
-			String string = (String) iter.next();
+			String string = iter.next();
 			sb.append(string);
 			if (iter.hasNext()) {
 				sb.append(".");

@@ -22,6 +22,7 @@ public class CollectionTypeReference extends CodeTypeReference {
 		super.addToElementTypes(typeReference);
 	}
 
+	@Override
 	public CollectionTypeReference getCopy() {
 		return new CollectionTypeReference(kind,isImplementation);
 	}

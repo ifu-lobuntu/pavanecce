@@ -11,7 +11,6 @@ import javassist.CtClass;
 import javassist.CtMethod;
 import javassist.CtNewMethod;
 
-import org.junit.Test;
 import org.pavanecce.common.code.metamodel.CodeClass;
 import org.pavanecce.common.code.metamodel.CodeModel;
 import org.pavanecce.uml.uml2code.java.JavaCodeGenerator;

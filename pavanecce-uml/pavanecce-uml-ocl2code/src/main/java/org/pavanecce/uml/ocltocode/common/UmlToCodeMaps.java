@@ -42,7 +42,6 @@ import org.pavanecce.uml.common.util.EmfWorkspace;
 import org.pavanecce.uml.common.util.TagNames;
 import org.pavanecce.uml.common.util.emulated.ArtificialElementFactory;
 import org.pavanecce.uml.common.util.emulated.EmulatedPropertyHolderForAssociation;
-import org.pavanecce.uml.common.util.emulated.OclContextFactory;
 import org.pavanecce.uml.common.util.emulated.OclRuntimeLibrary;
 import org.pavanecce.uml.ocltocode.maps.AssociationClassEndMap;
 import org.pavanecce.uml.ocltocode.maps.ClassifierMap;
@@ -215,7 +214,7 @@ public class UmlToCodeMaps extends UmlToCodeReferenceMap {
 		if (o instanceof Behavior) {
 			OperationMap result = operationMaps.get(o);
 			if (result == null) {
-				operationMaps.put(o, result = new OperationMap(this, (Behavior) o, ((Behavior) o).getOwnedParameters()));
+				operationMaps.put(o, result = new OperationMap(this, o, ((Behavior) o).getOwnedParameters()));
 			}
 			return result;
 		} else {

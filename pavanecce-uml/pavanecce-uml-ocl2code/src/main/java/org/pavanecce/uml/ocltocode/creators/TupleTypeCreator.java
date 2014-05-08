@@ -38,12 +38,12 @@ public class TupleTypeCreator {
 	public CodeClass make(TupleType in, CodePackage tuplePack) {
 		String key = "";
 		// build key from the types of the parts, in alphabetical order
-		TupleTypeMap TUPLE = codeMaps.buildTupleTypeMap((TupleType) in);
+		TupleTypeMap TUPLE = codeMaps.buildTupleTypeMap(in);
 		String[] typeNames = TUPLE.get_typenames();
 		for (int i = 0; i < typeNames.length; i++) {
 			key = key + "#" + typeNames[i];
 		}
-		CodeClass result = (CodeClass) tupleTypes.get(key);
+		CodeClass result = tupleTypes.get(key);
 		if (result != null) { // found the type; it already exists.
 			return result;
 		}
@@ -53,7 +53,7 @@ public class TupleTypeCreator {
 	}
 
 	private CodeClass priv_make(TupleType in, CodePackage tuplePack) {
-		TupleTypeMap tubple = codeMaps.buildTupleTypeMap((TupleType) in);
+		TupleTypeMap tubple = codeMaps.buildTupleTypeMap(in);
 		CodeClass created = new CodeClass(tubple.getClassName(), tuplePack);
 		created.setComment(standardClassComment);
 		Iterator<?> it = tubple.sort_parts().iterator();

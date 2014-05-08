@@ -102,6 +102,7 @@ public class CodeBehaviour extends CodeElement {
 		setDeclaringClass(clss);
 	}
 
+	@Override
 	public String toString() {
 		if (this.declaringClass != null) {
 			return declaringClass.getName() + identifier + "." + generateIdentifier(getName(), getParameters());

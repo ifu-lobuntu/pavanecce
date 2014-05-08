@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.junit.Test;
+import org.pavanecce.common.code.metamodel.CodeBehaviour;
 import org.pavanecce.common.code.metamodel.CodeClass;
 import org.pavanecce.common.code.metamodel.CodeMethod;
 import org.pavanecce.common.code.metamodel.CodeModel;
@@ -35,9 +36,9 @@ public class CodeModelBuilderTests extends AbstractModelBuilderTest {
 		assertNotNull(theClass);
 		assertEquals("TheClass",theClass.getName());
 		assertNotNull(theClass.getFields().get("simpleClass"));
-		assertNotNull(theClass.getMethods().get(CodeMethod.generateIdentifier("getSimpleClass",new ArrayList<CodeTypeReference>())));
-		assertNotNull(theClass.getMethods().get(CodeMethod.generateIdentifier("setSimpleClass", Arrays.asList(emptyClass.getPathName()))));
-		CodeMethod myOper = emptyClass.getMethods().get(CodeMethod.generateIdentifier("myOper", Arrays.asList(emptyClass.getPathName())));
+		assertNotNull(theClass.getMethods().get(CodeBehaviour.generateIdentifier("getSimpleClass",new ArrayList<CodeTypeReference>())));
+		assertNotNull(theClass.getMethods().get(CodeBehaviour.generateIdentifier("setSimpleClass", Arrays.asList(emptyClass.getPathName()))));
+		CodeMethod myOper = emptyClass.getMethods().get(CodeBehaviour.generateIdentifier("myOper", Arrays.asList(emptyClass.getPathName())));
 		assertEquals(emptyClass.getPathName(), myOper.getReturnType());
 	}
 }

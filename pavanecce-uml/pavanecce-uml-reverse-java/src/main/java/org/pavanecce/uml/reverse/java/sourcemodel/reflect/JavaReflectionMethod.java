@@ -34,6 +34,7 @@ public class JavaReflectionMethod extends JavaAnnotated implements SourceMethod 
 		init(binding.getAnnotations());
 	}
 
+	@Override
 	public String[] getParameterNames() {
 		String[] result = new String[getParameterTypes().length];
 		for (int i = 0; i < result.length; i++) {

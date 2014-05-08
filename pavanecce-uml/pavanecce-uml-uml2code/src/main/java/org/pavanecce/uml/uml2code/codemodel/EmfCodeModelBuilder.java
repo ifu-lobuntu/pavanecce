@@ -8,6 +8,7 @@ import org.pavanecce.common.code.metamodel.CodePrimitiveTypeKind;
 import org.pavanecce.common.code.metamodel.PrimitiveTypeReference;
 
 public class EmfCodeModelBuilder extends CodeModelBuilder {
+	@Override
 	protected String generateGetterName(Property p, CodeField cf, String capitalized) {
 		String getterName = "get" + capitalized;
 		if (cf.getType() instanceof PrimitiveTypeReference && ((PrimitiveTypeReference) cf.getType()).getKind() == CodePrimitiveTypeKind.BOOLEAN) {

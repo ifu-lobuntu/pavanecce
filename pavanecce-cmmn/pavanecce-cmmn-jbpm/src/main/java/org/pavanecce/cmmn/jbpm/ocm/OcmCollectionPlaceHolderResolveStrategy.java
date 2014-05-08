@@ -27,6 +27,7 @@ public class OcmCollectionPlaceHolderResolveStrategy extends CollectionPlaceHold
 		this.env = env;
 	}
 
+	@Override
 	public boolean accept(Object object) {
 		if(object instanceof Collection){
 			Collection<?> c = (Collection<?>) object;
@@ -39,6 +40,7 @@ public class OcmCollectionPlaceHolderResolveStrategy extends CollectionPlaceHold
 		return false;
 	}
 
+	@Override
 	public void write(ObjectOutputStream os, Object collection) throws IOException {
 		if (collection instanceof Stack) {
 			os.writeUTF(Stack.class.getName());
@@ -64,6 +66,7 @@ public class OcmCollectionPlaceHolderResolveStrategy extends CollectionPlaceHold
 	}
 
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public Object read(ObjectInputStream is) throws IOException, ClassNotFoundException {
 		String canonicalName = is.readUTF();
@@ -90,6 +93,7 @@ public class OcmCollectionPlaceHolderResolveStrategy extends CollectionPlaceHold
 		return coll;
 	}
 
+	@Override
 	public byte[] marshal(Context context, ObjectOutputStream os, Object object) throws IOException {
 		ByteArrayOutputStream buff = new ByteArrayOutputStream();
 		ObjectOutputStream oos = new ObjectOutputStream(buff);
@@ -98,11 +102,13 @@ public class OcmCollectionPlaceHolderResolveStrategy extends CollectionPlaceHold
 		return buff.toByteArray();
 	}
 
+	@Override
 	public Object unmarshal(Context context, ObjectInputStream ois, byte[] object, ClassLoader classloader) throws IOException, ClassNotFoundException {
 		DroolsObjectInputStream is = new DroolsObjectInputStream(new ByteArrayInputStream(object), classloader);
 		return read(is);
 	}
 
+	@Override
 	public Context createContext() {
 		// no need for context
 		return null;

@@ -5,12 +5,12 @@ import org.apache.jackrabbit.ocm.mapper.impl.annotation.Bean;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
-import org.pavanecce.cmmn.jbpm.instance.CaseFileItemSubscriptionInfo;
+import org.pavanecce.cmmn.jbpm.instance.PersistedCaseFileItemSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.instance.CaseSubscriptionInfo;
 import org.pavanecce.common.ocm.GrandParentBeanConverterImpl;
 
 @Node(discriminator = false, jcrType = "i:caseFileItemSubscription")
-public class OcmCaseFileItemSubscriptionInfo implements CaseFileItemSubscriptionInfo {
+public class OcmCaseFileItemSubscriptionInfo implements PersistedCaseFileItemSubscriptionInfo {
 	@Field(uuid = true)
 	private String id;
 	@Bean(converter=GrandParentBeanConverterImpl.class)
@@ -35,7 +35,6 @@ public class OcmCaseFileItemSubscriptionInfo implements CaseFileItemSubscription
 	public OcmCaseFileItemSubscriptionInfo() {
 		super();
 	}
-	@Override
 	public OcmCaseSubscriptionInfo getCaseSubscription() {
 		return caseSubscription;
 	}
@@ -109,10 +108,12 @@ public class OcmCaseFileItemSubscriptionInfo implements CaseFileItemSubscription
 		return processId;
 	}
 
+	@Override
 	public String getRelatedItemName() {
 		return relatedItemName;
 	}
 
+	@Override
 	public void setRelatedItemName(String relatedItemName) {
 		this.relatedItemName = relatedItemName;
 	}

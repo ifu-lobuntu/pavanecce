@@ -311,7 +311,7 @@ public abstract class AbstractUmlGenerator {
 
 	public Classifier getStandardPrimitiveType(Classifier type) {
 		if (type instanceof PrimitiveType && type.getGenerals().size() == 1 && type.getGenerals().get(0) instanceof PrimitiveType) {
-			type = (PrimitiveType) type.getGenerals().get(0);
+			type = type.getGenerals().get(0);
 			return getStandardPrimitiveType(type);
 		}else{
 			return type;

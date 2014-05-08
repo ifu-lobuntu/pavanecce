@@ -51,12 +51,14 @@ public class DefinitionsHandler extends BaseAbstractHandler implements Handler {
 		}
 	}
 
+	@Override
 	public Object start(final String uri, final String localName, final Attributes attrs, final ExtensibleXmlParser parser) throws SAXException {
 		parser.startElementBuilder(localName, attrs);
 		((ProcessBuildData) parser.getData()).setMetaData(CASE_FILE_ITEM_DEFINITIONS, new HashMap<String, CaseFileItemDefinition>());
 		return new Definitions();
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public Object end(final String uri, final String localName, final ExtensibleXmlParser parser) throws SAXException {
 		final Element element = parser.endElementBuilder();
@@ -74,6 +76,7 @@ public class DefinitionsHandler extends BaseAbstractHandler implements Handler {
 		return definitions;
 	}
 
+	@Override
 	public Class<?> generateNodeFor() {
 		return Definitions.class;
 	}
@@ -100,7 +103,7 @@ public class DefinitionsHandler extends BaseAbstractHandler implements Handler {
 
 	private void setVariableDataType(CaseFileItem variable, Map<String, CaseFileItemDefinition> itemDefinitions) {
 		// retrieve type from item definition
-		String definitionRef = (String) variable.getDefinitionRef();
+		String definitionRef = variable.getDefinitionRef();
 		if (UndefinedDataType.getInstance().equals(variable.getType()) && itemDefinitions != null && definitionRef != null) {
 			DataType dataType = new ObjectDataType();
 			CaseFileItemDefinition itemDefinition = itemDefinitions.get(definitionRef);
@@ -124,7 +127,7 @@ public class DefinitionsHandler extends BaseAbstractHandler implements Handler {
 			}
 			if (variable.isCollection()) {
 				CollectionDataType c = new CollectionDataType();
-				c.setClassName(dataType.getStringType());
+				c.setElementClassName(dataType.getStringType());
 				dataType = c;
 			}
 			variable.setType(dataType);

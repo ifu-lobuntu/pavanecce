@@ -1,17 +1,14 @@
 package org.pavanecce.cmmn.jbpm;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jbpm.shared.services.impl.events.JbpmServicesEventListener;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.transaction.UserTransaction;
+
 import org.junit.Test;
-import org.kie.api.task.model.Task;
-import org.kie.internal.task.api.EventService;
-import org.kie.internal.task.api.model.NotificationEvent;
 import org.pavanecce.cmmn.jbpm.instance.CaseInstance;
-import org.pavanecce.cmmn.jbpm.instance.CaseTaskLifecycleListener;
-import org.pavanecce.cmmn.jbpm.test.AbstractCmmnCaseTestCase;
 
 import test.ConstructionCase;
 import test.House;
@@ -23,10 +20,18 @@ public abstract class SingleCaseFileItemEntryCriterionTests extends AbstractCons
 
 	protected HousePlan housePlan;
 	protected House house;
-	private CaseInstance caseInstance;
+	protected CaseInstance caseInstance;
 
 	public SingleCaseFileItemEntryCriterionTests() {
 		super(true, true, "org.jbpm.persistence.jpa");
+	}
+
+	protected void maybeStartSubscription() {
+
+	}
+
+	protected void endSubscription() {
+
 	}
 
 	@Test
@@ -34,11 +39,12 @@ public abstract class SingleCaseFileItemEntryCriterionTests extends AbstractCons
 		// *****GIVEN
 		givenThatTheTestCaseIsStarted();
 		// *****WHEN
+		maybeStartSubscription();
 		addWallPlanAsChildToHousePlan();
+		endSubscription();
 		// *****THEN
 		/*
-		 * Verify Sentry Triggered: Sentries with a single OnPart are
-		 * implemented merely as CatchLinkNodes
+		 * Verify Sentry Triggered: Sentries with a single OnPart are implemented merely as CatchLinkNodes
 		 */
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenWallPlanCreated");
 		assertNodeTriggered(caseInstance.getId(), "WaitingForWallPlanCreatedSentry");
@@ -49,11 +55,12 @@ public abstract class SingleCaseFileItemEntryCriterionTests extends AbstractCons
 		// *****GIVEN
 		givenThatTheTestCaseIsStarted();
 		// *****WHEN
+		maybeStartSubscription();
 		addRoofPlanAsChildToHousePlan();
+		endSubscription();
 		// *****THEN
 		/*
-		 * Verify Sentry Triggered: Sentries with a single OnPart are
-		 * implemented merely as CatchLinkNodes
+		 * Verify Sentry Triggered: Sentries with a single OnPart are implemented merely as CatchLinkNodes
 		 */
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenRoofPlanCreated");
 		assertNodeTriggered(caseInstance.getId(), "WaitingForRoofPlanCreatedSentry");
@@ -64,11 +71,12 @@ public abstract class SingleCaseFileItemEntryCriterionTests extends AbstractCons
 		// *****GIVEN
 		givenThatTheTestCaseIsStarted();
 		// *****WHEN
+		maybeStartSubscription();
 		addWallPlanAsChildToHousePlan();
+		endSubscription();
 		// *****THEN
 		/*
-		 * Verify Sentry Triggered: Sentries with a single OnPart are
-		 * implemented merely as CatchLinkNodes
+		 * Verify Sentry Triggered: Sentries with a single OnPart are implemented merely as CatchLinkNodes
 		 */
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenWallPlanAddedAsChild");
 		assertNodeTriggered(caseInstance.getId(), "WaitingForWallPlanAddedAsChildSentry");
@@ -79,11 +87,12 @@ public abstract class SingleCaseFileItemEntryCriterionTests extends AbstractCons
 		// *****GIVEN
 		givenThatTheTestCaseIsStarted();
 		// *****WHEN
+		maybeStartSubscription();
 		addRoofPlanAsChildToHousePlan();
+		endSubscription();
 		// *****THEN
 		/*
-		 * Verify Sentry Triggered: Sentries with a single OnPart are
-		 * implemented merely as CatchLinkNodes
+		 * Verify Sentry Triggered: Sentries with a single OnPart are implemented merely as CatchLinkNodes
 		 */
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenRoofPlanAddedAsChild");
 		assertNodeTriggered(caseInstance.getId(), "WaitingForRoofPlanAddedAsChildSentry");
@@ -94,11 +103,13 @@ public abstract class SingleCaseFileItemEntryCriterionTests extends AbstractCons
 		// *****GIVEN
 		givenThatTheTestCaseIsStarted();
 		// *****WHEN
+		addWallPlanAsChildToHousePlan();
+		maybeStartSubscription();
 		addWallPlanAsReferenceToHouse();
+		endSubscription();
 		// *****THEN
 		/*
-		 * Verify Sentry Triggered: Sentries with a single OnPart are
-		 * implemented merely as CatchLinkNodes
+		 * Verify Sentry Triggered: Sentries with a single OnPart are implemented merely as CatchLinkNodes
 		 */
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenWallPlanAddedAsReference");
 		assertNodeTriggered(caseInstance.getId(), "WaitingForWallPlanAddedAsReferenceSentry");
@@ -108,12 +119,15 @@ public abstract class SingleCaseFileItemEntryCriterionTests extends AbstractCons
 	public void testAddReferenceOfObjectInSingletonFileItem() throws Exception {
 		// *****GIVEN
 		givenThatTheTestCaseIsStarted();
+		addRoofPlanAsChildToHousePlan();
 		// *****WHEN
+
+		maybeStartSubscription();
 		addRoofPlanAsReferenceToHouse();
+		endSubscription();
 		// *****THEN
 		/*
-		 * Verify Sentry Triggered: Sentries with a single OnPart are
-		 * implemented merely as CatchLinkNodes
+		 * Verify Sentry Triggered: Sentries with a single OnPart are implemented merely as CatchLinkNodes
 		 */
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenRoofPlanAddedAsReference");
 		assertNodeTriggered(caseInstance.getId(), "WaitingForRoofPlanAddedAsReferenceSentry");
@@ -126,11 +140,12 @@ public abstract class SingleCaseFileItemEntryCriterionTests extends AbstractCons
 		addWallPlanAsChildToHousePlan();
 
 		// *****WHEN
+		maybeStartSubscription();
 		removeWallPlansFromHousePlan();
+		endSubscription();
 		// *****THEN
 		/*
-		 * Verify Sentry Triggered: Sentries with a single OnPart are
-		 * implemented merely as CatchLinkNodes
+		 * Verify Sentry Triggered: Sentries with a single OnPart are implemented merely as CatchLinkNodes
 		 */
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenWallPlanDeleted");
 		assertNodeTriggered(caseInstance.getId(), "WaitingForWallPlanDeletedSentry");
@@ -149,11 +164,12 @@ public abstract class SingleCaseFileItemEntryCriterionTests extends AbstractCons
 		givenThatTheTestCaseIsStarted();
 		addRoofPlanAsChildToHousePlan();
 		// *****WHEN
+		maybeStartSubscription();
 		removeRoofPlanAsChildFromHousePlan();
+		endSubscription();
 		// *****THEN
 		/*
-		 * Verify Sentry Triggered: Sentries with a single OnPart are
-		 * implemented merely as CatchLinkNodes
+		 * Verify Sentry Triggered: Sentries with a single OnPart are implemented merely as CatchLinkNodes
 		 */
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenRoofPlanDeleted");
 		assertNodeTriggered(caseInstance.getId(), "WaitingForRoofPlanDeletedSentry");
@@ -165,11 +181,12 @@ public abstract class SingleCaseFileItemEntryCriterionTests extends AbstractCons
 		givenThatTheTestCaseIsStarted();
 		addWallPlanAsChildToHousePlan();
 		// *****WHEN
+		maybeStartSubscription();
 		removeWallPlansFromHousePlan();
+		endSubscription();
 		// *****THEN
 		/*
-		 * Verify Sentry Triggered: Sentries with a single OnPart are
-		 * implemented merely as CatchLinkNodes
+		 * Verify Sentry Triggered: Sentries with a single OnPart are implemented merely as CatchLinkNodes
 		 */
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenWallPlanRemovedAsChild");
 		assertNodeTriggered(caseInstance.getId(), "WaitingForWallPlanRemovedAsChildSentry");
@@ -181,11 +198,12 @@ public abstract class SingleCaseFileItemEntryCriterionTests extends AbstractCons
 		givenThatTheTestCaseIsStarted();
 		addRoofPlanAsChildToHousePlan();
 		// *****WHEN
+		maybeStartSubscription();
 		removeRoofPlanAsChildFromHousePlan();
+		endSubscription();
 		// *****THEN
 		/*
-		 * Verify Sentry Triggered: Sentries with a single OnPart are
-		 * implemented merely as CatchLinkNodes
+		 * Verify Sentry Triggered: Sentries with a single OnPart are implemented merely as CatchLinkNodes
 		 */
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenRoofPlanRemovedAsChild");
 		assertNodeTriggered(caseInstance.getId(), "WaitingForRoofPlanRemovedAsChildSentry");
@@ -195,13 +213,15 @@ public abstract class SingleCaseFileItemEntryCriterionTests extends AbstractCons
 	public void testRemoveReferenceOfObjectInCollectionFileItem() throws Exception {
 		// *****GIVEN
 		givenThatTheTestCaseIsStarted();
+		addWallPlanAsChildToHousePlan();
 		addWallPlanAsReferenceToHouse();
 		// *****WHEN
+		maybeStartSubscription();
 		removeWallPlansAsReferenceFromHouse();
+		endSubscription();
 		// *****THEN
 		/*
-		 * Verify Sentry Triggered: Sentries with a single OnPart are
-		 * implemented merely as CatchLinkNodes
+		 * Verify Sentry Triggered: Sentries with a single OnPart are implemented merely as CatchLinkNodes
 		 */
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenWallPlanRemovedAsReference");
 		assertNodeTriggered(caseInstance.getId(), "WaitingForWallPlanRemovedAsReferenceSentry");
@@ -211,13 +231,16 @@ public abstract class SingleCaseFileItemEntryCriterionTests extends AbstractCons
 	public void testRemoveReferenceOfObjectInSingletonFileItem() throws Exception {
 		// *****GIVEN
 		givenThatTheTestCaseIsStarted();
+		addRoofPlanAsChildToHousePlan();
 		addRoofPlanAsReferenceToHouse();
+
 		// *****WHEN
+		maybeStartSubscription();
 		removeRoofPlanAsReferenceFromHouse();
+		endSubscription();
 		// *****THEN
 		/*
-		 * Verify Sentry Triggered: Sentries with a single OnPart are
-		 * implemented merely as CatchLinkNodes
+		 * Verify Sentry Triggered: Sentries with a single OnPart are implemented merely as CatchLinkNodes
 		 */
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenRoofPlanRemovedAsReference");
 		assertNodeTriggered(caseInstance.getId(), "WaitingForRoofPlanRemovedAsReferenceSentry");
@@ -228,14 +251,15 @@ public abstract class SingleCaseFileItemEntryCriterionTests extends AbstractCons
 		// *****GIVEN
 		givenThatTheTestCaseIsStarted();
 		// *****WHEN
+		this.maybeStartSubscription();
 		house = getPersistence().find(House.class, house.getId());
 		house.setDescription("newDescription");
 		getPersistence().update(house);
 		getPersistence().commit();
+		endSubscription();
 		// *****THEN
 		/*
-		 * Verify Sentry Triggered: Sentries with a single OnPart are
-		 * implemented merely as CatchLinkNodes
+		 * Verify Sentry Triggered: Sentries with a single OnPart are implemented merely as CatchLinkNodes
 		 */
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenHouseUpdated");
 		assertNodeTriggered(caseInstance.getId(), "WaitingForHouseUpdatedSentry");
@@ -248,16 +272,14 @@ public abstract class SingleCaseFileItemEntryCriterionTests extends AbstractCons
 		getPersistence().commit();
 	}
 
-	private void removeRoofPlanAsChildFromHousePlan() {
+	private void removeRoofPlanAsChildFromHousePlan() throws NamingException {
 		housePlan = getPersistence().find(HousePlan.class, housePlan.getId());
-		housePlan.setRoofPlan(null);
+		housePlan.zz_internalSetRoofPlan(null);
 		getPersistence().update(housePlan);
 		getPersistence().commit();
 	}
 
 	private void addWallPlanAsReferenceToHouse() throws Exception {
-		addWallPlanAsChildToHousePlan();
-		addWallPlanAsChildToHousePlan();
 		this.house = getPersistence().find(House.class, house.getId());
 		house.getWallPlans().addAll(housePlan.getWallPlans());
 		getPersistence().update(house);
@@ -266,7 +288,6 @@ public abstract class SingleCaseFileItemEntryCriterionTests extends AbstractCons
 	}
 
 	private void addRoofPlanAsReferenceToHouse() {
-		addRoofPlanAsChildToHousePlan();
 		this.house = getPersistence().find(House.class, house.getId());
 		house.setRoofPlan(this.housePlan.getRoofPlan());
 		getPersistence().update(house);
@@ -283,10 +304,6 @@ public abstract class SingleCaseFileItemEntryCriterionTests extends AbstractCons
 
 	protected void givenThatTheTestCaseIsStarted() {
 		createRuntimeManager("test/SingleCaseFileItemEntryCriterionTests.cmmn");
-		@SuppressWarnings("unchecked")
-		EventService<JbpmServicesEventListener<NotificationEvent>, JbpmServicesEventListener<Task>> eventService = (EventService<JbpmServicesEventListener<NotificationEvent>, JbpmServicesEventListener<Task>>) getRuntimeEngine()
-				.getTaskService();
-		eventService.registerTaskLifecycleEventListener(new CaseTaskLifecycleListener(getRuntimeEngine().getKieSession()));
 		Map<String, Object> params = new HashMap<String, Object>();
 		getPersistence().start();
 
@@ -295,8 +312,8 @@ public abstract class SingleCaseFileItemEntryCriterionTests extends AbstractCons
 		house = new House(cc);
 		getPersistence().persist(cc);
 		getPersistence().commit();
-		params.put("housePlan", Arrays.asList(housePlan));
-		params.put("house", Arrays.asList(house));
+		params.put("housePlan", housePlan);
+		params.put("house", house);
 		getPersistence().start();
 		caseInstance = (CaseInstance) getRuntimeEngine().getKieSession().startProcess("SingleCaseFileItemEntryCriterionTests", params);
 		getPersistence().commit();

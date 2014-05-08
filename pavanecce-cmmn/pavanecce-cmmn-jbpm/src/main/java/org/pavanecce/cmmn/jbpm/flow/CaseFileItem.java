@@ -18,6 +18,7 @@ public class CaseFileItem extends Variable implements CMMNElement {
 	private List<CaseFileItem> targets = new ArrayList<CaseFileItem>();
 	private List<String> targetRefs;
 
+	@Override
 	public String getElementId() {
 		return id;
 	}

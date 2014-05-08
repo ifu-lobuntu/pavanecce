@@ -77,7 +77,7 @@ public class TextDirectory extends TextOutputNode {
 		if (path.size() == 1) {
 			return root;
 		} else {
-			return ((TextDirectory) root).findOrCreateTextDirectory(path.subList(1, path.size()));
+			return root.findOrCreateTextDirectory(path.subList(1, path.size()));
 		}
 	}
 

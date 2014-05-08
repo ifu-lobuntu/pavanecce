@@ -103,10 +103,12 @@ public class JavaReflectionProperty extends JavaAnnotated implements SourcePrope
 		return null;
 	}
 
+	@Override
 	public boolean isStatic() {
 		return isStatic;
 	}
 
+	@Override
 	public VisibilityKind getVisibility() {
 		return visibility;
 	}
@@ -166,6 +168,7 @@ public class JavaReflectionProperty extends JavaAnnotated implements SourcePrope
 		return cascade;
 	}
 
+	@Override
 	public SourceClass getDeclaringType() {
 		return declaringType;
 	}
@@ -197,6 +200,7 @@ public class JavaReflectionProperty extends JavaAnnotated implements SourcePrope
 		return this.otherEnd;
 	}
 
+	@Override
 	public String getMappedBy() {
 		if (mappedBy == null) {
 			mappedBy = findAnnotationAttributeValue("mappedBy", String.class);

@@ -6,8 +6,6 @@ import static org.pavanecce.common.util.NameConverter.toValidVariableName;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.JTable.PrintMode;
-
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Interface;
@@ -34,7 +32,6 @@ import org.pavanecce.common.code.metamodel.CollectionTypeReference;
 import org.pavanecce.common.code.metamodel.PrimitiveTypeReference;
 import org.pavanecce.common.code.metamodel.documentdb.DocumentProperty;
 import org.pavanecce.common.code.metamodel.documentdb.IDocumentElement;
-import org.pavanecce.common.code.metamodel.documentdb.IDocumentProperty;
 import org.pavanecce.common.code.metamodel.documentdb.PropertyType;
 import org.pavanecce.common.code.metamodel.expressions.BinaryOperatorExpression;
 import org.pavanecce.common.code.metamodel.expressions.IsNullExpression;
@@ -52,7 +49,6 @@ import org.pavanecce.common.code.metamodel.statements.CodeIfStatement;
 import org.pavanecce.common.code.metamodel.statements.MappedStatement;
 import org.pavanecce.common.code.metamodel.statements.MethodCallStatement;
 import org.pavanecce.common.code.metamodel.statements.PortableStatement;
-import org.pavanecce.common.code.metamodel.statements.SetResultStatement;
 import org.pavanecce.common.util.NameConverter;
 import org.pavanecce.uml.common.util.EmfClassifierUtil;
 import org.pavanecce.uml.common.util.EmfParameterUtil;

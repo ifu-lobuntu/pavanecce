@@ -9,7 +9,7 @@ import org.pavanecce.cmmn.jbpm.flow.CaseFileItemOnPart;
 import org.pavanecce.cmmn.jbpm.flow.OnPart;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemOnPart;
 
-public class OnPartInstance extends EventNodeInstance {
+public class OnPartInstance extends EventNodeInstance  {
 	/**
 	 * 
 	 */
@@ -18,7 +18,8 @@ public class OnPartInstance extends EventNodeInstance {
 	public OnPart getOnPart() {
 		return (OnPart) getEventNode();
 	}
-
+	
+	@Override
 	public void signalEvent(String type, Object event) {
 		if (event instanceof CaseFileItemEvent && getOnPart() instanceof CaseFileItemOnPart) {
 			CaseFileItemOnPart onPart = (CaseFileItemOnPart) getOnPart();
@@ -56,6 +57,7 @@ public class OnPartInstance extends EventNodeInstance {
 		return variable;
 	}
 
+	@Override
 	public void triggerCompleted() {
 		((org.jbpm.workflow.instance.NodeInstanceContainer) getNodeInstanceContainer()).setCurrentLevel(getLevel());
 		triggerCompleted(org.jbpm.workflow.core.Node.CONNECTION_DEFAULT_TYPE, false);
@@ -64,4 +66,5 @@ public class OnPartInstance extends EventNodeInstance {
 	public CaseEvent getCaseEvent() {
 		return getOnPart().createEvent(getEventStack().peek());
 	}
+
 }

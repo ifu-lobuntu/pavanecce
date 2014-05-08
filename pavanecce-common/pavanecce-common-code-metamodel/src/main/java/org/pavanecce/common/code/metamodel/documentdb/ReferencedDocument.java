@@ -14,6 +14,7 @@ public class ReferencedDocument extends DocumentAssociation implements IDocument
 		return PropertyType.REFERENCE;
 	}
 
+	@Override
 	public boolean isMandatory() {
 		return mandatory;
 	}

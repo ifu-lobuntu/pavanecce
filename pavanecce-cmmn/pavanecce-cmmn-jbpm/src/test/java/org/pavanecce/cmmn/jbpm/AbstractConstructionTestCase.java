@@ -26,6 +26,7 @@ public class AbstractConstructionTestCase extends AbstractCmmnCaseTestCase {
 		super(setupDataSource, sessionPersistence);
 	}
 
+	@Override
 	protected Class<?>[] getClasses() {
 		return new Class<?>[] { ConstructionCase.class, HousePlan.class, House.class, Wall.class, WallPlan.class, RoofPlan.class, OcmCaseSubscriptionInfo.class, OcmCaseFileItemSubscriptionInfo.class,
 				RoomPlan.class };

@@ -140,7 +140,6 @@ public class Case extends RuleFlowProcess implements PlanItemContainer {
 	public void addRole(Role r) {
 		roles.add(r);
 	}
-
 	@Override
 	public Collection<PlanItemInfo> getPlanItemInfo() {
 		return this.planItemInfo;

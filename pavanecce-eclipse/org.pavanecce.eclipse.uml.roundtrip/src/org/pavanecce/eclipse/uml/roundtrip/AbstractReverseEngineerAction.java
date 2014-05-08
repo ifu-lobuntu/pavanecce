@@ -44,6 +44,7 @@ public abstract class AbstractReverseEngineerAction extends AbstractEditingDomai
 		super(selection, name);
 	}
 
+	@Override
 	public void run() {
 
 		Shell shell = Display.getCurrent().getActiveShell();

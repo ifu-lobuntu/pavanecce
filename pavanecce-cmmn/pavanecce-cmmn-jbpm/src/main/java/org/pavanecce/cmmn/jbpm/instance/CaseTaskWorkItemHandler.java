@@ -10,7 +10,8 @@ import org.kie.api.runtime.process.WorkItem;
 import org.kie.internal.task.api.model.ContentData;
 
 public class CaseTaskWorkItemHandler extends LocalHTWorkItemHandler {
-    protected ContentData createTaskContentBasedOnWorkItemParams(KieSession session, WorkItem workItem) {
+    @Override
+	protected ContentData createTaskContentBasedOnWorkItemParams(KieSession session, WorkItem workItem) {
         ContentData content = null;
         Object contentObject = workItem.getParameter("Content");
         if (contentObject == null) {

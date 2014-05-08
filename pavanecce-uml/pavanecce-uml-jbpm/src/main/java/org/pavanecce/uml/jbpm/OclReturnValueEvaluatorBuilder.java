@@ -52,7 +52,7 @@ public class OclReturnValueEvaluatorBuilder implements ReturnValueEvaluatorBuild
 		OclContextFactory factory = new OclContextFactory(rst);
 		Map<String, Classifier> vars = findVariabes(returnValueDescr, ctx, rootObjects, factory);
 		FreeExpressionContext oclContext = factory.getFreeOclExpressionContext(next, vars, returnValueDescr.getText());
-		UmlToCodeMaps codeMaps = new UmlToCodeMaps( factory.getLibrary(),factory.getTypeResolver());
+		UmlToCodeMaps codeMaps = new UmlToCodeMaps(factory.getLibrary(), factory.getTypeResolver());
 		CodeModel codeModel = new CodeModel();
 		CodePackage codePackage = new CodePackage("tmp", codeModel);
 		CodeClass cc = new CodeClass("tmp", codePackage);
@@ -76,15 +76,15 @@ public class OclReturnValueEvaluatorBuilder implements ReturnValueEvaluatorBuild
 		sb.append("().go(");
 		Iterator<Entry<String, Classifier>> iterator = vars.entrySet().iterator();
 		while (iterator.hasNext()) {
-			Map.Entry<String, Classifier> entry = (Map.Entry<String, Classifier>) iterator.next();
+			Map.Entry<String, Classifier> entry = iterator.next();
 			sb.append(entry.getKey());
 			if (iterator.hasNext()) {
 				sb.append(",");
 			}
 		}
 		sb.append(");");
-		returnValueDescr.setText(sb.toString());
 		System.out.println(sb);
+		returnValueDescr.setText(sb.toString());
 		ProcessDialectRegistry.getDialect("java").getReturnValueEvaluatorBuilder().build(context, returnValueConstraintEvaluator, returnValueDescr, contextResolver);
 	}
 
@@ -112,9 +112,20 @@ public class OclReturnValueEvaluatorBuilder implements ReturnValueEvaluatorBuild
 	}
 
 	protected boolean isVariableUsed(ReturnValueDescr returnValueDescr, CaseFileItem cfi) {
-		int i = returnValueDescr.getText().indexOf(cfi.getName());
-		boolean isVariableRead = i >= 0 && (i == 0 || (returnValueDescr.getText().charAt(i) != '.' && !Character.isAlphabetic(returnValueDescr.getText().charAt(i))));
-		return isVariableRead;
+		int fromIndex = 0;
+
+		int i = -1;
+		while(0 <= (i = returnValueDescr.getText().indexOf(cfi.getName(), fromIndex))) {
+			if (i == 0 || (returnValueDescr.getText().charAt(i-1) != '.' && !Character.isAlphabetic(returnValueDescr.getText().charAt(i-1)))) {
+				char charAt = returnValueDescr.getText().charAt(i + cfi.getName().length());
+				boolean isPartOfOtherName = Character.isAlphabetic(charAt);
+				if (!isPartOfOtherName) {
+					return true;
+				}
+			}
+			fromIndex=i+1;
+		}
+		return false;
 	}
 
 	private Classifier findClassifier(Collection<Package> rootObjects, String structureRef) {

@@ -92,6 +92,7 @@ public final class ExtendedOclEnvironment extends DefaultParentOclEnvironment {
 		this.variables = new HashSet<Variable>();
 		setProblemHandler(new CustomOclProblemHandler(getParser()));
 	}
+	@Override
 	public Classifier getContextClassifier() {
 		org.eclipse.ocl.expressions.Variable<Classifier, Parameter> selfVariable = getSelfVariable();
 		return selfVariable ==null?super.getOCLStandardLibrary().getOclAny():selfVariable.getType();
@@ -305,6 +306,7 @@ public final class ExtendedOclEnvironment extends DefaultParentOclEnvironment {
 		return additionalAttributes;
 	}
 
+	@Override
 	public void setFactory(EnvironmentFactory<Package, Classifier, Operation, Property, EnumerationLiteral, Parameter, State, CallOperationAction, SendSignalAction, Constraint, Class, EObject> d) {
 		super.setFactory(d);
 	}
@@ -418,6 +420,14 @@ public final class ExtendedOclEnvironment extends DefaultParentOclEnvironment {
 			Classifier oclType = getTypeResolver().resolve(pt);
 			if (oclType != null) {
 				p = super.lookupProperty(oclType, name);
+			}
+		}
+		if(p==null && owner!=null){
+			System.out.println(1);
+			for (Property property : EmfPropertyUtil.getEffectiveProperties(owner)) {
+				if(name.equals(property.getName())){
+					return property;
+				}
 			}
 		}
 		return p;

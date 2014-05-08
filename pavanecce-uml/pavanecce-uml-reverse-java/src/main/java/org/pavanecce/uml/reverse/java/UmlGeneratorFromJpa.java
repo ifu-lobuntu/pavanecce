@@ -77,6 +77,7 @@ public class UmlGeneratorFromJpa extends AbstractUmlGenerator {
 		return result;
 	}
 
+	@Override
 	protected boolean canReverse(Package library) {
 		return library instanceof Model;
 	}
@@ -106,6 +107,7 @@ public class UmlGeneratorFromJpa extends AbstractUmlGenerator {
 		return assoc;
 	}
 
+	@Override
 	protected Property findProperty(Classifier classifier, SourceProperty pd) {
 		Property r = findProperty(pd, classifier.getAttributes());
 		if (r == null) {
@@ -156,14 +158,14 @@ public class UmlGeneratorFromJpa extends AbstractUmlGenerator {
 	private Property createEnd(Classifier owner, Association assoc, SourceProperty end, Classifier baseType) {
 		Property umlEnd;
 		if (end == null) {
-			umlEnd = (Property) assoc.getOwnedEnd(NameConverter.decapitalize(baseType.getName()), baseType, true, UMLPackage.eINSTANCE.getProperty(), true);
+			umlEnd = assoc.getOwnedEnd(NameConverter.decapitalize(baseType.getName()), baseType, true, UMLPackage.eINSTANCE.getProperty(), true);
 		} else if (end.isComposite()) {
 			umlEnd = super.createAttribute(owner, end);
 			assoc.getMemberEnds().add(umlEnd);
 			umlEnd.setAggregation(AggregationKind.COMPOSITE_LITERAL);
 			umlEnd.setIsNavigable(true);
 		} else {
-			umlEnd = (Property) assoc.getNavigableOwnedEnd(end.getName(), baseType, true, UMLPackage.eINSTANCE.getProperty(), true);
+			umlEnd = assoc.getNavigableOwnedEnd(end.getName(), baseType, true, UMLPackage.eINSTANCE.getProperty(), true);
 
 		}
 		if (end != null) {

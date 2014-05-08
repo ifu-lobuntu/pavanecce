@@ -13,6 +13,7 @@ import org.eclipse.ocl.uml.OCLExpression;
 import org.eclipse.ocl.uml.Variable;
 import org.eclipse.uml2.uml.Classifier;
 import org.eclipse.uml2.uml.Parameter;
+import org.pavanecce.common.code.metamodel.CodeBehaviour;
 import org.pavanecce.common.code.metamodel.CodeBlock;
 import org.pavanecce.common.code.metamodel.CodeClass;
 import org.pavanecce.common.code.metamodel.CodeExpression;
@@ -139,8 +140,7 @@ public class IterationExpressionCreator {
 			new PortableStatement(forEach.getBody(), "result.addAll( bodyExpResult )");
 		} else {
 			NotExpression notNull = new NotExpression(new IsNullExpression(new PortableExpression("bodyExpResult")));
-			CodeIfStatement ifMatch = new CodeIfStatement(forEach.getBody(), notNull, new PortableStatement("result.add( bodyExpResult )"));
-//			new PortableStatement(ifMatch.getThenBlock(),"Packages.java.lang.System.out.println(bodyExpResult)" );
+			new CodeIfStatement(forEach.getBody(), notNull, new PortableStatement("result.add( bodyExpResult )"));
 		}
 
 		return callMethod(oper);
@@ -180,7 +180,7 @@ public class IterationExpressionCreator {
 	}
 
 	private CodeExpression callMethod(CodeMethod oper) {
-		return new PortableExpression("${self}."+ oper.getName() + "(" + CodeMethod.paramsToActuals(oper) + ")");
+		return new PortableExpression("${self}."+ oper.getName() + "(" + CodeBehaviour.paramsToActuals(oper) + ")");
 	}
 
 	private CodeExpression createReject(IteratorExp exp, CodeExpression source, boolean isStatic, List<CodeParameter> params) {

@@ -19,6 +19,7 @@ public class PrimitiveTypeReference extends CodeTypeReference {
 		this(kind2);
 		super.mappings=mappings;
 	}
+	@Override
 	public PrimitiveTypeReference getCopy(){
 		return new PrimitiveTypeReference(kind,mappings);
 	}

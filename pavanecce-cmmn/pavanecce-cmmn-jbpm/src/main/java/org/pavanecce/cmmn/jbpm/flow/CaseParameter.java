@@ -13,6 +13,8 @@ public class CaseParameter implements Serializable,CMMNElement{
 	private String name;
 	private CaseFileItem variable;
 	private Constraint bindingRefinement;
+	private Constraint bindingRefinementParent;
+	@Override
 	public String getElementId() {
 		return id;
 	}
@@ -35,10 +37,13 @@ public class CaseParameter implements Serializable,CMMNElement{
 		return variable;
 	}
 	public void setVariable(CaseFileItem variable) {
-		if(variable==null){
-			System.out.println();
-		}
 		this.variable = variable;
+	}
+	public Constraint getBindingRefinementParent() {
+		return bindingRefinementParent;
+	}
+	public void setBindingRefinementParent(Constraint bindingRefinement) {
+		this.bindingRefinementParent = bindingRefinement;
 	}
 	public Constraint getBindingRefinement() {
 		return bindingRefinement;
@@ -47,10 +52,16 @@ public class CaseParameter implements Serializable,CMMNElement{
 		this.bindingRefinement = bindingRefinement;
 	}
 	public ReturnValueEvaluator getBindingRefinementEvaluator() {
-		if(bindingRefinement==null){
-			return null;
+		if(bindingRefinement instanceof ReturnValueConstraintEvaluator){
+			return ((ReturnValueConstraintEvaluator) bindingRefinement).getReturnValueEvaluator();
 		}
-		return ((ReturnValueConstraintEvaluator) bindingRefinement).getReturnValueEvaluator();
+		return null;
+	}
+	public ReturnValueEvaluator getBindingRefinementParentEvaluator() {
+		if(bindingRefinementParent instanceof ReturnValueConstraintEvaluator){
+			return ((ReturnValueConstraintEvaluator) bindingRefinementParent).getReturnValueEvaluator();
+		}
+		return null;
 	}
 
 	

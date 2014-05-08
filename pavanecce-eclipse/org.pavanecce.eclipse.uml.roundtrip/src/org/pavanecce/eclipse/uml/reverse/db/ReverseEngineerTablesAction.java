@@ -12,6 +12,7 @@ public class ReverseEngineerTablesAction extends AbstractReverseEngineerAction{
 	public ReverseEngineerTablesAction(IStructuredSelection selection){
 		super(selection, "Reverse Engineer Tables");
 	}
+	@Override
 	public AbstractCommand buildCommand(final Package model){
 		return new AbstractCommand(){
 			@Override

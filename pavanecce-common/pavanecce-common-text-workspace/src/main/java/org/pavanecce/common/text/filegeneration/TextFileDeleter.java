@@ -14,6 +14,7 @@ public class TextFileDeleter extends DefaultTextFileVisitor {
 		initialize(mappedRoot);
 	}
 
+	@Override
 	public void visitTextFileDirectory(TextDirectory textDir) {
 		if (textDir instanceof SourceFolder && !((SourceFolder) textDir).isRegenerated()) {
 			// Do nothing - no new code generated into this folder

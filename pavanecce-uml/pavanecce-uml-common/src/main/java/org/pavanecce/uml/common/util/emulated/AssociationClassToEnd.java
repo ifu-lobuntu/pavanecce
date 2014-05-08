@@ -10,7 +10,7 @@ public class AssociationClassToEnd extends AbstractEmulatedProperty{
 	private Property property;
 	private EndToAssociationClass otherEnd;
 	public AssociationClassToEnd(Property property){
-		super((Classifier) property.getAssociation(), property);
+		super(property.getAssociation(), property);
 		this.property = property;
 	}
 	@Override

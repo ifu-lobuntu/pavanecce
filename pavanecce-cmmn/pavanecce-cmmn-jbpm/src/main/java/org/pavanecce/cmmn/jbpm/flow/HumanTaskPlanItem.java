@@ -37,6 +37,7 @@ public class HumanTaskPlanItem extends WorkItemNode implements PlanItem {
 		return null;
 	}
 
+	@Override
 	public void validateAddIncomingConnection(final String type, final Connection connection) {
 		if (type == null) {
 			throw new IllegalArgumentException("Connection type cannot be null");

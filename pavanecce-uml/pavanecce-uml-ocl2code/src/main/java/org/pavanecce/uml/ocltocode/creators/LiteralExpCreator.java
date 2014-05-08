@@ -20,6 +20,7 @@ import org.eclipse.ocl.uml.TupleType;
 import org.eclipse.uml2.uml.Classifier;
 import org.eclipse.uml2.uml.EnumerationLiteral;
 import org.eclipse.uml2.uml.Property;
+import org.pavanecce.common.code.metamodel.CodeBehaviour;
 import org.pavanecce.common.code.metamodel.CodeBlock;
 import org.pavanecce.common.code.metamodel.CodeClass;
 import org.pavanecce.common.code.metamodel.CodeExpression;
@@ -89,7 +90,7 @@ public class LiteralExpCreator {
 			PropertyMap map = codeMaps.buildStructuralFeatureMap(part.getAttribute());
 			new MethodCallStatement(oper.getBody(), map.setter(), arg);
 		}
-		return new PortableExpression(oper.getName() + "(" + CodeMethod.paramsToActuals(oper) + ")");
+		return new PortableExpression(oper.getName() + "(" + CodeBehaviour.paramsToActuals(oper) + ")");
 	}
 
 	private CodeExpression makeCollectionLiteralExp(CollectionLiteralExp exp, boolean isStatic, List<CodeParameter> params) {
@@ -125,7 +126,7 @@ public class LiteralExpCreator {
 			oper.setVisibility(CodeVisibilityKind.PRIVATE);
 			oper.setComment("implements " + exp.toString());
 			createCollectionBody(oper, exp, mapper.javaTypePath(), isStatic, params);
-			return new PortableExpression(operName + "(" + CodeMethod.paramsToActuals(oper) + ")");
+			return new PortableExpression(operName + "(" + CodeBehaviour.paramsToActuals(oper) + ")");
 		}
 	}
 

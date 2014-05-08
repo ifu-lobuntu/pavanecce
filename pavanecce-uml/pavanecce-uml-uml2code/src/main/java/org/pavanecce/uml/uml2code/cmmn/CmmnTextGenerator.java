@@ -8,13 +8,13 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Classifier;
 import org.eclipse.uml2.uml.LiteralUnlimitedNatural;
+import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Type;
 import org.pavanecce.common.util.NameConverter;
 import org.pavanecce.uml.common.util.EmfClassifierUtil;
 import org.pavanecce.uml.common.util.EmfPropertyUtil;
 import org.pavanecce.uml.uml2code.AbstractTextGenerator;
-import org.eclipse.uml2.uml.Package;
 
 public class CmmnTextGenerator extends AbstractTextGenerator {
 	protected Deque<String> elementStack = new ArrayDeque<String>();

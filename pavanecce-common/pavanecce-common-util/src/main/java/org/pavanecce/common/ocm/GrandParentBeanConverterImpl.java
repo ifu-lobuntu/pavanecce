@@ -19,6 +19,7 @@ public class GrandParentBeanConverterImpl extends ParentBeanConverterImpl {
 		super(mapper, objectConverter, atomicTypeConverterProvider);
 	}
 
+	@Override
 	@SuppressWarnings("rawtypes")
 	public Object getObject(Session session, Node parentNode, BeanDescriptor beanDescriptor, ClassDescriptor beanClassDescriptor, Class beanClass, Object parent)
 			throws ObjectContentManagerException, RepositoryException,JcrMappingException {

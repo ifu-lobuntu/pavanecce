@@ -43,6 +43,16 @@
 		</cmmn:input>
 		<cmmn:input bindingRef="houseFileItemId" id="houseInputId" name="house">
 		</cmmn:input>
+		<cmmn:input bindingRef="wallPlanFileItemId" id="wallPlanInputId" name="housePlan">
+			<cmmn:bindingRefinement language="http://www.java.com/java">
+				<cmmn:body>return housePlan.getWallPlans();</cmmn:body>
+			</cmmn:bindingRefinement>
+		</cmmn:input>
+		<cmmn:input bindingRef="roofPlanFileItemId" id="roofPlanInputId" name="roofPlan">
+			<cmmn:bindingRefinement language="http://www.java.com/java">
+				<cmmn:body>return housePlan.getRoofPlan();</cmmn:body>
+			</cmmn:bindingRefinement>
+		</cmmn:input>
 	</cmmn:case>
 </cmmn:definitions>
 

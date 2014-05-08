@@ -34,10 +34,12 @@ public class CollectionPlaceHolderResolveStrategy extends JPAPlaceholderResolver
 		this.env=env;
 	}
 
+	@Override
 	public boolean accept(Object object) {
 		return (object instanceof Collection);
 	}
 
+	@Override
 	public void write(ObjectOutputStream os, Object collection) throws IOException {
 		if(collection instanceof Stack){
 			os.writeUTF(Stack.class.getName());
@@ -82,6 +84,7 @@ public class CollectionPlaceHolderResolveStrategy extends JPAPlaceholderResolver
 		return result;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public Object read(ObjectInputStream is) throws IOException, ClassNotFoundException {
 		String canonicalName = is.readUTF();
@@ -110,6 +113,7 @@ public class CollectionPlaceHolderResolveStrategy extends JPAPlaceholderResolver
 		return coll;
 	}
 
+	@Override
 	public byte[] marshal(Context context, ObjectOutputStream os, Object object) throws IOException {
 		ByteArrayOutputStream buff = new ByteArrayOutputStream();
 		ObjectOutputStream oos = new ObjectOutputStream(buff);
@@ -118,10 +122,12 @@ public class CollectionPlaceHolderResolveStrategy extends JPAPlaceholderResolver
 		return buff.toByteArray();
 	}
 
+	@Override
 	public Object unmarshal(Context context, ObjectInputStream ois, byte[] object, ClassLoader classloader) throws IOException, ClassNotFoundException {
 		DroolsObjectInputStream is = new DroolsObjectInputStream(new ByteArrayInputStream(object), classloader);
 		return read(is);
 	}
+	@Override
 	public Context createContext() {
 		// no need for context
 		return null;

@@ -33,38 +33,47 @@ public class Stage extends CompositeContextNode implements PlanItemDefinition, P
 		this.theCase = theCase;
 	}
 
+	@Override
 	public StartNode getDefaultStart() {
 		return defaultStart;
 	}
 
+	@Override
 	public void setDefaultStart(StartNode defaultStart) {
 		this.defaultStart = defaultStart;
 	}
 
+	@Override
 	public Split getDefaultSplit() {
 		return defaultSplit;
 	}
 
+	@Override
 	public void setDefaultSplit(Split defaultSplit) {
 		this.defaultSplit = defaultSplit;
 	}
 
+	@Override
 	public EndNode getDefaultEnd() {
 		return defaultEnd;
 	}
 
+	@Override
 	public void setDefaultEnd(EndNode defaultEnd) {
 		this.defaultEnd = defaultEnd;
 	}
 
+	@Override
 	public Join getDefaultJoin() {
 		return defaultJoin;
 	}
 
+	@Override
 	public void setDefaultJoin(Join defaultJoin) {
 		this.defaultJoin = defaultJoin;
 	}
 
+	@Override
 	public String getElementId() {
 		return elementId;
 	}
@@ -73,15 +82,7 @@ public class Stage extends CompositeContextNode implements PlanItemDefinition, P
 		this.elementId = elementId;
 	}
 
-	@Override
-	public List<DataAssociation> getInAssociations() {
-		return Collections.emptyList();
-	}
 
-	@Override
-	public List<CaseParameter> getInputs() {
-		return Collections.emptyList();
-	}
 
 	@Override
 	public void addPlanItemInfo(PlanItemInfo d) {

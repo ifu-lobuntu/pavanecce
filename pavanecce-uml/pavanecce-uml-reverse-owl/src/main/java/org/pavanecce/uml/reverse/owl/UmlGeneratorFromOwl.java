@@ -44,6 +44,7 @@ public class UmlGeneratorFromOwl extends AbstractUmlGenerator {
 		return result;
 	}
 
+	@Override
 	protected boolean canReverse(Package library) {
 		return library instanceof Model;
 	}
@@ -73,6 +74,7 @@ public class UmlGeneratorFromOwl extends AbstractUmlGenerator {
 		return assoc;
 	}
 
+	@Override
 	protected Property findProperty(Classifier classifier, SourceProperty pd) {
 		Property r = findProperty(pd, classifier.getAttributes());
 		if (r == null) {
@@ -107,7 +109,7 @@ public class UmlGeneratorFromOwl extends AbstractUmlGenerator {
 		Property otherEnd;
 		if (end == null) {
 
-			otherEnd = (Property) assoc.getOwnedEnd(NameConverter.decapitalize(baseType.getName()), baseType, true, UMLPackage.eINSTANCE.getProperty(), true);
+			otherEnd = assoc.getOwnedEnd(NameConverter.decapitalize(baseType.getName()), baseType, true, UMLPackage.eINSTANCE.getProperty(), true);
 
 		} else if (end.isComposite()) {
 
@@ -118,7 +120,7 @@ public class UmlGeneratorFromOwl extends AbstractUmlGenerator {
 			otherEnd.setIsNavigable(true);
 		} else {
 
-			otherEnd = (Property) assoc.getNavigableOwnedEnd(end.getName(), baseType, true, UMLPackage.eINSTANCE.getProperty(), true);
+			otherEnd = assoc.getNavigableOwnedEnd(end.getName(), baseType, true, UMLPackage.eINSTANCE.getProperty(), true);
 
 		}
 		if (end == null || end.isMany()) {

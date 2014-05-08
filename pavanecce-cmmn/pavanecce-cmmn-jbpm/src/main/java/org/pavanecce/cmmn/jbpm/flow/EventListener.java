@@ -13,21 +13,13 @@ public class EventListener extends EventNode implements PlanItemDefinition {
 	private static final long serialVersionUID = -2391269457943140229L;
 	private String elementId;
 
+	@Override
 	public String getElementId() {
 		return elementId;
 	}
 
 	public void setElementId(String elementId) {
 		this.elementId = elementId;
-	}
-	@Override
-	public List<DataAssociation> getInAssociations() {
-		return Collections.emptyList();
-	}
-
-	@Override
-	public List<CaseParameter> getInputs() {
-		return Collections.emptyList();
 	}
 
 }

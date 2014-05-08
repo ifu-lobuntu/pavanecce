@@ -31,47 +31,58 @@ public class TypedElementPropertyBridge extends AbstractEmulatedProperty {
 		this.emulation = pe;
 	}
 
+	@Override
 	public Type getType() {
 		Type type = typedElement.getType();
 		return type;
 	}
 
+	@Override
 	public boolean isOrdered() {
 		return getMultiplicityElement().isOrdered();
 	}
 
+	@Override
 	public boolean isUnique() {
 		return getMultiplicityElement().isUnique();
 	}
 
+	@Override
 	public int getUpper() {
 		return getMultiplicityElement().getUpper();
 	}
 
+	@Override
 	public ValueSpecification getUpperValue() {
 		return getMultiplicityElement().getUpperValue();
 	}
 
+	@Override
 	public boolean isMultivalued() {
 		return getMultiplicityElement().isMultivalued();
 	}
 
+	@Override
 	public boolean includesCardinality(int C) {
 		return getMultiplicityElement().includesCardinality(C);
 	}
 
+	@Override
 	public boolean includesMultiplicity(MultiplicityElement M) {
 		return getMultiplicityElement().includesMultiplicity(M);
 	}
 
+	@Override
 	public int lowerBound() {
 		return getMultiplicityElement().lowerBound();
 	}
 
+	@Override
 	public int upperBound() {
 		return getMultiplicityElement().upperBound();
 	}
 
+	@Override
 	public boolean is(int lowerbound, int upperbound) {
 		return getMultiplicityElement().is(lowerbound, upperbound);
 	}

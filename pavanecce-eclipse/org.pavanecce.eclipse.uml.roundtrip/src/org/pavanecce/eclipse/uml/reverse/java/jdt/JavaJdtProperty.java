@@ -106,6 +106,7 @@ public class JavaJdtProperty extends JdtAnnotated implements SourceProperty {
 		return isStatic;
 	}
 
+	@Override
 	public SourceClass getDeclaringType() {
 		return declaringType;
 	}
@@ -170,6 +171,7 @@ public class JavaJdtProperty extends JdtAnnotated implements SourceProperty {
 		return this.otherEnd;
 	}
 
+	@Override
 	public String getMappedBy() {
 		if (mappedBy == null) {
 			mappedBy = findAnnotationAttributeValue("mappedBy", String.class);

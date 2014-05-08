@@ -30,15 +30,18 @@ public class CollectionDataType implements DataType {
         this.className = className;
     }
 
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+    @Override
+	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         className = (String) in.readObject();
     }
 
-    public void writeExternal(ObjectOutput out) throws IOException {
+    @Override
+	public void writeExternal(ObjectOutput out) throws IOException {
         out.writeObject(className);
     }
 
-    public boolean verifyDataType(final Object value) {
+    @Override
+	public boolean verifyDataType(final Object value) {
         if (value == null) {
             return true;
         }
@@ -54,17 +57,20 @@ public class CollectionDataType implements DataType {
         return false;
     }
 
-    public Object readValue(String value) {
+    @Override
+	public Object readValue(String value) {
         XStream xstream = new XStream();
         return xstream.fromXML(value);
     }
 
-    public String writeValue(Object value) {
+    @Override
+	public String writeValue(Object value) {
         XStream xstream = new XStream();
         return xstream.toXML(value);
     }
 
-    public String getStringType() {
+    @Override
+	public String getStringType() {
         return className == null ? "java.lang.Object" : className;
     }
 

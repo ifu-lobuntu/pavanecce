@@ -1,27 +1,30 @@
 package test;
-import java.util.HashSet;
 import java.util.Set;
-
+import java.util.HashSet;
+import test.ConstructionCase;
+import test.RoofPlan;
+import test.Wall;
+import test.WallPlan;
+import org.pavanecce.common.collections.OneToManySet;
+import org.pavanecce.common.collections.OneToManySet;
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
+import org.apache.jackrabbit.ocm.manager.beanconverter.impl.ParentBeanConverterImpl;
+import org.apache.jackrabbit.ocm.manager.beanconverter.impl.ReferenceBeanConverterImpl;
+import org.apache.jackrabbit.ocm.manager.collectionconverter.impl.BeanReferenceCollectionConverterImpl;
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Bean;
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Collection;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
-import org.apache.jackrabbit.ocm.manager.beanconverter.impl.ParentBeanConverterImpl;
-import org.apache.jackrabbit.ocm.manager.beanconverter.impl.ReferenceBeanConverterImpl;
-import org.apache.jackrabbit.ocm.manager.collectionconverter.impl.BeanReferenceCollectionConverterImpl;
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Bean;
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Collection;
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
-import org.pavanecce.common.collections.OneToManySet;
 @Node(jcrType = "test:house", discriminator = false)
 @Entity(name="House")
 @Table(name="house")
@@ -46,10 +49,11 @@ public class House{
         @JoinColumn(name="roof_plan_id",referencedColumnName="id")}
   )
   private RoofPlan roofPlan = null;
-  private transient OneToManySet<House,WallPlan> wallPlansWrapper = new OneToManySet<House,WallPlan>(this){
+  @SuppressWarnings("serial")  private transient OneToManySet<House,WallPlan> wallPlansWrapper = new OneToManySet<House,WallPlan>(this){
       public Set<WallPlan> getDelegate(){
         return wallPlans;
       }
+      @SuppressWarnings("unchecked")
       protected OneToManySet<House,WallPlan> getChildren(House parent){
         return (OneToManySet<House,WallPlan>)parent.getWallPlans();
       }
@@ -69,10 +73,11 @@ public class House{
   @Collection(jcrName = "test:wallPlans", collectionConverter =  BeanReferenceCollectionConverterImpl.class)
   @OneToMany(mappedBy="house")
   private Set<WallPlan> wallPlans = new HashSet<WallPlan>();
-  private transient OneToManySet<House,Wall> wallsWrapper = new OneToManySet<House,Wall>(this){
+  @SuppressWarnings("serial")  private transient OneToManySet<House,Wall> wallsWrapper = new OneToManySet<House,Wall>(this){
       public Set<Wall> getDelegate(){
         return walls;
       }
+      @SuppressWarnings("unchecked")
       protected OneToManySet<House,Wall> getChildren(House parent){
         return (OneToManySet<House,Wall>)parent.getWalls();
       }
@@ -90,10 +95,13 @@ public class House{
       }
   };
   @Collection(jcrName = "test:walls", jcrElementName = "test:wall")
-  @OneToMany(mappedBy="house",cascade=CascadeType.ALL)
+  @OneToMany(mappedBy="house",cascade=CascadeType.ALL,orphanRemoval=true)
   private Set<Wall> walls = new HashSet<Wall>();
   @Field(path=true)
   String path;
+  @Field(jcrName = "test:uuid", jcrType = "String")
+  @javax.persistence.Basic()
+  private String uuid=getUuid();
   public House(){
   }
   public House(ConstructionCase owner){
@@ -174,5 +182,20 @@ public class House{
   }
   public void setPath(String value){
     this.path=value;
+  }
+  public int hashCode(){
+    return getUuid().hashCode();
+  }
+  public boolean equals(Object o){
+    return o instanceof House && ((House)o).getUuid().equals(getUuid());
+  }
+  public String getUuid(){
+    if(uuid==null){
+      uuid=java.util.UUID.randomUUID().toString();
+    }
+    return uuid;
+  }
+  public void setUuid(String uuid){
+    this.uuid=uuid;
   }
 }

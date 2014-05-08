@@ -36,6 +36,7 @@ public class Parent {
 			return parent.children;
 		}
 
+		@Override
 		protected Collection<Child> getDelegate() {
 			return delegate;
 		};

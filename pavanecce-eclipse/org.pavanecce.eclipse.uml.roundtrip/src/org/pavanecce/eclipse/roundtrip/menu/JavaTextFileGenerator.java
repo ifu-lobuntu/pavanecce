@@ -50,7 +50,7 @@ public class JavaTextFileGenerator extends DefaultCodeModelVisitor {
 			
 			@Override
 			public char[] toCharArray() {
-				return javaCodeGenerator.toClassifierDeclaration((CodeClass) cc).toCharArray();
+				return javaCodeGenerator.toClassifierDeclaration(cc).toCharArray();
 			}
 			
 			@Override

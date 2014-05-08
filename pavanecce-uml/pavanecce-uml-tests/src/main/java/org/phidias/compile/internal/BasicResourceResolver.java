@@ -27,10 +27,12 @@ import org.phidias.compile.ResourceResolver;
  */
 public class BasicResourceResolver implements ResourceResolver {
 
+	@Override
 	public URL getResource(BundleWiring bundleWiring, String name) {
 		return bundleWiring.getBundle().getResource(name);
 	}
 
+	@Override
 	public Collection<String> resolveResources(
 		BundleWiring bundleWiring, String path, String filePattern,
 		int options) {

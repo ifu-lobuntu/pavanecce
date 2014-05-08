@@ -24,6 +24,7 @@ public class InverseArtificialProperty extends AbstractEmulatedProperty{
 		super(owner, msg);
 		setType(msg);
 	}
+	@Override
 	public Classifier getOwner(){
 		return (Classifier) super.getOwner();
 	}
@@ -43,6 +44,7 @@ public class InverseArtificialProperty extends AbstractEmulatedProperty{
 	public boolean isOrdered(){
 		return getOriginalElement() instanceof Behavior || getOriginalElement() instanceof MessageType;
 	}
+	@Override
 	public int getUpper(){
 		if(isClassifierBehavior()){
 			return 1;
@@ -60,9 +62,11 @@ public class InverseArtificialProperty extends AbstractEmulatedProperty{
 		}
 	}
 
+	@Override
 	public String getName(){
 		return NameConverter.decapitalize(getOriginalElement().getName());
 	}
+	@Override
 	public NonInverseArtificialProperty getOtherEnd(){
 		if(otherEnd == null){
 			initialiseOtherEnd();

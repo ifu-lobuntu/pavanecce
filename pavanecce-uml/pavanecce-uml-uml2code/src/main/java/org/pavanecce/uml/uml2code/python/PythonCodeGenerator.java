@@ -127,7 +127,7 @@ public class PythonCodeGenerator extends AbstractCodeGenerator {
 		Iterator<CodeParameter> iterator = method.getParameters().iterator();
 		while (iterator.hasNext()) {
 			sb.append(", ");
-			CodeParameter codeParameter = (CodeParameter) iterator.next();
+			CodeParameter codeParameter = iterator.next();
 			sb.append(codeParameter.getName());
 		}
 		sb.append("):\n");
