@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import org.pavanecce.cmmn.jbpm.instance.CaseSubscriptionKey;
+import org.pavanecce.cmmn.jbpm.jpa.JpaCaseSubscriptionKey;
 
 public class OcmCaseSubscriptionKey implements Serializable, CaseSubscriptionKey {
 	/**
@@ -65,4 +66,17 @@ public class OcmCaseSubscriptionKey implements Serializable, CaseSubscriptionKey
 	public String getId() {
 		return id;
 	}
-}
+	@Override
+	public int hashCode() {
+		return className.hashCode();
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if(this==obj){
+			return true;
+		}else if(obj instanceof OcmCaseSubscriptionKey){
+			OcmCaseSubscriptionKey other =(OcmCaseSubscriptionKey) obj;
+			return other.className.equals(className) && other.id.equals(id);
+		}
+		return false;
+	}}

@@ -37,7 +37,7 @@ public class OcmTests extends AbstractPersistenceTest {
 		example.generateCode(new JavaCodeGenerator(), new OcmCodeDecorator());
 		List<Class> classes = getClasses();
 		File outputRoot = example.calculateBinaryOutputRoot();
-		File testCndFile = generateCndFile(outputRoot);
+		File testCndFile = generateCndFile(outputRoot,new CndTextGenerator());
 		Repository tr = new TransientRepository();
 		Session session = tr.login(new SimpleCredentials("admin", "admin".toCharArray()));
 		CndImporter.registerNodeTypes(new FileReader(testCndFile), session);
@@ -50,16 +50,11 @@ public class OcmTests extends AbstractPersistenceTest {
 		example.initScriptingEngine();
 		example.getJavaScriptContext().setAttribute("p", hibernatePersistence, ScriptContext.ENGINE_SCOPE);
 	}
-	protected static File generateCndFile(File outputRoot) {
+	protected static File generateCndFile(File outputRoot, CndTextGenerator cndTextGenerator) {
 		UmlDocumentModelFileVisitorAdaptor a = new UmlDocumentModelFileVisitorAdaptor();
 		DocumentModelBuilder docBuilder = new DocumentModelBuilder();
 		a.startVisiting(docBuilder, example.getModel());
-		CndTextGenerator cndTextGenerator = new CndTextGenerator(){
-			@Override
-			public void appendExtraFields() {
-				append("  - test:uuid ( STRING )  mandatory\n");
-			}
-		};
+		
 		DocumentNamespace documentModel = docBuilder.getDocumentModel();
 		File testCndFile = new File(outputRoot,"test.cnd");
 		FileUtil.write(testCndFile, cndTextGenerator.generate(documentModel));

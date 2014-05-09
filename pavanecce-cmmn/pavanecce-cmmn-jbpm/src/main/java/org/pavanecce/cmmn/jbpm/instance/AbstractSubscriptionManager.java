@@ -3,11 +3,11 @@ package org.pavanecce.cmmn.jbpm.instance;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -20,24 +20,18 @@ import org.drools.persistence.PersistenceContext;
 import org.drools.persistence.PersistenceContextManager;
 import org.drools.persistence.jpa.JpaPersistenceContextManager;
 import org.kie.api.runtime.EnvironmentName;
-import org.kie.api.runtime.process.NodeInstance;
 import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItem;
-import org.pavanecce.cmmn.jbpm.flow.CaseFileItemOnPart;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
-import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
 import org.pavanecce.cmmn.jbpm.flow.OnPart;
-import org.pavanecce.cmmn.jbpm.flow.PlanItem;
-import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
-import org.pavanecce.cmmn.jbpm.flow.TaskDefinition;
-import org.pavanecce.cmmn.jbpm.flow.builder.CollectionDataType;
 import org.pavanecce.common.ObjectPersistence;
 
-public abstract class AbstractSubscriptionManager<T extends CaseSubscriptionInfo<X>, X extends PersistedCaseFileItemSubscriptionInfo> {
+public abstract class AbstractSubscriptionManager<T extends CaseSubscriptionInfo<X>, X extends PersistedCaseFileItemSubscriptionInfo> implements SubscriptionManager {
 
 	private static ThreadLocal<Set<EntityManager>> entityManagersToFlush = new ThreadLocal<Set<EntityManager>>();
 	private boolean cascadeSubscription = false;
-	private static ThreadLocal<Map<CaseInstance, Set<CaseParameter>>> explicitlyScopedSubscriptions = new ThreadLocal<Map<CaseInstance, Set<CaseParameter>>>();
+	private static ThreadLocal<Map<Long, Set<OnPartInstanceSubscription>>> explicitlyScopedSubscriptions = new ThreadLocal<Map<Long, Set<OnPartInstanceSubscription>>>();
+	private ThreadLocal<Map<CaseSubscriptionKey, T>> cachedSubscriptions = new ThreadLocal<Map<CaseSubscriptionKey, T>>();
 
 	public AbstractSubscriptionManager() {
 		super();
@@ -48,78 +42,31 @@ public abstract class AbstractSubscriptionManager<T extends CaseSubscriptionInfo
 		this.cascadeSubscription = cascade;
 	}
 
-	public final void subscribe(CaseInstance process, CaseFileItem item, Object target, ObjectPersistence p) {
-		subscribeToUnknownNumberOfObjects(process, item, target, p);
+	@Override
+	public void subscribe(CaseInstance process, Collection<Object> targets, Map<CaseFileItem, Collection<Object>> parentSubscriptions, ObjectPersistence p) {
+		cachedSubscriptions.set(new HashMap<CaseSubscriptionKey, T>());
+		Set<OnPartInstanceSubscription> findOnPartInstanceSubscriptions = process.findOnPartInstanceSubscriptions();
+		subscribeToUnknownNumberOfObjects(process, findOnPartInstanceSubscriptions, targets, p);
+		subscribeToCreateAndDeleteOfChildren(process, parentSubscriptions, p);
+		flushSubscriptions(p);
 	}
 
-	public final void subscribeToParent(CaseInstance process, CaseFileItem caseFileItem, Object parent, ObjectPersistence p) {
-		if (parent instanceof Collection) {
-			Collection<?> coll = (Collection<?>) parent;
-			for (Object object : coll) {
-				T info = findOrCreateCaseSubscriptionInfo(object, p);
-				subscribeChildItem(process, info, process.getCase(), caseFileItem);
-				p.update(info);
-			}
-		} else {
-			T info = findOrCreateCaseSubscriptionInfo(parent, p);
-			subscribeChildItem(process, info, process.getCase(), caseFileItem);
-			p.update(info);
-		}
-	}
-
-	public void unsubscribeFromParent(CaseInstance process, CaseFileItem caseFileItem, Object parent, ObjectPersistence p) {
-		// TODO do this correctly
-		unsubscribe(process, caseFileItem, parent, p);
-	}
 	public static void addScopedSubscriptions(CaseInstance theCase) {
-		Set<CaseParameter> params = new HashSet<CaseParameter>();
-		params.addAll(theCase.getCase().getInputParameters());
-		for (NodeInstance ni : theCase.getNodeInstances()) {
-			if (ni.getNode() instanceof PlanItem) {
-				PlanItem pi = (PlanItem) ni.getNode();
-				PlanItemDefinition def = pi.getPlanInfo().getDefinition();
-				if (def instanceof TaskDefinition) {
-					params.addAll(((TaskDefinition) def).getOutputs());
-				}
-			}
-		}
-		Map<CaseInstance, Set<CaseParameter>> map = explicitlyScopedSubscriptions.get();
+		Map<Long, Set<OnPartInstanceSubscription>> map = explicitlyScopedSubscriptions.get();
 		if (map == null) {
-			explicitlyScopedSubscriptions.set(map = new HashMap<CaseInstance, Set<CaseParameter>>());
+			explicitlyScopedSubscriptions.set(map = new HashMap<Long, Set<OnPartInstanceSubscription>>());
 		}
-		map.put(theCase, params);
+		map.put(theCase.getId(), theCase.findOnPartInstanceSubscriptions());
 	}
 
-	public static Map<CaseInstance, Set<CaseParameter>> getScopedSubscriptions() {
-		return explicitlyScopedSubscriptions.get();
-	}
-
-	public static Collection<OnPartInstanceSubscription> getExplicitlyScopedSubscriptionsFor(Object source, CaseFileItemTransition... transitions) {
-		if (getScopedSubscriptions() != null) {
-			Collection<OnPartInstanceSubscription> result = new HashSet<OnPartInstanceSubscription>();
-			for (Entry<CaseInstance, Set<CaseParameter>> entry : getScopedSubscriptions().entrySet()) {
-				for (CaseParameter caseParameter : entry.getValue()) {
-					boolean isListed = false;
-					if (caseParameter.getVariable().isCollection()) {
-						CollectionDataType dt = (CollectionDataType) caseParameter.getVariable().getType();
-						String elementClassName = dt.getElementClassName();
-						if (isInstance(source, elementClassName)) {
-							isListed = true;
-						}
-					} else {
-						String stringType = caseParameter.getVariable().getType().getStringType();
-						if (isInstance(source, stringType)) {
-							isListed = true;
-						}
-					}
-					if (isListed) {
-						for (OnPartInstance opi : entry.getKey().findCaseFileItemOnPartInstancesFor(caseParameter.getVariable())) {
-							for (CaseFileItemTransition t : transitions) {
-								if (t == opi.getOnPart().getStandardEvent()) {
-									result.add(new OnPartInstanceSubscription(opi, caseParameter));
-									break;
-								}
-							}
+	public static Set<OnPartInstanceSubscription> getExplicitlyScopedSubscriptionsFor(Object source, CaseFileItemTransition... transitions) {
+		if (explicitlyScopedSubscriptions.get() != null) {
+			Set<OnPartInstanceSubscription> result = new HashSet<OnPartInstanceSubscription>();
+			for (Entry<Long, Set<OnPartInstanceSubscription>> entry : explicitlyScopedSubscriptions.get().entrySet()) {
+				for (CaseFileItemTransition t : transitions) {
+					for (OnPartInstanceSubscription opis : entry.getValue()) {
+						if (opis.isListeningTo(source, t)) {
+							result.add(opis);
 						}
 					}
 				}
@@ -129,22 +76,14 @@ public abstract class AbstractSubscriptionManager<T extends CaseSubscriptionInfo
 		return Collections.emptySet();
 	}
 
-	private static boolean isInstance(Object source, String stringType) {
-		try {
-			return Class.forName(stringType).isInstance(source);
-		} catch (ClassNotFoundException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	protected void subscribeToUnknownNumberOfObjects(CaseInstance process, CaseFileItem caseFileItem, Object val, ObjectPersistence em) {
-		if (val instanceof Collection) {
-			Collection<?> coll = (Collection<?>) val;
-			for (Object child : coll) {
-				subscribeToSingleObject(process, caseFileItem, child, em);
+	private void subscribeToUnknownNumberOfObjects(CaseInstance process, Collection<OnPartInstanceSubscription> subs, Object target, ObjectPersistence em) {
+		if (target instanceof Collection) {
+			Collection<?> targets = (Collection<?>) target;
+			for (Object currentTarget : targets) {
+				subscribeToSingleObject(process, subs, currentTarget, em);
 			}
-		} else if (val != null) {
-			subscribeToSingleObject(process, caseFileItem, val, em);
+		} else if (target != null) {
+			subscribeToSingleObject(process, subs, target, em);
 		}
 	}
 
@@ -158,15 +97,15 @@ public abstract class AbstractSubscriptionManager<T extends CaseSubscriptionInfo
 	protected static void fireEvent(CaseFileItemSubscriptionInfo is, Object parentObject, Object value) {
 		CaseFileItemEvent event = new CaseFileItemEvent(is.getItemName(), is.getTransition(), parentObject, value);
 		if (is instanceof OnPartInstanceSubscription) {
-			OnPartInstanceSubscription onPartInstanceSubscription = (OnPartInstanceSubscription) is;
-			if (onPartInstanceSubscription.meetsBindingRefinementCriteria(value)) {
-				OnPartInstance source = onPartInstanceSubscription.getSource();
-				CaseInstance ci=(CaseInstance) source.getProcessInstance();
+			OnPartInstanceSubscription opis = (OnPartInstanceSubscription) is;
+			InternalKnowledgeRuntime eventManager = CaseInstanceFactory.getEventManager(opis.getCaseKey());
+			CaseInstance ci = (CaseInstance) eventManager.getProcessInstance(opis.getProcessInstanceId());
+			if (opis.meetsBindingRefinementCriteria(value, ci)) {
 				fireEvent(ci.getCase().getCaseKey(), ci.getId(), event);
 			}
 		} else if (is instanceof PersistedCaseFileItemSubscriptionInfo) {
 			PersistedCaseFileItemSubscriptionInfo pcfis = (PersistedCaseFileItemSubscriptionInfo) is;
-			fireEvent(pcfis.getCaseKey(), pcfis.getProcessId(), event);
+			fireEvent(pcfis.getCaseKey(), pcfis.getProcessInstanceId(), event);
 		}
 	}
 
@@ -206,82 +145,108 @@ public abstract class AbstractSubscriptionManager<T extends CaseSubscriptionInfo
 		return collection;
 	}
 
-	private void subscribeToSingleObject(CaseInstance process, CaseFileItem caseFileItem, Object currentInstance, ObjectPersistence em) {
-		T info = findOrCreateCaseSubscriptionInfo(currentInstance, em);
-		Case theCase = (Case) process.getProcess();
-		storeVariable(process, caseFileItem, currentInstance);
-		Collection<CaseFileItemOnPart> onCaseFileItemParts = theCase.findCaseFileItemOnPartsFor(caseFileItem);
-		for (CaseFileItemOnPart part : onCaseFileItemParts) {
-			switch (part.getStandardEvent()) {
-			case ADD_CHILD:
-			case ADD_REFERENCE:
-			case REMOVE_CHILD:
-			case REMOVE_REFERENCE:
-			case REPLACE:
-			case UPDATE:
-				buildCaseFileItemSubscriptionInfo(process, caseFileItem, info, part);
-				break;
-			default:
-				break;
+	private void subscribeToSingleObject(CaseInstance caseInstance, Collection<OnPartInstanceSubscription> subs, Object target, ObjectPersistence em) {
+		T info = findOrCreateCaseSubscriptionInfo(caseInstance, target, em);
+		for (OnPartInstanceSubscription sub : subs) {
+			if (sub.isListeningTo(target, sub.getTransition()) && !sub.getTransition().requiresParentSubscription()) {
+				storeVariable(caseInstance, sub.getVariable(), target);
+				buildCaseFileItemSubscriptionInfo(caseInstance, info, sub);
 			}
-		}
-		if (cascadeSubscription) {
-			addSubscriptionsForCreationOrDeletionOfChildren(process, caseFileItem, info, theCase);
-			em.update(info);
-			cascadeSubscribe(process, currentInstance, caseFileItem.getChildren(), em);
-			cascadeSubscribe(process, currentInstance, caseFileItem.getTargets(), em);
-		} else {
-			em.update(info);
+			if (cascadeSubscription) {
+				/*
+				 * CREATE and DELETE events are only relevant if the object created is added as a child to a parent
+				 * object that is already involved in the case. We therefore need to listen for that event too
+				 */
+				for (CaseFileItem childCaseFileItem : sub.getVariable().getChildren()) {
+					registerChildCreateAndDeleteSubscriptions(caseInstance, subs, info, childCaseFileItem);
+				}
+				if (sub.isListeningTo(target, sub.getTransition())) {
+					cascadeSubscribe(caseInstance, target, sub.getVariable().getChildren(), em, subs);
+					cascadeSubscribe(caseInstance, target, sub.getVariable().getTargets(), em, subs);
+				}
+			}
 		}
 	}
 
-	protected T findOrCreateCaseSubscriptionInfo(Object currentInstance, ObjectPersistence em) {
+	protected void registerChildCreateAndDeleteSubscriptions(CaseInstance caseInstance, Collection<OnPartInstanceSubscription> subs, T parentInfo, CaseFileItem childCaseFileItem) {
+		for (OnPartInstanceSubscription childSubscription : subs) {
+			if (childSubscription.getVariable().getElementId().equals(childCaseFileItem.getElementId()) && childSubscription.getTransition().requiresParentSubscription()) {
+				buildCaseFileItemSubscriptionInfo(caseInstance, parentInfo, childSubscription);
+			}
+		}
+	}
+
+	private void flushSubscriptions(ObjectPersistence p) {
+		for (CaseSubscriptionInfo<X> caseSubscriptionInfo : this.cachedSubscriptions.get().values()) {
+			Iterator<? extends X> iterator = caseSubscriptionInfo.getCaseFileItemSubscriptions().iterator();
+			while (iterator.hasNext()) {
+				X x = (X) iterator.next();
+				if (!x.isActive()) {
+					iterator.remove();
+					p.remove(x);
+				}
+			}
+			p.update(caseSubscriptionInfo);
+		}
+	}
+
+	private void subscribeToCreateAndDeleteOfChildren(CaseInstance caseInstance, Map<CaseFileItem, Collection<Object>> parents, ObjectPersistence p) {
+		Set<OnPartInstanceSubscription> subs = caseInstance.findOnPartInstanceSubscriptions();
+		for (Entry<CaseFileItem, Collection<Object>> entry : parents.entrySet()) {
+			CaseFileItem caseFileItem = entry.getKey();
+			for (Object currentParent : entry.getValue()) {
+				T parentSubscription = findOrCreateCaseSubscriptionInfo(caseInstance, currentParent, p);
+				registerChildCreateAndDeleteSubscriptions(caseInstance, subs, parentSubscription, caseFileItem);
+			}
+		}
+	}
+
+	private T findOrCreateCaseSubscriptionInfo(CaseInstance caseInstance, Object currentInstance, ObjectPersistence em) {
 		CaseSubscriptionKey key = createCaseSubscriptionKey(currentInstance);
-		T info = em.find(caseSubscriptionInfoClass(), key);
+		T info = cachedSubscriptions.get().get(key);
 		if (info == null) {
-			info = createCaseSubscriptionInfo(currentInstance);
-			em.persist(info);
+			info = em.find(caseSubscriptionInfoClass(), key);
+			if (info == null) {
+				info = createCaseSubscriptionInfo(currentInstance);
+				em.persist(info);
+			} else {
+				// found, deactivate subscriptions for this caseInstance to be activated only if matched subscription
+				// found
+				for (X x : info.getCaseFileItemSubscriptions()) {
+					if (x.getProcessInstanceId() == caseInstance.getId()) {
+						x.deactivate();
+					}
+				}
+			}
+			cachedSubscriptions.get().put(key, info);
 		}
 		return info;
 	}
 
-	protected void addSubscriptionsForCreationOrDeletionOfChildren(CaseInstance process, CaseFileItem caseFileItem, T info, Case theCase) {
-		/*
-		 * CREATE and DELETE events are only relevant if the object created is added as a child to a parent object that
-		 * is already involved in the case We therefore need to listen for that event too
-		 */
-		for (CaseFileItem childItem : caseFileItem.getChildren()) {
-			subscribeChildItem(process, info, theCase, childItem);
-		}
-	}
-
-	protected void subscribeChildItem(CaseInstance process, T info, Case theCase, CaseFileItem childItem) {
-		Collection<CaseFileItemOnPart> on = theCase.findCaseFileItemOnPartsFor(childItem);
-		for (CaseFileItemOnPart part : on) {
-			if (part.getStandardEvent() == CaseFileItemTransition.CREATE || part.getStandardEvent() == CaseFileItemTransition.DELETE) {
-				buildCaseFileItemSubscriptionInfo(process, childItem, info, part);
-			}
-		}
-	}
-
 	@SuppressWarnings("unchecked")
-	protected Class<T> caseSubscriptionInfoClass() {
+	private Class<T> caseSubscriptionInfoClass() {
 		ParameterizedType genericSuperclass = (ParameterizedType) this.getClass().getGenericSuperclass();
 		Type result = genericSuperclass.getActualTypeArguments()[0];
 		return (Class<T>) result;
 	}
 
-	protected PersistedCaseFileItemSubscriptionInfo buildCaseFileItemSubscriptionInfo(CaseInstance process, CaseFileItem caseFileItem, T info, CaseFileItemOnPart part) {
+	private X buildCaseFileItemSubscriptionInfo(CaseInstance process, T info, OnPartInstanceSubscription sub) {
+		// first try to find it and the actiate it
+		for (X x : info.getCaseFileItemSubscriptions()) {
+			if (x.isEquivalent(sub)) {
+				x.activate();
+				return x;
+			}
+		}
+		// not foud, create new
 		X result = createCaseFileItemSubscriptionInfo();
 		result.setCaseSubscription(info);
-		info.addCaseFileItemSubscription(result);
-		result.setItemName(caseFileItem.getName());
-		result.setTransition(part.getStandardEvent());
-		result.setProcessId(process.getId());
+		result.setItemName(sub.getItemName());
+		result.setTransition(sub.getTransition());
+		result.setProcessInstanceId(process.getId());
 		result.setCaseKey(((Case) process.getProcess()).getCaseKey());
-		if (part.getRelatedCaseFileItem() != null) {
-			result.setRelatedItemName(part.getRelatedCaseFileItem().getName());
-		}
+		result.setRelatedItemName(sub.getRelatedItemName());
+		info.addCaseFileItemSubscription(result);
 		return result;
 	}
 
@@ -299,64 +264,22 @@ public abstract class AbstractSubscriptionManager<T extends CaseSubscriptionInfo
 				variable = new HashSet<Object>();
 				process.setVariable(caseFileItem.getName(), variable);
 			}
-			// TODO think about the possibility of the objects being read from
-			// different entityManagers
 			variable.add(target);
 		} else {
 			process.setVariable(caseFileItem.getName(), target);
 		}
 	}
 
-	private void cascadeSubscribe(CaseInstance process, Object target, List<CaseFileItem> related, ObjectPersistence em) {
+	private void cascadeSubscribe(CaseInstance process, Object target, List<CaseFileItem> related, ObjectPersistence em, Collection<OnPartInstanceSubscription> subs) {
 		for (CaseFileItem caseFileItem : related) {
 			String propName = caseFileItem.getName();
 			try {
 				Method getter = target.getClass().getMethod("get" + Character.toUpperCase(propName.charAt(0)) + propName.substring(1));
-				subscribeToUnknownNumberOfObjects(process, caseFileItem, getter.invoke(target), em);
+				subscribeToUnknownNumberOfObjects(process, subs, getter.invoke(target), em);
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
 		}
-	}
-
-	protected void unsubscribeFromUnknownNumberOfObjects(CaseInstance process, ObjectPersistence em, CaseFileItem caseFileItem, Object val) {
-		if (val instanceof Collection) {
-			Collection<?> coll = (Collection<?>) val;
-			for (Object object : coll) {
-				unsubscribe(process, caseFileItem, object, em);
-			}
-		} else if (val != null) {
-			unsubscribe(process, caseFileItem, val, em);
-
-		}
-	}
-
-	private void cascadeUnsubscribe(CaseInstance process, Object target, List<CaseFileItem> children, ObjectPersistence em) {
-		for (CaseFileItem caseFileItem : children) {
-			String propName = caseFileItem.getName();
-			try {
-				Method getter = target.getClass().getMethod("get" + Character.toUpperCase(propName.charAt(0)) + propName.substring(1));
-				Object val = getter.invoke(target);
-				unsubscribeFromUnknownNumberOfObjects(process, em, caseFileItem, val);
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-		}
-	}
-
-	public void unsubscribe(CaseInstance process, CaseFileItem caseFileItem, Object target, ObjectPersistence em) {
-		CaseSubscriptionKey key = createCaseSubscriptionKey(target);
-		T info = em.find(caseSubscriptionInfoClass(), key);
-		if (info != null) {
-			for (PersistedCaseFileItemSubscriptionInfo s : new ArrayList<PersistedCaseFileItemSubscriptionInfo>(info.getCaseFileItemSubscriptions())) {
-				if (s.getProcessId() == process.getId()) {
-					em.remove(s);
-					info.getCaseFileItemSubscriptions().remove(s);
-				}
-			}
-		}
-		cascadeUnsubscribe(process, target, caseFileItem.getChildren(), em);
-		cascadeUnsubscribe(process, target, caseFileItem.getTargets(), em);
 	}
 
 	protected boolean isMatchingAddChild(CaseFileItemSubscriptionInfo is, String propertyName) {

@@ -6,9 +6,9 @@
 <cmmn:definitions xmlns:cmmn="http://www.omg.org/spec/CMMN/20121031/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:test="http://ifu-lobuntu.org/test"
 	targetNamespace="http://ifu-lobuntu.org/test">
 	&structureDefs;
-	<cmmn:case name="SingleCaseFileItemEntryCriterionTests" id="SingleCaseFileItemEntryCriterionTests">
+	<cmmn:case name="CaseFileItemEventTests" id="CaseFileItemEventTests">
 		&caseFileModel;
-		<cmmn:casePlanModel name="SingleCaseFileItemEntryCriterionTests">
+		<cmmn:casePlanModel name="CaseFileItemEventTests">
 			<cmmn:planItem definitionRef="theTask" name="PlanItemEnteredWhenWallPlanCreated" id="planItemEnteredWhenWallPlanCreatedId" entryCriteriaRefs="waitingForWallPlanCreatedSentryId">
 			</cmmn:planItem>
 			<cmmn:planItem definitionRef="theTask" name="PlanItemEnteredWhenRoofPlanCreated" id="planItemEnteredWhenRoofPlanCreatedId" entryCriteriaRefs="waitingForRoofPlanCreatedSentryId">

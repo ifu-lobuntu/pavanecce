@@ -78,7 +78,6 @@ import org.pavanecce.common.jpa.JpaObjectPersistence;
 import org.pavanecce.common.ocm.OcmFactory;
 import org.pavanecce.common.ocm.OcmObjectPersistence;
 
-
 //import test.ConstructionCase;
 //import test.House;
 //import test.HousePlan;
@@ -212,6 +211,7 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 		if (ts instanceof InternalTaskService) {
 			((InternalTaskService) ts).addMarshallerContext(rm.getIdentifier(), new ContentMarshallerContext(env, getClass().getClassLoader()));
 		}
+		@SuppressWarnings("unchecked")
 		EventService<JbpmServicesEventListener<NotificationEvent>, JbpmServicesEventListener<Task>> eventService = (EventService<JbpmServicesEventListener<NotificationEvent>, JbpmServicesEventListener<Task>>) ts;
 		eventService.registerTaskLifecycleEventListener(new CaseTaskLifecycleListener(getRuntimeEngine().getKieSession()));
 		CaseTaskWorkItemHandler handler = new CaseTaskWorkItemHandler();

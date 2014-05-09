@@ -6,12 +6,13 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
-import org.pavanecce.cmmn.jbpm.instance.PersistedCaseFileItemSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.instance.CaseInstance;
 import org.pavanecce.cmmn.jbpm.instance.CaseSubscriptionInfo;
+import org.pavanecce.cmmn.jbpm.instance.PersistedCaseFileItemSubscriptionInfo;
+import org.pavanecce.cmmn.jbpm.ocm.AbstractCaseFileItemSubscriptionInfo;
 
 @Entity
-public class JpaCaseFileItemSubscriptionInfo implements PersistedCaseFileItemSubscriptionInfo {
+public class JpaCaseFileItemSubscriptionInfo extends AbstractCaseFileItemSubscriptionInfo implements PersistedCaseFileItemSubscriptionInfo {
 	@Id
 	@GeneratedValue
 	private Long id;
@@ -20,7 +21,7 @@ public class JpaCaseFileItemSubscriptionInfo implements PersistedCaseFileItemSub
 	private String itemName;
 	private String relatedItemName;
 	private CaseFileItemTransition transition;
-	private long processId;
+	private long processInstanceId;
 	private String caseKey;
 
 	public JpaCaseFileItemSubscriptionInfo() {
@@ -61,10 +62,6 @@ public class JpaCaseFileItemSubscriptionInfo implements PersistedCaseFileItemSub
 		this.transition = transition;
 	}
 
-	@Override
-	public void setProcessId(long processId) {
-		this.processId = processId;
-	}
 
 	@Override
 	public void setCaseKey(String caseKey) {
@@ -95,12 +92,16 @@ public class JpaCaseFileItemSubscriptionInfo implements PersistedCaseFileItemSub
 	}
 
 	@Override
-	public long getProcessId() {
-		return processId;
+	public String toString() {
+		return itemName + "[" + transition + "]";
 	}
 
 	@Override
-	public String toString() {
-		return itemName + "[" + transition +"]";
+	public long getProcessInstanceId() {
+		return processInstanceId;
+	}
+
+	public void setProcessInstanceId(long processInstanceId) {
+		this.processInstanceId = processInstanceId;
 	}
 }

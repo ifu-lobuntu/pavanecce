@@ -5,7 +5,7 @@
 	- i:itemName (string)
 	- i:relatedItemName (string)
 	- i:caseKey (string)
-	- i:processId (long)
+	- i:processInstanceId (long)
 	- i:transition (string)
 
 [i:caseSubscriptionInfo] > mix:lifecycle, mix:referenceable

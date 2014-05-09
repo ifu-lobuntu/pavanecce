@@ -1,21 +1,8 @@
 package test;
-import java.util.Set;
 import java.util.HashSet;
-import test.House;
-import test.HousePlan;
-import test.RoomPlan;
-import test.Wall;
-import org.pavanecce.common.collections.ManyToManySet;
-import org.pavanecce.common.collections.ManyToManyCollection;
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
-import org.apache.jackrabbit.ocm.manager.beanconverter.impl.ReferenceBeanConverterImpl;
-import org.apache.jackrabbit.ocm.manager.collectionconverter.impl.BeanReferenceCollectionConverterImpl;
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Bean;
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Collection;
-import org.pavanecce.common.ocm.GrandParentBeanConverterImpl;
+import java.util.Set;
+
 import javax.persistence.Entity;
-import javax.persistence.Table;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -23,6 +10,17 @@ import javax.persistence.JoinColumns;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+import org.apache.jackrabbit.ocm.manager.beanconverter.impl.ReferenceBeanConverterImpl;
+import org.apache.jackrabbit.ocm.manager.collectionconverter.impl.BeanReferenceCollectionConverterImpl;
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Bean;
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Collection;
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
+import org.pavanecce.common.collections.ManyToManyCollection;
+import org.pavanecce.common.collections.ManyToManySet;
+import org.pavanecce.common.ocm.GrandParentBeanConverterImpl;
 @Node(jcrType = "test:wallPlan", discriminator = false)
 @Entity(name="WallPlan")
 @Table(name="wall_plan")

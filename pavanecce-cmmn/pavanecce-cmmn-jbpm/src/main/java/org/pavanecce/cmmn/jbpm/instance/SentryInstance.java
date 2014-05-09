@@ -12,7 +12,6 @@ import org.jbpm.process.instance.ProcessInstance;
 import org.jbpm.process.instance.impl.ConstraintEvaluator;
 import org.jbpm.workflow.core.Constraint;
 import org.jbpm.workflow.core.Node;
-import org.jbpm.workflow.core.impl.NodeImpl;
 import org.jbpm.workflow.instance.NodeInstanceContainer;
 import org.jbpm.workflow.instance.node.JoinInstance;
 import org.jbpm.workflow.instance.node.WorkItemNodeInstance;

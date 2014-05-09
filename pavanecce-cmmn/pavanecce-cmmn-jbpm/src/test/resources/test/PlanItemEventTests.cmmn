@@ -8,9 +8,9 @@
 <cmmn:definitions xmlns:cmmn="http://www.omg.org/spec/CMMN/20121031/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:test="http://ifu-lobuntu.org/test"
 	targetNamespace="http://ifu-lobuntu.org/test">
 	&structureDefs;
-	<cmmn:case name="SinglePlanItemEntryCriterionTests" id="SinglePlanItemEntryCriterionTests">
+	<cmmn:case name="PlanItemEventTests" id="PlanItemEventTests">
 		&caseFileModel;
-		<cmmn:casePlanModel name="SinglePlanItemEntryCriterionTests">
+		<cmmn:casePlanModel name="PlanItemEventTests">
 			<cmmn:planItem definitionRef="theEventGeneratingTask" name="TheEventGeneratingTaskPlanItem" id="theEventGeneratingTaskPlanItemId"
 				entryCriteriaRefs="waitingForWallPlanCreatedSentryId">
 			</cmmn:planItem>
@@ -70,6 +70,16 @@
 		<cmmn:input bindingRef="housePlanFileItemId" id="housePlanInputId" name="housePlan">
 		</cmmn:input>
 		<cmmn:input bindingRef="houseFileItemId" id="houseInputId" name="house">
+		</cmmn:input>
+		<cmmn:input bindingRef="wallPlanFileItemId" id="wallPlanInputId" name="housePlan">
+			<cmmn:bindingRefinement language="http://www.java.com/java">
+				<cmmn:body>return housePlan.getWallPlans();</cmmn:body>
+			</cmmn:bindingRefinement>
+		</cmmn:input>
+		<cmmn:input bindingRef="roofPlanFileItemId" id="roofPlanInputId" name="roofPlan">
+			<cmmn:bindingRefinement language="http://www.java.com/java">
+				<cmmn:body>return housePlan.getRoofPlan();</cmmn:body>
+			</cmmn:bindingRefinement>
 		</cmmn:input>
 	</cmmn:case>
 </cmmn:definitions>

@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.pavanecce.cmmn.jbpm.instance.AbstractSubscriptionManager;
 import org.pavanecce.cmmn.jbpm.instance.CaseInstance;
 
-public class JpaExplicitSubscriptionTests extends JpaSingleCaseFileITemEntryCriterionTest {
+public class JpaDemarcatedSubscriptionEventTest extends JpaPersistentSubscriptionEventTest {
 	@Override
 	protected AbstractSubscriptionManager<?, ?> getSubscriptionManager() {
 		return null;

@@ -4,9 +4,8 @@ import java.io.Serializable;
 
 import org.pavanecce.cmmn.jbpm.instance.CaseEvent;
 import org.pavanecce.cmmn.jbpm.instance.CaseFileItemEvent;
-import org.pavanecce.cmmn.jbpm.instance.CaseFileItemSubscriptionInfo;
 
-public class CaseFileItemOnPart extends OnPart implements Serializable,CaseFileItemSubscriptionInfo {
+public class CaseFileItemOnPart extends OnPart implements Serializable{
 	private static final long serialVersionUID = -9167236068103073693L;
 	private CaseFileItemTransition standardEvent;
 	private CaseFileItem sourceCaseFileItem;
@@ -70,20 +69,6 @@ public class CaseFileItemOnPart extends OnPart implements Serializable,CaseFileI
 	@Override
 	public CaseEvent createEvent(Object peek) {
 		return new CaseFileItemEvent(sourceCaseFileItem.getName(), getStandardEvent(), null, peek);
-	}
-
-	@Override
-	public String getItemName() {
-		return getSourceCaseFileItem().getName();
-	}
-
-	@Override
-	public CaseFileItemTransition getTransition() {
-		return getStandardEvent();
-	}
-	@Override
-	public String getRelatedItemName() {
-		return relatedCaseFileItem==null?null:relatedCaseFileItem.getName();
 	}
 
 }

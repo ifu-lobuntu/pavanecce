@@ -10,7 +10,7 @@ import test.RoofPlan;
 import test.Wall;
 import test.WallPlan;
 
-public class JpaSingleCaseFileITemEntryCriterionTest extends SingleCaseFileItemEntryCriterionTests {
+public class JpaPersistentSubscriptionEventTest extends CaseFileItemEventTests {
 	{
 		super.isJpa = true;
 	}

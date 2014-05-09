@@ -2,11 +2,8 @@ package org.pavanecce.cmmn.jbpm.flow;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 import org.jbpm.workflow.core.node.CompositeContextNode;
-import org.jbpm.workflow.core.node.DataAssociation;
 import org.jbpm.workflow.core.node.EndNode;
 import org.jbpm.workflow.core.node.Join;
 import org.jbpm.workflow.core.node.Split;

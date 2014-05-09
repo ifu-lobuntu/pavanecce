@@ -3,8 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: org.pavanecce.cmmn.jbpm
 Bundle-SymbolicName: org.pavanecce.cmmn.jbpm
 Bundle-Version: 0.0.1.qualifier
-Export-Package: org.jbpm.services.task.identity,
- org.pavanecce.cmmn.jbpm,
+Export-Package: org.pavanecce.cmmn.jbpm,
  org.pavanecce.cmmn.jbpm.flow,
  org.pavanecce.cmmn.jbpm.flow.builder,
  org.pavanecce.cmmn.jbpm.instance,
@@ -96,3 +95,4 @@ Import-Package: bitronix.tm.resource.common,
  org.kie.internal.task.api,
  org.kie.internal.task.api.model
 Require-Bundle: org.pavanecce.common.util
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

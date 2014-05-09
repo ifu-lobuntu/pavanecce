@@ -3,9 +3,7 @@ package org.pavanecce.cmmn.jbpm;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.transaction.UserTransaction;
 
 import org.junit.Test;
 import org.pavanecce.cmmn.jbpm.instance.CaseInstance;
@@ -16,13 +14,13 @@ import test.HousePlan;
 import test.RoofPlan;
 import test.WallPlan;
 
-public abstract class SingleCaseFileItemEntryCriterionTests extends AbstractConstructionTestCase {
+public abstract class CaseFileItemEventTests extends AbstractConstructionTestCase {
 
 	protected HousePlan housePlan;
 	protected House house;
 	protected CaseInstance caseInstance;
 
-	public SingleCaseFileItemEntryCriterionTests() {
+	public CaseFileItemEventTests() {
 		super(true, true, "org.jbpm.persistence.jpa");
 	}
 
@@ -102,8 +100,8 @@ public abstract class SingleCaseFileItemEntryCriterionTests extends AbstractCons
 	public void testAddReferenceOfObjectInCollectionFileItem() throws Exception {
 		// *****GIVEN
 		givenThatTheTestCaseIsStarted();
-		// *****WHEN
 		addWallPlanAsChildToHousePlan();
+		// *****WHEN
 		maybeStartSubscription();
 		addWallPlanAsReferenceToHouse();
 		endSubscription();
@@ -303,7 +301,7 @@ public abstract class SingleCaseFileItemEntryCriterionTests extends AbstractCons
 	}
 
 	protected void givenThatTheTestCaseIsStarted() {
-		createRuntimeManager("test/SingleCaseFileItemEntryCriterionTests.cmmn");
+		createRuntimeManager("test/CaseFileItemEventTests.cmmn");
 		Map<String, Object> params = new HashMap<String, Object>();
 		getPersistence().start();
 
@@ -315,7 +313,7 @@ public abstract class SingleCaseFileItemEntryCriterionTests extends AbstractCons
 		params.put("housePlan", housePlan);
 		params.put("house", house);
 		getPersistence().start();
-		caseInstance = (CaseInstance) getRuntimeEngine().getKieSession().startProcess("SingleCaseFileItemEntryCriterionTests", params);
+		caseInstance = (CaseInstance) getRuntimeEngine().getKieSession().startProcess("CaseFileItemEventTests", params);
 		getPersistence().commit();
 		assertProcessInstanceActive(caseInstance.getId(), getRuntimeEngine().getKieSession());
 		assertNodeTriggered(caseInstance.getId(), "defaultSplit");

@@ -1,9 +1,5 @@
 package org.pavanecce.cmmn.jbpm.flow;
 
-import java.util.Collections;
-import java.util.List;
-
-import org.jbpm.workflow.core.node.DataAssociation;
 import org.jbpm.workflow.core.node.MilestoneNode;
 
 public class Milestone extends MilestoneNode implements PlanItemDefinition {

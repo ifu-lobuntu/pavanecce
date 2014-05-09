@@ -5,23 +5,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jbpm.shared.services.impl.events.JbpmServicesEventListener;
 import org.junit.Test;
-import org.kie.api.runtime.manager.RuntimeManager;
-import org.kie.api.task.model.Task;
 import org.kie.api.task.model.TaskSummary;
-import org.kie.internal.task.api.EventService;
-import org.kie.internal.task.api.model.NotificationEvent;
 import org.pavanecce.cmmn.jbpm.instance.CaseInstance;
-import org.pavanecce.cmmn.jbpm.instance.CaseTaskLifecycleListener;
-import org.pavanecce.cmmn.jbpm.instance.CaseTaskWorkItemHandler;
 
 import test.ConstructionCase;
 import test.House;
 import test.HousePlan;
 import test.WallPlan;
 
-public class StageTests extends AbstractConstructionTestCase {
+public class StageTest extends AbstractConstructionTestCase {
 	{
 		super.isJpa = true;
 	}
@@ -29,7 +22,7 @@ public class StageTests extends AbstractConstructionTestCase {
 	protected House house;
 	private CaseInstance caseInstance;
 
-	public StageTests() {
+	public StageTest() {
 		super(true, true, "org.jbpm.persistence.jpa");
 	}
 
@@ -57,8 +50,8 @@ public class StageTests extends AbstractConstructionTestCase {
 		house = new House(cc);
 		getPersistence().persist(cc);
 		getPersistence().commit();
-		params.put("housePlan", Arrays.asList(housePlan));
-		params.put("house", Arrays.asList(house));
+		params.put("housePlan", housePlan);
+		params.put("house", house);
 		getPersistence().start();
 		caseInstance = (CaseInstance) getRuntimeEngine().getKieSession().startProcess("StageTests", params);
 		getPersistence().commit();

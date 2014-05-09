@@ -2,7 +2,6 @@ package org.pavanecce.cmmn.jbpm.flow;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -10,8 +9,6 @@ import java.util.Set;
 import org.jbpm.workflow.core.Node;
 import org.jbpm.workflow.core.NodeContainer;
 import org.jbpm.workflow.core.impl.ConnectionImpl;
-import org.jbpm.workflow.core.impl.NodeImpl;
-import org.jbpm.workflow.core.node.DataAssociation;
 
 public class PlanItemInfo {
 	private Map<String, Sentry> entryCriteria = new HashMap<String, Sentry>();
