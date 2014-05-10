@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -31,7 +30,9 @@ public abstract class AbstractSubscriptionManager<T extends CaseSubscriptionInfo
 	private static ThreadLocal<Set<EntityManager>> entityManagersToFlush = new ThreadLocal<Set<EntityManager>>();
 	private boolean cascadeSubscription = false;
 	private static ThreadLocal<Map<Long, Set<OnPartInstanceSubscription>>> explicitlyScopedSubscriptions = new ThreadLocal<Map<Long, Set<OnPartInstanceSubscription>>>();
-	private ThreadLocal<Map<CaseSubscriptionKey, T>> cachedSubscriptions = new ThreadLocal<Map<CaseSubscriptionKey, T>>();
+	private static Map<Object,Map<CaseSubscriptionKey, CaseSubscriptionInfo>> cachedSubscriptions = new HashMap<Object, Map<CaseSubscriptionKey, CaseSubscriptionInfo>>();
+
+	// private ThreadLocal<Map<String, X>> cachedItemSubscriptions = new ThreadLocal<Map<String, X>>();
 
 	public AbstractSubscriptionManager() {
 		super();
@@ -43,12 +44,36 @@ public abstract class AbstractSubscriptionManager<T extends CaseSubscriptionInfo
 	}
 
 	@Override
-	public void subscribe(CaseInstance process, Collection<Object> targets, Map<CaseFileItem, Collection<Object>> parentSubscriptions, ObjectPersistence p) {
-		cachedSubscriptions.set(new HashMap<CaseSubscriptionKey, T>());
-		Set<OnPartInstanceSubscription> findOnPartInstanceSubscriptions = process.findOnPartInstanceSubscriptions();
-		subscribeToUnknownNumberOfObjects(process, findOnPartInstanceSubscriptions, targets, p);
-		subscribeToCreateAndDeleteOfChildren(process, parentSubscriptions, p);
-		flushSubscriptions(p);
+	public void updateSubscriptions(CaseInstance caseInstance, Collection<Object> targets, Map<CaseFileItem, Collection<Object>> parentSubscriptions, ObjectPersistence p) {
+		cacheSubscriptions(caseInstance, p);
+		Set<OnPartInstanceSubscription> findOnPartInstanceSubscriptions = caseInstance.findOnPartInstanceSubscriptions();
+		subscribeToUnknownNumberOfObjects(caseInstance, findOnPartInstanceSubscriptions, targets, p);
+		subscribeToCreateAndDeleteOfChildren(caseInstance, parentSubscriptions, p);
+	}
+
+	private void cacheSubscriptions(CaseInstance caseInstance, ObjectPersistence p) {
+		Map<CaseSubscriptionKey, CaseSubscriptionInfo> map = getCachedSubscriptions(p);
+		for (T t : getAllSubscriptionsAgainst(caseInstance, p)) {
+			invalidateCaseFileItemSubscriptions(caseInstance, t);
+			map.put(t.getId(), t);
+		}
+	}
+
+	protected Map<CaseSubscriptionKey, CaseSubscriptionInfo> getCachedSubscriptions(Object p) {
+		Map<CaseSubscriptionKey, CaseSubscriptionInfo> map = cachedSubscriptions.get(p);
+		if (map == null) {
+			cachedSubscriptions.put(p, map=new HashMap<CaseSubscriptionKey,CaseSubscriptionInfo>());
+		}
+		return map;
+	}
+
+	private void invalidateCaseFileItemSubscriptions(CaseInstance caseInstance, T t) {
+		for (X x : t.getCaseFileItemSubscriptions()) {
+			if (x.getProcessInstanceId() == caseInstance.getId()) {
+				x.deactivate();
+			}
+		}
+
 	}
 
 	public static void addScopedSubscriptions(CaseInstance theCase) {
@@ -176,20 +201,6 @@ public abstract class AbstractSubscriptionManager<T extends CaseSubscriptionInfo
 		}
 	}
 
-	private void flushSubscriptions(ObjectPersistence p) {
-		for (CaseSubscriptionInfo<X> caseSubscriptionInfo : this.cachedSubscriptions.get().values()) {
-			Iterator<? extends X> iterator = caseSubscriptionInfo.getCaseFileItemSubscriptions().iterator();
-			while (iterator.hasNext()) {
-				X x = (X) iterator.next();
-				if (!x.isActive()) {
-					iterator.remove();
-					p.remove(x);
-				}
-			}
-			p.update(caseSubscriptionInfo);
-		}
-	}
-
 	private void subscribeToCreateAndDeleteOfChildren(CaseInstance caseInstance, Map<CaseFileItem, Collection<Object>> parents, ObjectPersistence p) {
 		Set<OnPartInstanceSubscription> subs = caseInstance.findOnPartInstanceSubscriptions();
 		for (Entry<CaseFileItem, Collection<Object>> entry : parents.entrySet()) {
@@ -201,9 +212,16 @@ public abstract class AbstractSubscriptionManager<T extends CaseSubscriptionInfo
 		}
 	}
 
+	public T getCaseSubscriptionInfoFor(Object currentInstance, ObjectPersistence em) {
+		CaseSubscriptionKey key = createCaseSubscriptionKey(currentInstance);
+		return em.find(caseSubscriptionInfoClass(), key);
+	}
+
+	protected abstract Collection<T> getAllSubscriptionsAgainst(CaseInstance caseInstance, ObjectPersistence em);
+
 	private T findOrCreateCaseSubscriptionInfo(CaseInstance caseInstance, Object currentInstance, ObjectPersistence em) {
 		CaseSubscriptionKey key = createCaseSubscriptionKey(currentInstance);
-		T info = cachedSubscriptions.get().get(key);
+		T info = (T) getCachedSubscriptions(em.getDelegate()).get(key);
 		if (info == null) {
 			info = em.find(caseSubscriptionInfoClass(), key);
 			if (info == null) {
@@ -212,13 +230,9 @@ public abstract class AbstractSubscriptionManager<T extends CaseSubscriptionInfo
 			} else {
 				// found, deactivate subscriptions for this caseInstance to be activated only if matched subscription
 				// found
-				for (X x : info.getCaseFileItemSubscriptions()) {
-					if (x.getProcessInstanceId() == caseInstance.getId()) {
-						x.deactivate();
-					}
-				}
+				invalidateCaseFileItemSubscriptions(caseInstance, info);
 			}
-			cachedSubscriptions.get().put(key, info);
+			cachedSubscriptions.get(em.getDelegate()).put(key, info);
 		}
 		return info;
 	}

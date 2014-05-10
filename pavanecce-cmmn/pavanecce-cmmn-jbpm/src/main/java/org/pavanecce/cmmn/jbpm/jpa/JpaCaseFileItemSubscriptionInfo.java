@@ -104,4 +104,7 @@ public class JpaCaseFileItemSubscriptionInfo extends AbstractCaseFileItemSubscri
 	public void setProcessInstanceId(long processInstanceId) {
 		this.processInstanceId = processInstanceId;
 	}
+	public String getIdentifier(){
+		return  caseSubscription.getId().getClassName() + caseSubscription.getId().getId()+super.getIdentifier();
+	}
 }

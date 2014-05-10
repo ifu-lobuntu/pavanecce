@@ -3,6 +3,7 @@ package org.pavanecce.cmmn.jbpm.instance;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -14,6 +15,7 @@ import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItem;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemOnPart;
 import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
+import org.pavanecce.cmmn.jbpm.flow.HumanTask;
 import org.pavanecce.cmmn.jbpm.flow.PlanItem;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 import org.pavanecce.cmmn.jbpm.flow.TaskDefinition;
@@ -21,57 +23,102 @@ import org.pavanecce.common.ObjectPersistence;
 
 public class CaseInstance extends RuleFlowProcessInstance {
 	private static final long serialVersionUID = 8715128915363796623L;
-
+	private boolean shouldUpdateSubscriptions;
+	private transient int signalCount=0;
 	public Case getCase() {
 		return (Case) getProcess();
 	}
-	@SuppressWarnings("unchecked")
+
+	public void markSubscriptionsForUpdate() {
+		this.shouldUpdateSubscriptions = true;
+	}
+
+	@Override
+	public void signalEvent(String type, Object event) {
+		signalCount++;
+		super.signalEvent(type, event);
+		signalCount--;
+		if (shouldUpdateSubscriptions && signalCount==0) {
+			updateSubscriptions();
+		}
+	}
+
 	@Override
 	public void start() {
 		super.start();
+		updateSubscriptions();
+	}
+
+	protected void updateSubscriptions() {
 		SubscriptionManager subscriptionManager = (SubscriptionManager) getKnowledgeRuntime().getEnvironment().get(SubscriptionManager.ENV_NAME);
 		if (subscriptionManager != null) {
-			ObjectPersistence persistence = subscriptionManager.getObjectPersistence(this);
+			CaseInstance caseInstance = this;
+			ObjectPersistence persistence = subscriptionManager.getObjectPersistence(caseInstance);
 			Map<CaseFileItem, Collection<Object>> parentSubscriptions = new HashMap<CaseFileItem, Collection<Object>>();
 			Collection<Object> subscriptions = new HashSet<Object>();
-			for (CaseParameter caseParameter : getCase().getInputParameters()) {
-				if (caseParameter.getBindingRefinementEvaluator() == null) {
-					Object var = getVariable(caseParameter.getVariable().getName());
-					if (var != null) {
-						subscriptions.add(var);
-					}
-				} else {
-					ProcessContext ctx = new ProcessContext(getKnowledgeRuntime());
-					ctx.setProcessInstance(this);
-					try {
-						Object subscribeTo = caseParameter.getBindingRefinementEvaluator().evaluate(ctx);
-						if ((subscribeTo instanceof Collection && ((Collection<?>) subscribeTo).isEmpty()) || subscribeTo == null) {
-							//Nothing to subscribe to - subscribe to parent for CREATE and DELETE events
-							Object parentToSubscribeTo = caseParameter.getBindingRefinementParentEvaluator().evaluate(ctx);
-							if (parentToSubscribeTo != null) {
-								Collection<Object> collection = parentSubscriptions.get(caseParameter.getVariable());
-								if (collection == null) {
-									parentSubscriptions.put(caseParameter.getVariable(), collection = new HashSet<Object>());
-								}
-								if (parentToSubscribeTo instanceof Collection) {
-									collection.addAll((Collection<? extends Object>) parentToSubscribeTo);
-								} else {
-									collection.add(parentToSubscribeTo);
-								}
-							}
-						} else if (subscribeTo instanceof Collection) {
-							subscriptions.addAll((Collection<?>) subscribeTo);
-						} else if (subscribeTo != null) {
-							subscriptions.add(subscribeTo);
-						}
-					} catch (Exception e) {
-						throw new RuntimeException(e);
-					}
+			populateSubscriptionsActivatedByParameters(parentSubscriptions, subscriptions, getCase().getInputParameters());
+			populateSubscriptionsActivatedByParameters(caseInstance, parentSubscriptions, subscriptions);
+			subscriptionManager.updateSubscriptions(caseInstance, subscriptions, parentSubscriptions, persistence);
+			subscriptionManager.flush(persistence);
+		}
+		shouldUpdateSubscriptions = false;
+
+	}
+
+	protected void populateSubscriptionsActivatedByParameters(NodeInstanceContainer caseInstance, Map<CaseFileItem, Collection<Object>> parentSubscriptions, Collection<Object> subscriptions) {
+		Collection<NodeInstance> nodeInstances = caseInstance.getNodeInstances();
+		for (NodeInstance nodeInstance : nodeInstances) {
+			if (nodeInstance.getNode() instanceof PlanItem) {
+				PlanItem pi = (PlanItem) nodeInstance.getNode();
+				if (pi.getPlanInfo().getDefinition() instanceof TaskDefinition) {
+					TaskDefinition td = (TaskDefinition) pi.getPlanInfo().getDefinition();
+					populateSubscriptionsActivatedByParameters(parentSubscriptions, subscriptions, td.getOutputs());
 				}
 			}
-			subscriptionManager.subscribe(this, subscriptions, parentSubscriptions, persistence);
+			if(nodeInstance instanceof StagePlanItemInstance){
+				populateSubscriptionsActivatedByParameters((NodeInstanceContainer) nodeInstance, parentSubscriptions, subscriptions);
+			}
 		}
 	}
+
+	protected void populateSubscriptionsActivatedByParameters(Map<CaseFileItem, Collection<Object>> parentSubscriptions, Collection<Object> subscriptions, List<CaseParameter> subscribingParameters) {
+		for (CaseParameter caseParameter : subscribingParameters) {
+			if (caseParameter.getBindingRefinementEvaluator() == null) {
+				Object var = getVariable(caseParameter.getVariable().getName());
+				if (var != null) {
+					subscriptions.add(var);
+				}
+			} else {
+				ProcessContext ctx = new ProcessContext(getKnowledgeRuntime());
+				ctx.setProcessInstance(this);
+				try {
+					Object subscribeTo = caseParameter.getBindingRefinementEvaluator().evaluate(ctx);
+					if ((subscribeTo instanceof Collection && ((Collection<?>) subscribeTo).isEmpty()) || subscribeTo == null) {
+						// Nothing to subscribe to - subscribe to parent for CREATE and DELETE events
+						Object parentToSubscribeTo = caseParameter.getBindingRefinementParentEvaluator().evaluate(ctx);
+						if (parentToSubscribeTo != null) {
+							Collection<Object> collection = parentSubscriptions.get(caseParameter.getVariable());
+							if (collection == null) {
+								parentSubscriptions.put(caseParameter.getVariable(), collection = new HashSet<Object>());
+							}
+							if (parentToSubscribeTo instanceof Collection) {
+								collection.addAll((Collection<? extends Object>) parentToSubscribeTo);
+							} else {
+								collection.add(parentToSubscribeTo);
+							}
+						}
+					} else if (subscribeTo instanceof Collection) {
+						subscriptions.addAll((Collection<?>) subscribeTo);
+					} else if (subscribeTo != null) {
+						subscriptions.add(subscribeTo);
+					}
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			}
+		}
+	}
+
 	public Set<OnPartInstanceSubscription> findOnPartInstanceSubscriptions() {
 		Set<CaseParameter> params = new HashSet<CaseParameter>();
 		params.addAll(getCase().getInputParameters());
@@ -81,7 +128,7 @@ public class CaseInstance extends RuleFlowProcessInstance {
 		for (CaseParameter item : params) {
 			findCaseFileItemOnPartsFor(item, nodes, onCaseFileItemParts);
 		}
-		return new HashSet<OnPartInstanceSubscription>( onCaseFileItemParts.values());
+		return new HashSet<OnPartInstanceSubscription>(onCaseFileItemParts.values());
 
 	}
 
@@ -109,7 +156,7 @@ public class CaseInstance extends RuleFlowProcessInstance {
 						OnPartInstanceSubscription subscription = target.get(onPartInstance);
 						if (subscription == null) {
 							target.put(onPartInstance, new OnPartInstanceSubscription(getCase().getCaseKey(), getId(), onPart, parameter));
-						}else{
+						} else {
 							subscription.addParameter(parameter);
 						}
 					}

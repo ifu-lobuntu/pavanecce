@@ -31,7 +31,7 @@ public class OnPartInstance extends EventNodeInstance  {
 		}else if(event instanceof PlanItemEvent && getOnPart() instanceof PlanItemOnPart){
 			PlanItemOnPart onPart=(PlanItemOnPart) getOnPart();
 			PlanItemEvent e = (PlanItemEvent) event;
-			if(e.getCaseFileItemName().equals(onPart.getSourcePlanItem().getName())&& e.getTransition()==onPart.getStandardEvent()){
+			if(e.getPlanItemName().equals(onPart.getSourcePlanItem().getName())&& e.getTransition()==onPart.getStandardEvent()){
 				getEventStack().push(((PlanItemEvent) event).getValue());
 				triggerCompleted();
 			}

@@ -50,6 +50,10 @@ public abstract class AbstractCaseFileItemSubscriptionInfo implements CaseFileIt
 		}
 		return false;
 	}
+	
+	public String getIdentifier(){
+		return getProcessInstanceId() + getCaseKey() + getItemName() + getTransition()+getRelatedItemName();
+	}
 
 
 }

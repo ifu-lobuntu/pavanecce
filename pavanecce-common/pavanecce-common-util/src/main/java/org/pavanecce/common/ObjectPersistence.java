@@ -1,6 +1,5 @@
 package org.pavanecce.common;
 
-
 public interface ObjectPersistence {
 
 	public abstract void start();
@@ -16,5 +15,7 @@ public interface ObjectPersistence {
 	public abstract void close();
 
 	void update(Object o);
+
+	Object getDelegate();
 
 }

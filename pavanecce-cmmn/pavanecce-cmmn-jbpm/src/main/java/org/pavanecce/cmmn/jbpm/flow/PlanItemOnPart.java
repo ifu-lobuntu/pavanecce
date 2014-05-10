@@ -36,7 +36,7 @@ public class PlanItemOnPart extends OnPart implements Serializable {
 	}
 	@Override
 	public CaseEvent createEvent(Object peek) {
-		return new PlanItemEvent(planSourceItem.getName(), getStandardEvent(), (Task) peek);
+		return new PlanItemEvent(planSourceItem.getName(), getStandardEvent(), peek);
 	}
 
 }

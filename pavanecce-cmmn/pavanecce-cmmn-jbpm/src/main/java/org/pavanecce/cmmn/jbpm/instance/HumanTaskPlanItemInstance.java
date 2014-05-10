@@ -50,11 +50,20 @@ public class HumanTaskPlanItemInstance extends WorkItemNodeInstance {
 		// TODO subscribe to out parameters
 		return result;
 	}
-
+	@Override
+	public void triggerCompleted() {
+		super.triggerCompleted();
+		((CaseInstance)getProcessInstance()).markSubscriptionsForUpdate();
+	}
+	@Override
+	public void cancel() {
+		super.cancel();
+		((CaseInstance)getProcessInstance()).markSubscriptionsForUpdate();
+	}
 	@Override
 	public void internalTrigger(NodeInstance from, String type) {
-		// TODO Auto-generated method stub
 		super.internalTrigger(from, type);
+		((CaseInstance)getProcessInstance()).markSubscriptionsForUpdate();
 	}
 	// @Override
 	// public void addEventListeners() {

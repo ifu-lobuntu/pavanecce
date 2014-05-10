@@ -45,6 +45,12 @@ public class PlanItemInfo {
 			planItem = new HumanTaskPlanItem(this);
 		} else if (definition instanceof Stage) {
 			planItem = new StagePlanItem(this);
+		} else if (definition instanceof UserEventListener) {
+			planItem = new UserEventPlanItem(this);
+		} else if (definition instanceof TimerEventListener) {
+			planItem = new TimerEventPlanItem(this);
+		} else if (definition instanceof Milestone) {
+			planItem = new MilestonePlanItem(this);
 		}
 		planItem.setElementId(getElementId());
 		planItem.setName(getName());

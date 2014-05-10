@@ -3,6 +3,7 @@ package org.pavanecce.cmmn.jbpm.instance;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
 
 public interface PersistedCaseFileItemSubscriptionInfo extends CaseFileItemSubscriptionInfo {
+	String getIdentifier();
 
 	CaseFileItemTransition getTransition();
 
@@ -23,5 +24,7 @@ public interface PersistedCaseFileItemSubscriptionInfo extends CaseFileItemSubsc
 	void setRelatedItemName(String itemName);
 
 	void setCaseSubscription(CaseSubscriptionInfo<?> caseSubscription);
+
+	CaseSubscriptionInfo<?> getCaseSubscription();
 
 }

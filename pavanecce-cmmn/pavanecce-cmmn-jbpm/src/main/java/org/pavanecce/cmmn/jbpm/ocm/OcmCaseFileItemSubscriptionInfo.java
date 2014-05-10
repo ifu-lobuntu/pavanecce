@@ -117,4 +117,8 @@ public class OcmCaseFileItemSubscriptionInfo extends AbstractCaseFileItemSubscri
 	public void setRelatedItemName(String relatedItemName) {
 		this.relatedItemName = relatedItemName;
 	}
+
+	public String getIdentifier() {
+		return getCaseSubscription().getId().getClassName() + getCaseSubscription().getId().getId() + super.getIdentifier();
+	}
 }

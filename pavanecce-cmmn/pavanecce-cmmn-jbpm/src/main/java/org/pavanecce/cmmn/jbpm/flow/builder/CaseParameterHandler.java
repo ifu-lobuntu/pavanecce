@@ -44,7 +44,7 @@ public class CaseParameterHandler extends AbstractCaseElementHandler implements 
 	public Object end(String uri, String localName, ExtensibleXmlParser xmlPackageReader) throws SAXException {
 		Element el = xmlPackageReader.endElementBuilder();
 		CaseParameter caseParameter = (CaseParameter) xmlPackageReader.getCurrent();
-		caseParameter.setBindingRefinement(SentryHandler.extractExpression(el, "bindingRefinement"));
+		caseParameter.setBindingRefinement(ConstraintExtractor.extractExpression(el, "bindingRefinement"));
 		return caseParameter;
 	}
 	

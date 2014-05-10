@@ -15,6 +15,7 @@ import org.jbpm.marshalling.impl.AbstractProcessInstanceMarshaller;
 import org.jbpm.workflow.instance.impl.NodeInstanceImpl;
 import org.jbpm.workflow.instance.impl.WorkflowProcessInstanceImpl;
 import org.jbpm.workflow.instance.node.CompositeContextNodeInstance;
+import org.jbpm.workflow.instance.node.TimerNodeInstance;
 import org.kie.api.runtime.process.NodeInstance;
 import org.kie.api.runtime.process.WorkflowProcessInstance;
 
@@ -23,6 +24,9 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 	private static final int ON_PART_INSTANCE = 177;
 	private static final int HUMAN_TASK_PLAN_ITEM_INSTANCE = 178;
 	private static final int STAGE_PLAN_ITEM_INSTANCE = 179;
+	private static final int USER_EVENT_PLAN_ITEM_INSTANCE = 180;
+	private static final int TIMER_EVENT_PLAN_ITEM_INSTANCE = 181;
+	private static final int MILESTONE_PLAN_ITEM_INSTANCE = 182;
 
 	@Override
 	protected WorkflowProcessInstanceImpl createProcessInstance() {
@@ -40,6 +44,16 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 		case ON_PART_INSTANCE:
 			OnPartInstance onPartInstance = new OnPartInstance();
 			nodeInstance = onPartInstance;
+			break;
+		case MILESTONE_PLAN_ITEM_INSTANCE:
+			nodeInstance = new MilestonePlanItemInstance();
+			break;
+		case USER_EVENT_PLAN_ITEM_INSTANCE:
+			nodeInstance = new UserEventPlanItemInstance();
+			break;
+		case TIMER_EVENT_PLAN_ITEM_INSTANCE:
+			nodeInstance = new TimerEventPlanItemInstance();
+			((TimerEventPlanItemInstance) nodeInstance).internalSetTimerId(stream.readLong());
 			break;
 		case HUMAN_TASK_PLAN_ITEM_INSTANCE:
 			HumanTaskPlanItemInstance planItemInstance = new HumanTaskPlanItemInstance();
@@ -77,6 +91,13 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 			stream.writeShort(SENTRY_INSTANCE);
 		} else if (nodeInstance instanceof OnPartInstance) {
 			stream.writeShort(ON_PART_INSTANCE);
+		} else if (nodeInstance instanceof MilestonePlanItemInstance) {
+			stream.writeShort(MILESTONE_PLAN_ITEM_INSTANCE);
+		} else if (nodeInstance instanceof UserEventPlanItemInstance) {
+			stream.writeShort(USER_EVENT_PLAN_ITEM_INSTANCE);
+		} else if (nodeInstance instanceof TimerEventPlanItemInstance) {
+			stream.writeShort(TIMER_EVENT_PLAN_ITEM_INSTANCE);
+			stream.writeLong(((TimerNodeInstance) nodeInstance).getTimerId());
 		} else if (nodeInstance instanceof HumanTaskPlanItemInstance) {
 			stream.writeShort(HUMAN_TASK_PLAN_ITEM_INSTANCE);
 			stream.writeLong(((HumanTaskPlanItemInstance) nodeInstance).getWorkItemId());

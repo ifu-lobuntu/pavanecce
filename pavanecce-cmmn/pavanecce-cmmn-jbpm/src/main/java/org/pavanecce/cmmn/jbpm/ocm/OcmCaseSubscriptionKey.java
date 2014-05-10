@@ -19,6 +19,12 @@ public class OcmCaseSubscriptionKey implements Serializable, CaseSubscriptionKey
 	private String id;
 	private Class<?> entityClass;
 
+	public OcmCaseSubscriptionKey(String path) {
+		String[] split = path.substring("/subscriptions/".length()).split("\\$");
+		className = split[0];
+		id = split[1];
+	}
+
 	public OcmCaseSubscriptionKey() {
 
 	}
@@ -66,17 +72,24 @@ public class OcmCaseSubscriptionKey implements Serializable, CaseSubscriptionKey
 	public String getId() {
 		return id;
 	}
+
+	public String toString() {
+		return className + "$" + id;
+	}
+
 	@Override
 	public int hashCode() {
 		return className.hashCode();
 	}
+
 	@Override
 	public boolean equals(Object obj) {
-		if(this==obj){
+		if (this == obj) {
 			return true;
-		}else if(obj instanceof OcmCaseSubscriptionKey){
-			OcmCaseSubscriptionKey other =(OcmCaseSubscriptionKey) obj;
+		} else if (obj instanceof OcmCaseSubscriptionKey) {
+			OcmCaseSubscriptionKey other = (OcmCaseSubscriptionKey) obj;
 			return other.className.equals(className) && other.id.equals(id);
 		}
 		return false;
-	}}
+	}
+}

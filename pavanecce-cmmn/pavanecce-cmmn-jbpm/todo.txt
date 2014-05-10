@@ -20,53 +20,64 @@ Throwing Human Task COMPLETE events from TaskService
 Throwing Human Task SUSPEND events from TaskService
 Throwing Human Task RESUME events from TaskService
 Throwing Human Task TERMINATE events from TaskService
-
-To test
-All the above events but for exit criteria
-Sentry.Conditions
 Manually scoped event subscriptions
-
-Todo
-Input ParameterMapping and bindingRefinement
-  Generate JCR node types (CND) for tasks - REFERENCE to casefileitem
-  Make sure Jahia will create it in the correct way
+Scoping of subscriptions in JCR
+Scoping of subscriptions in Hibernate
 Implement OCLProcessDialect that extends JavaProcessDialect
   focus on ReturnValueBuilder first, then the others
   consider reversing Java classes to UML
 Output ParameterMapping, bindingRefinement and scoped subscriptions
+Make recursive subscriptions parameterizable
 Timer Event
-User Event
+
+To test
+UserEvent
+exit criteria for human task
+Sentry.Conditions
+
+
+Todo
+Exits criteria of the various plan Items
 Milestone
 Process/Case Task
 ItemControl.repetitionRule
 ItemControl.requiredRule
-
-
-Throwing Human Task EXIT events from TaskService - happens when exit criteria are achieved
-Throwing Human Task CREATE,DISABLE,ENABLE,REENABLE events from TaskService - this is tricky because the task node instance does not exist in jBPM
-Scoping of subscriptions
-Make recursive subscriptions parameterizable
-
-Planning
-Planning with quotes for subsequent activities
-milestone with cost breakdown
-
-
+ItemControl.automaticActivationRule
 Throwing Process/Case Task COMPLETE event
 Throwing Process/Case Task CREATE event
 Stage SUSPEND
+Autocompletion
+Stage exit and event
+Throwing Human Task EXIT events from TaskService - happens when exit criteria are achieved
+
+
+
+Input ParameterMapping and bindingRefinement
+  Generate JCR node types (CND) for tasks - REFERENCE to casefileitem
+  Make sure Jahia will create it in the correct way
+Support for more time formats
+
+
+
 Throwing casePlanModel CLOSE event
 CLOSED state and event
-ItemControl.automaticActivationRule
 DiscretionaryItem
 ApplicabilityRule
 Assigning tasks at runtime
 casePlanModel exit criteria
-Autocompletion
 plan fragment
-Stage exit and event
 
 
 Difficult
+Throwing Human Task CREATE,DISABLE,ENABLE,REENABLE events from TaskService - this is tricky because the task node instance does not exist in jBPM
 With JCR Property.CHANGE events, try to get the original value and only fire events for ADD_/REMOVE_REFERENCE when they applicable - JCR limitation
 Optimize caching of SubscriptionInfo and perhaps even other OCM objects IN OCMSubscriptioinManager
+
+Ifu Extension
+Planning with quotes for subsequent activities
+milestone with cost breakdown
+
+
+
+Refactoring:
+Clear up confustion between org.pavanecce.cmmn.jbpm.flow.builder.AbstractCaseElementHandler and org.pavanecce.cmmn.jbpm.flow.builder.AbstractPlanModelElementHandler

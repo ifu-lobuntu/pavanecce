@@ -6,10 +6,10 @@ import java.util.Set;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Collection;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
-import org.pavanecce.cmmn.jbpm.instance.CaseSubscriptionInfo;
+import org.pavanecce.cmmn.jbpm.instance.AbstractCaseSubscriptionInfo;
 
 @Node(discriminator=false,jcrType="i:caseSubscriptionInfo")
-public class OcmCaseSubscriptionInfo implements CaseSubscriptionInfo<OcmCaseFileItemSubscriptionInfo> {
+public class OcmCaseSubscriptionInfo extends AbstractCaseSubscriptionInfo<OcmCaseFileItemSubscriptionInfo> {
 	private OcmCaseSubscriptionKey id;
 	@Field(path=true)
 	private String path;
@@ -17,15 +17,19 @@ public class OcmCaseSubscriptionInfo implements CaseSubscriptionInfo<OcmCaseFile
 	private Set<OcmCaseFileItemSubscriptionInfo> caseFileItemSubscriptions = new HashSet<OcmCaseFileItemSubscriptionInfo>();
 
 	public OcmCaseSubscriptionKey getId() {
+		if(id==null && path!=null){
+			id = new OcmCaseSubscriptionKey(path);
+		}
 		return id;
 	}
 
 	public OcmCaseSubscriptionInfo() {
+		System.out.println();
 	}
 
 	public OcmCaseSubscriptionInfo(Object o) {
 		this.id = new OcmCaseSubscriptionKey(o);
-		path="/subscriptions/"+id.getId();
+		path="/subscriptions/"+id.toString();
 	}
 
 	public String getPath() {

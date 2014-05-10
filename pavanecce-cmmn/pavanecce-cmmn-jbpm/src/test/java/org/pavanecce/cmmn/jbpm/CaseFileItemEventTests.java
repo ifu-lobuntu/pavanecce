@@ -173,6 +173,7 @@ public abstract class CaseFileItemEventTests extends AbstractConstructionTestCas
 		assertNodeTriggered(caseInstance.getId(), "WaitingForRoofPlanDeletedSentry");
 	}
 
+
 	@Test
 	public void testRemoveChildOfObjectInCollectionFileItem() throws Exception {
 		// *****GIVEN

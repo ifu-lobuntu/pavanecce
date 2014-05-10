@@ -9,9 +9,12 @@ import org.pavanecce.common.ObjectPersistence;
 public interface SubscriptionManager {
 	String ENV_NAME = SubscriptionManager.class.getName();
 
-	void subscribe(CaseInstance process, Collection<Object> targets, Map<CaseFileItem, Collection<Object>> parentSubscriptions, ObjectPersistence p);
-
+	void updateSubscriptions(CaseInstance process, Collection<Object> targets, Map<CaseFileItem, Collection<Object>> parentSubscriptions, ObjectPersistence p);
 
 	ObjectPersistence getObjectPersistence(CaseInstance p);
+
+	CaseSubscriptionInfo<?> getCaseSubscriptionInfoFor(Object housePlan, ObjectPersistence p);
+
+	public void flush(ObjectPersistence p);
 
 }

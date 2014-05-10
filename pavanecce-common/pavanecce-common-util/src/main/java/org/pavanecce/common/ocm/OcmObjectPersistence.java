@@ -13,6 +13,7 @@ import javax.transaction.UserTransaction;
 import org.apache.jackrabbit.ocm.manager.ObjectContentManager;
 import org.apache.jackrabbit.ocm.mapper.model.ClassDescriptor;
 import org.pavanecce.common.ObjectPersistence;
+
 public class OcmObjectPersistence implements ObjectPersistence {
 	private UserTransaction transaction;
 	private OcmFactory factory;
@@ -20,6 +21,11 @@ public class OcmObjectPersistence implements ObjectPersistence {
 
 	public OcmObjectPersistence(OcmFactory factory) {
 		this.factory = factory;
+	}
+
+	@Override
+	public Object getDelegate() {
+		return getSession().getSession();
 	}
 
 	@Override
@@ -58,7 +64,6 @@ public class OcmObjectPersistence implements ObjectPersistence {
 		}
 	}
 
-	
 	protected boolean isTransactionActive() throws SystemException, NamingException {
 		return getTransaction().getStatus() == Status.STATUS_ACTIVE;
 	}

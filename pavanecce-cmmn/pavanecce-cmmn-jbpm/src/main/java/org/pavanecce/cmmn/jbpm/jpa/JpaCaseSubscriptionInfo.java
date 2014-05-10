@@ -10,10 +10,10 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
-import org.pavanecce.cmmn.jbpm.instance.CaseSubscriptionInfo;
+import org.pavanecce.cmmn.jbpm.instance.AbstractCaseSubscriptionInfo;
 
 @Entity
-public class JpaCaseSubscriptionInfo implements CaseSubscriptionInfo<JpaCaseFileItemSubscriptionInfo> {
+public class JpaCaseSubscriptionInfo extends AbstractCaseSubscriptionInfo<JpaCaseFileItemSubscriptionInfo> {
 	@EmbeddedId()
 	private JpaCaseSubscriptionKey id;
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)

@@ -23,6 +23,8 @@ import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemInfo;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemOnPart;
 import org.pavanecce.cmmn.jbpm.flow.Sentry;
+import org.pavanecce.cmmn.jbpm.flow.TimerEventPlanItem;
+import org.pavanecce.cmmn.jbpm.flow.UserEventPlanItem;
 
 public abstract class PlanItemContainerHandler extends BaseAbstractHandler {
 
@@ -67,6 +69,9 @@ public abstract class PlanItemContainerHandler extends BaseAbstractHandler {
 		for (String string : new ArrayList<String>(node.getPlanInfo().getExitCriteria().keySet())) {
 			Sentry exit = findSentry(process, string);
 			node.getPlanInfo().putExitCriterion(string, exit);
+		}
+		if (node instanceof UserEventPlanItem || node instanceof TimerEventPlanItem) {
+			new ConnectionImpl(process.getDefaultSplit(), DEFAULT, node, DEFAULT);
 		}
 		node.getPlanInfo().linkPlanItem();
 	}

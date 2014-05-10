@@ -26,6 +26,7 @@ public class OcmPersistentSubscriptionEventTest extends CaseFileItemEventTests {
 		OcmObjectPersistence p = new OcmObjectPersistence(getOcmFactory());
 		removeChildren(p, "/cases");
 		removeChildren(p, "/subscriptions");
+		p.getSession().save();
 	}
 
 	protected void removeChildren(OcmObjectPersistence p, String path) {

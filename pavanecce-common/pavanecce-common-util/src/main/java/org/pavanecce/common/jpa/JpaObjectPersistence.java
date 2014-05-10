@@ -21,6 +21,11 @@ public class JpaObjectPersistence implements ObjectPersistence {
 	}
 
 	@Override
+	public Object getDelegate() {
+		return getEntityManager().getDelegate();
+	}
+
+	@Override
 	public void start() {
 		try {
 			if (em != null && em.isOpen()) {
@@ -94,7 +99,7 @@ public class JpaObjectPersistence implements ObjectPersistence {
 		return getEntityManager().find(class1, id);
 	}
 
-	protected EntityManager getEntityManager() {
+	public EntityManager getEntityManager() {
 		if (em == null || !em.isOpen()) {
 			em = emf.createEntityManager();
 			em.joinTransaction();

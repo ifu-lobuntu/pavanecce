@@ -1,27 +1,26 @@
 package org.pavanecce.cmmn.jbpm.instance;
 
-import org.kie.api.task.model.Task;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemTransition;
 
 public class PlanItemEvent  extends CaseEvent{
-	private String caseFileItemName;
+	private String planItemName;
 	private PlanItemTransition transition;
-	private Task value;
-	public PlanItemEvent(String caseFileItemName, PlanItemTransition transition, Task value) {
+	private Object value;
+	public PlanItemEvent(String planItemName, PlanItemTransition transition, Object value) {
 		super();
-		this.caseFileItemName = caseFileItemName;
+		this.planItemName = planItemName;
 		this.transition = transition;
 		this.value = value;
 	}
-	public String getCaseFileItemName() {
-		return caseFileItemName;
+	public String getPlanItemName() {
+		return planItemName;
 	}
 	@Override
 	public PlanItemTransition getTransition() {
 		return transition;
 	}
 	@Override
-	public Task getValue() {
+	public Object getValue() {
 		return value;
 	}
 	
