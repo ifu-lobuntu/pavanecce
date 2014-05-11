@@ -1,5 +1,7 @@
 package org.pavanecce.cmmn.jbpm.instance;
 
+import static org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition.*;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -11,8 +13,6 @@ import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
 import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
 import org.pavanecce.cmmn.jbpm.flow.builder.CollectionDataType;
 import org.pavanecce.cmmn.jbpm.ocm.AbstractCaseFileItemSubscriptionInfo;
-
-import static org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition.*;
 
 public class OnPartInstanceSubscription extends AbstractCaseFileItemSubscriptionInfo implements CaseFileItemSubscriptionInfo {
 	CaseFileItemOnPart source;
@@ -58,7 +58,7 @@ public class OnPartInstanceSubscription extends AbstractCaseFileItemSubscription
 				return true;
 			} else {
 				Object val = readBindingRefinement(caseParameter, caseInstance);
-				if (caseParameter.getVariable().isCollection()) {
+				if (caseParameter.getBoundVariable().isCollection()) {
 					if (val instanceof Collection && ((Collection<?>) val).contains(o)) {
 						return true;
 					}

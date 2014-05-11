@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE doc [
+<!ENTITY structureDefs SYSTEM "src/test/resources/test/structureDefs.xmlFragment">
+<!ENTITY caseFileModel SYSTEM "src/test/resources/test/caseFileModel.xmlFragment">
+<!--!ENTITY structureDefs SYSTEM "structureDefs.xmlFragment">
+<!ENTITY caseFileModel SYSTEM "caseFileModel.xmlFragment"-->
+]>
+<cmmn:definitions xmlns:cmmn="http://www.omg.org/spec/CMMN/20121031/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:test="http://ifu-lobuntu.org/test"
+	targetNamespace="http://ifu-lobuntu.org/test">
+	
+	&structureDefs;
+	<cmmn:case name="CaseTaskTests" id="CaseTaskTests">
+		&caseFileModel;
+		<cmmn:casePlanModel name="CaseTaskTests">
+			<cmmn:planItem definitionRef="theUserEventId" name="TheUserEventPlanItem" id="theUserEventPlanItemId">
+			</cmmn:planItem>
+			<cmmn:planItem definitionRef="theCaseTaskId" name="TheCaseTaskPlanItem" id="theCaseTaskPlanItemID" entryCriteriaRefs="waitingForTheUserEventSentryId">
+			</cmmn:planItem>
+			<cmmn:sentry id="waitingForTheUserEventSentryId" name="WaitingForTheUserEventSentry">
+				<cmmn:planItemOnPart id="onTheUserEventOccurPartId" sourceRef="theUserEventPlanItemId">
+					<cmmn:standardEvent>occur</cmmn:standardEvent>
+				</cmmn:planItemOnPart>
+			</cmmn:sentry>
+			<cmmn:caseTask id="theCaseTaskId" name="TheCaseTask" caseRef="SubCase.cmmn#SubCase" isBlocking="true">
+				<cmmn:inputs bindingRef="housePlanItemId" id="housePlanTaskParameter" name="housePlanTaskParameter">
+				</cmmn:inputs>
+				<cmmn:inputs bindingRef="wallPlanItemId" id="wallPlanTaskParameter" name="wallPlanTaskParameter">
+				</cmmn:inputs>
+				<cmmn:parameterMapping sourceRef="housePlanTaskParameter" targetRef="SubCase.cmmn#housePlanSubCaseParameterId" />
+				<cmmn:parameterMapping sourceRef="wallPlanTaskParameter" targetRef="SubCase.cmmn#wallPlanSubCaseParameterId">
+					<cmmn:transformation language="http://www.java.com/java">
+						<cmmn:body>return housePlan.getWallPlans().iterator().next();</cmmn:body>
+					</cmmn:transformation>
+				</cmmn:parameterMapping>
+			</cmmn:caseTask>
+			<cmmn:userEvent id="theUserEventId" name="TheUserEvent"></cmmn:userEvent>
+		</cmmn:casePlanModel>
+		<cmmn:caseRoles name="Builder" id="builderRoleId" />
+		<cmmn:input bindingRef="housePlanFileItemId" id="housePlanCaseParameterId" name="housePlanCaseParameter">
+		</cmmn:input>
+		<cmmn:input bindingRef="houseFileItemId" id="houseCaseParameterId" name="houseCaseParameter">
+		</cmmn:input>
+	</cmmn:case>
+</cmmn:definitions>
+
+	   

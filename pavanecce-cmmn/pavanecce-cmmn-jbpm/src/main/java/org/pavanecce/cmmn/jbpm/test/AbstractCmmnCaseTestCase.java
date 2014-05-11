@@ -53,6 +53,7 @@ import org.kie.internal.task.api.model.NotificationEvent;
 import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemDefinitionType;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemOnPart;
+import org.pavanecce.cmmn.jbpm.flow.CaseTaskPlanItem;
 import org.pavanecce.cmmn.jbpm.flow.HumanTaskPlanItem;
 import org.pavanecce.cmmn.jbpm.flow.JoiningSentry;
 import org.pavanecce.cmmn.jbpm.flow.MilestonePlanItem;
@@ -68,10 +69,11 @@ import org.pavanecce.cmmn.jbpm.flow.builder.DefaultTypeMap;
 import org.pavanecce.cmmn.jbpm.flow.builder.DefinitionsHandler;
 import org.pavanecce.cmmn.jbpm.flow.builder.PlanItemBuilder;
 import org.pavanecce.cmmn.jbpm.flow.builder.SentryBuilder;
-import org.pavanecce.cmmn.jbpm.instance.AbstractSubscriptionManager;
+import org.pavanecce.cmmn.jbpm.instance.AbstractPersistentSubscriptionManager;
 import org.pavanecce.cmmn.jbpm.instance.CaseInstanceFactory;
 import org.pavanecce.cmmn.jbpm.instance.CaseInstanceMarshaller;
 import org.pavanecce.cmmn.jbpm.instance.CaseTaskLifecycleListener;
+import org.pavanecce.cmmn.jbpm.instance.CaseTaskPlanItemInstance;
 import org.pavanecce.cmmn.jbpm.instance.CaseTaskWorkItemHandler;
 import org.pavanecce.cmmn.jbpm.instance.HumanTaskPlanItemInstance;
 import org.pavanecce.cmmn.jbpm.instance.MilestonePlanItemInstance;
@@ -92,7 +94,6 @@ import org.pavanecce.common.jpa.JpaObjectPersistence;
 import org.pavanecce.common.ocm.OcmFactory;
 import org.pavanecce.common.ocm.OcmObjectPersistence;
 import org.pavanecce.common.util.FileUtil;
-
 
 //import test.ConstructionCase;
 //import test.House;
@@ -150,7 +151,7 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 		
 		Field fl = JbpmServicesPersistenceManagerImpl.class.getDeclaredField("noScopeEmLocal");
 		fl.setAccessible(true);
-		ThreadLocal l =(ThreadLocal)fl.get(null);
+		ThreadLocal<?> l =(ThreadLocal<?>)fl.get(null);
 		l.set(null);
 		FileUtil.deleteRoot(new File("jbpm-db.h2.db"));
 		FileUtil.deleteRoot(new File("jbpm-db.trace.db"));
@@ -229,6 +230,7 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 		ProcessNodeBuilderRegistry.INSTANCE.register(UserEventPlanItem.class, new PlanItemBuilder());
 		ProcessNodeBuilderRegistry.INSTANCE.register(TimerEventPlanItem.class, new PlanItemBuilder());
 		ProcessNodeBuilderRegistry.INSTANCE.register(StagePlanItem.class, new PlanItemBuilder());
+		ProcessNodeBuilderRegistry.INSTANCE.register(CaseTaskPlanItem.class, new PlanItemBuilder());
 		ProcessNodeBuilderRegistry.INSTANCE.register(MilestonePlanItem.class, new PlanItemBuilder());
 		ProcessNodeBuilderRegistry.INSTANCE.register(HumanTaskPlanItem.class, new PlanItemBuilder());
 		ProcessNodeBuilderRegistry.INSTANCE.register(SimpleSentry.class, new SentryBuilder());
@@ -240,7 +242,7 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 		RuntimeEngine runtimeEngine = getRuntimeEngine();
 		Environment env = runtimeEngine.getKieSession().getEnvironment();
 		env.set(OBJECT_MARSHALLING_STRATEGIES, getPlaceholdStrategies(env));
-		AbstractSubscriptionManager<?, ?> subscriptionManager = getSubscriptionManager();
+		AbstractPersistentSubscriptionManager<?, ?> subscriptionManager = getSubscriptionManager();
 		if (subscriptionManager != null) {
 			env.set(SubscriptionManager.ENV_NAME, subscriptionManager);
 		}
@@ -259,6 +261,7 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 		nodeInstanceFactoryRegistry.register(PlanItemOnPart.class, new ReuseNodeFactory(OnPartInstance.class));
 		nodeInstanceFactoryRegistry.register(StagePlanItem.class, new CreateNewNodeFactory(StagePlanItemInstance.class));
 		nodeInstanceFactoryRegistry.register(HumanTaskPlanItem.class, new CreateNewNodeFactory(HumanTaskPlanItemInstance.class));
+		nodeInstanceFactoryRegistry.register(CaseTaskPlanItem.class, new CreateNewNodeFactory(CaseTaskPlanItemInstance.class));
 		TaskService ts = runtimeEngine.getTaskService();
 		if (ts instanceof InternalTaskService) {
 			((InternalTaskService) ts).addMarshallerContext(rm.getIdentifier(), new ContentMarshallerContext(env, getClass().getClassLoader()));
@@ -308,11 +311,11 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 		}
 	}
 
-	protected AbstractSubscriptionManager<?, ?> getSubscriptionManager() {
+	protected AbstractPersistentSubscriptionManager<?, ?> getSubscriptionManager() {
 		if (isJpa) {
 			return new HibernateSubscriptionManager();
 		} else {
-			return (AbstractSubscriptionManager<?, ?>) getOcmFactory().getEventListener();
+			return (AbstractPersistentSubscriptionManager<?, ?>) getOcmFactory().getEventListener();
 		}
 	}
 

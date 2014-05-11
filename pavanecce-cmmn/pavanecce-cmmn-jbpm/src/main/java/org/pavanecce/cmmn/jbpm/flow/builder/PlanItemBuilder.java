@@ -16,6 +16,8 @@ import org.kie.api.definition.process.Node;
 import org.kie.api.definition.process.Process;
 import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
+import org.pavanecce.cmmn.jbpm.flow.CaseTask;
+import org.pavanecce.cmmn.jbpm.flow.ParameterMapping;
 import org.pavanecce.cmmn.jbpm.flow.PlanItem;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 import org.pavanecce.cmmn.jbpm.flow.TaskDefinition;
@@ -30,6 +32,11 @@ public class PlanItemBuilder implements ProcessNodeBuilder {
 		if (def instanceof TaskDefinition) {
 			processParameters(context, node, ((TaskDefinition) def).getInputs());
 			processParameters(context, node, ((TaskDefinition) def).getOutputs());
+			if(def instanceof CaseTask){
+				for (ParameterMapping pm : ((CaseTask) def).getParameterMappings()) {
+					pm.setTransformation(build(context, node, pm.getTransformation()));
+				}
+			}
 		}
 	}
 
@@ -61,7 +68,7 @@ public class PlanItemBuilder implements ProcessNodeBuilder {
 
 	public static String getParentExpression(CaseParameter cp, Constraint constraint) {
 		// TODO make this strategy configurable by dialect
-		return getParentExpression(constraint.getConstraint(), cp.getVariable().getName());
+		return getParentExpression(constraint.getConstraint(), cp.getBoundVariable().getName());
 	}
 
 	protected static String getParentExpression(String constraintText, String varName) {

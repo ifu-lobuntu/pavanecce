@@ -1,7 +1,6 @@
 package org.pavanecce.cmmn.jbpm.jpa;
 
 import static org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition.*;
-import static org.pavanecce.cmmn.jbpm.instance.AbstractSubscriptionManager.*;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -33,18 +32,19 @@ import org.hibernate.type.OneToOneType;
 import org.kie.api.runtime.Environment;
 import org.kie.api.runtime.EnvironmentName;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
-import org.pavanecce.cmmn.jbpm.instance.AbstractSubscriptionManager;
+import org.pavanecce.cmmn.jbpm.instance.AbstractPersistentSubscriptionManager;
 import org.pavanecce.cmmn.jbpm.instance.CaseFileItemSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.instance.CaseInstance;
 import org.pavanecce.cmmn.jbpm.instance.CaseSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.instance.CaseSubscriptionKey;
+import org.pavanecce.cmmn.jbpm.instance.DemarcatedSubscriptionContent;
 import org.pavanecce.cmmn.jbpm.instance.OnPartInstanceSubscription;
 import org.pavanecce.cmmn.jbpm.instance.PersistedCaseFileItemSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.instance.SubscriptionManager;
 import org.pavanecce.common.ObjectPersistence;
 import org.pavanecce.common.jpa.JpaObjectPersistence;
 
-public class HibernateSubscriptionManager extends AbstractSubscriptionManager<JpaCaseSubscriptionInfo, JpaCaseFileItemSubscriptionInfo> implements SubscriptionManager, PostInsertEventListener,
+public class HibernateSubscriptionManager extends AbstractPersistentSubscriptionManager<JpaCaseSubscriptionInfo, JpaCaseFileItemSubscriptionInfo> implements SubscriptionManager, PostInsertEventListener,
 		PostDeleteEventListener, FlushEntityEventListener, FlushEventListener {
 
 	private static final long serialVersionUID = -9103789384930931973L;
@@ -86,7 +86,7 @@ public class HibernateSubscriptionManager extends AbstractSubscriptionManager<Jp
 				Set<? extends JpaCaseFileItemSubscriptionInfo> caseFileItemSubscriptions = inf.getCaseFileItemSubscriptions();
 				fireEventsFor(event, dirtyOneToOnes, caseFileItemSubscriptions);
 			}
-			fireEventsFor(event, dirtyOneToOnes, getExplicitlyScopedSubscriptionsFor(event.getEntity(), ADD_CHILD, ADD_REFERENCE, REMOVE_CHILD, REMOVE_REFERENCE, UPDATE));
+			fireEventsFor(event, dirtyOneToOnes, DemarcatedSubscriptionContent.getSubscriptionsInScopeForFor(event.getEntity(), ADD_CHILD, ADD_REFERENCE, REMOVE_CHILD, REMOVE_REFERENCE, UPDATE));
 			/**
 			 * For inverse OneToOnes to always allow for positive dirty comparison, whenever a change is made it needs
 			 * to be reflected in the loadedState
@@ -216,16 +216,15 @@ public class HibernateSubscriptionManager extends AbstractSubscriptionManager<Jp
 
 	@Override
 	public void onFlush(FlushEvent event) throws HibernateException {
-		flushEntityManagers();
 		Session delegate = event.getSession();
 		flush(delegate);
 	}
 
 	protected void flush(Session delegate) {
-		Map<CaseSubscriptionKey, CaseSubscriptionInfo> map = getCachedSubscriptions(delegate);
-		Collection<CaseSubscriptionInfo> values = map.values();
+		Map<CaseSubscriptionKey, CaseSubscriptionInfo<?>> map = getCachedSubscriptions(delegate);
+		Collection<CaseSubscriptionInfo<?>> values = map.values();
 		if (values.size() > 0) {
-			for (CaseSubscriptionInfo t : values) {
+			for (CaseSubscriptionInfo<?> t : values) {
 				for (PersistedCaseFileItemSubscriptionInfo x : new HashSet<PersistedCaseFileItemSubscriptionInfo>(t.getCaseFileItemSubscriptions())) {
 					if (!x.isActive()) {
 						x.getCaseSubscription().getCaseFileItemSubscriptions().remove(x);
@@ -240,7 +239,7 @@ public class HibernateSubscriptionManager extends AbstractSubscriptionManager<Jp
 
 	@Override
 	public void onPostDelete(PostDeleteEvent event) {
-		for (OnPartInstanceSubscription s : getExplicitlyScopedSubscriptionsFor(event.getEntity(), DELETE)) {
+		for (OnPartInstanceSubscription s : DemarcatedSubscriptionContent.getSubscriptionsInScopeForFor(event.getEntity(), DELETE)) {
 			fireEvent(s, null, event.getEntity());
 		}
 
@@ -248,7 +247,7 @@ public class HibernateSubscriptionManager extends AbstractSubscriptionManager<Jp
 
 	@Override
 	public void onPostInsert(PostInsertEvent event) {
-		for (OnPartInstanceSubscription s : getExplicitlyScopedSubscriptionsFor(event.getEntity(), CREATE)) {
+		for (OnPartInstanceSubscription s : DemarcatedSubscriptionContent.getSubscriptionsInScopeForFor(event.getEntity(), CREATE)) {
 			fireEvent(s, null, event.getEntity());
 		}
 	}

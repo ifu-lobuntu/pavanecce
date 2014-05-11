@@ -1,4 +1,4 @@
-package org.pavanecce.cmmn.jbpm;
+package org.pavanecce.cmmn.jbpm.casefileitem;
 
 import java.io.File;
 

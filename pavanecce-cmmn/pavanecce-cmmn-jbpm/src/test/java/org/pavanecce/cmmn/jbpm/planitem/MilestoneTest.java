@@ -1,9 +1,10 @@
-package org.pavanecce.cmmn.jbpm;
+package org.pavanecce.cmmn.jbpm.planitem;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
+import org.pavanecce.cmmn.jbpm.AbstractConstructionTestCase;
 import org.pavanecce.cmmn.jbpm.instance.CaseInstance;
 
 import test.ConstructionCase;
@@ -20,7 +21,7 @@ public class MilestoneTest extends AbstractConstructionTestCase {
 	}
 
 	@Test
-	public void testCreateAndDeleteSubscriptionsAgainstParent() throws Exception {
+	public void testOccurrence() throws Exception {
 		// *****GIVEN
 		givenThatTheTestCaseIsStarted();
 		// *****WHEN

@@ -51,6 +51,8 @@ public class PlanItemInfo {
 			planItem = new TimerEventPlanItem(this);
 		} else if (definition instanceof Milestone) {
 			planItem = new MilestonePlanItem(this);
+		} else if (definition instanceof CaseTask) {
+			planItem = new CaseTaskPlanItem(this);
 		}
 		planItem.setElementId(getElementId());
 		planItem.setName(getName());

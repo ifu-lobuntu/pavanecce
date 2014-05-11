@@ -1,28 +1,19 @@
-package org.pavanecce.cmmn.jbpm;
+package org.pavanecce.cmmn.jbpm.planitem;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.jbpm.process.instance.InternalProcessRuntime;
 import org.jbpm.process.instance.timer.TimerInstance;
 import org.jbpm.process.instance.timer.TimerManager;
-import org.jbpm.services.task.utils.ContentMarshallerHelper;
 import org.junit.Test;
-import org.kie.api.task.model.Content;
-import org.kie.api.task.model.Task;
-import org.kie.api.task.model.TaskSummary;
-import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
+import org.pavanecce.cmmn.jbpm.AbstractConstructionTestCase;
 import org.pavanecce.cmmn.jbpm.instance.CaseInstance;
-import org.pavanecce.cmmn.jbpm.instance.CaseSubscriptionInfo;
-import org.pavanecce.cmmn.jbpm.instance.PersistedCaseFileItemSubscriptionInfo;
-import org.pavanecce.cmmn.jbpm.instance.SubscriptionManager;
 
 import test.ConstructionCase;
 import test.House;
 import test.HousePlan;
-import test.WallPlan;
 
 public class TimerEventListenerTest extends AbstractConstructionTestCase {
 	protected HousePlan housePlan;

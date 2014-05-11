@@ -1,4 +1,4 @@
-Done and Tested
+1. Done and Tested
 Throwing CREATE events from JCR
 Throwing CREATE events from Hibernate
 Throwing Human Task Completion events from TaskService
@@ -29,55 +29,71 @@ Implement OCLProcessDialect that extends JavaProcessDialect
 Output ParameterMapping, bindingRefinement and scoped subscriptions
 Make recursive subscriptions parameterizable
 Timer Event
+Milestone
+CaseTask
 
-To test
+2. To test
 UserEvent
 exit criteria for human task
 Sentry.Conditions
 
 
-Todo
-Exits criteria of the various plan Items
-Milestone
-Process/Case Task
+3. To implement
+
 ItemControl.repetitionRule
-ItemControl.requiredRule
 ItemControl.automaticActivationRule
-Throwing Process/Case Task COMPLETE event
-Throwing Process/Case Task CREATE event
-Stage SUSPEND
-Autocompletion
-Stage exit and event
-Throwing Human Task EXIT events from TaskService - happens when exit criteria are achieved
 
+Process/Case Task
+ - parameterMapping
+ - transformation
 
+CaseModel:
+ - direct exit Criteria
+ - manual completion
+ - throwing CLOSE, COMPLETE,CREATE,...
+ - auto completion, use ItemControl.requiredRule
+ 
+Stage:
+ - stagePlanItem's exit and its event
+ - manual completion
+ - implement and throw CLOSE, COMPLETE,CREATE,SUSPEND,RESUME,TERMINATE...
+ - auto completion, use ItemControl.requiredRule
 
-Input ParameterMapping and bindingRefinement
-  Generate JCR node types (CND) for tasks - REFERENCE to casefileitem
-  Make sure Jahia will create it in the correct way
-Support for more time formats
+Human Task
+ - throwing EXIT events - happens when exit criteria are achieved
+ - 
+Planning Tables:
+ - Planning Table object (string/xml representing the current state of tasks and assignments of roles/parameters)
+ - Marshal this from/to the workItem
+ - DiscretionaryItem
+ - ApplicabilityRule
+ - Assigning tasks at runtime
+ - Assigning caseParameters at runtime
 
-
-
-Throwing casePlanModel CLOSE event
-CLOSED state and event
-DiscretionaryItem
-ApplicabilityRule
-Assigning tasks at runtime
-casePlanModel exit criteria
 plan fragment
+Transformations on parameterMappings
 
-
-Difficult
+4. Difficult
 Throwing Human Task CREATE,DISABLE,ENABLE,REENABLE events from TaskService - this is tricky because the task node instance does not exist in jBPM
 With JCR Property.CHANGE events, try to get the original value and only fire events for ADD_/REMOVE_REFERENCE when they applicable - JCR limitation
 Optimize caching of SubscriptionInfo and perhaps even other OCM objects IN OCMSubscriptioinManager
 
-Ifu Extension
-Planning with quotes for subsequent activities
+5. Planned Extensions
+Generate JCR node types (CND) for tasks - REFERENCE to casefileitem. Make sure Jahia will create it in the correct way
+Planning with quotes/costing for subsequent activities
 milestone with cost breakdown
+Support for more time formats
+In expressions inside a Task, make the CaseParameters available. This would help with automatic selection of other parameters based on one input parameter
+
+6.Refactoring:
+Clear up confusion between org.pavanecce.cmmn.jbpm.flow.builder.AbstractCaseElementHandler and org.pavanecce.cmmn.jbpm.flow.builder.AbstractPlanModelElementHandler
+
+
+7. Questions for OMG:
+When a Stage needs to be closed manually, which users should be allowed to do that? Same goes for suspend/resume/terminate etc.
+In the notation examples, it seems there are Discretionary items that also have entryCriteratia. How so?
+Discrepancies in XSD:
+  In the XSD, TimerEventListener.timerExpression is a fully fledged expression, but in the spec it is just string. Does the result still have to be ISO-8601 compliant?
 
 
 
-Refactoring:
-Clear up confustion between org.pavanecce.cmmn.jbpm.flow.builder.AbstractCaseElementHandler and org.pavanecce.cmmn.jbpm.flow.builder.AbstractPlanModelElementHandler

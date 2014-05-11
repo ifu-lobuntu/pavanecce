@@ -8,6 +8,7 @@ import org.drools.core.xml.Handler;
 import org.jbpm.process.core.context.variable.Variable;
 import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
+import org.pavanecce.cmmn.jbpm.flow.CaseTask;
 import org.pavanecce.cmmn.jbpm.flow.HumanTask;
 import org.pavanecce.cmmn.jbpm.flow.Milestone;
 import org.pavanecce.cmmn.jbpm.flow.PlanItem;
@@ -29,6 +30,7 @@ public abstract class AbstractCaseElementHandler extends BaseAbstractHandler imp
 		this.validPeers.add(Sentry.class);
 		this.validPeers.add(PlanItem.class);
 		this.validPeers.add(HumanTask.class);
+		this.validPeers.add(CaseTask.class);
 		this.validPeers.add(Variable.class);
 		this.validPeers.add(Role.class);
 		this.validPeers.add(Stage.class);

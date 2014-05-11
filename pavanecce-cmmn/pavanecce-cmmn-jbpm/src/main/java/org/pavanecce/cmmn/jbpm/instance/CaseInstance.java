@@ -15,7 +15,6 @@ import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItem;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemOnPart;
 import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
-import org.pavanecce.cmmn.jbpm.flow.HumanTask;
 import org.pavanecce.cmmn.jbpm.flow.PlanItem;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 import org.pavanecce.cmmn.jbpm.flow.TaskDefinition;
@@ -81,10 +80,11 @@ public class CaseInstance extends RuleFlowProcessInstance {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	protected void populateSubscriptionsActivatedByParameters(Map<CaseFileItem, Collection<Object>> parentSubscriptions, Collection<Object> subscriptions, List<CaseParameter> subscribingParameters) {
 		for (CaseParameter caseParameter : subscribingParameters) {
 			if (caseParameter.getBindingRefinementEvaluator() == null) {
-				Object var = getVariable(caseParameter.getVariable().getName());
+				Object var = getVariable(caseParameter.getBoundVariable().getName());
 				if (var != null) {
 					subscriptions.add(var);
 				}
@@ -97,9 +97,9 @@ public class CaseInstance extends RuleFlowProcessInstance {
 						// Nothing to subscribe to - subscribe to parent for CREATE and DELETE events
 						Object parentToSubscribeTo = caseParameter.getBindingRefinementParentEvaluator().evaluate(ctx);
 						if (parentToSubscribeTo != null) {
-							Collection<Object> collection = parentSubscriptions.get(caseParameter.getVariable());
+							Collection<Object> collection = parentSubscriptions.get(caseParameter.getBoundVariable());
 							if (collection == null) {
-								parentSubscriptions.put(caseParameter.getVariable(), collection = new HashSet<Object>());
+								parentSubscriptions.put(caseParameter.getBoundVariable(), collection = new HashSet<Object>());
 							}
 							if (parentToSubscribeTo instanceof Collection) {
 								collection.addAll((Collection<? extends Object>) parentToSubscribeTo);
@@ -152,7 +152,7 @@ public class CaseInstance extends RuleFlowProcessInstance {
 				OnPartInstance onPartInstance = (OnPartInstance) node;
 				if (onPartInstance.getOnPart() instanceof CaseFileItemOnPart) {
 					CaseFileItemOnPart onPart = (CaseFileItemOnPart) onPartInstance.getOnPart();
-					if (onPart.getSourceCaseFileItem().getElementId().equals(parameter.getVariable().getElementId())) {
+					if (onPart.getSourceCaseFileItem().getElementId().equals(parameter.getBoundVariable().getElementId())) {
 						OnPartInstanceSubscription subscription = target.get(onPartInstance);
 						if (subscription == null) {
 							target.put(onPartInstance, new OnPartInstanceSubscription(getCase().getCaseKey(), getId(), onPart, parameter));

@@ -20,14 +20,11 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
 import org.drools.core.common.InternalKnowledgeRuntime;
-import org.drools.core.spi.ProcessContext;
 import org.jbpm.process.core.ContextContainer;
 import org.jbpm.process.core.context.variable.VariableScope;
 import org.jbpm.process.instance.AbstractProcessInstanceFactory;
@@ -37,9 +34,7 @@ import org.jbpm.process.instance.context.variable.VariableScopeInstance;
 import org.kie.api.definition.process.Process;
 import org.kie.internal.process.CorrelationKey;
 import org.pavanecce.cmmn.jbpm.flow.Case;
-import org.pavanecce.cmmn.jbpm.flow.CaseFileItem;
 import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
-import org.pavanecce.common.ObjectPersistence;
 
 public class CaseInstanceFactory extends AbstractProcessInstanceFactory implements Externalizable {
 	// Temporary HACK - find the right place to map caseKeys with
@@ -60,7 +55,6 @@ public class CaseInstanceFactory extends AbstractProcessInstanceFactory implemen
 	public void writeExternal(ObjectOutput out) throws IOException {
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public ProcessInstance createProcessInstance(Process process, CorrelationKey correlationKey, InternalKnowledgeRuntime kruntime, Map<String, Object> parameters) {
 		CaseInstance processInstance = (CaseInstance) createProcessInstance();
@@ -82,7 +76,7 @@ public class CaseInstanceFactory extends AbstractProcessInstanceFactory implemen
 				List<CaseParameter> inputParameters = theCase.getInputParameters();
 				for (CaseParameter caseParameter : inputParameters) {
 					Object var = parameters.get(caseParameter.getName());
-					variableScopeInstance.setVariable(caseParameter.getVariable().getName(), var);
+					variableScopeInstance.setVariable(caseParameter.getBoundVariable().getName(), var);
 				}
 			} else {
 				throw new IllegalArgumentException("This process does not support parameters!");

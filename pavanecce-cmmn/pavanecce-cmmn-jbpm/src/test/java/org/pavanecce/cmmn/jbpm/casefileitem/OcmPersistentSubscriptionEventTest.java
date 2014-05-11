@@ -1,4 +1,4 @@
-package org.pavanecce.cmmn.jbpm;
+package org.pavanecce.cmmn.jbpm.casefileitem;
 
 import java.io.IOException;
 
@@ -8,6 +8,7 @@ import javax.jcr.NodeIterator;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.pavanecce.cmmn.jbpm.JcrTestCase;
 import org.pavanecce.common.ocm.OcmObjectPersistence;
 
 import test.ConstructionCase;

@@ -4,7 +4,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -25,20 +24,18 @@ import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
 import org.pavanecce.cmmn.jbpm.flow.OnPart;
 import org.pavanecce.common.ObjectPersistence;
 
-public abstract class AbstractSubscriptionManager<T extends CaseSubscriptionInfo<X>, X extends PersistedCaseFileItemSubscriptionInfo> implements SubscriptionManager {
+public abstract class AbstractPersistentSubscriptionManager<T extends CaseSubscriptionInfo<X>, X extends PersistedCaseFileItemSubscriptionInfo> implements SubscriptionManager {
 
-	private static ThreadLocal<Set<EntityManager>> entityManagersToFlush = new ThreadLocal<Set<EntityManager>>();
 	private boolean cascadeSubscription = false;
-	private static ThreadLocal<Map<Long, Set<OnPartInstanceSubscription>>> explicitlyScopedSubscriptions = new ThreadLocal<Map<Long, Set<OnPartInstanceSubscription>>>();
-	private static Map<Object,Map<CaseSubscriptionKey, CaseSubscriptionInfo>> cachedSubscriptions = new HashMap<Object, Map<CaseSubscriptionKey, CaseSubscriptionInfo>>();
+	private static Map<Object,Map<CaseSubscriptionKey, CaseSubscriptionInfo<?>>> cachedSubscriptions = new HashMap<Object, Map<CaseSubscriptionKey, CaseSubscriptionInfo<?>>>();
 
 	// private ThreadLocal<Map<String, X>> cachedItemSubscriptions = new ThreadLocal<Map<String, X>>();
 
-	public AbstractSubscriptionManager() {
+	public AbstractPersistentSubscriptionManager() {
 		super();
 	}
 
-	public AbstractSubscriptionManager(boolean cascade) {
+	public AbstractPersistentSubscriptionManager(boolean cascade) {
 		super();
 		this.cascadeSubscription = cascade;
 	}
@@ -52,17 +49,17 @@ public abstract class AbstractSubscriptionManager<T extends CaseSubscriptionInfo
 	}
 
 	private void cacheSubscriptions(CaseInstance caseInstance, ObjectPersistence p) {
-		Map<CaseSubscriptionKey, CaseSubscriptionInfo> map = getCachedSubscriptions(p);
+		Map<CaseSubscriptionKey, CaseSubscriptionInfo<?>> map = getCachedSubscriptions(p);
 		for (T t : getAllSubscriptionsAgainst(caseInstance, p)) {
 			invalidateCaseFileItemSubscriptions(caseInstance, t);
 			map.put(t.getId(), t);
 		}
 	}
 
-	protected Map<CaseSubscriptionKey, CaseSubscriptionInfo> getCachedSubscriptions(Object p) {
-		Map<CaseSubscriptionKey, CaseSubscriptionInfo> map = cachedSubscriptions.get(p);
+	protected Map<CaseSubscriptionKey, CaseSubscriptionInfo<?>> getCachedSubscriptions(Object p) {
+		Map<CaseSubscriptionKey, CaseSubscriptionInfo<?>> map = cachedSubscriptions.get(p);
 		if (map == null) {
-			cachedSubscriptions.put(p, map=new HashMap<CaseSubscriptionKey,CaseSubscriptionInfo>());
+			cachedSubscriptions.put(p, map=new HashMap<CaseSubscriptionKey,CaseSubscriptionInfo<?>>());
 		}
 		return map;
 	}
@@ -76,31 +73,6 @@ public abstract class AbstractSubscriptionManager<T extends CaseSubscriptionInfo
 
 	}
 
-	public static void addScopedSubscriptions(CaseInstance theCase) {
-		Map<Long, Set<OnPartInstanceSubscription>> map = explicitlyScopedSubscriptions.get();
-		if (map == null) {
-			explicitlyScopedSubscriptions.set(map = new HashMap<Long, Set<OnPartInstanceSubscription>>());
-		}
-		map.put(theCase.getId(), theCase.findOnPartInstanceSubscriptions());
-	}
-
-	public static Set<OnPartInstanceSubscription> getExplicitlyScopedSubscriptionsFor(Object source, CaseFileItemTransition... transitions) {
-		if (explicitlyScopedSubscriptions.get() != null) {
-			Set<OnPartInstanceSubscription> result = new HashSet<OnPartInstanceSubscription>();
-			for (Entry<Long, Set<OnPartInstanceSubscription>> entry : explicitlyScopedSubscriptions.get().entrySet()) {
-				for (CaseFileItemTransition t : transitions) {
-					for (OnPartInstanceSubscription opis : entry.getValue()) {
-						if (opis.isListeningTo(source, t)) {
-							result.add(opis);
-						}
-					}
-				}
-			}
-			return result;
-		}
-		return Collections.emptySet();
-	}
-
 	private void subscribeToUnknownNumberOfObjects(CaseInstance process, Collection<OnPartInstanceSubscription> subs, Object target, ObjectPersistence em) {
 		if (target instanceof Collection) {
 			Collection<?> targets = (Collection<?>) target;
@@ -112,12 +84,7 @@ public abstract class AbstractSubscriptionManager<T extends CaseSubscriptionInfo
 		}
 	}
 
-	public static void flushEntityManagers() {
-		for (EntityManager em : getEntitymanagersToFlush()) {
-			em.flush();
-		}
-		entityManagersToFlush.get().clear();
-	}
+
 
 	protected static void fireEvent(CaseFileItemSubscriptionInfo is, Object parentObject, Object value) {
 		CaseFileItemEvent event = new CaseFileItemEvent(is.getItemName(), is.getTransition(), parentObject, value);
@@ -149,26 +116,13 @@ public abstract class AbstractSubscriptionManager<T extends CaseSubscriptionInfo
 			em.joinTransaction();
 			eventManager.signalEvent(eventType, caseFileItemEvent, processId);
 			em.flush();
-			addEntityManagerToFlush(em);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		pcm.endCommandScopedEntityManager();
 	}
 
-	private static void addEntityManagerToFlush(EntityManager em) {
-		// DIsabled - attempted performance optimization but it broke WorkItem
-		// persistence
-		// getEntitymanagersToFlush().add(em);
-	}
 
-	protected static Set<EntityManager> getEntitymanagersToFlush() {
-		Set<EntityManager> collection = entityManagersToFlush.get();
-		if (collection == null) {
-			entityManagersToFlush.set(collection = new HashSet<EntityManager>());
-		}
-		return collection;
-	}
 
 	private void subscribeToSingleObject(CaseInstance caseInstance, Collection<OnPartInstanceSubscription> subs, Object target, ObjectPersistence em) {
 		T info = findOrCreateCaseSubscriptionInfo(caseInstance, target, em);
@@ -219,6 +173,7 @@ public abstract class AbstractSubscriptionManager<T extends CaseSubscriptionInfo
 
 	protected abstract Collection<T> getAllSubscriptionsAgainst(CaseInstance caseInstance, ObjectPersistence em);
 
+	@SuppressWarnings("unchecked")
 	private T findOrCreateCaseSubscriptionInfo(CaseInstance caseInstance, Object currentInstance, ObjectPersistence em) {
 		CaseSubscriptionKey key = createCaseSubscriptionKey(currentInstance);
 		T info = (T) getCachedSubscriptions(em.getDelegate()).get(key);
@@ -324,9 +279,5 @@ public abstract class AbstractSubscriptionManager<T extends CaseSubscriptionInfo
 		 * In the case of CREATE and DELETE the itemName is actually the name of the property on the parent to the child
 		 */
 		return propertyName.equals(is.getItemName()) && (is.getTransition() == CaseFileItemTransition.CREATE || is.getTransition() == CaseFileItemTransition.DELETE);
-	}
-
-	public static void removeScopedSubscriptions() {
-		explicitlyScopedSubscriptions.set(null);
 	}
 }

@@ -3,7 +3,6 @@ package org.pavanecce.cmmn.jbpm.flow.builder;
 import org.drools.core.xml.ExtensibleXmlParser;
 import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.flow.Milestone;
-import org.pavanecce.cmmn.jbpm.flow.UserEventListener;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 

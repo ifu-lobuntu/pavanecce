@@ -1,9 +1,7 @@
 package org.pavanecce.cmmn.jbpm.ocm;
 
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 
-import org.apache.jackrabbit.ocm.exception.ObjectContentManagerException;
 import org.apache.jackrabbit.ocm.mapper.model.ClassDescriptor;
 import org.pavanecce.common.ocm.OcmFactory;
 import org.pavanecce.common.ocm.OcmObjectPersistence;

@@ -1,12 +1,12 @@
-package org.pavanecce.cmmn.jbpm;
+package org.pavanecce.cmmn.jbpm.planitem;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
 import org.kie.api.task.model.TaskSummary;
+import org.pavanecce.cmmn.jbpm.AbstractConstructionTestCase;
 import org.pavanecce.cmmn.jbpm.instance.CaseInstance;
 
 import test.ConstructionCase;
@@ -14,7 +14,7 @@ import test.House;
 import test.HousePlan;
 import test.WallPlan;
 
-public class PlanItemEventTest extends AbstractConstructionTestCase {
+public class HumanTaskTest extends AbstractConstructionTestCase {
 	{
 		super.isJpa = true;
 	}
@@ -22,7 +22,7 @@ public class PlanItemEventTest extends AbstractConstructionTestCase {
 	protected House house;
 	private CaseInstance caseInstance;
 
-	public PlanItemEventTest() {
+	public HumanTaskTest() {
 		super(true, true, "org.jbpm.persistence.jpa");
 	}
 
@@ -127,7 +127,7 @@ public class PlanItemEventTest extends AbstractConstructionTestCase {
 	}
 
 	protected void givenThatTheTestCaseIsStarted() {
-		createRuntimeManager("test/PlanItemEventTests.cmmn");
+		createRuntimeManager("test/HumanTaskTests.cmmn");
 		Map<String, Object> params = new HashMap<String, Object>();
 		getPersistence().start();
 

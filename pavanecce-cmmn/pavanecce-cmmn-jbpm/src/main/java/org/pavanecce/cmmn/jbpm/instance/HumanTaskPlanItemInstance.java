@@ -22,6 +22,7 @@ public class HumanTaskPlanItemInstance extends WorkItemNodeInstance {
 
 		final ContextInstance result = super.resolveContextInstance(contextId, param);
 		if (contextId.equals(VariableScope.VARIABLE_SCOPE)) {
+			//TODO make caseParameters available??
 			return new CustomVariableScopeInstance(result);
 		}
 		return result;
@@ -42,12 +43,11 @@ public class HumanTaskPlanItemInstance extends WorkItemNodeInstance {
 					e.printStackTrace();
 				}
 			} else {
-				CaseFileItem variable = cp.getVariable();
+				CaseFileItem variable = cp.getBoundVariable();
 				VariableScopeInstance varContext = (VariableScopeInstance) resolveContextInstance(VariableScope.VARIABLE_SCOPE, variable.getName());
 				result.setParameter(cp.getName(), varContext.getVariable(variable.getName()));
 			}
 		}
-		// TODO subscribe to out parameters
 		return result;
 	}
 	@Override
@@ -65,30 +65,5 @@ public class HumanTaskPlanItemInstance extends WorkItemNodeInstance {
 		super.internalTrigger(from, type);
 		((CaseInstance)getProcessInstance()).markSubscriptionsForUpdate();
 	}
-	// @Override
-	// public void addEventListeners() {
-	// PlanItem planItem=(PlanItem) getNode();
-	// Collection<Sentry> values = planItem.getExitCriteria().values();
-	// for (Sentry sentry : values) {
-	// ((WorkflowProcessInstance)
-	// getProcessInstance()).addEventListener("timerTriggered", this, false);
-	// }
-	// // skip workITem listeners because CMMN takes care of exit criteria
-	// if (getTimerInstances() != null && getTimerInstances().size() > 0) {
-	// addTimerListener();
-	// }
-	// }
-	// @Override
-	// public void signalEvent(String type, Object event) {
-	// PlanItem planItem = (PlanItem) getNode();
-	// if (planItem.getExitCriteria().isEmpty()) {
-	// if ("workItemCompleted".equals(type)) {
-	// workItemCompleted((WorkItem) event);
-	// } else if ("workItemAborted".equals(type)) {
-	// workItemAborted((WorkItem) event);
-	// } else {
-	// super.signalEvent(type, event);
-	// }
-	// }
-	// }
+
 }

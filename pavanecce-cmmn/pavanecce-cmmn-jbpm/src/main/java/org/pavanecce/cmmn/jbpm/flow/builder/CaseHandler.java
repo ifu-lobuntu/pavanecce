@@ -137,7 +137,7 @@ public class CaseHandler extends PlanItemContainerHandler implements Handler {
 
 	private void linkParametersToCaseFileItems(VariableScope variableScope, List<CaseParameter> inputParameters) {
 		for (CaseParameter caseParameter : inputParameters) {
-			caseParameter.setVariable(findCaseFileItemById(variableScope, caseParameter.getBindingRef()));
+			caseParameter.setBoundVariable(findCaseFileItemById(variableScope, caseParameter.getBindingRef()));
 		}
 	}
 

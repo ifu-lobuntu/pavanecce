@@ -47,7 +47,7 @@
 	<classpathentry exported="true" kind="lib" path="libs/jbpm-runtime-manager.jar" sourcepath="libs/jbpm-runtime-manager-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/jbpm-shared-services.jar" sourcepath="libs/jbpm-shared-services-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/jbpm-test.jar" sourcepath="libs/jbpm-test-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/kie-api.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/kie-api.jar" sourcepath="libs/kie-api-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/kie-ci.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/kie-internal.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/xstream.jar"/>

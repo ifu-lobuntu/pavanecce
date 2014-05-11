@@ -1,7 +1,6 @@
 package org.pavanecce.cmmn.jbpm;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 import java.io.BufferedReader;
 import java.io.File;

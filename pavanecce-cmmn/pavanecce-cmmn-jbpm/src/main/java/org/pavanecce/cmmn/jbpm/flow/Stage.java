@@ -2,7 +2,15 @@ package org.pavanecce.cmmn.jbpm.flow;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
+import org.drools.core.process.core.ParameterDefinition;
+import org.drools.core.process.core.Work;
+import org.drools.core.process.core.datatype.impl.type.StringDataType;
+import org.drools.core.process.core.impl.ParameterDefinitionImpl;
+import org.drools.core.process.core.impl.WorkImpl;
+import org.jbpm.services.task.wih.util.PeopleAssignmentHelper;
 import org.jbpm.workflow.core.node.CompositeContextNode;
 import org.jbpm.workflow.core.node.EndNode;
 import org.jbpm.workflow.core.node.Join;
@@ -20,6 +28,22 @@ public class Stage extends CompositeContextNode implements PlanItemDefinition, P
 	private EndNode defaultEnd;
 	private Join defaultJoin;
 	private Case theCase;
+
+	public Work getWork() {
+		Work work = new WorkImpl();
+		work.setName("Human Task");
+		Set<ParameterDefinition> parameterDefinitions = new HashSet<ParameterDefinition>();
+		parameterDefinitions.add(new ParameterDefinitionImpl("TaskName", new StringDataType()));
+		parameterDefinitions.add(new ParameterDefinitionImpl("ActorId", new StringDataType()));
+		parameterDefinitions.add(new ParameterDefinitionImpl("Priority", new StringDataType()));
+		parameterDefinitions.add(new ParameterDefinitionImpl("Comment", new StringDataType()));
+		parameterDefinitions.add(new ParameterDefinitionImpl("Skippable", new StringDataType()));
+		parameterDefinitions.add(new ParameterDefinitionImpl("Content", new StringDataType()));
+		work.setParameter(PeopleAssignmentHelper.GROUP_ID, "Administrators");//TODO
+		work.setParameter(PeopleAssignmentHelper.ACTOR_ID, "Administrator");//TODO
+		
+		return work;
+	}
 
 	@Override
 	public Case getCase() {
@@ -78,8 +102,6 @@ public class Stage extends CompositeContextNode implements PlanItemDefinition, P
 	public void setElementId(String elementId) {
 		this.elementId = elementId;
 	}
-
-
 
 	@Override
 	public void addPlanItemInfo(PlanItemInfo d) {

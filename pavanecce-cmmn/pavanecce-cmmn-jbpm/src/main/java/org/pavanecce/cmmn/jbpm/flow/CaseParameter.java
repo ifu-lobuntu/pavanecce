@@ -33,10 +33,10 @@ public class CaseParameter implements Serializable,CMMNElement{
 	public void setName(String name) {
 		this.name = name;
 	}
-	public CaseFileItem getVariable() {
+	public CaseFileItem getBoundVariable() {
 		return variable;
 	}
-	public void setVariable(CaseFileItem variable) {
+	public void setBoundVariable(CaseFileItem variable) {
 		this.variable = variable;
 	}
 	public Constraint getBindingRefinementParent() {

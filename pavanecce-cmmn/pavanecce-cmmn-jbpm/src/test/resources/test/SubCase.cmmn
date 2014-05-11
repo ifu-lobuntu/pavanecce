@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE doc [
+<!ENTITY structureDefs SYSTEM "src/test/resources/test/structureDefs.xmlFragment">
+<!ENTITY caseFileModel SYSTEM "src/test/resources/test/caseFileModel.xmlFragment">
+<!--!ENTITY structureDefs SYSTEM "structureDefs.xmlFragment">
+<!ENTITY caseFileModel SYSTEM "caseFileModel.xmlFragment"-->
+]>
+<cmmn:definitions xmlns:cmmn="http://www.omg.org/spec/CMMN/20121031/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:test="http://ifu-lobuntu.org/test"
+	targetNamespace="http://ifu-lobuntu.org/test">
+	
+	&structureDefs;
+	<cmmn:case name="SubCase" id="SubCase">
+		&caseFileModel;
+		<cmmn:casePlanModel name="SubCase">
+			<cmmn:planItem definitionRef="theUserEventId" name="TheUserEventPlanItem" id="theUserEventPlanItemId">
+			</cmmn:planItem>
+			<cmmn:planItem definitionRef="theTask" name="TheTask" id="theTaskId" entryCriteriaRefs="waitingForTheUserEventSentryId">
+			</cmmn:planItem>
+			<cmmn:sentry id="waitingForTheUserEventSentryId" name="WaitingForTheUserEventSentry">
+				<cmmn:planItemOnPart id="onTheUserEventOccurPartId" sourceRef="theUserEventPlanItemId">
+					<cmmn:standardEvent>occur</cmmn:standardEvent>
+				</cmmn:planItemOnPart>
+			</cmmn:sentry>
+			<cmmn:humanTask id="theTask" name="TheTask" isBlocking="true" performerRef="builderRoleId">
+			</cmmn:humanTask>
+			<cmmn:userEvent id="theUserEventId" name="TheUserEvent"></cmmn:userEvent>
+		</cmmn:casePlanModel>
+		<cmmn:caseRoles name="Builder" id="builderRoleId" />
+		<cmmn:input bindingRef="housePlanFileItemId" id="housePlanSubCaseParameterId" name="housePlanSubCaseParameter">
+		</cmmn:input>
+		<cmmn:input bindingRef="wallPlanFileItemId" id="wallPlanSubCaseParameterId" name="wallPlanSubCaseParameter">
+		</cmmn:input>
+	</cmmn:case>
+</cmmn:definitions>
+
+	   

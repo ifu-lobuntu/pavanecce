@@ -1,11 +1,13 @@
 package org.pavanecce.cmmn.jbpm;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jbpm.services.task.utils.ContentMarshallerHelper;
 import org.junit.Test;
+import org.kie.api.task.model.Content;
+import org.kie.api.task.model.Task;
 import org.kie.api.task.model.TaskSummary;
 import org.pavanecce.cmmn.jbpm.instance.CaseInstance;
 
@@ -14,7 +16,7 @@ import test.House;
 import test.HousePlan;
 import test.WallPlan;
 
-public class StageTest extends AbstractConstructionTestCase {
+public class ParameterTest extends AbstractConstructionTestCase {
 	{
 		super.isJpa = true;
 	}
@@ -22,29 +24,34 @@ public class StageTest extends AbstractConstructionTestCase {
 	protected House house;
 	private CaseInstance caseInstance;
 
-	public StageTest() {
+	public ParameterTest() {
 		super(true, true, "org.jbpm.persistence.jpa");
 	}
+	
+	//TODO testTaskOutputParameters -writing to caseFilteItem - not essential for a pass-by-reference world
 
 	@Test
-	public void testStageTriggered() throws Exception {
+	public void testTaskInputParameters() throws Exception {
 		// *****GIVEN
 		givenThatTheTestCaseIsStarted();
+		// *****WHEN
 		triggerStartOfTask();
-		assertNodeTriggered(caseInstance.getId(), "TopLevelTask");
+		// *****THEN
+		assertNodeTriggered(caseInstance.getId(), "TheTask");
 		List<TaskSummary> list = getRuntimeEngine().getTaskService().getTasksOwned("Builder", "en-UK");
 		assertEquals(1, list.size());
-		getRuntimeEngine().getTaskService().start(list.get(0).getId(), "Builder");
-		// *****WHEN
-		getRuntimeEngine().getTaskService().complete(list.get(0).getId(), "Builder", new HashMap<String,Object>());
-		// *****THEN
-		assertNodeTriggered(caseInstance.getId(), "TheStagePlanItem");
+		Task task = getRuntimeEngine().getTaskService().getTaskById(list.get(0).getId());
+		Content input = getRuntimeEngine().getTaskService().getContentById(task.getTaskData().getDocumentContentId());
+		@SuppressWarnings("unchecked")
+		Map<String, Object> contentData = (Map<String, Object>) ContentMarshallerHelper.unmarshall(input.getContent(), getRuntimeEngine().getKieSession(). getEnvironment());
+		assertEquals(housePlan.getWallPlans().iterator().next().getId(), ((WallPlan) contentData.get("wallPlan")).getId());
 	}
 
 	protected void givenThatTheTestCaseIsStarted() {
-		createRuntimeManager("test/StageTests.cmmn");
+		createRuntimeManager("test/ParameterTests.cmmn");
 		Map<String, Object> params = new HashMap<String, Object>();
 		getPersistence().start();
+		
 		ConstructionCase cc = new ConstructionCase("/cases/case1");
 		housePlan = new HousePlan(cc);
 		house = new House(cc);
@@ -53,7 +60,7 @@ public class StageTest extends AbstractConstructionTestCase {
 		params.put("housePlan", housePlan);
 		params.put("house", house);
 		getPersistence().start();
-		caseInstance = (CaseInstance) getRuntimeEngine().getKieSession().startProcess("StageTests", params);
+		caseInstance = (CaseInstance) getRuntimeEngine().getKieSession().startProcess("ParameterTests", params);
 		getPersistence().commit();
 		assertProcessInstanceActive(caseInstance.getId(), getRuntimeEngine().getKieSession());
 		assertNodeTriggered(caseInstance.getId(), "defaultSplit");

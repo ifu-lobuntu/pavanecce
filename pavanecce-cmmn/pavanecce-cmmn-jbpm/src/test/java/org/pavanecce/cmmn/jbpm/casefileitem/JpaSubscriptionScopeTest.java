@@ -1,4 +1,4 @@
-package org.pavanecce.cmmn.jbpm;
+package org.pavanecce.cmmn.jbpm.casefileitem;
 
 
 public class JpaSubscriptionScopeTest extends SubscriptionScopeTest {

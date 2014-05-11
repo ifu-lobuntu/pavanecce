@@ -15,6 +15,7 @@ import org.jbpm.marshalling.impl.AbstractProcessInstanceMarshaller;
 import org.jbpm.workflow.instance.impl.NodeInstanceImpl;
 import org.jbpm.workflow.instance.impl.WorkflowProcessInstanceImpl;
 import org.jbpm.workflow.instance.node.CompositeContextNodeInstance;
+import org.jbpm.workflow.instance.node.SubProcessNodeInstance;
 import org.jbpm.workflow.instance.node.TimerNodeInstance;
 import org.kie.api.runtime.process.NodeInstance;
 import org.kie.api.runtime.process.WorkflowProcessInstance;
@@ -27,6 +28,7 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 	private static final int USER_EVENT_PLAN_ITEM_INSTANCE = 180;
 	private static final int TIMER_EVENT_PLAN_ITEM_INSTANCE = 181;
 	private static final int MILESTONE_PLAN_ITEM_INSTANCE = 182;
+	private static final int CASE_TASK_PLAN_ITEM_INSTANCE = 183;
 
 	@Override
 	protected WorkflowProcessInstanceImpl createProcessInstance() {
@@ -48,6 +50,18 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 		case MILESTONE_PLAN_ITEM_INSTANCE:
 			nodeInstance = new MilestonePlanItemInstance();
 			break;
+		case CASE_TASK_PLAN_ITEM_INSTANCE:
+			nodeInstance = new CaseTaskPlanItemInstance();
+			((CaseTaskPlanItemInstance) nodeInstance).internalSetProcessInstanceId(stream.readLong());
+			int nbTimerInstances = stream.readInt();
+			if (nbTimerInstances > 0) {
+				List<Long> timerInstances = new ArrayList<Long>();
+				for (int i = 0; i < nbTimerInstances; i++) {
+					timerInstances.add(stream.readLong());
+				}
+				((CaseTaskPlanItemInstance) nodeInstance).internalSetTimerInstances(timerInstances);
+			}
+			break;
 		case USER_EVENT_PLAN_ITEM_INSTANCE:
 			nodeInstance = new UserEventPlanItemInstance();
 			break;
@@ -58,7 +72,7 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 		case HUMAN_TASK_PLAN_ITEM_INSTANCE:
 			HumanTaskPlanItemInstance planItemInstance = new HumanTaskPlanItemInstance();
 			planItemInstance.internalSetWorkItemId(stream.readLong());
-			int nbTimerInstances = stream.readInt();
+			nbTimerInstances = stream.readInt();
 			if (nbTimerInstances > 0) {
 				List<Long> timerInstances = new ArrayList<Long>();
 				for (int i = 0; i < nbTimerInstances; i++) {
@@ -70,6 +84,7 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 			break;
 		case STAGE_PLAN_ITEM_INSTANCE:
 			nodeInstance = new StagePlanItemInstance();
+			((StagePlanItemInstance) nodeInstance).internalSetWorkItemId(stream.readLong());
 			nbTimerInstances = stream.readInt();
 			if (nbTimerInstances > 0) {
 				List<Long> timerInstances = new ArrayList<Long>();
@@ -93,6 +108,18 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 			stream.writeShort(ON_PART_INSTANCE);
 		} else if (nodeInstance instanceof MilestonePlanItemInstance) {
 			stream.writeShort(MILESTONE_PLAN_ITEM_INSTANCE);
+		} else if (nodeInstance instanceof CaseTaskPlanItemInstance) {
+			stream.writeShort(CASE_TASK_PLAN_ITEM_INSTANCE);
+			stream.writeLong(((CaseTaskPlanItemInstance) nodeInstance).getProcessInstanceId());
+			List<Long> timerInstances = ((CaseTaskPlanItemInstance) nodeInstance).getTimerInstances();
+			if (timerInstances != null) {
+				stream.writeInt(timerInstances.size());
+				for (Long id : timerInstances) {
+					stream.writeLong(id);
+				}
+			} else {
+				stream.writeInt(0);
+			}
 		} else if (nodeInstance instanceof UserEventPlanItemInstance) {
 			stream.writeShort(USER_EVENT_PLAN_ITEM_INSTANCE);
 		} else if (nodeInstance instanceof TimerEventPlanItemInstance) {
@@ -113,6 +140,7 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 		} else if (nodeInstance instanceof StagePlanItemInstance) {
 			stream.writeShort(STAGE_PLAN_ITEM_INSTANCE);
 			StagePlanItemInstance compositeNodeInstance = (StagePlanItemInstance) nodeInstance;
+			stream.writeLong(compositeNodeInstance.getWorkItemId());
 			List<Long> timerInstances = compositeNodeInstance.getTimerInstances();
 			if (timerInstances != null) {
 				stream.writeInt(timerInstances.size());

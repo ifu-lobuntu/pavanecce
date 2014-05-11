@@ -2,7 +2,6 @@ package org.pavanecce.cmmn.jbpm.flow;
 
 import java.io.Serializable;
 
-import org.kie.api.task.model.Task;
 import org.pavanecce.cmmn.jbpm.instance.CaseEvent;
 import org.pavanecce.cmmn.jbpm.instance.PlanItemEvent;
 

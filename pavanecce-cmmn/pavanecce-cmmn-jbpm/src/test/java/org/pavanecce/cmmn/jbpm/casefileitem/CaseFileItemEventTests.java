@@ -1,4 +1,4 @@
-package org.pavanecce.cmmn.jbpm;
+package org.pavanecce.cmmn.jbpm.casefileitem;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.naming.NamingException;
 
 import org.junit.Test;
+import org.pavanecce.cmmn.jbpm.AbstractConstructionTestCase;
 import org.pavanecce.cmmn.jbpm.instance.CaseInstance;
 
 import test.ConstructionCase;

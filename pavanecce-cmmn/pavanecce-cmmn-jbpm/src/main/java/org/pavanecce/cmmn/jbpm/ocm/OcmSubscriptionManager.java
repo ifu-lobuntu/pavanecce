@@ -20,13 +20,10 @@ import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
-import javax.jcr.version.VersionException;
 
 import org.apache.jackrabbit.core.observation.SynchronousEventListener;
 import org.apache.jackrabbit.ocm.mapper.model.BeanDescriptor;
@@ -34,17 +31,19 @@ import org.apache.jackrabbit.ocm.mapper.model.ClassDescriptor;
 import org.apache.jackrabbit.ocm.query.Filter;
 import org.apache.jackrabbit.ocm.query.Query;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
-import org.pavanecce.cmmn.jbpm.instance.AbstractSubscriptionManager;
+import org.pavanecce.cmmn.jbpm.instance.AbstractPersistentSubscriptionManager;
 import org.pavanecce.cmmn.jbpm.instance.CaseFileItemSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.instance.CaseInstance;
 import org.pavanecce.cmmn.jbpm.instance.CaseSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.instance.CaseSubscriptionKey;
+import org.pavanecce.cmmn.jbpm.instance.DemarcatedSubscriptionContent;
+import org.pavanecce.cmmn.jbpm.instance.PersistedCaseFileItemSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.instance.SubscriptionManager;
 import org.pavanecce.common.ObjectPersistence;
 import org.pavanecce.common.ocm.OcmFactory;
 import org.pavanecce.common.ocm.OcmObjectPersistence;
 
-public class OcmSubscriptionManager extends AbstractSubscriptionManager<OcmCaseSubscriptionInfo, OcmCaseFileItemSubscriptionInfo> implements SubscriptionManager, SynchronousEventListener {
+public class OcmSubscriptionManager extends AbstractPersistentSubscriptionManager<OcmCaseSubscriptionInfo, OcmCaseFileItemSubscriptionInfo> implements SubscriptionManager, SynchronousEventListener {
 	private OcmCasePersistence persistence;
 	private OcmFactory factory;
 	private ThreadLocal<Set<Node>> updatedNodes = new ThreadLocal<Set<Node>>();
@@ -95,7 +94,6 @@ public class OcmSubscriptionManager extends AbstractSubscriptionManager<OcmCaseS
 			}
 			fireUpdateEvents();
 			this.updatedNodes.set(null);
-			super.flushEntityManagers();
 			flush(getPersistence());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -103,26 +101,18 @@ public class OcmSubscriptionManager extends AbstractSubscriptionManager<OcmCaseS
 	}
 
 	public void flush(ObjectPersistence p ) {
-		Map<CaseSubscriptionKey, CaseSubscriptionInfo> cachedSubscriptions = getCachedSubscriptions(getPersistence().getDelegate());
+		Map<CaseSubscriptionKey, CaseSubscriptionInfo<?>> cachedSubscriptions = getCachedSubscriptions(getPersistence().getDelegate());
 		if (cachedSubscriptions.size() > 0) {
-			Collection<CaseSubscriptionInfo> values = cachedSubscriptions.values();
-			for (CaseSubscriptionInfo t : values) {
-				for (OcmCaseFileItemSubscriptionInfo x : new HashSet<OcmCaseFileItemSubscriptionInfo>(t.getCaseFileItemSubscriptions())) {
+			Collection<CaseSubscriptionInfo<?>> values = cachedSubscriptions.values();
+			for (CaseSubscriptionInfo<?> t : values) {
+				for (PersistedCaseFileItemSubscriptionInfo x : new HashSet<PersistedCaseFileItemSubscriptionInfo>(t.getCaseFileItemSubscriptions())) {
 					if (!x.isActive()) {
 						x.getCaseSubscription().getCaseFileItemSubscriptions().remove(x);
-						 try {
-//							getPersistence().getSession().getSession().removeItem(x.getPath());
-						} catch (Exception e) {
-							// TODO Auto-generated catch block
-//							e.printStackTrace();
-						}
-//						persistence.remove(x);
 					}
 				}
 				getPersistence().update(t);
 			}
 			cachedSubscriptions.clear();
-			getPersistence().getSession().save();
 		}
 	}
 
@@ -134,8 +124,8 @@ public class OcmSubscriptionManager extends AbstractSubscriptionManager<OcmCaseS
 				if (info.subscriptionInfo != null) {
 					fireAddsAndCreates(info, object, info.subscriptionInfo.getCaseFileItemSubscriptions());
 				}
-				fireAddsAndCreates(info, object, getExplicitlyScopedSubscriptionsFor(object, CREATE));
-				fireAddsAndCreates(info, object, getExplicitlyScopedSubscriptionsFor(info.parentObject, ADD_CHILD));
+				fireAddsAndCreates(info, object, DemarcatedSubscriptionContent.getSubscriptionsInScopeForFor(object, CREATE));
+				fireAddsAndCreates(info, object, DemarcatedSubscriptionContent.getSubscriptionsInScopeForFor(info.parentObject, ADD_CHILD));
 			}
 		} catch (RuntimeException e) {
 			e.printStackTrace();
@@ -177,8 +167,8 @@ public class OcmSubscriptionManager extends AbstractSubscriptionManager<OcmCaseS
 				if (info.subscriptionInfo != null) {
 					fireRemovesAndDeletes(info, empty, info.subscriptionInfo.getCaseFileItemSubscriptions());
 				}
-				fireRemovesAndDeletes(info, empty, getExplicitlyScopedSubscriptionsFor(empty, DELETE));
-				fireRemovesAndDeletes(info, empty, getExplicitlyScopedSubscriptionsFor(info.parentObject, REMOVE_CHILD));
+				fireRemovesAndDeletes(info, empty, DemarcatedSubscriptionContent.getSubscriptionsInScopeForFor(empty, DELETE));
+				fireRemovesAndDeletes(info, empty, DemarcatedSubscriptionContent.getSubscriptionsInScopeForFor(info.parentObject, REMOVE_CHILD));
 
 			}
 		} catch (RuntimeException e) {
@@ -281,7 +271,7 @@ public class OcmSubscriptionManager extends AbstractSubscriptionManager<OcmCaseS
 					}
 					if (hasClass) {
 						Object find = getPersistence().find(null, node.getIdentifier());
-						fireUpdates(node, getExplicitlyScopedSubscriptionsFor(find, UPDATE));
+						fireUpdates(node, DemarcatedSubscriptionContent.getSubscriptionsInScopeForFor(find, UPDATE));
 					}
 				}
 			}
@@ -363,7 +353,7 @@ public class OcmSubscriptionManager extends AbstractSubscriptionManager<OcmCaseS
 						if (i != null) {
 							fireReferenceUpdate(event, currentNode, standardEvent, jcrPropertyName, currentObject, i.getCaseFileItemSubscriptions());
 						}
-						fireReferenceUpdate(event, currentNode, standardEvent, jcrPropertyName, currentObject, getExplicitlyScopedSubscriptionsFor(currentObject, standardEvent));
+						fireReferenceUpdate(event, currentNode, standardEvent, jcrPropertyName, currentObject, DemarcatedSubscriptionContent.getSubscriptionsInScopeForFor(currentObject, standardEvent));
 					}
 				}
 			}
@@ -439,10 +429,10 @@ public class OcmSubscriptionManager extends AbstractSubscriptionManager<OcmCaseS
 	private OcmCaseSubscriptionInfo getSubscription(Node node) throws RepositoryException {
 		OcmCaseSubscriptionKey key = getPersistence().getSubscription(node);
 		if (key != null) {
-			Map<CaseSubscriptionKey, CaseSubscriptionInfo> cachedSubscriptions = getCachedSubscriptions(getPersistence().getDelegate());
-			CaseSubscriptionInfo ocmCaseSubscriptionInfo = cachedSubscriptions.get(key);
+			Map<CaseSubscriptionKey, CaseSubscriptionInfo<?>> cachedSubscriptions = getCachedSubscriptions(getPersistence().getDelegate());
+			CaseSubscriptionInfo<?> ocmCaseSubscriptionInfo = cachedSubscriptions.get(key);
 			if (ocmCaseSubscriptionInfo == null) {
-				CaseSubscriptionInfo find = getPersistence().find(null, key);
+				CaseSubscriptionInfo<?> find = getPersistence().find(null, key);
 				if (find != null) {
 					cachedSubscriptions.put(key, ocmCaseSubscriptionInfo = find);
 				}
@@ -472,6 +462,7 @@ public class OcmSubscriptionManager extends AbstractSubscriptionManager<OcmCaseS
 		Filter f = oop.getSession().getQueryManager().createFilter(OcmCaseFileItemSubscriptionInfo.class);
 		f.addEqualTo("processInstanceId", caseInstance.getId());
 		Query q = oop.getSession().getQueryManager().createQuery(f);
+		@SuppressWarnings("unchecked")
 		Collection<OcmCaseFileItemSubscriptionInfo> t = oop.getSession().getObjects(q);
 		Map<OcmCaseSubscriptionKey, OcmCaseSubscriptionInfo> result = new HashMap<OcmCaseSubscriptionKey, OcmCaseSubscriptionInfo>();
 		for (OcmCaseFileItemSubscriptionInfo i : t) {

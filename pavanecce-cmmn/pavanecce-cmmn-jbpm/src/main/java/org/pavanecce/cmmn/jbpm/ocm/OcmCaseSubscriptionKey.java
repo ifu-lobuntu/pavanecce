@@ -8,7 +8,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import org.pavanecce.cmmn.jbpm.instance.CaseSubscriptionKey;
-import org.pavanecce.cmmn.jbpm.jpa.JpaCaseSubscriptionKey;
 
 public class OcmCaseSubscriptionKey implements Serializable, CaseSubscriptionKey {
 	/**

@@ -1,6 +1,8 @@
 package org.pavanecce.cmmn.jbpm.flow;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.drools.core.process.core.ParameterDefinition;
@@ -9,16 +11,17 @@ import org.drools.core.process.core.datatype.impl.type.StringDataType;
 import org.drools.core.process.core.impl.ParameterDefinitionImpl;
 import org.drools.core.process.core.impl.WorkImpl;
 import org.jbpm.services.task.wih.util.PeopleAssignmentHelper;
+import org.jbpm.workflow.core.node.WorkItemNode;
 
-public class HumanTask extends TaskNode {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 705559982079220394L;
+public class HumanTask extends WorkItemNode implements TaskDefinition {
 	private String performerRef;
 	private Role performer;
 	private boolean isBlocking;
 
+	private static final long serialVersionUID = 2502972573721493216L;
+	private String elementId;
+	private List<CaseParameter> inputParameters = new ArrayList<CaseParameter>();
+	private List<CaseParameter> outputParameters = new ArrayList<CaseParameter>();
 
 	public HumanTask() {
 		Work work = new WorkImpl();
@@ -39,6 +42,33 @@ public class HumanTask extends TaskNode {
 		work.setParameterDefinitions(parameterDefinitions);
 		setWork(work);
 
+	}
+
+	@Override
+	public String getElementId() {
+		return elementId;
+	}
+
+	public void setElementId(String elementId) {
+		this.elementId = elementId;
+	}
+
+	public void addOutputParameter(CaseParameter cp) {
+		this.outputParameters.add(cp);
+	}
+
+	public void addInputParameter(CaseParameter cp) {
+		this.inputParameters.add(cp);
+	}
+
+	@Override
+	public List<CaseParameter> getOutputs() {
+		return outputParameters;
+	}
+
+	@Override
+	public List<CaseParameter> getInputs() {
+		return inputParameters;
 	}
 
 	public String getPerformerRef() {
@@ -64,14 +94,14 @@ public class HumanTask extends TaskNode {
 	public void setPerformer(Role performer) {
 		this.performer = performer;
 	}
+
 	@Override
 	public Work getWork() {
 		Work result = super.getWork();
-		//Think about this - case owner??
-		result.setParameter(PeopleAssignmentHelper.BUSINESSADMINISTRATOR_ID,getPerformer().getName());
+		// Think about this - case owner??
+		result.setParameter(PeopleAssignmentHelper.BUSINESSADMINISTRATOR_ID, getPerformer().getName());
 
 		return result;
 	}
-
 
 }
