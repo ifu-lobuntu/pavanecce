@@ -6,6 +6,6 @@ public interface PlanItemDefinition extends Serializable,CMMNElement {
 
 	String getName();
 
-
+	PlanItemControl getDefaultControl();
 
 }

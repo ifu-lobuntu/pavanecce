@@ -14,7 +14,7 @@ import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
 import org.pavanecce.cmmn.jbpm.flow.PlanItem;
 import org.pavanecce.cmmn.jbpm.flow.TaskDefinition;
 
-public class HumanTaskPlanItemInstance extends WorkItemNodeInstance {
+public class HumanTaskPlanItemInstance extends WorkItemNodeInstance implements PlanItemInstanceWithTask{
 	private static final long serialVersionUID = 3200294767777991641L;
 
 	@Override

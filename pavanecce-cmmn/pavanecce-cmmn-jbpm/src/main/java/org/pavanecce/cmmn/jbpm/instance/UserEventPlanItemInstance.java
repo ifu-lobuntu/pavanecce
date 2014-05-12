@@ -1,6 +1,7 @@
 package org.pavanecce.cmmn.jbpm.instance;
 
 import org.jbpm.workflow.instance.node.EventNodeInstance;
+import org.pavanecce.cmmn.jbpm.event.PlanItemEvent;
 import org.pavanecce.cmmn.jbpm.flow.OnPart;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemTransition;
 import org.pavanecce.cmmn.jbpm.flow.UserEventPlanItem;

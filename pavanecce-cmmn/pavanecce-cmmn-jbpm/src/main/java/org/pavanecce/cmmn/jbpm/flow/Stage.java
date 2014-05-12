@@ -28,6 +28,8 @@ public class Stage extends CompositeContextNode implements PlanItemDefinition, P
 	private EndNode defaultEnd;
 	private Join defaultJoin;
 	private Case theCase;
+	private PlanItemControl defaultControl;
+
 
 	public Work getWork() {
 		Work work = new WorkImpl();
@@ -119,6 +121,14 @@ public class Stage extends CompositeContextNode implements PlanItemDefinition, P
 
 	public void setAutoComplete(boolean autoComplete) {
 		this.autoComplete = autoComplete;
+	}
+
+	public PlanItemControl getDefaultControl() {
+		return defaultControl;
+	}
+
+	public void setDefaultControl(PlanItemControl defaultControl) {
+		this.defaultControl = defaultControl;
 	}
 
 }

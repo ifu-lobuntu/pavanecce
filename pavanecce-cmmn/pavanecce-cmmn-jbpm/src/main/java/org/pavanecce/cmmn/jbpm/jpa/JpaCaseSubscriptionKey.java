@@ -12,7 +12,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import org.pavanecce.cmmn.jbpm.instance.CaseSubscriptionKey;
+import org.pavanecce.cmmn.jbpm.event.CaseSubscriptionKey;
 
 @Embeddable
 public class JpaCaseSubscriptionKey implements Serializable, CaseSubscriptionKey {

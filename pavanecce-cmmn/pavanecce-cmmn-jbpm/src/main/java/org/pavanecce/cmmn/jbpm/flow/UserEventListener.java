@@ -15,6 +15,9 @@ public class UserEventListener extends EventNode implements PlanItemDefinition {
 	private String elementId;
 	private String eventName;
 	private Map<String,Role> authorizedRoles = new HashMap<String,Role>();
+	private PlanItemControl defaultControl;
+	
+
 	public String getElementId() {
 		return elementId;
 	}
@@ -42,5 +45,11 @@ public class UserEventListener extends EventNode implements PlanItemDefinition {
 		eventTypeFilter.setType(eventName);
 		super.setEventFilters(Arrays.<EventFilter>asList(eventTypeFilter));
 		this.eventName = eventName;
+	}
+	public PlanItemControl getDefaultControl() {
+		return defaultControl;
+	}
+	public void setDefaultControl(PlanItemControl defaultControl) {
+		this.defaultControl = defaultControl;
 	}
 }

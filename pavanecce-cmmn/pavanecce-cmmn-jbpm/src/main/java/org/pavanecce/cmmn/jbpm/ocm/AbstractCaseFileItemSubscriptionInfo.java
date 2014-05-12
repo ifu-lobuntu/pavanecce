@@ -1,6 +1,6 @@
 package org.pavanecce.cmmn.jbpm.ocm;
 
-import org.pavanecce.cmmn.jbpm.instance.CaseFileItemSubscriptionInfo;
+import org.pavanecce.cmmn.jbpm.event.CaseFileItemSubscriptionInfo;
 
 public abstract class AbstractCaseFileItemSubscriptionInfo implements CaseFileItemSubscriptionInfo {
 	boolean active = true;

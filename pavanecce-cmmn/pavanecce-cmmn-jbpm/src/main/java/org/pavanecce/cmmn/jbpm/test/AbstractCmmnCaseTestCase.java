@@ -50,6 +50,9 @@ import org.kie.internal.task.api.ContentMarshallerContext;
 import org.kie.internal.task.api.EventService;
 import org.kie.internal.task.api.InternalTaskService;
 import org.kie.internal.task.api.model.NotificationEvent;
+import org.pavanecce.cmmn.jbpm.event.AbstractPersistentSubscriptionManager;
+import org.pavanecce.cmmn.jbpm.event.CaseTaskLifecycleListener;
+import org.pavanecce.cmmn.jbpm.event.SubscriptionManager;
 import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemDefinitionType;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemOnPart;
@@ -64,23 +67,17 @@ import org.pavanecce.cmmn.jbpm.flow.SimpleSentry;
 import org.pavanecce.cmmn.jbpm.flow.StagePlanItem;
 import org.pavanecce.cmmn.jbpm.flow.TimerEventPlanItem;
 import org.pavanecce.cmmn.jbpm.flow.UserEventPlanItem;
-import org.pavanecce.cmmn.jbpm.flow.builder.CMMNBuilder;
-import org.pavanecce.cmmn.jbpm.flow.builder.DefaultTypeMap;
-import org.pavanecce.cmmn.jbpm.flow.builder.DefinitionsHandler;
-import org.pavanecce.cmmn.jbpm.flow.builder.PlanItemBuilder;
-import org.pavanecce.cmmn.jbpm.flow.builder.SentryBuilder;
-import org.pavanecce.cmmn.jbpm.instance.AbstractPersistentSubscriptionManager;
-import org.pavanecce.cmmn.jbpm.instance.CaseInstanceFactory;
-import org.pavanecce.cmmn.jbpm.instance.CaseInstanceMarshaller;
-import org.pavanecce.cmmn.jbpm.instance.CaseTaskLifecycleListener;
+import org.pavanecce.cmmn.jbpm.infra.CaseInstanceFactory;
+import org.pavanecce.cmmn.jbpm.infra.CaseInstanceMarshaller;
+import org.pavanecce.cmmn.jbpm.infra.CaseTaskWorkItemHandler;
+import org.pavanecce.cmmn.jbpm.infra.PlanItemBuilder;
+import org.pavanecce.cmmn.jbpm.infra.SentryBuilder;
 import org.pavanecce.cmmn.jbpm.instance.CaseTaskPlanItemInstance;
-import org.pavanecce.cmmn.jbpm.instance.CaseTaskWorkItemHandler;
 import org.pavanecce.cmmn.jbpm.instance.HumanTaskPlanItemInstance;
 import org.pavanecce.cmmn.jbpm.instance.MilestonePlanItemInstance;
 import org.pavanecce.cmmn.jbpm.instance.OnPartInstance;
 import org.pavanecce.cmmn.jbpm.instance.SentryInstance;
 import org.pavanecce.cmmn.jbpm.instance.StagePlanItemInstance;
-import org.pavanecce.cmmn.jbpm.instance.SubscriptionManager;
 import org.pavanecce.cmmn.jbpm.instance.TimerEventPlanItemInstance;
 import org.pavanecce.cmmn.jbpm.instance.UserEventPlanItemInstance;
 import org.pavanecce.cmmn.jbpm.jpa.CollectionPlaceHolderResolveStrategy;
@@ -89,11 +86,22 @@ import org.pavanecce.cmmn.jbpm.ocm.OcmCasePersistence;
 import org.pavanecce.cmmn.jbpm.ocm.OcmCollectionPlaceHolderResolveStrategy;
 import org.pavanecce.cmmn.jbpm.ocm.OcmPlaceHolderResolveStrategy;
 import org.pavanecce.cmmn.jbpm.ocm.OcmSubscriptionManager;
+import org.pavanecce.cmmn.jbpm.xml.handler.CMMNBuilder;
+import org.pavanecce.cmmn.jbpm.xml.handler.DefaultTypeMap;
+import org.pavanecce.cmmn.jbpm.xml.handler.DefinitionsHandler;
 import org.pavanecce.common.ObjectPersistence;
 import org.pavanecce.common.jpa.JpaObjectPersistence;
 import org.pavanecce.common.ocm.OcmFactory;
 import org.pavanecce.common.ocm.OcmObjectPersistence;
 import org.pavanecce.common.util.FileUtil;
+
+
+
+
+
+
+
+
 
 //import test.ConstructionCase;
 //import test.House;

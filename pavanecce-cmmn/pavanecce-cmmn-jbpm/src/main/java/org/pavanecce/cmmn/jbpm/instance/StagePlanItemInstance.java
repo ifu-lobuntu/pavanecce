@@ -1,6 +1,9 @@
 package org.pavanecce.cmmn.jbpm.instance;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.drools.core.WorkItemHandlerNotFoundException;
 import org.drools.core.process.core.Work;
@@ -15,35 +18,19 @@ import org.jbpm.workflow.instance.WorkflowRuntimeException;
 import org.jbpm.workflow.instance.node.CompositeNodeInstance;
 import org.kie.api.runtime.process.NodeInstance;
 import org.kie.internal.runtime.KnowledgeRuntime;
+import org.pavanecce.cmmn.jbpm.flow.PlanItem;
 import org.pavanecce.cmmn.jbpm.flow.StagePlanItem;
 
-public class StagePlanItemInstance extends CompositeNodeInstance {
+public class StagePlanItemInstance extends CompositeNodeInstance implements PlanItemInstanceContainer,PlanItemInstanceWithTask{
 
 	private static final long serialVersionUID = 112341234123L;
 	private long workItemId;
 	private WorkItem workItem;
-
+	private PlanItemState planItemState;
+	private PlanItemState lastBusyState;
 	@Override
 	protected CompositeNode getCompositeNode() {
 		return super.getCompositeNode();
-	}
-
-	public void exit() {
-		// TODO
-		cancel();
-	}
-
-	public void suspend() {
-		// TODO
-	}
-
-	public void resume() {
-		// TODO
-	}
-
-	public void applyPlanning(WorkItem workItem) {
-		// TODO
-
 	}
 
 	public void triggerCompleted(WorkItem workItem) {
@@ -173,6 +160,135 @@ public class StagePlanItemInstance extends CompositeNodeInstance {
 		((WorkItem) workItem).setParameter("planningTable", "");// TODO
 		((WorkItem) workItem).setParameter("planningTable", "");// TODO
 		return workItem;
+	}
+	@Override
+	public PlanItem getPlanItem() {
+		return getStagePlanItem();
+	}
+
+	@Override
+	public void setPlanItemState(PlanItemState s) {
+		this.planItemState = s;
+	}
+
+	@Override
+	public void setLastBusyState(PlanItemState s) {
+		this.lastBusyState = s;
+	}
+
+	@Override
+	public void enable() {
+		planItemState.enable(this);
+	}
+
+	@Override
+	public void disable() {
+		planItemState.disable(this);
+	}
+
+	@Override
+	public void reenable() {
+		planItemState.reenable(this);
+	}
+
+	@Override
+	public void manualStart() {
+		planItemState.reenable(this);
+	}
+
+	@Override
+	public void reactivate() {
+		planItemState.reactivate(this);
+	}
+
+	@Override
+	public void suspend() {
+		planItemState.suspend(this);
+	}
+
+	@Override
+	public void resume() {
+		planItemState.resume(this);
+	}
+
+	@Override
+	public void terminate() {
+		planItemState.terminate(this);
+	}
+
+	@Override
+	public void exit() {
+		planItemState.exit(this);
+	}
+
+	@Override
+	public void complete() {
+		planItemState.complete(this);
+	}
+
+	@Override
+	public void parentSuspend() {
+		planItemState.parentSuspend(this);
+	}
+
+	@Override
+	public void parentResume() {
+		planItemState.parentResume(this);
+	}
+
+	@Override
+	public void parentTerminate() {
+		planItemState.parentTerminate(this);
+	}
+
+	@Override
+	public void create() {
+		planItemState.create(this);
+	}
+
+	@Override
+	public void fault() {
+		planItemState.fault(this);
+	}
+
+	@Override
+	public void occur() {
+		planItemState.occur(this);
+	}
+
+	@Override
+	public void close() {
+		planItemState.close(this);
+	}
+
+	@Override
+	public PlanItemState getLastBusyState() {
+		return lastBusyState;
+	}
+	@Override
+	public PlanItemState getPlanItemState() {
+		return planItemState;
+	}
+
+	@Override
+	public Collection<PlanItemInstance> getChildren() {
+		Set<PlanItemInstance> result = new HashSet<PlanItemInstance>();
+		for (NodeInstance nodeInstance : getNodeInstances()) {
+			if (nodeInstance instanceof PlanItemInstance) {
+				result.add((PlanItemInstance) nodeInstance);
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public CaseInstance getCaseInstance() {
+		return (CaseInstance) getProcessInstance();
+	}
+
+	@Override
+	public void start() {
+		planItemState.start(this);
 	}
 
 }

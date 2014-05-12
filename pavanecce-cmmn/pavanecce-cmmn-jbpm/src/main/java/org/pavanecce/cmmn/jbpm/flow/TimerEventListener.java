@@ -9,6 +9,7 @@ public class TimerEventListener extends TimerNode implements PlanItemDefinition 
 	private static final long serialVersionUID = 123L;
 	private String elementId;
 	private Constraint timerExpression;
+	private PlanItemControl defaultControl;
 
 	@Override
 	public String getElementId() {
@@ -31,6 +32,14 @@ public class TimerEventListener extends TimerNode implements PlanItemDefinition 
 			t.setPeriod(timerExpression.getConstraint());
 			super.setTimer(t);
 		}
+	}
+
+	public PlanItemControl getDefaultControl() {
+		return defaultControl;
+	}
+
+	public void setDefaultControl(PlanItemControl defaultControl) {
+		this.defaultControl = defaultControl;
 	}
 
 }

@@ -1,9 +1,9 @@
 package org.pavanecce.cmmn.jbpm.casefileitem;
 
 import org.junit.Test;
-import org.pavanecce.cmmn.jbpm.instance.AbstractPersistentSubscriptionManager;
+import org.pavanecce.cmmn.jbpm.event.AbstractPersistentSubscriptionManager;
+import org.pavanecce.cmmn.jbpm.event.DemarcatedSubscriptionContext;
 import org.pavanecce.cmmn.jbpm.instance.CaseInstance;
-import org.pavanecce.cmmn.jbpm.instance.DemarcatedSubscriptionContent;
 
 public class OcmDemarcatedSubscriptionEventTest extends OcmPersistentSubscriptionEventTest {
 	@Override
@@ -13,11 +13,11 @@ public class OcmDemarcatedSubscriptionEventTest extends OcmPersistentSubscriptio
 	@Override
 	protected void maybeStartSubscription() {
 		getPersistence().start();
-		DemarcatedSubscriptionContent.activateSubscriptionsFrom((CaseInstance) getRuntimeEngine().getKieSession().getProcessInstance(caseInstance.getId()));
+		DemarcatedSubscriptionContext.activateSubscriptionsFrom((CaseInstance) getRuntimeEngine().getKieSession().getProcessInstance(caseInstance.getId()));
 	}
 	@Override
 	protected void endSubscription() {
-		DemarcatedSubscriptionContent.deactiveSubscriptions();
+		DemarcatedSubscriptionContext.deactiveSubscriptions();
 	}
 	@Test
 	public void testCreationOfObjectInCollectionFileItem() throws Exception {

@@ -31,16 +31,16 @@ import org.hibernate.event.spi.PostInsertEventListener;
 import org.hibernate.type.OneToOneType;
 import org.kie.api.runtime.Environment;
 import org.kie.api.runtime.EnvironmentName;
+import org.pavanecce.cmmn.jbpm.event.AbstractPersistentSubscriptionManager;
+import org.pavanecce.cmmn.jbpm.event.CaseFileItemSubscriptionInfo;
+import org.pavanecce.cmmn.jbpm.event.CaseSubscriptionInfo;
+import org.pavanecce.cmmn.jbpm.event.CaseSubscriptionKey;
+import org.pavanecce.cmmn.jbpm.event.DemarcatedSubscriptionContext;
+import org.pavanecce.cmmn.jbpm.event.PersistedCaseFileItemSubscriptionInfo;
+import org.pavanecce.cmmn.jbpm.event.SubscriptionManager;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
-import org.pavanecce.cmmn.jbpm.instance.AbstractPersistentSubscriptionManager;
-import org.pavanecce.cmmn.jbpm.instance.CaseFileItemSubscriptionInfo;
+import org.pavanecce.cmmn.jbpm.infra.OnPartInstanceSubscription;
 import org.pavanecce.cmmn.jbpm.instance.CaseInstance;
-import org.pavanecce.cmmn.jbpm.instance.CaseSubscriptionInfo;
-import org.pavanecce.cmmn.jbpm.instance.CaseSubscriptionKey;
-import org.pavanecce.cmmn.jbpm.instance.DemarcatedSubscriptionContent;
-import org.pavanecce.cmmn.jbpm.instance.OnPartInstanceSubscription;
-import org.pavanecce.cmmn.jbpm.instance.PersistedCaseFileItemSubscriptionInfo;
-import org.pavanecce.cmmn.jbpm.instance.SubscriptionManager;
 import org.pavanecce.common.ObjectPersistence;
 import org.pavanecce.common.jpa.JpaObjectPersistence;
 
@@ -86,7 +86,7 @@ public class HibernateSubscriptionManager extends AbstractPersistentSubscription
 				Set<? extends JpaCaseFileItemSubscriptionInfo> caseFileItemSubscriptions = inf.getCaseFileItemSubscriptions();
 				fireEventsFor(event, dirtyOneToOnes, caseFileItemSubscriptions);
 			}
-			fireEventsFor(event, dirtyOneToOnes, DemarcatedSubscriptionContent.getSubscriptionsInScopeForFor(event.getEntity(), ADD_CHILD, ADD_REFERENCE, REMOVE_CHILD, REMOVE_REFERENCE, UPDATE));
+			fireEventsFor(event, dirtyOneToOnes, DemarcatedSubscriptionContext.getSubscriptionsInScopeForFor(event.getEntity(), ADD_CHILD, ADD_REFERENCE, REMOVE_CHILD, REMOVE_REFERENCE, UPDATE));
 			/**
 			 * For inverse OneToOnes to always allow for positive dirty comparison, whenever a change is made it needs
 			 * to be reflected in the loadedState
@@ -239,7 +239,7 @@ public class HibernateSubscriptionManager extends AbstractPersistentSubscription
 
 	@Override
 	public void onPostDelete(PostDeleteEvent event) {
-		for (OnPartInstanceSubscription s : DemarcatedSubscriptionContent.getSubscriptionsInScopeForFor(event.getEntity(), DELETE)) {
+		for (OnPartInstanceSubscription s : DemarcatedSubscriptionContext.getSubscriptionsInScopeForFor(event.getEntity(), DELETE)) {
 			fireEvent(s, null, event.getEntity());
 		}
 
@@ -247,7 +247,7 @@ public class HibernateSubscriptionManager extends AbstractPersistentSubscription
 
 	@Override
 	public void onPostInsert(PostInsertEvent event) {
-		for (OnPartInstanceSubscription s : DemarcatedSubscriptionContent.getSubscriptionsInScopeForFor(event.getEntity(), CREATE)) {
+		for (OnPartInstanceSubscription s : DemarcatedSubscriptionContext.getSubscriptionsInScopeForFor(event.getEntity(), CREATE)) {
 			fireEvent(s, null, event.getEntity());
 		}
 	}

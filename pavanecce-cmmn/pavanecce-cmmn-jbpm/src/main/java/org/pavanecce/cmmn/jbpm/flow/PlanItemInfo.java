@@ -20,10 +20,11 @@ public class PlanItemInfo {
 	private String name;
 	private long id;
 	private NodeContainer nodeContainer;
-
+	private PlanItemControl itemControl;
+	
 	public PlanItemInfo() {
 	}
-
+	
 	public Map<String, Sentry> getEntryCriteria() {
 		return Collections.unmodifiableMap(entryCriteria);
 	}
@@ -121,5 +122,16 @@ public class PlanItemInfo {
 		this.nodeContainer = nodeContainer;
 		nodeContainer.addPlanItemInfo(this);
 
+	}
+
+	public PlanItemControl getItemControl() {
+		if(itemControl==null && definition!=null){
+			return definition.getDefaultControl();
+		}
+		return itemControl;
+	}
+
+	public void setItemControl(PlanItemControl itemControl) {
+		this.itemControl = itemControl;
 	}
 }

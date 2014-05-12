@@ -12,6 +12,8 @@ public class CaseTask extends SubProcessNode implements TaskDefinition {
 	List<ParameterMapping> mappings = new ArrayList<ParameterMapping>();
 	String elementId;
 	private boolean blocking;
+	private PlanItemControl defaultControl;
+
 
 	@Override
 	public List<CaseParameter> getInputs() {
@@ -74,5 +76,13 @@ public class CaseTask extends SubProcessNode implements TaskDefinition {
 			}
 		}
 		return false;
+	}
+
+	public PlanItemControl getDefaultControl() {
+		return defaultControl;
+	}
+
+	public void setDefaultControl(PlanItemControl defaultControl) {
+		this.defaultControl = defaultControl;
 	}
 }

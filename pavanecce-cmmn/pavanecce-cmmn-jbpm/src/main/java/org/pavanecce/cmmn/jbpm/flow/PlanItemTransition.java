@@ -1,24 +1,42 @@
 package org.pavanecce.cmmn.jbpm.flow;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.pavanecce.cmmn.jbpm.instance.PlanItemInstance;
+import org.pavanecce.common.util.NameConverter;
+
 public enum PlanItemTransition {
-
-	CLOSE, COMPLETE, CREATE, DISABLE, ENABLE, EXIT, FAULT, MANUAL_START, OCCUR, PARENT_RESUME, PARENT_SUSPEND, REACTIVATE, REENABLE, RESUME, START, SUSPEND, TERMINATE;
+	CLOSE, COMPLETE, CREATE, DISABLE, ENABLE, EXIT, PARENT_TERMINATE, FAULT, MANUAL_START, OCCUR, PARENT_RESUME, PARENT_SUSPEND, REACTIVATE, REENABLE, RESUME, START, SUSPEND, TERMINATE;
 	private static Map<String, PlanItemTransition> BY_NAME = new HashMap<String, PlanItemTransition>();
-
-
+	Method method;
+	public Method getMethod() {
+		if(method==null){
+			String name = NameConverter.underscoredToCamelCase(name().toLowerCase());
+			try {
+				method=PlanItemInstance.class.getMethod(name);
+			} catch (NoSuchMethodException e) {
+				e.printStackTrace();
+			} catch (SecurityException e) {
+				e.printStackTrace();
+			}
+		}
+		return method;
+	}
 	public static PlanItemTransition resolveByName(String name) {
 		if (BY_NAME.isEmpty()) {
 			PlanItemTransition[] values = values();
 			for (PlanItemTransition planItemTransition : values) {
-				BY_NAME.put(
-						planItemTransition.name().toLowerCase()
-								.replace("_", ""), planItemTransition);
+				BY_NAME.put(planItemTransition.name().toLowerCase().replace("_", ""), planItemTransition);
 			}
 		}
 		return BY_NAME.get(name.toLowerCase());
+	}
+	public static void main(String[] args) {
+		for (PlanItemTransition p : values()) {
+			System.out.println(p.getMethod());
+		}
 	}
 
 }

@@ -10,7 +10,7 @@ import org.jbpm.process.core.context.variable.VariableScope;
 import org.jbpm.process.core.event.EventFilter;
 import org.jbpm.process.core.event.EventTypeFilter;
 import org.jbpm.workflow.core.node.EventNode;
-import org.pavanecce.cmmn.jbpm.instance.CaseEvent;
+import org.pavanecce.cmmn.jbpm.event.CaseEvent;
 
 public abstract class OnPart extends EventNode implements Serializable, CMMNElement {
 	private static final long serialVersionUID = 1403604027414552700L;

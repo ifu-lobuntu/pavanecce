@@ -11,6 +11,7 @@ import org.drools.core.spi.ProcessContext;
 import org.jbpm.ruleflow.instance.RuleFlowProcessInstance;
 import org.jbpm.workflow.instance.NodeInstanceContainer;
 import org.kie.api.runtime.process.NodeInstance;
+import org.pavanecce.cmmn.jbpm.event.SubscriptionManager;
 import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItem;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemOnPart;
@@ -18,12 +19,16 @@ import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
 import org.pavanecce.cmmn.jbpm.flow.PlanItem;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 import org.pavanecce.cmmn.jbpm.flow.TaskDefinition;
+import org.pavanecce.cmmn.jbpm.infra.OnPartInstanceSubscription;
 import org.pavanecce.common.ObjectPersistence;
 
-public class CaseInstance extends RuleFlowProcessInstance {
+public class CaseInstance extends RuleFlowProcessInstance implements PlanItemInstanceContainer {
 	private static final long serialVersionUID = 8715128915363796623L;
 	private boolean shouldUpdateSubscriptions;
-	private transient int signalCount=0;
+	private transient int signalCount = 0;
+	private PlanItemState planItemState = PlanItemState.NONE;
+	private PlanItemState lastBusyState = PlanItemState.NONE;
+
 	public Case getCase() {
 		return (Case) getProcess();
 	}
@@ -37,7 +42,7 @@ public class CaseInstance extends RuleFlowProcessInstance {
 		signalCount++;
 		super.signalEvent(type, event);
 		signalCount--;
-		if (shouldUpdateSubscriptions && signalCount==0) {
+		if (shouldUpdateSubscriptions && signalCount == 0) {
 			updateSubscriptions();
 		}
 	}
@@ -74,7 +79,7 @@ public class CaseInstance extends RuleFlowProcessInstance {
 					populateSubscriptionsActivatedByParameters(parentSubscriptions, subscriptions, td.getOutputs());
 				}
 			}
-			if(nodeInstance instanceof StagePlanItemInstance){
+			if (nodeInstance instanceof StagePlanItemInstance) {
 				populateSubscriptionsActivatedByParameters((NodeInstanceContainer) nodeInstance, parentSubscriptions, subscriptions);
 			}
 		}
@@ -167,4 +172,147 @@ public class CaseInstance extends RuleFlowProcessInstance {
 		}
 	}
 
+	@Override
+	public PlanItem getPlanItem() {
+		return null;
+	}
+
+	@Override
+	public void setPlanItemState(PlanItemState s) {
+		this.planItemState = s;
+	}
+
+	@Override
+	public void setLastBusyState(PlanItemState s) {
+		this.lastBusyState = s;
+	}
+
+	@Override
+	public void enable() {
+		planItemState.enable(this);
+	}
+
+	@Override
+	public void disable() {
+		planItemState.disable(this);
+	}
+
+	@Override
+	public void reenable() {
+		planItemState.reenable(this);
+	}
+
+	@Override
+	public void manualStart() {
+		planItemState.reenable(this);
+	}
+
+	@Override
+	public void reactivate() {
+		planItemState.reactivate(this);
+	}
+
+	@Override
+	public void suspend() {
+		planItemState.suspend(this);
+	}
+
+	@Override
+	public void resume() {
+		planItemState.resume(this);
+	}
+
+	@Override
+	public void terminate() {
+		planItemState.terminate(this);
+	}
+
+	@Override
+	public void exit() {
+		planItemState.exit(this);
+	}
+
+	@Override
+	public void complete() {
+		planItemState.complete(this);
+	}
+
+	@Override
+	public void parentSuspend() {
+		planItemState.parentSuspend(this);
+	}
+
+	@Override
+	public void parentResume() {
+		planItemState.parentResume(this);
+	}
+
+	@Override
+	public void parentTerminate() {
+		planItemState.parentTerminate(this);
+	}
+
+	@Override
+	public void create() {
+		planItemState.create(this);
+	}
+
+	@Override
+	public void fault() {
+		planItemState.fault(this);
+	}
+
+	@Override
+	public void occur() {
+		planItemState.occur(this);
+	}
+
+	@Override
+	public void close() {
+		planItemState.close(this);
+	}
+
+	@Override
+	public PlanItemState getLastBusyState() {
+		return lastBusyState;
+	}
+
+	@Override
+	public PlanItemState getPlanItemState() {
+		return planItemState;
+	}
+
+	@Override
+	public Collection<PlanItemInstance> getChildren() {
+		Set<PlanItemInstance> result = new HashSet<PlanItemInstance>();
+		for (NodeInstance nodeInstance : getNodeInstances()) {
+			if (nodeInstance instanceof PlanItemInstance) {
+				result.add((PlanItemInstance) nodeInstance);
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public CaseInstance getCaseInstance() {
+		return this;
+	}
+
+	public PlanItemInstance findPlanItemInstanceForWorkItemId(long workItemId) {
+		return findPlanItemInstanceForWorkItemId(workItemId, getNodeInstances());
+	}
+
+	protected PlanItemInstance findPlanItemInstanceForWorkItemId(long workItemId, Collection<NodeInstance> nodeInstances) {
+		for (NodeInstance ni : nodeInstances) {
+			if (ni instanceof PlanItemInstanceWithTask && ((PlanItemInstanceWithTask) ni).getWorkItemId() == workItemId) {
+				return (PlanItemInstance) ni;
+			} else if (ni instanceof NodeInstanceContainer) {
+				PlanItemInstance result = findPlanItemInstanceForWorkItemId(workItemId, ((NodeInstanceContainer) ni).getNodeInstances());
+				if (result != null) {
+					return result;
+				}
+			}
+		}
+		return null;
+	}
 }

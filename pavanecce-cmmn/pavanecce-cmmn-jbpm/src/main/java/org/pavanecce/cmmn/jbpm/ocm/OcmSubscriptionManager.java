@@ -30,15 +30,15 @@ import org.apache.jackrabbit.ocm.mapper.model.BeanDescriptor;
 import org.apache.jackrabbit.ocm.mapper.model.ClassDescriptor;
 import org.apache.jackrabbit.ocm.query.Filter;
 import org.apache.jackrabbit.ocm.query.Query;
+import org.pavanecce.cmmn.jbpm.event.AbstractPersistentSubscriptionManager;
+import org.pavanecce.cmmn.jbpm.event.CaseFileItemSubscriptionInfo;
+import org.pavanecce.cmmn.jbpm.event.CaseSubscriptionInfo;
+import org.pavanecce.cmmn.jbpm.event.CaseSubscriptionKey;
+import org.pavanecce.cmmn.jbpm.event.DemarcatedSubscriptionContext;
+import org.pavanecce.cmmn.jbpm.event.PersistedCaseFileItemSubscriptionInfo;
+import org.pavanecce.cmmn.jbpm.event.SubscriptionManager;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
-import org.pavanecce.cmmn.jbpm.instance.AbstractPersistentSubscriptionManager;
-import org.pavanecce.cmmn.jbpm.instance.CaseFileItemSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.instance.CaseInstance;
-import org.pavanecce.cmmn.jbpm.instance.CaseSubscriptionInfo;
-import org.pavanecce.cmmn.jbpm.instance.CaseSubscriptionKey;
-import org.pavanecce.cmmn.jbpm.instance.DemarcatedSubscriptionContent;
-import org.pavanecce.cmmn.jbpm.instance.PersistedCaseFileItemSubscriptionInfo;
-import org.pavanecce.cmmn.jbpm.instance.SubscriptionManager;
 import org.pavanecce.common.ObjectPersistence;
 import org.pavanecce.common.ocm.OcmFactory;
 import org.pavanecce.common.ocm.OcmObjectPersistence;
@@ -124,8 +124,8 @@ public class OcmSubscriptionManager extends AbstractPersistentSubscriptionManage
 				if (info.subscriptionInfo != null) {
 					fireAddsAndCreates(info, object, info.subscriptionInfo.getCaseFileItemSubscriptions());
 				}
-				fireAddsAndCreates(info, object, DemarcatedSubscriptionContent.getSubscriptionsInScopeForFor(object, CREATE));
-				fireAddsAndCreates(info, object, DemarcatedSubscriptionContent.getSubscriptionsInScopeForFor(info.parentObject, ADD_CHILD));
+				fireAddsAndCreates(info, object, DemarcatedSubscriptionContext.getSubscriptionsInScopeForFor(object, CREATE));
+				fireAddsAndCreates(info, object, DemarcatedSubscriptionContext.getSubscriptionsInScopeForFor(info.parentObject, ADD_CHILD));
 			}
 		} catch (RuntimeException e) {
 			e.printStackTrace();
@@ -167,8 +167,8 @@ public class OcmSubscriptionManager extends AbstractPersistentSubscriptionManage
 				if (info.subscriptionInfo != null) {
 					fireRemovesAndDeletes(info, empty, info.subscriptionInfo.getCaseFileItemSubscriptions());
 				}
-				fireRemovesAndDeletes(info, empty, DemarcatedSubscriptionContent.getSubscriptionsInScopeForFor(empty, DELETE));
-				fireRemovesAndDeletes(info, empty, DemarcatedSubscriptionContent.getSubscriptionsInScopeForFor(info.parentObject, REMOVE_CHILD));
+				fireRemovesAndDeletes(info, empty, DemarcatedSubscriptionContext.getSubscriptionsInScopeForFor(empty, DELETE));
+				fireRemovesAndDeletes(info, empty, DemarcatedSubscriptionContext.getSubscriptionsInScopeForFor(info.parentObject, REMOVE_CHILD));
 
 			}
 		} catch (RuntimeException e) {
@@ -271,7 +271,7 @@ public class OcmSubscriptionManager extends AbstractPersistentSubscriptionManage
 					}
 					if (hasClass) {
 						Object find = getPersistence().find(null, node.getIdentifier());
-						fireUpdates(node, DemarcatedSubscriptionContent.getSubscriptionsInScopeForFor(find, UPDATE));
+						fireUpdates(node, DemarcatedSubscriptionContext.getSubscriptionsInScopeForFor(find, UPDATE));
 					}
 				}
 			}
@@ -353,7 +353,7 @@ public class OcmSubscriptionManager extends AbstractPersistentSubscriptionManage
 						if (i != null) {
 							fireReferenceUpdate(event, currentNode, standardEvent, jcrPropertyName, currentObject, i.getCaseFileItemSubscriptions());
 						}
-						fireReferenceUpdate(event, currentNode, standardEvent, jcrPropertyName, currentObject, DemarcatedSubscriptionContent.getSubscriptionsInScopeForFor(currentObject, standardEvent));
+						fireReferenceUpdate(event, currentNode, standardEvent, jcrPropertyName, currentObject, DemarcatedSubscriptionContext.getSubscriptionsInScopeForFor(currentObject, standardEvent));
 					}
 				}
 			}

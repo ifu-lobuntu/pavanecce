@@ -7,10 +7,10 @@ import java.util.Map;
 import org.junit.Test;
 import org.kie.api.task.model.TaskSummary;
 import org.pavanecce.cmmn.jbpm.AbstractConstructionTestCase;
+import org.pavanecce.cmmn.jbpm.event.CaseSubscriptionInfo;
+import org.pavanecce.cmmn.jbpm.event.SubscriptionManager;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
 import org.pavanecce.cmmn.jbpm.instance.CaseInstance;
-import org.pavanecce.cmmn.jbpm.instance.CaseSubscriptionInfo;
-import org.pavanecce.cmmn.jbpm.instance.SubscriptionManager;
 
 import test.ConstructionCase;
 import test.House;

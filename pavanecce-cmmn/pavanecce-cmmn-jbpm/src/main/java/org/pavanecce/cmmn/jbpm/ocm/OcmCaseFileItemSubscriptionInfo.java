@@ -4,9 +4,9 @@ import org.apache.jackrabbit.ocm.manager.enumconverter.EnumTypeConverter;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Bean;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
+import org.pavanecce.cmmn.jbpm.event.CaseSubscriptionInfo;
+import org.pavanecce.cmmn.jbpm.event.PersistedCaseFileItemSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
-import org.pavanecce.cmmn.jbpm.instance.CaseSubscriptionInfo;
-import org.pavanecce.cmmn.jbpm.instance.PersistedCaseFileItemSubscriptionInfo;
 import org.pavanecce.common.ocm.GrandParentBeanConverterImpl;
 
 @Node(discriminator = false, jcrType = "i:caseFileItemSubscription")

@@ -7,7 +7,7 @@ import java.lang.reflect.Member;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import org.pavanecce.cmmn.jbpm.instance.CaseSubscriptionKey;
+import org.pavanecce.cmmn.jbpm.event.CaseSubscriptionKey;
 
 public class OcmCaseSubscriptionKey implements Serializable, CaseSubscriptionKey {
 	/**

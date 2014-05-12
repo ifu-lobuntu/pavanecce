@@ -2,8 +2,8 @@ package org.pavanecce.cmmn.jbpm.flow;
 
 import java.io.Serializable;
 
-import org.pavanecce.cmmn.jbpm.instance.CaseEvent;
-import org.pavanecce.cmmn.jbpm.instance.CaseFileItemEvent;
+import org.pavanecce.cmmn.jbpm.event.CaseEvent;
+import org.pavanecce.cmmn.jbpm.event.CaseFileItemEvent;
 
 public class CaseFileItemOnPart extends OnPart implements Serializable{
 	private static final long serialVersionUID = -9167236068103073693L;

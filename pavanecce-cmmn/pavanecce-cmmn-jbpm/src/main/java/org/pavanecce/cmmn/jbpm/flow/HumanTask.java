@@ -22,6 +22,8 @@ public class HumanTask extends WorkItemNode implements TaskDefinition {
 	private String elementId;
 	private List<CaseParameter> inputParameters = new ArrayList<CaseParameter>();
 	private List<CaseParameter> outputParameters = new ArrayList<CaseParameter>();
+	private PlanItemControl defaultControl;
+
 
 	public HumanTask() {
 		Work work = new WorkImpl();
@@ -102,6 +104,14 @@ public class HumanTask extends WorkItemNode implements TaskDefinition {
 		result.setParameter(PeopleAssignmentHelper.BUSINESSADMINISTRATOR_ID, getPerformer().getName());
 
 		return result;
+	}
+
+	public PlanItemControl getDefaultControl() {
+		return defaultControl;
+	}
+
+	public void setDefaultControl(PlanItemControl defaultControl) {
+		this.defaultControl = defaultControl;
 	}
 
 }
