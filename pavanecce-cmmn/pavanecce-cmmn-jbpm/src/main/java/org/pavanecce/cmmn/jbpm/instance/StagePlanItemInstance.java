@@ -17,20 +17,82 @@ import org.jbpm.workflow.core.node.CompositeNode;
 import org.jbpm.workflow.instance.WorkflowRuntimeException;
 import org.jbpm.workflow.instance.node.CompositeNodeInstance;
 import org.kie.api.runtime.process.NodeInstance;
+import org.kie.api.task.model.Task;
 import org.kie.internal.runtime.KnowledgeRuntime;
 import org.pavanecce.cmmn.jbpm.flow.PlanItem;
+import org.pavanecce.cmmn.jbpm.flow.PlanItemTransition;
 import org.pavanecce.cmmn.jbpm.flow.StagePlanItem;
 
-public class StagePlanItemInstance extends CompositeNodeInstance implements PlanItemInstanceContainer,PlanItemInstanceWithTask{
+public class StagePlanItemInstance extends CompositeNodeInstance implements PlanItemInstanceContainer {
 
 	private static final long serialVersionUID = 112341234123L;
 	private long workItemId;
-	private WorkItem workItem;
-	private PlanItemState planItemState;
-	private PlanItemState lastBusyState;
+	transient private WorkItem workItem;
+	private PlanItemState planItemState=PlanItemState.AVAILABLE;
+	private PlanItemState lastBusyState=PlanItemState.NONE;
+
 	@Override
 	protected CompositeNode getCompositeNode() {
 		return super.getCompositeNode();
+	}
+
+	public WorkItem getWorkItem() {
+		if (workItem == null && workItemId >= 0) {
+			workItem = ((WorkItemManager) ((ProcessInstance) getProcessInstance()).getKnowledgeRuntime().getWorkItemManager()).getWorkItem(workItemId);
+		}
+		return workItem;
+	}
+
+	public long getWorkItemId() {
+		return workItemId;
+	}
+
+	public void internalSetWorkItemId(long readLong) {
+		this.workItemId = readLong;
+	}
+
+	public void internalTrigger(final NodeInstance from, String type) {
+		super.internalTrigger(from, type);
+		StagePlanItem workItemNode = getStagePlanItem();
+		createWorkItem(workItemNode);
+		addWorkItemListener();
+		String deploymentId = (String) getProcessInstance().getKnowledgeRuntime().getEnvironment().get("deploymentId");
+		((WorkItem) workItem).setDeploymentId(deploymentId);
+		if (isInversionOfControl()) {
+			((ProcessInstance) getProcessInstance()).getKnowledgeRuntime().update(((ProcessInstance) getProcessInstance()).getKnowledgeRuntime().getFactHandle(this), this);
+		} else {
+			try {
+				((WorkItemManager) ((ProcessInstance) getProcessInstance()).getKnowledgeRuntime().getWorkItemManager()).internalExecuteWorkItem((org.drools.core.process.instance.WorkItem) workItem);
+			} catch (WorkItemHandlerNotFoundException wihnfe) {
+				getProcessInstance().setState(ProcessInstance.STATE_ABORTED);
+				throw wihnfe;
+			} catch (Exception e) {
+				String exceptionName = e.getClass().getName();
+				ExceptionScopeInstance exceptionScopeInstance = (ExceptionScopeInstance) resolveContextInstance(ExceptionScope.EXCEPTION_SCOPE, exceptionName);
+				if (exceptionScopeInstance == null) {
+					throw new WorkflowRuntimeException(this, getProcessInstance(), "Unable to execute Action: " + e.getMessage(), e);
+				}
+				this.workItemId = workItem.getId();
+				exceptionScopeInstance.handleException(exceptionName, e);
+			}
+		}
+		this.workItemId = workItem.getId();
+		this.enable();
+	}
+
+	protected StagePlanItem getStagePlanItem() {
+		return (StagePlanItem) getNode();
+	}
+
+	protected WorkItem createWorkItem(StagePlanItem workItemNode) {
+		workItem = new WorkItemImpl();
+		Work work = getStagePlanItem().getWork();
+		((WorkItem) workItem).setName(work.getName());
+		((WorkItem) workItem).setProcessInstanceId(getProcessInstance().getId());
+		((WorkItem) workItem).setParameters(new HashMap<String, Object>(work.getParameters()));
+		((WorkItem) workItem).setParameter("planningTable", "");// TODO
+		((WorkItem) workItem).setParameter("planningTable", "");// TODO
+		return workItem;
 	}
 
 	public void triggerCompleted(WorkItem workItem) {
@@ -66,101 +128,33 @@ public class StagePlanItemInstance extends CompositeNodeInstance implements Plan
 	}
 
 	private void addWorkItemListener() {
-		getProcessInstance().addEventListener("workItemCompleted", this, false);
-		getProcessInstance().addEventListener("workItemAborted", this, false);
+		getProcessInstance().addEventListener("workItemUpdated", this, false);
 	}
 
 	public void removeEventListeners() {
 		super.removeEventListeners();
-		getProcessInstance().removeEventListener("workItemCompleted", this, false);
-		getProcessInstance().removeEventListener("workItemAborted", this, false);
+		getProcessInstance().removeEventListener("workItemUpdated", this, false);
 	}
 
+	@Override
 	public void signalEvent(String type, Object event) {
-		if ("workItemCompleted".equals(type)) {
-			workItemCompleted((WorkItem) event);
-		} else if ("workItemAborted".equals(type)) {
-			workItemAborted((WorkItem) event);
+		if (type.equals("workItemUpdated") && isMyWorkItem((WorkItem) event)) {
+			this.workItem = (WorkItem) event;
+			PlanItemTransition transition = (PlanItemTransition) workItem.getResult(HumanControlledPlanItemInstance.TRANSITION);
+			transition.invokeOn(this);
 		} else {
 			super.signalEvent(type, event);
 		}
 	}
 
+	protected boolean isMyWorkItem(WorkItem event) {
+		return event.getId() == getWorkItemId() || (getWorkItemId() == -1 && getWorkItem().getId() == (event.getId()));
+	}
+
 	public String[] getEventTypes() {
-		return new String[] { "workItemCompleted" };
+		return new String[] { "workItemUpdated" };
 	}
 
-	public WorkItem getWorkItem() {
-		if (workItem == null && workItemId >= 0) {
-			workItem = ((WorkItemManager) ((ProcessInstance) getProcessInstance()).getKnowledgeRuntime().getWorkItemManager()).getWorkItem(workItemId);
-		}
-		return workItem;
-	}
-
-	public long getWorkItemId() {
-		return workItemId;
-	}
-
-	public void workItemAborted(WorkItem workItem) {
-		if (workItemId == workItem.getId() || (workItemId == -1 && getWorkItem().getId() == workItem.getId())) {
-			removeEventListeners();
-			triggerCompleted(workItem);
-		}
-	}
-
-	public void workItemCompleted(WorkItem workItem) {
-		if (workItemId == workItem.getId() || (workItemId == -1 && getWorkItem().getId() == workItem.getId())) {
-			removeEventListeners();
-			triggerCompleted(workItem);
-		}
-	}
-
-	public void internalSetWorkItemId(long readLong) {
-		this.workItemId = readLong;
-	}
-
-	public void internalTrigger(final NodeInstance from, String type) {
-		super.internalTrigger(from, type);
-		StagePlanItem workItemNode = getStagePlanItem();
-		createWorkItem(workItemNode);
-		addWorkItemListener();
-		String deploymentId = (String) getProcessInstance().getKnowledgeRuntime().getEnvironment().get("deploymentId");
-		((WorkItem) workItem).setDeploymentId(deploymentId);
-		if (isInversionOfControl()) {
-			((ProcessInstance) getProcessInstance()).getKnowledgeRuntime().update(((ProcessInstance) getProcessInstance()).getKnowledgeRuntime().getFactHandle(this), this);
-		} else {
-			try {
-				((WorkItemManager) ((ProcessInstance) getProcessInstance()).getKnowledgeRuntime().getWorkItemManager()).internalExecuteWorkItem((org.drools.core.process.instance.WorkItem) workItem);
-			} catch (WorkItemHandlerNotFoundException wihnfe) {
-				getProcessInstance().setState(ProcessInstance.STATE_ABORTED);
-				throw wihnfe;
-			} catch (Exception e) {
-				String exceptionName = e.getClass().getName();
-				ExceptionScopeInstance exceptionScopeInstance = (ExceptionScopeInstance) resolveContextInstance(ExceptionScope.EXCEPTION_SCOPE, exceptionName);
-				if (exceptionScopeInstance == null) {
-					throw new WorkflowRuntimeException(this, getProcessInstance(), "Unable to execute Action: " + e.getMessage(), e);
-				}
-				this.workItemId = workItem.getId();
-				exceptionScopeInstance.handleException(exceptionName, e);
-			}
-		}
-		this.workItemId = workItem.getId();
-	}
-
-	protected StagePlanItem getStagePlanItem() {
-		return (StagePlanItem) getNode();
-	}
-
-	protected WorkItem createWorkItem(StagePlanItem workItemNode) {
-		workItem = new WorkItemImpl();
-		Work work = getStagePlanItem().getWork();
-		((WorkItem) workItem).setName(work.getName());
-		((WorkItem) workItem).setProcessInstanceId(getProcessInstance().getId());
-		((WorkItem) workItem).setParameters(new HashMap<String, Object>(work.getParameters()));
-		((WorkItem) workItem).setParameter("planningTable", "");// TODO
-		((WorkItem) workItem).setParameter("planningTable", "");// TODO
-		return workItem;
-	}
 	@Override
 	public PlanItem getPlanItem() {
 		return getStagePlanItem();
@@ -193,7 +187,7 @@ public class StagePlanItemInstance extends CompositeNodeInstance implements Plan
 
 	@Override
 	public void manualStart() {
-		planItemState.reenable(this);
+		planItemState.manualStart(this);
 	}
 
 	@Override
@@ -265,6 +259,7 @@ public class StagePlanItemInstance extends CompositeNodeInstance implements Plan
 	public PlanItemState getLastBusyState() {
 		return lastBusyState;
 	}
+
 	@Override
 	public PlanItemState getPlanItemState() {
 		return planItemState;
@@ -289,6 +284,19 @@ public class StagePlanItemInstance extends CompositeNodeInstance implements Plan
 	@Override
 	public void start() {
 		planItemState.start(this);
+	}
+
+	@Override
+	public Task getTask() {
+		if (getWorkItem() != null) {
+			return (Task) getWorkItem().getResult(HumanControlledPlanItemInstance.TASK);
+		}
+		return null;
+	}
+
+	@Override
+	public String getPlanItemName() {
+		return getPlanItem().getName();
 	}
 
 }

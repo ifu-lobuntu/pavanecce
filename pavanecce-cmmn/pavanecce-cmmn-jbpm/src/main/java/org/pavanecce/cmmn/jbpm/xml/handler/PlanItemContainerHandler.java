@@ -53,6 +53,8 @@ public abstract class PlanItemContainerHandler extends BaseAbstractHandler {
 			if (node instanceof PlanItem) {
 				linkPlanItemCriteria(container, defaultJoin, (PlanItem) node);
 			} else if (node instanceof Sentry) {
+				//We need to activate sentries immediately to indicate that the associated PLanItem is available
+				new ConnectionImpl(defaultSplit, DEFAULT, node, DEFAULT);
 				linkSentryOnPart(container, defaultSplit, variableScope, (Sentry) node);
 			}
 		}

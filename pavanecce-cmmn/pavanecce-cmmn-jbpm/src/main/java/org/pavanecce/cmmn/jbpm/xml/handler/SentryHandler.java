@@ -8,10 +8,8 @@ import org.jbpm.workflow.core.Node;
 import org.jbpm.workflow.core.NodeContainer;
 import org.jbpm.workflow.core.impl.ConnectionImpl;
 import org.jbpm.workflow.core.impl.ConstraintImpl;
-import org.pavanecce.cmmn.jbpm.flow.JoiningSentry;
 import org.pavanecce.cmmn.jbpm.flow.OnPart;
 import org.pavanecce.cmmn.jbpm.flow.Sentry;
-import org.pavanecce.cmmn.jbpm.flow.SimpleSentry;
 import org.pavanecce.cmmn.jbpm.flow.Stage;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -22,15 +20,14 @@ public class SentryHandler extends AbstractPlanModelElementHandler implements Ha
 	private static final String DEFAULT = Node.CONNECTION_DEFAULT_TYPE;
 
 	public SentryHandler() {
-		super.validPeers.add(SimpleSentry.class);
-		super.validPeers.add(JoiningSentry.class);
+		super.validPeers.add(Sentry.class);
 		super.validParents.add(Stage.class);
 	}
 
 	@Override
 	public Object start(final String uri, final String localName, final Attributes attrs, final ExtensibleXmlParser parser) throws SAXException {
 		parser.startElementBuilder(localName, attrs);
-		SimpleSentry node = new SimpleSentry();
+		Sentry node = new Sentry();
 		node.setElementId(attrs.getValue("id"));
 		node.setName(attrs.getValue("name"));
 		return node;
@@ -47,15 +44,6 @@ public class SentryHandler extends AbstractPlanModelElementHandler implements Ha
 		Sentry node = (Sentry) xmlPackageReader.getCurrent();
 		Collection<? extends OnPart> onParts = node.getOnParts();
 		Element el = xmlPackageReader.endElementBuilder();
-		if (onParts.size() > 1) {
-			JoiningSentry js = new JoiningSentry();
-			js.setElementId(node.getElementId());
-			js.setName(node.getName());
-			for (OnPart onPart : onParts) {
-				js.addOnPart(onPart);
-			}
-			node = js;
-		}
 		ConstraintImpl constraint = maybeCreateConstraint(node, el);
 		node.setCondition(constraint);
 		node.setId(IdGenerator.next(xmlPackageReader));

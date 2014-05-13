@@ -7,9 +7,7 @@ import org.drools.core.xml.ExtensibleXmlParser;
 import org.drools.core.xml.Handler;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemOnPart;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
-import org.pavanecce.cmmn.jbpm.flow.JoiningSentry;
 import org.pavanecce.cmmn.jbpm.flow.Sentry;
-import org.pavanecce.cmmn.jbpm.flow.SimpleSentry;
 import org.w3c.dom.NodeList;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -18,8 +16,7 @@ public class CaseFileItemOnPartHandler extends BaseAbstractHandler implements Ha
 	public CaseFileItemOnPartHandler() {
 		super.validParents = new HashSet<Class<?>>();
 		validParents.add(Sentry.class);
-		super.validParents.add(SimpleSentry.class);
-		super.validParents.add(JoiningSentry.class);
+		super.validParents.add(Sentry.class);
 		super.validPeers = new HashSet<Class<?>>();
 		validPeers.add(CaseFileItemOnPart.class);
 		validPeers.add(CaseFileItemOnPart.class);

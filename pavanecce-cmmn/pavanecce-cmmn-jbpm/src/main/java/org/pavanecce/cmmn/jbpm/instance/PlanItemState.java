@@ -141,18 +141,18 @@ public enum PlanItemState {
 		validateTransition(pi, ENABLE);
 		signalEvent(pi, PlanItemTransition.ENABLE);
 		pi.setPlanItemState(ENABLED);
-		PlanItemControl itemControl = pi.getPlanItem().getPlanInfo().getItemControl();
-		if (itemControl != null && itemControl.getAutomaticActivationRule() instanceof ConstraintEvaluator) {
-			ConstraintEvaluator ev = (ConstraintEvaluator) itemControl.getAutomaticActivationRule();
-			if (ev.evaluate((NodeInstance) pi, null, ev)) {
-				pi.start();
-			}
-		}
 	}
 
 	private void signalEvent(PlanItemInstance pi, PlanItemTransition transition) {
-		String eventToTrigger = OnPart.getType(pi.getPlanItem().getName(), transition);
-		PlanItemEvent event = new PlanItemEvent(pi.getPlanItem().getName(), transition, new Object());
+		String eventToTrigger = OnPart.getType(pi.getPlanItemName(), transition);
+		Object eventObject = null;
+		if (pi instanceof HumanControlledPlanItemInstance) {
+			eventObject = ((HumanControlledPlanItemInstance) pi).getTask();
+		}
+		if(eventObject==null){
+			eventObject=new Object();
+		}
+		PlanItemEvent event = new PlanItemEvent(pi.getPlanItemName(), transition, eventObject);
 		pi.getCaseInstance().signalEvent(eventToTrigger, event);
 	}
 
@@ -170,7 +170,7 @@ public enum PlanItemState {
 
 	public void start(PlanItemInstance pi) {
 		validateTransition(pi, START);
-		signalEvent(pi, PlanItemTransition.REENABLE);
+		signalEvent(pi, PlanItemTransition.START);
 		pi.setPlanItemState(ACTIVE);
 	}
 
@@ -182,7 +182,7 @@ public enum PlanItemState {
 
 	public void reactivate(PlanItemInstance pi) {
 		validateTransition(pi, REACTIVATE);
-		signalEvent(pi, PlanItemTransition.MANUAL_START);
+		signalEvent(pi, PlanItemTransition.REACTIVATE);
 		pi.setPlanItemState(ACTIVE);
 	}
 
@@ -225,16 +225,18 @@ public enum PlanItemState {
 		validateTransition(pi, EXIT);
 		signalEvent(pi, PlanItemTransition.EXIT);
 		pi.setPlanItemState(TERMINATED);
+		PlanItemInstanceUtil.exitPlanItem(pi);
 	}
 
 	public void complete(PlanItemInstance pi) {
 		validateTransition(pi, COMPLETE);
 		signalEvent(pi, PlanItemTransition.COMPLETE);
 		pi.setPlanItemState(COMPLETED);
+		pi.getCaseInstance().markSubscriptionsForUpdate();
 	}
 
 	public void parentSuspend(PlanItemInstance pi) {
-		validateTransition(pi, SUSPEND);
+		validateTransition(pi, PARENT_SUSPEND);
 		signalEvent(pi, PlanItemTransition.PARENT_SUSPEND);
 		pi.setLastBusyState(pi.getPlanItemState());
 		pi.setPlanItemState(SUSPENDED);

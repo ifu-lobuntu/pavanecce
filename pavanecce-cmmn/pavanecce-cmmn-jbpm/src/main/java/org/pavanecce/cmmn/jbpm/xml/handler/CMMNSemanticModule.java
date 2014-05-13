@@ -1,8 +1,7 @@
 package org.pavanecce.cmmn.jbpm.xml.handler;
 
 import org.drools.core.xml.DefaultSemanticModule;
-import org.pavanecce.cmmn.jbpm.flow.JoiningSentry;
-import org.pavanecce.cmmn.jbpm.flow.SimpleSentry;
+import org.pavanecce.cmmn.jbpm.flow.Sentry;
 
 public class CMMNSemanticModule extends DefaultSemanticModule{
 	public static final String CMMN_URI="http://www.omg.org/spec/CMMN/20121031/MODEL";
@@ -29,8 +28,9 @@ public class CMMNSemanticModule extends DefaultSemanticModule{
 		super.addHandler("milestone", new MilestoneHandler());
 		super.addHandler("caseFileItemOnPart", new CaseFileItemOnPartHandler());
 		super.addHandler("stage", new StageHandler());
-        this.handlersByClass.put( SimpleSentry.class, sentryHandler);
-        this.handlersByClass.put( JoiningSentry.class, sentryHandler);
+		super.addHandler("defaultControl", new PlanItemControlHandler());
+		super.addHandler("itemControl", new PlanItemControlHandler());
+        this.handlersByClass.put( Sentry.class, sentryHandler);
 
 	}
 

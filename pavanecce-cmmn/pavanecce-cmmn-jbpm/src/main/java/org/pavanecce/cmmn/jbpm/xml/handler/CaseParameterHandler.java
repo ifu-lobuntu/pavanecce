@@ -7,6 +7,7 @@ import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
 import org.pavanecce.cmmn.jbpm.flow.CaseTask;
 import org.pavanecce.cmmn.jbpm.flow.HumanTask;
 import org.pavanecce.cmmn.jbpm.flow.ParameterMapping;
+import org.pavanecce.cmmn.jbpm.flow.PlanItemControl;
 import org.pavanecce.cmmn.jbpm.flow.TaskDefinition;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
@@ -19,6 +20,7 @@ public class CaseParameterHandler extends AbstractCaseElementHandler implements 
 		this.validPeers.add(null);
 		this.validPeers.add(CaseParameter.class);
 		this.validPeers.add(ParameterMapping.class);
+		this.validPeers.add(PlanItemControl.class);
 	}
 
 	@Override

@@ -66,11 +66,12 @@ public class PlanItemInfo {
 	public void linkPlanItem() {
 		Set<Entry<String, Sentry>> entrySet = entryCriteria.entrySet();
 		for (Entry<String, Sentry> entry : entrySet) {
+			entry.getValue().setPlanItemEntering(this.planItem);
 			new ConnectionImpl(entry.getValue(), Node.CONNECTION_DEFAULT_TYPE, planItem, Node.CONNECTION_DEFAULT_TYPE);
 		}
 		Set<Entry<String, Sentry>> exitSet = exitCriteria.entrySet();
 		for (Entry<String, Sentry> entry : exitSet) {
-			entry.getValue().addPlanItemExiting(this.planItem);
+			entry.getValue().setPlanItemExiting(this.planItem);
 		}
 	}
 

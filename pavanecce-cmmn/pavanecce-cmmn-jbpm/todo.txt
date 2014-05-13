@@ -1,67 +1,102 @@
 1. Done and Tested
-Throwing CREATE events from JCR
-Throwing CREATE events from Hibernate
-Throwing Human Task Completion events from TaskService
-Throwing ADD_REFERENCE events from JCR
-Throwing ADD_CHILD events from JCR
-Throwing ADD_REFERENCE events from Hibernate
-Throwing ADD_CHILD events from Hibernate
-Throwing REMOVE_REFERENCE events from JCR
-Throwing REMOVE_REFERENCE events from Hibernate
-Throwing REMOVE_CHILD events from JCR
-Throwing REMOVE_CHILD events from Hibernate
-Throwing DELETE events from JCR
-Throwing DELETE events from Hibernate
-Throwing UPDATE events from JCR
-Throwing UPDATE events from Hibernate
-Generate OCM and JPA test Java classes from UML along with CaseFileItemDefinition includes
-Throwing Human Task FAULT events from TaskService
-Throwing Human Task COMPLETE events from TaskService
-Throwing Human Task SUSPEND events from TaskService
-Throwing Human Task RESUME events from TaskService
-Throwing Human Task TERMINATE events from TaskService
-Manually scoped event subscriptions
-Scoping of subscriptions in JCR
-Scoping of subscriptions in Hibernate
-Implement OCLProcessDialect that extends JavaProcessDialect
-  focus on ReturnValueBuilder first, then the others
-  consider reversing Java classes to UML
-Output ParameterMapping, bindingRefinement and scoped subscriptions
-Make recursive subscriptions parameterizable
+JCR/OCM persistent subscriptions
+ - scope of subscriptions
+ - bindingRefined
+ - throwing CREATE,DELETE,ADD_CHILD,REMOVE_CHILD,ADD_REFERENCE,REMOVE_REFERENCE and UPDATE events
+
+JCR/OCM demarcated subscriptions
+ - throwing CREATE,DELETE,ADD_CHILD,REMOVE_CHILD,ADD_REFERENCE,REMOVE_REFERENCE and UPDATE events
+
+JPA/Hibernate persistent subscriptions
+ - scope of subscriptions 
+ - bindingRefined
+ - throwing CREATE,DELETE,ADD_CHILD,REMOVE_CHILD,ADD_REFERENCE,REMOVE_REFERENCE and UPDATE events
+
+JPA/Hibernate demarcated subscriptions
+ - throwing CREATE,DELETE,ADD_CHILD,REMOVE_CHILD,ADD_REFERENCE,REMOVE_REFERENCE and UPDATE events
+
 Timer Event
+ - OCCUR
+
 Milestone
+ - entry criteria achieved
+ - OCCUR
+
 CaseTask
+ - basic call
+ - entry criteria achieved
+
+Human Task
+ - automaticActivationRule
+ - entry criteria achieved
+ - exit criteria achieved
+ - EXIT,DISABLE,ENABLE,START,COMPLETE,TERMINATE,FAULT,SUSPEND,RESUME events
+
+UserEvent
+ - OCCUR 
+
+Generate OCM and JPA test Java classes from UML along with CaseFileItemDefinition includes
+Implement OCLProcessDialect that extends JavaProcessDialect
+Output ParameterMapping, bindingRefinement and scoped subscriptions
+Recursive subscriptions, parameterizable
+
 
 2. To test
-UserEvent
-exit criteria for human task
 Sentry.Conditions
+Sentries with multiple onParts
 
 
 3. To implement
 
-ItemControl.repetitionRule
-ItemControl.automaticActivationRule
-
 Process/Case Task
+ - no sentry
+ - repetitionRule
+ - requiredRule
+ - automaticActivationRule
  - parameterMapping
  - transformation
+ - exit criteria achieved
+ - EXIT,DISABLE,ENABLE,MANUAL_START,START,COMPLETE,TERMINATE,FAULT,SUSPEND,RESUME,CREATE,REENABLE,REACTIVATE,PARENT_SUSPEND, PARENT_RESUME
 
 CaseModel:
  - direct exit Criteria
  - manual completion
- - throwing CLOSE, COMPLETE,CREATE,...
- - auto completion, use ItemControl.requiredRule
+ - auto completion
+ - CREATE, TERMINATE,FAULT,CLOSE, COMPLETE,SUSPEND,REACTIVATE
  
 Stage:
+ - no sentry
+ - repetitionRule
+ - requiredRule
+ - automaticActivationRule
  - stagePlanItem's exit and its event
  - manual completion
- - implement and throw CLOSE, COMPLETE,CREATE,SUSPEND,RESUME,TERMINATE...
+ - exit criteria achieved
+ - EXIT,DISABLE,ENABLE,MANUAL_START,START,COMPLETE,TERMINATE,FAULT,SUSPEND,RESUME,CREATE,REENABLE,REACTIVATE,PARENT_SUSPEND, PARENT_RESUME
  - auto completion, use ItemControl.requiredRule
 
 Human Task
- - throwing EXIT events - happens when exit criteria are achieved
- - 
+ - no sentry
+ - repetitionRule
+ - requiredRule
+ - CREATE,REENABLE,REACTIVATE,PARENT_SUSPEND, PARENT_RESUME
+
+Milestone
+ - no sentry
+ - requiredRule
+ - repetitionRule
+ - CREATE,SUSPEND,RESUME,TERMINATE,PARENT_TERMINATE
+
+UserEvent
+ - no sentry
+ - requiredRule
+ - CREATE,SUSPEND,RESUME,TERMINATE,PARENT_TERMINATE
+
+TimerEvent
+ - no sentry
+ - requiredRule
+ - CREATE,SUSPEND,RESUME,TERMINATE,PARENT_TERMINATE
+
 Planning Tables:
  - Planning Table object (string/xml representing the current state of tasks and assignments of roles/parameters)
  - Marshal this from/to the workItem
@@ -71,10 +106,10 @@ Planning Tables:
  - Assigning caseParameters at runtime
 
 plan fragment
-Transformations on parameterMappings
+contextRefs for rules
+
 
 4. Difficult
-Throwing Human Task CREATE,DISABLE,ENABLE,REENABLE events from TaskService - this is tricky because the task node instance does not exist in jBPM
 With JCR Property.CHANGE events, try to get the original value and only fire events for ADD_/REMOVE_REFERENCE when they applicable - JCR limitation
 Optimize caching of SubscriptionInfo and perhaps even other OCM objects IN OCMSubscriptioinManager
 
@@ -84,6 +119,8 @@ Planning with quotes/costing for subsequent activities
 milestone with cost breakdown
 Support for more time formats
 In expressions inside a Task, make the CaseParameters available. This would help with automatic selection of other parameters based on one input parameter
+Reversing Java classes to UML for OCL expressions
+Allowing SentryInstances and OnPartInstances to be created at runtime
 
 6.Refactoring:
 Clear up confusion between org.pavanecce.cmmn.jbpm.flow.builder.AbstractCaseElementHandler and org.pavanecce.cmmn.jbpm.flow.builder.AbstractPlanModelElementHandler
@@ -92,10 +129,10 @@ Clear up confusion between org.pavanecce.cmmn.jbpm.flow.builder.AbstractCaseElem
 7. Questions for OMG:
 When a Stage needs to be closed manually, which users should be allowed to do that? Same goes for suspend/resume/terminate etc.
 In the notation examples, it seems there are Discretionary items that also have entryCriteratia. How so?
-For stages and tasks, when they are enabled and repititionRUle=true, it should create a new instance, but what happens to the
+For stages and tasks, when they are enabled and repititionRule=true, it should create a new instance, but what happens to the
 instance that was already in the available state?
 Discrepancies in XSD:
   In the XSD, TimerEventListener.timerExpression is a fully fledged expression, but in the spec it is just string. Does the result still have to be ISO-8601 compliant?
-
+  AuthoizedRoleRefs for user events?
 
 

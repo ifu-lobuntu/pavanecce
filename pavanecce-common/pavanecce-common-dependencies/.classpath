@@ -49,7 +49,7 @@
 	<classpathentry exported="true" kind="lib" path="libs/jbpm-test.jar" sourcepath="libs/jbpm-test-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/kie-api.jar" sourcepath="libs/kie-api-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/kie-ci.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/kie-internal.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/kie-internal.jar" sourcepath="libs/kie-internal-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/xstream.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/hibernate-jpa-2.0-api.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/javaee-api.jar"/>

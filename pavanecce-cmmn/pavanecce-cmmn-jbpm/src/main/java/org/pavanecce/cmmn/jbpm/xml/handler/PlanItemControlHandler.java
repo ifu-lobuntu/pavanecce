@@ -1,0 +1,74 @@
+package org.pavanecce.cmmn.jbpm.xml.handler;
+
+import org.drools.core.xml.ExtensibleXmlParser;
+import org.drools.core.xml.Handler;
+import org.jbpm.workflow.core.impl.ConstraintImpl;
+import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
+import org.pavanecce.cmmn.jbpm.flow.CaseTask;
+import org.pavanecce.cmmn.jbpm.flow.HumanTask;
+import org.pavanecce.cmmn.jbpm.flow.Milestone;
+import org.pavanecce.cmmn.jbpm.flow.ParameterMapping;
+import org.pavanecce.cmmn.jbpm.flow.PlanItemControl;
+import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
+import org.pavanecce.cmmn.jbpm.flow.PlanItemInfo;
+import org.pavanecce.cmmn.jbpm.flow.TimerEventListener;
+import org.pavanecce.cmmn.jbpm.flow.UserEventListener;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+
+public class PlanItemControlHandler extends AbstractPlanModelElementHandler implements Handler {
+	public PlanItemControlHandler() {
+		super();
+		super.validParents.add(PlanItemInfo.class);
+		super.validParents.add(HumanTask.class);
+		super.validParents.add(CaseTask.class);
+		super.validParents.add(UserEventListener.class);
+		super.validParents.add(TimerEventListener.class);
+		super.validParents.add(Milestone.class);
+		super.validPeers.add(null);
+		this.validPeers.add(CaseParameter.class);
+		this.validPeers.add(ParameterMapping.class);
+		this.validPeers.add(PlanItemControl.class);
+
+	}
+
+	@Override
+	public Object start(String uri, String localName, Attributes attrs, ExtensibleXmlParser xmlPackageReader) throws SAXException {
+		PlanItemControl planItemControl = new PlanItemControl();
+		planItemControl.setElementId(attrs.getValue("id"));
+		Object parent = xmlPackageReader.getParent();
+		if (parent instanceof PlanItemInfo) {
+			((PlanItemInfo) parent).setItemControl(planItemControl);
+		} else if (parent instanceof PlanItemDefinition) {
+			((PlanItemDefinition) parent).setDefaultControl(planItemControl);
+		}
+		return planItemControl;
+	}
+
+	@Override
+	public Object end(String uri, String localName, ExtensibleXmlParser xmlPackageReader) throws SAXException {
+		Element el = xmlPackageReader.endElementBuilder();
+		PlanItemControl planItemControl = (PlanItemControl) xmlPackageReader.getCurrent();
+		planItemControl .setAutomaticActivationRule(extractRule(el, "automaticActivationRule"));
+		planItemControl .setRepetitionRule(extractRule(el, "repetitionRule"));
+		planItemControl .setRequiredRule(extractRule(el, "requiredRule"));
+		return xmlPackageReader.getCurrent();
+	}
+
+	protected ConstraintImpl extractRule(Element el, String epxressionElementName3) {
+		NodeList elems = el.getElementsByTagName(epxressionElementName3);
+		if(elems.getLength()==1){
+			Element  rule=(Element) elems.item(0);
+			return ConstraintExtractor.extractExpression(rule, "condition");
+		}
+		return null;
+	}
+
+	@Override
+	public Class<?> generateNodeFor() {
+		return PlanItemControl.class;
+	}
+
+}

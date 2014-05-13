@@ -6,7 +6,9 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.drools.core.marshalling.impl.MarshallerReaderContext;
 import org.drools.core.marshalling.impl.MarshallerWriteContext;
@@ -15,6 +17,7 @@ import org.jbpm.marshalling.impl.AbstractProcessInstanceMarshaller;
 import org.jbpm.workflow.instance.impl.NodeInstanceImpl;
 import org.jbpm.workflow.instance.impl.WorkflowProcessInstanceImpl;
 import org.jbpm.workflow.instance.node.CompositeContextNodeInstance;
+import org.jbpm.workflow.instance.node.JoinInstance;
 import org.jbpm.workflow.instance.node.SubProcessNodeInstance;
 import org.jbpm.workflow.instance.node.TimerNodeInstance;
 import org.kie.api.runtime.process.NodeInstance;
@@ -81,6 +84,18 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 		switch (nodeType) {
 		case SENTRY_INSTANCE:
 			SentryInstance sentryInstance = new SentryInstance();
+			sentryInstance.setPlanItemInstanceRequired(context.stream.readBoolean());
+            int number = stream.readInt();
+            if (number > 0) {
+                Map<Long, Integer> triggers = new HashMap<Long, Integer>();
+                for (int i = 0; i < number; i++) {
+                    long l = stream.readLong();
+                    int count = stream.readInt();
+                    triggers.put(l,
+                            count);
+                }
+                sentryInstance.internalSetTriggers(triggers);
+            }
 			nodeInstance = sentryInstance;
 			break;
 		case ON_PART_INSTANCE:
@@ -111,6 +126,7 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 			break;
 		case HUMAN_TASK_PLAN_ITEM_INSTANCE:
 			HumanTaskPlanItemInstance planItemInstance = new HumanTaskPlanItemInstance();
+			readPlanItemStates(planItemInstance, stream);
 			planItemInstance.internalSetWorkItemId(stream.readLong());
 			nbTimerInstances = stream.readInt();
 			if (nbTimerInstances > 0) {
@@ -123,8 +139,10 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 			nodeInstance = planItemInstance;
 			break;
 		case STAGE_PLAN_ITEM_INSTANCE:
-			nodeInstance = new StagePlanItemInstance();
-			((StagePlanItemInstance) nodeInstance).internalSetWorkItemId(stream.readLong());
+			StagePlanItemInstance spii = new StagePlanItemInstance();
+			nodeInstance = spii;
+			readPlanItemStates(spii, stream);
+			spii.internalSetWorkItemId(stream.readLong());
 			nbTimerInstances = stream.readInt();
 			if (nbTimerInstances > 0) {
 				List<Long> timerInstances = new ArrayList<Long>();
@@ -144,6 +162,23 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 	protected void writeNodeInstanceContent(ObjectOutputStream stream, NodeInstance nodeInstance, MarshallerWriteContext context) throws IOException {
 		if (nodeInstance instanceof SentryInstance) {
 			stream.writeShort(SENTRY_INSTANCE);
+			stream.writeBoolean(((SentryInstance) nodeInstance).isPlanItemInstanceRequired());
+            Map<Long, Integer> triggers = ((JoinInstance) nodeInstance).getTriggers();
+            stream.writeInt(triggers.size());
+            List<Long> keys = new ArrayList<Long>(triggers.keySet());
+            Collections.sort(keys,
+                    new Comparator<Long>() {
+
+                        public int compare(Long o1,
+                                Long o2) {
+                            return o1.compareTo(o2);
+                        }
+                    });
+            for (Long key : keys) {
+                stream.writeLong(key);
+                stream.writeInt(triggers.get(key));
+            }
+
 		} else if (nodeInstance instanceof OnPartInstance) {
 			stream.writeShort(ON_PART_INSTANCE);
 		} else if (nodeInstance instanceof MilestonePlanItemInstance) {
@@ -167,8 +202,10 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 			stream.writeLong(((TimerNodeInstance) nodeInstance).getTimerId());
 		} else if (nodeInstance instanceof HumanTaskPlanItemInstance) {
 			stream.writeShort(HUMAN_TASK_PLAN_ITEM_INSTANCE);
-			stream.writeLong(((HumanTaskPlanItemInstance) nodeInstance).getWorkItemId());
-			List<Long> timerInstances = ((HumanTaskPlanItemInstance) nodeInstance).getTimerInstances();
+			HumanTaskPlanItemInstance hpii = (HumanTaskPlanItemInstance)nodeInstance;
+			writePlanItemStates(hpii, stream);
+			stream.writeLong(hpii.getWorkItemId());
+			List<Long> timerInstances = hpii.getTimerInstances();
 			if (timerInstances != null) {
 				stream.writeInt(timerInstances.size());
 				for (Long id : timerInstances) {
@@ -180,6 +217,7 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 		} else if (nodeInstance instanceof StagePlanItemInstance) {
 			stream.writeShort(STAGE_PLAN_ITEM_INSTANCE);
 			StagePlanItemInstance compositeNodeInstance = (StagePlanItemInstance) nodeInstance;
+			writePlanItemStates(compositeNodeInstance, stream);
 			stream.writeLong(compositeNodeInstance.getWorkItemId());
 			List<Long> timerInstances = compositeNodeInstance.getTimerInstances();
 			if (timerInstances != null) {

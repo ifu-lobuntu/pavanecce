@@ -1,5 +1,6 @@
 package org.pavanecce.cmmn.jbpm.flow;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +37,21 @@ public enum PlanItemTransition {
 	public static void main(String[] args) {
 		for (PlanItemTransition p : values()) {
 			System.out.println(p.getMethod());
+		}
+	}
+	public void invokeOn(PlanItemInstance target) {
+		try {
+			getMethod().invoke(target);
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException(e);
+		} catch (IllegalArgumentException e) {
+			throw new RuntimeException(e);
+		} catch (InvocationTargetException e) {
+			if (e.getTargetException() instanceof RuntimeException) {
+				throw (RuntimeException) e.getTargetException();
+			} else {
+				throw new RuntimeException(e.getTargetException());
+			}
 		}
 	}
 

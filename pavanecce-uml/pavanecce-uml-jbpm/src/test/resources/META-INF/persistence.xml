@@ -72,9 +72,10 @@
             <!-- BZ 841786: AS7/EAP 6/Hib 4 uses new (sequence) generators which seem to cause problems -->      
             <property name="hibernate.id.new_generator_mappings" value="false" />            
             <property name="hibernate.transaction.jta.platform" value="org.hibernate.service.jta.platform.internal.BitronixJtaPlatform" />
-            <property name="hibernate.ejb.event.post-update" value="org.pavanecce.cmmn.jbpm.jpa.HibernateSubscriptionManager" />
+            <property name="hibernate.ejb.event.post-insert" value="org.pavanecce.cmmn.jbpm.jpa.HibernateSubscriptionManager" />
+            <property name="hibernate.ejb.event.post-delete" value="org.pavanecce.cmmn.jbpm.jpa.HibernateSubscriptionManager" />
+            <property name="hibernate.ejb.event.flush" value="org.pavanecce.cmmn.jbpm.jpa.HibernateSubscriptionManager" />
             <property name="hibernate.ejb.event.flush-entity" value="org.pavanecce.cmmn.jbpm.jpa.HibernateSubscriptionManager" />
-            <property name="hibernate.ejb.event.pre-collection-update" value="org.pavanecce.cmmn.jbpm.jpa.HibernateSubscriptionManager"/>
         </properties>        
     </persistence-unit>
 </persistence>    

@@ -51,4 +51,6 @@ public interface PlanItemInstance {
 
 	CaseInstance getCaseInstance();
 
+	String getPlanItemName();
+
 }

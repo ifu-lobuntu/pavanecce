@@ -4,21 +4,15 @@ import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.HashSet;
-import java.util.Set;
 
-import org.drools.core.process.instance.WorkItem;
-import org.drools.core.process.instance.WorkItemManager;
-import org.jbpm.process.instance.ProcessInstance;
 import org.jbpm.process.instance.impl.ConstraintEvaluator;
 import org.jbpm.workflow.core.Constraint;
 import org.jbpm.workflow.core.Node;
 import org.jbpm.workflow.instance.NodeInstanceContainer;
 import org.jbpm.workflow.instance.node.JoinInstance;
-import org.jbpm.workflow.instance.node.WorkItemNodeInstance;
 import org.kie.api.definition.process.Connection;
 import org.kie.api.runtime.process.NodeInstance;
 import org.pavanecce.cmmn.jbpm.event.CaseEvent;
-import org.pavanecce.cmmn.jbpm.flow.JoiningSentry;
 import org.pavanecce.cmmn.jbpm.flow.OnPart;
 import org.pavanecce.cmmn.jbpm.flow.PlanItem;
 import org.pavanecce.cmmn.jbpm.flow.Sentry;
@@ -30,18 +24,32 @@ public class SentryInstance extends JoinInstance {
 		return getEventQueue().peek();
 	}
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -4302504131617050844L;
+	private Boolean isPlanItemInstanceRequired;
 
 	@Override
 	public void internalTrigger(NodeInstance from, String type) {
-		if (getNode() instanceof JoiningSentry) {
-			super.internalTrigger(from, type);
+		PlanItem toEnter = getSentry().getPlanItemEntering();
+		if (isPlanItemInstanceRequired == null && toEnter != null && toEnter.getPlanInfo().getItemControl() != null
+				&& toEnter.getPlanInfo().getItemControl().getRequiredRule() instanceof ConstraintEvaluator) {
+			ConstraintEvaluator constraintEvaluator = (ConstraintEvaluator) toEnter.getPlanInfo().getItemControl().getRequiredRule();
+			isPlanItemInstanceRequired = constraintEvaluator.evaluate(this, null, constraintEvaluator);
 		} else {
-			triggerCompleted();
+			isPlanItemInstanceRequired = Boolean.FALSE;
 		}
+		super.internalTrigger(from, type);
+	}
+
+	public boolean isPlanItemInstanceRequired() {
+		return isPlanItemInstanceRequired;
+	}
+
+	public void setPlanItemInstanceRequired(boolean isPlanItemInstanceRequired) {
+		this.isPlanItemInstanceRequired = isPlanItemInstanceRequired;
+	}
+
+	public Sentry getSentry() {
+		return (Sentry) getNode();
 	}
 
 	protected Collection<CaseEvent> getEvents() {
@@ -59,11 +67,11 @@ public class SentryInstance extends JoinInstance {
 
 	@Override
 	public void triggerCompleted() {
-		Sentry sentry=(Sentry) getNode();
+		Sentry sentry = (Sentry) getNode();
 		Constraint c = sentry.getCondition();
-		if(c instanceof ConstraintEvaluator ){
+		if (c instanceof ConstraintEvaluator) {
 			Connection conn = getNode().getIncomingConnections(Node.CONNECTION_DEFAULT_TYPE).get(0);
-			if(!((ConstraintEvaluator) c).evaluate(this, conn, c)){
+			if (!((ConstraintEvaluator) c).evaluate(this, conn, c)) {
 				return;
 			}
 		}
@@ -87,7 +95,12 @@ public class SentryInstance extends JoinInstance {
 				opi.popEvent();
 			}
 		}
-
+		for (Connection connection : values) {
+			if (!(connection.getFrom() instanceof OnPart)) {
+				// Once activated, we keep the originating "from" active to indicate an "Available" state
+				super.getTriggers().put(connection.getFrom().getId(), 1);
+			}
+		}
 	}
 
 	protected static Deque<Collection<CaseEvent>> getEventQueue() {
@@ -101,18 +114,14 @@ public class SentryInstance extends JoinInstance {
 	private boolean maybeTriggerExit(NodeInstanceContainer nic) {
 		boolean hasTriggered = false;
 		Sentry sentry = (Sentry) getNode();
-		Set<PlanItem> planItemsExiting = sentry.getPlanItemsExiting();
-		for (PlanItem planItem : planItemsExiting) {
-			NodeInstance found = findNodeInstance(nic, planItem);
+		if (sentry.getPlanItemExiting() != null) {
+			NodeInstance found = findNodeInstance(nic, sentry.getPlanItemExiting());
 			// TODO refine which PlannItemInstance to exit, e.g. look at the
 			// output and see if the caseFileITem Instance associated matches
-			if (found instanceof WorkItemNodeInstance) {
+			if (found instanceof PlanItemInstance) {
 				// Task planItem
-				WorkItemNodeInstance wini = (WorkItemNodeInstance) found;
-				WorkItem workItem = wini.getWorkItem();
-				workItem.setState(org.kie.api.runtime.process.WorkItem.COMPLETED);
-				wini.signalEvent("workItemCompleted", workItem);
-				((WorkItemManager) ((ProcessInstance) getProcessInstance()).getKnowledgeRuntime().getWorkItemManager()).internalAbortWorkItem(workItem.getId());
+				PlanItemInstance pii = (PlanItemInstance) found;
+				pii.exit();
 				hasTriggered = true;
 			} else {
 				// TODO: SubProcessInstance? Exception?

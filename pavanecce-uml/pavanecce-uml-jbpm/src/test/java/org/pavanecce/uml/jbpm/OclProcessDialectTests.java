@@ -17,7 +17,7 @@ import org.kie.api.task.model.Task;
 import org.kie.api.task.model.TaskSummary;
 import org.kie.internal.task.api.EventService;
 import org.kie.internal.task.api.model.NotificationEvent;
-import org.pavanecce.cmmn.jbpm.event.CaseTaskLifecycleListener;
+import org.pavanecce.cmmn.jbpm.infra.CaseTaskLifecycleListener;
 import org.pavanecce.cmmn.jbpm.infra.CaseTaskWorkItemHandler;
 import org.pavanecce.cmmn.jbpm.instance.CaseInstance;
 import org.pavanecce.cmmn.jbpm.ocm.OcmCaseFileItemSubscriptionInfo;
@@ -70,13 +70,6 @@ public class OclProcessDialectTests extends AbstractCmmnCaseTestCase {
 
 	protected void givenThatTheTestCaseIsStarted() {
 		RuntimeManager runtimeManager = createRuntimeManager("test/test.uml", "test/OclProcessDialectTests.cmmn");
-		@SuppressWarnings("unchecked")
-		EventService<JbpmServicesEventListener<NotificationEvent>, JbpmServicesEventListener<Task>> eventService = (EventService<JbpmServicesEventListener<NotificationEvent>, JbpmServicesEventListener<Task>>) getRuntimeEngine()
-				.getTaskService();
-		eventService.registerTaskLifecycleEventListener(new CaseTaskLifecycleListener(getRuntimeEngine().getKieSession()));
-		CaseTaskWorkItemHandler handler = new CaseTaskWorkItemHandler();
-		handler.setRuntimeManager(runtimeManager);
-		getRuntimeEngine().getKieSession().getWorkItemManager().registerWorkItemHandler("Human Task", handler);
 		Map<String, Object> params = new HashMap<String, Object>();
 		getPersistence().start();
 
@@ -85,8 +78,8 @@ public class OclProcessDialectTests extends AbstractCmmnCaseTestCase {
 		house = new House(cc);
 		getPersistence().persist(cc);
 		getPersistence().commit();
-		params.put("housePlan", Arrays.asList(housePlan));
-		params.put("house", Arrays.asList(house));
+		params.put("housePlan", housePlan);
+		params.put("house", house);
 		getPersistence().start();
 		caseInstance = (CaseInstance) getRuntimeEngine().getKieSession().startProcess("OclProcessDialectTests", params);
 		getPersistence().commit();

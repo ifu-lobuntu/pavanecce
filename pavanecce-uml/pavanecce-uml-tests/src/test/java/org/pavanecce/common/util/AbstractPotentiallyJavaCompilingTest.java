@@ -220,7 +220,7 @@ public abstract class AbstractPotentiallyJavaCompilingTest extends Assert {
 		FileUtil.deleteAllChildren(destination);
 		newClassLoader = new URLClassLoader(new URL[] { destination.toURI().toURL() }, getClass().getClassLoader());
 		if (Thread.currentThread().getContextClassLoader() instanceof URLClassLoader) {
-			System.out.println("!!!!!!!!!!!!!!!!!!!!Compiling in STandalone architecture!!!!!!!!!!!!!!!!!!");
+			System.out.println("!!!!!!!!!!!!!!!!!!!!Compiling in Standalone architecture!!!!!!!!!!!!!!!!!!");
 			compileInStandalone(set, destination);
 		} else {
 			System.out.println("!!!!!!!!!!!!!!!!!!!!Compiling in OSGi architecture!!!!!!!!!!!!!!!!!!");

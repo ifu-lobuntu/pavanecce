@@ -19,6 +19,7 @@ import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
 import org.pavanecce.cmmn.jbpm.flow.CaseTask;
 import org.pavanecce.cmmn.jbpm.flow.ParameterMapping;
 import org.pavanecce.cmmn.jbpm.flow.PlanItem;
+import org.pavanecce.cmmn.jbpm.flow.PlanItemControl;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 import org.pavanecce.cmmn.jbpm.flow.TaskDefinition;
 
@@ -32,11 +33,21 @@ public class PlanItemBuilder implements ProcessNodeBuilder {
 		if (def instanceof TaskDefinition) {
 			processParameters(context, node, ((TaskDefinition) def).getInputs());
 			processParameters(context, node, ((TaskDefinition) def).getOutputs());
-			if(def instanceof CaseTask){
+			if (def instanceof CaseTask) {
 				for (ParameterMapping pm : ((CaseTask) def).getParameterMappings()) {
 					pm.setTransformation(build(context, node, pm.getTransformation()));
 				}
 			}
+		}
+		buildControl(context, node, def.getDefaultControl());
+		buildControl(context, node, item.getPlanInfo().getItemControl());
+	}
+
+	protected void buildControl(ProcessBuildContext context, Node node, PlanItemControl itemControl) {
+		if (itemControl != null) {
+			itemControl.setAutomaticActivationRule(build(context, node, itemControl.getAutomaticActivationRule()));
+			itemControl.setRequiredRule(build(context, node, itemControl.getRequiredRule()));
+			itemControl.setRepetitionRule(build(context, node, itemControl.getRepetitionRule()));
 		}
 	}
 

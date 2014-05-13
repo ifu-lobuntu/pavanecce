@@ -27,6 +27,8 @@ import org.jbpm.marshalling.impl.ProcessInstanceResolverStrategy;
 import org.jbpm.marshalling.impl.ProcessMarshallerRegistry;
 import org.jbpm.process.builder.ProcessNodeBuilderRegistry;
 import org.jbpm.process.instance.ProcessInstanceFactoryRegistry;
+import org.jbpm.process.instance.event.DefaultSignalManagerFactory;
+import org.jbpm.process.instance.impl.DefaultProcessInstanceManagerFactory;
 import org.jbpm.ruleflow.core.RuleFlowProcess;
 import org.jbpm.services.task.identity.JBossUserGroupCallbackImpl;
 import org.jbpm.services.task.impl.model.GroupImpl;
@@ -41,41 +43,46 @@ import org.junit.After;
 import org.kie.api.io.ResourceType;
 import org.kie.api.marshalling.ObjectMarshallingStrategy;
 import org.kie.api.runtime.Environment;
+import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.manager.RuntimeEngine;
+import org.kie.api.runtime.manager.RuntimeEnvironmentBuilder;
 import org.kie.api.runtime.manager.RuntimeManager;
+import org.kie.api.runtime.process.NodeInstance;
 import org.kie.api.task.TaskService;
 import org.kie.api.task.model.Task;
 import org.kie.api.task.model.TaskSummary;
+import org.kie.internal.io.ResourceFactory;
 import org.kie.internal.task.api.ContentMarshallerContext;
 import org.kie.internal.task.api.EventService;
 import org.kie.internal.task.api.InternalTaskService;
 import org.kie.internal.task.api.model.NotificationEvent;
 import org.pavanecce.cmmn.jbpm.event.AbstractPersistentSubscriptionManager;
-import org.pavanecce.cmmn.jbpm.event.CaseTaskLifecycleListener;
 import org.pavanecce.cmmn.jbpm.event.SubscriptionManager;
 import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemDefinitionType;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemOnPart;
 import org.pavanecce.cmmn.jbpm.flow.CaseTaskPlanItem;
 import org.pavanecce.cmmn.jbpm.flow.HumanTaskPlanItem;
-import org.pavanecce.cmmn.jbpm.flow.JoiningSentry;
 import org.pavanecce.cmmn.jbpm.flow.MilestonePlanItem;
 import org.pavanecce.cmmn.jbpm.flow.OnPart;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemOnPart;
 import org.pavanecce.cmmn.jbpm.flow.Sentry;
-import org.pavanecce.cmmn.jbpm.flow.SimpleSentry;
 import org.pavanecce.cmmn.jbpm.flow.StagePlanItem;
 import org.pavanecce.cmmn.jbpm.flow.TimerEventPlanItem;
 import org.pavanecce.cmmn.jbpm.flow.UserEventPlanItem;
 import org.pavanecce.cmmn.jbpm.infra.CaseInstanceFactory;
 import org.pavanecce.cmmn.jbpm.infra.CaseInstanceMarshaller;
+import org.pavanecce.cmmn.jbpm.infra.CaseRegisterableItemsFactory;
 import org.pavanecce.cmmn.jbpm.infra.CaseTaskWorkItemHandler;
 import org.pavanecce.cmmn.jbpm.infra.PlanItemBuilder;
 import org.pavanecce.cmmn.jbpm.infra.SentryBuilder;
+import org.pavanecce.cmmn.jbpm.instance.CaseInstance;
 import org.pavanecce.cmmn.jbpm.instance.CaseTaskPlanItemInstance;
 import org.pavanecce.cmmn.jbpm.instance.HumanTaskPlanItemInstance;
 import org.pavanecce.cmmn.jbpm.instance.MilestonePlanItemInstance;
 import org.pavanecce.cmmn.jbpm.instance.OnPartInstance;
+import org.pavanecce.cmmn.jbpm.instance.PlanItemInstance;
+import org.pavanecce.cmmn.jbpm.instance.PlanItemState;
 import org.pavanecce.cmmn.jbpm.instance.SentryInstance;
 import org.pavanecce.cmmn.jbpm.instance.StagePlanItemInstance;
 import org.pavanecce.cmmn.jbpm.instance.TimerEventPlanItemInstance;
@@ -95,14 +102,6 @@ import org.pavanecce.common.ocm.OcmFactory;
 import org.pavanecce.common.ocm.OcmObjectPersistence;
 import org.pavanecce.common.util.FileUtil;
 
-
-
-
-
-
-
-
-
 //import test.ConstructionCase;
 //import test.House;
 //import test.HousePlan;
@@ -111,6 +110,7 @@ import org.pavanecce.common.util.FileUtil;
 //import test.Wall;
 //import test.WallPlan;
 import bitronix.tm.resource.jdbc.PoolingDataSource;
+
 public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 	ObjectPersistence persistence;
 	protected boolean isJpa = false;
@@ -129,12 +129,35 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 	public AbstractCmmnCaseTestCase(boolean setupDataSource, boolean sessionPersistence, String persistenceUnitName) {
 		super(setupDataSource, sessionPersistence, persistenceUnitName);
 	}
+
+	@Override
+	public void assertNodeActive(long processInstanceId, KieSession ksession, String... name) {
+		super.assertNodeActive(processInstanceId, ksession, name);
+	}
+
 	@Override
 	public void assertNodeTriggered(long processInstanceId, String... nodeNames) {
 		getPersistence().start();
 		super.assertNodeTriggered(processInstanceId, nodeNames);
 		getPersistence().commit();
 	}
+
+	public void assertPlanItemInState(long processInstanceId, String planItemName, PlanItemState s) {
+		getPersistence().start();
+		CaseInstance ci= (CaseInstance) getRuntimeEngine().getKieSession().getProcessInstance(processInstanceId);
+		boolean found=false;
+		String foundState="";
+		for (NodeInstance ni : ci.getNodeInstances()) {
+			if(ni instanceof PlanItemInstance && ni.getNodeName().equals(planItemName) ){
+				if(((PlanItemInstance) ni).getPlanItemState()==s){
+				found=true;}else{
+				foundState=((PlanItemInstance) ni).getPlanItemState().name();
+			}}
+		}
+		assertTrue(planItemName + " should be in state " + s.name() + " but was in " +foundState, found);
+		getPersistence().commit();
+	}
+
 	public UserTransaction getTransaction() throws NamingException {
 		if (transaction == null) {
 			transaction = (UserTransaction) new InitialContext().lookup("java:comp/UserTransaction");
@@ -142,30 +165,29 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 		return transaction;
 	}
 
-
 	@After
 	public void tearDown() throws Exception {
-		try{
+		try {
 			getTransaction().rollback();
-		}catch(Exception e){
-			
+		} catch (Exception e) {
+
 		}
-		transaction=null;
+		transaction = null;
 		super.tearDown();
 		runtimeEngine = null;
-		
+
 		getPersistence().close();
-		persistence=null;
-		
+		persistence = null;
+
 		Field fl = JbpmServicesPersistenceManagerImpl.class.getDeclaredField("noScopeEmLocal");
 		fl.setAccessible(true);
-		ThreadLocal<?> l =(ThreadLocal<?>)fl.get(null);
+		ThreadLocal<?> l = (ThreadLocal<?>) fl.get(null);
 		l.set(null);
 		FileUtil.deleteRoot(new File("jbpm-db.h2.db"));
 		FileUtil.deleteRoot(new File("jbpm-db.trace.db"));
-//		FileUtil.deleteRoot(new File("btm1.tlog"));
-//		FileUtil.deleteRoot(new File("btm2.tlog"));
-		
+		// FileUtil.deleteRoot(new File("btm1.tlog"));
+		// FileUtil.deleteRoot(new File("btm2.tlog"));
+
 	}
 
 	protected void assertTaskTypeCreated(List<TaskSummary> list, String expected) {
@@ -232,6 +254,30 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 		return createRuntimeManager(strategy, resources, identifier);
 	}
 
+	protected RuntimeManager createRuntimeManager(Strategy strategy, Map<String, ResourceType> resources, String identifier) {
+		if (manager != null) {
+			throw new IllegalStateException("There is already one RuntimeManager active");
+		}
+
+		RuntimeEnvironmentBuilder builder = null;
+		if (!setupDataSource) {
+			builder = RuntimeEnvironmentBuilder.Factory.get().newEmptyBuilder().registerableItemsFactory(new CaseRegisterableItemsFactory())
+					.addConfiguration("drools.processSignalManagerFactory", DefaultSignalManagerFactory.class.getName())
+					.addConfiguration("drools.processInstanceManagerFactory", DefaultProcessInstanceManagerFactory.class.getName());
+		} else if (sessionPersistence) {
+			builder = RuntimeEnvironmentBuilder.Factory.get().newDefaultBuilder().registerableItemsFactory(new CaseRegisterableItemsFactory()).entityManagerFactory(getEmf());
+		} else {
+			builder = RuntimeEnvironmentBuilder.Factory.get().newDefaultInMemoryBuilder();
+		}
+		builder.userGroupCallback(new JBossUserGroupCallbackImpl("classpath:/usergroups.properties"));
+
+		for (Map.Entry<String, ResourceType> entry : resources.entrySet()) {
+			builder.addAsset(ResourceFactory.newClassPathResource(entry.getKey()), entry.getValue());
+		}
+
+		return createRuntimeManager(strategy, resources, builder.get(), identifier);
+	}
+
 	@Override
 	protected RuntimeManager createRuntimeManager(String... processFile) {
 		DefinitionsHandler.registerTypeMap(CaseFileItemDefinitionType.UML_CLASS, new DefaultTypeMap());
@@ -241,8 +287,7 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 		ProcessNodeBuilderRegistry.INSTANCE.register(CaseTaskPlanItem.class, new PlanItemBuilder());
 		ProcessNodeBuilderRegistry.INSTANCE.register(MilestonePlanItem.class, new PlanItemBuilder());
 		ProcessNodeBuilderRegistry.INSTANCE.register(HumanTaskPlanItem.class, new PlanItemBuilder());
-		ProcessNodeBuilderRegistry.INSTANCE.register(SimpleSentry.class, new SentryBuilder());
-		ProcessNodeBuilderRegistry.INSTANCE.register(JoiningSentry.class, new SentryBuilder());
+		ProcessNodeBuilderRegistry.INSTANCE.register(Sentry.class, new SentryBuilder());
 		ProcessInstanceFactoryRegistry.INSTANCE.register(Case.class, new CaseInstanceFactory());
 		CaseInstanceMarshaller m = new CaseInstanceMarshaller();
 		ProcessMarshallerRegistry.INSTANCE.register(RuleFlowProcess.RULEFLOW_TYPE, m);
@@ -259,8 +304,7 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 		}
 		NodeInstanceFactoryRegistry nodeInstanceFactoryRegistry = NodeInstanceFactoryRegistry.getInstance(env);
 		nodeInstanceFactoryRegistry.register(Sentry.class, new ReuseNodeFactory(SentryInstance.class));
-		nodeInstanceFactoryRegistry.register(SimpleSentry.class, new ReuseNodeFactory(SentryInstance.class));
-		nodeInstanceFactoryRegistry.register(JoiningSentry.class, new ReuseNodeFactory(SentryInstance.class));
+		nodeInstanceFactoryRegistry.register(Sentry.class, new ReuseNodeFactory(SentryInstance.class));
 		nodeInstanceFactoryRegistry.register(OnPart.class, new ReuseNodeFactory(OnPartInstance.class));
 		nodeInstanceFactoryRegistry.register(UserEventPlanItem.class, new ReuseNodeFactory(UserEventPlanItemInstance.class));
 		nodeInstanceFactoryRegistry.register(TimerEventPlanItem.class, new ReuseNodeFactory(TimerEventPlanItemInstance.class));
@@ -276,16 +320,15 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 		}
 		@SuppressWarnings("unchecked")
 		EventService<JbpmServicesEventListener<NotificationEvent>, JbpmServicesEventListener<Task>> eventService = (EventService<JbpmServicesEventListener<NotificationEvent>, JbpmServicesEventListener<Task>>) ts;
-		eventService.registerTaskLifecycleEventListener(new CaseTaskLifecycleListener(getRuntimeEngine().getKieSession()));
 		CaseTaskWorkItemHandler handler = new CaseTaskWorkItemHandler();
 		handler.setRuntimeManager(rm);
 		getRuntimeEngine().getKieSession().getWorkItemManager().registerWorkItemHandler("Human Task", handler);
-		//for some reason the task service does not persist the users and groups ???
-		populateUsers("Builder", "Administrator" );
+		// for some reason the task service does not persist the users and groups ???
+		populateUsers("Builder", "Administrator");
 		return rm;
 	}
 
-	protected void populateUsers(String ... userIds) {
+	protected void populateUsers(String... userIds) {
 		JBossUserGroupCallbackImpl users = new JBossUserGroupCallbackImpl("classpath:/usergroups.properties");
 		getPersistence().start();
 		EntityManager em = getEmf().createEntityManager();

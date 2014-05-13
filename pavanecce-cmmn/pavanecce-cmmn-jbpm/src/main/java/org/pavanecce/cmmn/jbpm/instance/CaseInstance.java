@@ -7,10 +7,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.drools.core.WorkItemHandlerNotFoundException;
+import org.drools.core.process.instance.WorkItem;
+import org.drools.core.process.instance.WorkItemManager;
+import org.drools.core.process.instance.impl.WorkItemImpl;
 import org.drools.core.spi.ProcessContext;
+import org.jbpm.process.instance.ProcessInstance;
 import org.jbpm.ruleflow.instance.RuleFlowProcessInstance;
 import org.jbpm.workflow.instance.NodeInstanceContainer;
 import org.kie.api.runtime.process.NodeInstance;
+import org.kie.api.task.model.Task;
 import org.pavanecce.cmmn.jbpm.event.SubscriptionManager;
 import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItem;
@@ -18,6 +24,7 @@ import org.pavanecce.cmmn.jbpm.flow.CaseFileItemOnPart;
 import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
 import org.pavanecce.cmmn.jbpm.flow.PlanItem;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
+import org.pavanecce.cmmn.jbpm.flow.PlanItemTransition;
 import org.pavanecce.cmmn.jbpm.flow.TaskDefinition;
 import org.pavanecce.cmmn.jbpm.infra.OnPartInstanceSubscription;
 import org.pavanecce.common.ObjectPersistence;
@@ -26,8 +33,10 @@ public class CaseInstance extends RuleFlowProcessInstance implements PlanItemIns
 	private static final long serialVersionUID = 8715128915363796623L;
 	private boolean shouldUpdateSubscriptions;
 	private transient int signalCount = 0;
-	private PlanItemState planItemState = PlanItemState.NONE;
+	private PlanItemState planItemState = PlanItemState.ACTIVE;
 	private PlanItemState lastBusyState = PlanItemState.NONE;
+	private long workItemId;
+	transient private WorkItem workItem;
 
 	public Case getCase() {
 		return (Case) getProcess();
@@ -40,17 +49,54 @@ public class CaseInstance extends RuleFlowProcessInstance implements PlanItemIns
 	@Override
 	public void signalEvent(String type, Object event) {
 		signalCount++;
-		super.signalEvent(type, event);
+		if (type.equals("workItemUpdated") && isMyWorkItem((WorkItem) event)) {
+			this.workItem = (WorkItem) event;
+			PlanItemTransition transition = (PlanItemTransition) workItem.getResult(HumanControlledPlanItemInstance.TRANSITION);
+			transition.invokeOn(this);
+		} else {
+			super.signalEvent(type, event);
+		}
 		signalCount--;
 		if (shouldUpdateSubscriptions && signalCount == 0) {
 			updateSubscriptions();
 		}
 	}
 
+	protected boolean isMyWorkItem(WorkItem event) {
+		return event.getId() == getWorkItemId() || (getWorkItemId() == -1 && getWorkItem().getId() == (event.getId()));
+	}
+
+	protected WorkItem createWorkItem() {
+		workItem = new WorkItemImpl();
+		((WorkItem) workItem).setName("Human Task");
+		((WorkItem) workItem).setProcessInstanceId(getId());
+		((WorkItem) workItem).setParameters(new HashMap<String, Object>());
+		((WorkItem) workItem).setParameter("planningTable", "");// TODO
+		((WorkItem) workItem).setParameter("nodeName", getCase().getName());// TODO
+		return workItem;
+	}
+
 	@Override
 	public void start() {
 		super.start();
 		updateSubscriptions();
+		createWorkItem();
+		String deploymentId = (String) getKnowledgeRuntime().getEnvironment().get("deploymentId");
+		((WorkItem) workItem).setDeploymentId(deploymentId);
+		try {
+			((WorkItemManager) getKnowledgeRuntime().getWorkItemManager()).internalExecuteWorkItem((org.drools.core.process.instance.WorkItem) workItem);
+		} catch (WorkItemHandlerNotFoundException wihnfe) {
+			setState(ProcessInstance.STATE_ABORTED);
+			throw wihnfe;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		this.workItemId = workItem.getId();
+	}
+
+	@Override
+	public String[] getEventTypes() {
+		return super.getEventTypes();
 	}
 
 	protected void updateSubscriptions() {
@@ -71,18 +117,22 @@ public class CaseInstance extends RuleFlowProcessInstance implements PlanItemIns
 
 	protected void populateSubscriptionsActivatedByParameters(NodeInstanceContainer caseInstance, Map<CaseFileItem, Collection<Object>> parentSubscriptions, Collection<Object> subscriptions) {
 		Collection<NodeInstance> nodeInstances = caseInstance.getNodeInstances();
-		for (NodeInstance nodeInstance : nodeInstances) {
-			if (nodeInstance.getNode() instanceof PlanItem) {
-				PlanItem pi = (PlanItem) nodeInstance.getNode();
-				if (pi.getPlanInfo().getDefinition() instanceof TaskDefinition) {
+		for (NodeInstance ni : nodeInstances) {
+			if (ni.getNode() instanceof PlanItem) {
+				PlanItem pi = (PlanItem) ni.getNode();
+				if (pi.getPlanInfo().getDefinition() instanceof TaskDefinition && ni instanceof PlanItemInstance && isSubscribing((PlanItemInstance) ni)) {
 					TaskDefinition td = (TaskDefinition) pi.getPlanInfo().getDefinition();
 					populateSubscriptionsActivatedByParameters(parentSubscriptions, subscriptions, td.getOutputs());
 				}
 			}
-			if (nodeInstance instanceof StagePlanItemInstance) {
-				populateSubscriptionsActivatedByParameters((NodeInstanceContainer) nodeInstance, parentSubscriptions, subscriptions);
+			if (ni instanceof StagePlanItemInstance) {
+				populateSubscriptionsActivatedByParameters((NodeInstanceContainer) ni, parentSubscriptions, subscriptions);
 			}
 		}
+	}
+
+	protected boolean isSubscribing(PlanItemInstance ni) {
+		return ni.getPlanItemState()==PlanItemState.ACTIVE || ni.getPlanItemState()==PlanItemState.ENABLED;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -204,7 +254,7 @@ public class CaseInstance extends RuleFlowProcessInstance implements PlanItemIns
 
 	@Override
 	public void manualStart() {
-		planItemState.reenable(this);
+		planItemState.manualStart(this);
 	}
 
 	@Override
@@ -298,21 +348,27 @@ public class CaseInstance extends RuleFlowProcessInstance implements PlanItemIns
 		return this;
 	}
 
-	public PlanItemInstance findPlanItemInstanceForWorkItemId(long workItemId) {
-		return findPlanItemInstanceForWorkItemId(workItemId, getNodeInstances());
+	public WorkItem getWorkItem() {
+		if (workItem == null && workItemId >= 0) {
+			workItem = ((WorkItemManager) getKnowledgeRuntime().getWorkItemManager()).getWorkItem(workItemId);
+		}
+		return workItem;
 	}
 
-	protected PlanItemInstance findPlanItemInstanceForWorkItemId(long workItemId, Collection<NodeInstance> nodeInstances) {
-		for (NodeInstance ni : nodeInstances) {
-			if (ni instanceof PlanItemInstanceWithTask && ((PlanItemInstanceWithTask) ni).getWorkItemId() == workItemId) {
-				return (PlanItemInstance) ni;
-			} else if (ni instanceof NodeInstanceContainer) {
-				PlanItemInstance result = findPlanItemInstanceForWorkItemId(workItemId, ((NodeInstanceContainer) ni).getNodeInstances());
-				if (result != null) {
-					return result;
-				}
-			}
+	@Override
+	public Task getTask() {
+		if (getWorkItem() != null) {
+			return (Task) getWorkItem().getResult(HumanControlledPlanItemInstance.TASK);
 		}
 		return null;
+	}
+
+	@Override
+	public long getWorkItemId() {
+		return workItemId;
+	}
+	@Override
+	public String getPlanItemName() {
+		return getCase().getName();
 	}
 }

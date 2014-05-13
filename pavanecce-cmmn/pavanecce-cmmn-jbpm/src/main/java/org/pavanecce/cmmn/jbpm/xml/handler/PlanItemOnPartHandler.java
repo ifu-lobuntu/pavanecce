@@ -6,11 +6,9 @@ import org.drools.core.xml.BaseAbstractHandler;
 import org.drools.core.xml.ExtensibleXmlParser;
 import org.drools.core.xml.Handler;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemOnPart;
-import org.pavanecce.cmmn.jbpm.flow.JoiningSentry;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemOnPart;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemTransition;
 import org.pavanecce.cmmn.jbpm.flow.Sentry;
-import org.pavanecce.cmmn.jbpm.flow.SimpleSentry;
 import org.w3c.dom.NodeList;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -19,8 +17,7 @@ public class PlanItemOnPartHandler extends BaseAbstractHandler implements Handle
 	public PlanItemOnPartHandler() {
 		super.validParents=new HashSet<Class<?>>();
 		validParents.add(Sentry.class);
-		super.validParents.add(SimpleSentry.class);
-		super.validParents.add(JoiningSentry.class);
+		super.validParents.add(Sentry.class);
 		super.validPeers=new HashSet<Class<?>>();
 		validPeers.add(PlanItemOnPart.class);
 		validPeers.add(CaseFileItemOnPart.class);

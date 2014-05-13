@@ -18,6 +18,9 @@ import org.drools.persistence.PersistenceContext;
 import org.drools.persistence.PersistenceContextManager;
 import org.drools.persistence.jpa.JpaPersistenceContextManager;
 import org.kie.api.runtime.EnvironmentName;
+import org.kie.api.runtime.KieSession;
+import org.kie.api.task.model.Task;
+import org.kie.internal.runtime.manager.context.ProcessInstanceIdContext;
 import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItem;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
@@ -103,8 +106,13 @@ public abstract class AbstractPersistentSubscriptionManager<T extends CaseSubscr
 			fireEvent(pcfis.getCaseKey(), pcfis.getProcessInstanceId(), event);
 		}
 	}
+	protected KieSession getKieSession(Task ti) {
+		return null;
+//		return getManager(ti).getRuntimeEngine(ProcessInstanceIdContext.get(ti.getTaskData().getProcessInstanceId())).getKieSession();
+	}
 
 	protected static void fireEvent(String caseKey, long processId, CaseFileItemEvent caseFileItemEvent) {
+		//TODO use deploymentId here
 		InternalKnowledgeRuntime eventManager = CaseInstanceFactory.getEventManager(caseKey);
 		String eventType = OnPart.getType(caseFileItemEvent.getCaseFileItemName(), caseFileItemEvent.getTransition());
 		PersistenceContextManager pcm = (PersistenceContextManager) eventManager.getEnvironment().get(EnvironmentName.PERSISTENCE_CONTEXT_MANAGER);

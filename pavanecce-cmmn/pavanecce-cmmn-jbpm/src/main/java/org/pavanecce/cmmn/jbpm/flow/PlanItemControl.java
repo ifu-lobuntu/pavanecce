@@ -29,10 +29,10 @@ public class PlanItemControl implements Serializable, CMMNElement {
 	public void setRequiredRule(Constraint requiredRule) {
 		this.requiredRule = requiredRule;
 	}
-	public Constraint getRepetionRule() {
+	public Constraint getRepetitionRule() {
 		return repetionRule;
 	}
-	public void setRepetionRule(Constraint repetionRule) {
+	public void setRepetitionRule(Constraint repetionRule) {
 		this.repetionRule = repetionRule;
 	}
 	

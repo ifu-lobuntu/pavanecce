@@ -1,25 +1,68 @@
 package org.pavanecce.cmmn.jbpm.flow;
 
-import java.util.Collection;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jbpm.workflow.core.Constraint;
-import org.jbpm.workflow.core.Node;
+import org.jbpm.workflow.core.node.Join;
+import org.kie.api.definition.process.Connection;
 
-public interface Sentry extends Node, CMMNElement {
+public class Sentry extends Join implements CMMNElement {
+	private static final long serialVersionUID = -3568385090236274366L;
+	private List<OnPart> onParts = new ArrayList<OnPart>();
+	private String elementId;
+	private Constraint condition;
+	private PlanItem planItemExiting;
+	private PlanItem planItemEntering;
 
-	void addPlanItemExiting(PlanItem planItem);
+	public Sentry() {
+		setType(TYPE_AND);
+	}
 
-	Collection<? extends OnPart> getOnParts();
+	public Constraint getCondition() {
+		return condition;
+	}
 
-	void addOnPart(OnPart part);
+	public void addOnPart(OnPart onPart) {
+		this.onParts.add(onPart);
+	}
 
-	Set<PlanItem> getPlanItemsExiting();
+	public void setCondition(Constraint condition) {
+		this.condition = condition;
+	}
 
-	void setElementId(String value);
+	@Override
+	public void validateAddIncomingConnection(String type, Connection connection) {
+		super.validateAddIncomingConnection(type, connection);
+	}
 
-	Constraint getCondition();
+	public List<OnPart> getOnParts() {
+		return onParts;
+	}
 
-	void setCondition(Constraint c);
+	@Override
+	public String getElementId() {
+		return elementId;
+	}
+
+	public void setElementId(String elementId) {
+		this.elementId = elementId;
+	}
+
+	public void setPlanItemExiting(PlanItem planItem) {
+		planItemExiting = planItem;
+	}
+
+	public PlanItem getPlanItemExiting() {
+		return planItemExiting;
+	}
+
+	public PlanItem getPlanItemEntering() {
+		return planItemEntering;
+	}
+
+	public void setPlanItemEntering(PlanItem planItemEntering) {
+		this.planItemEntering = planItemEntering;
+	}
 
 }
