@@ -10,7 +10,7 @@ import org.drools.core.process.core.impl.WorkImpl;
 import org.jbpm.workflow.core.node.WorkItemNode;
 import org.kie.api.definition.process.Connection;
 
-public class HumanTaskPlanItem extends WorkItemNode implements PlanItem {
+public class HumanTaskPlanItem extends WorkItemNode implements PlanItem<HumanTask> {
 
 	private static final long serialVersionUID = 7613141769339402877L;
 	private static final Work NO_WORK = new WorkImpl();
@@ -19,13 +19,16 @@ public class HumanTaskPlanItem extends WorkItemNode implements PlanItem {
 	}
 	private Work work;
 	private String elementId;
-	private PlanItemInfo info;
-	public HumanTaskPlanItem(PlanItemInfo info){
+	private PlanItemInfo<HumanTask> info;
+	public HumanTaskPlanItem(PlanItemInfo<HumanTask> info){
 		this.info=info;
 	}
-
 	@Override
-	public PlanItemInfo getPlanInfo() {
+	public boolean isWaitForCompletion() {
+		return ((HumanTask)getPlanInfo().getDefinition()).isBlocking();
+	}
+	@Override
+	public PlanItemInfo<HumanTask> getPlanInfo() {
 		return info;
 	}
 	@Override

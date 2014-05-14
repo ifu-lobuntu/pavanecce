@@ -5,7 +5,8 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.pavanecce.cmmn.jbpm.instance.PlanItemInstance;
+import org.pavanecce.cmmn.jbpm.instance.CaseElementLifecycle;
+import org.pavanecce.cmmn.jbpm.instance.ControllablePlanItemInstanceLifecycle;
 import org.pavanecce.common.util.NameConverter;
 
 public enum PlanItemTransition {
@@ -16,7 +17,7 @@ public enum PlanItemTransition {
 		if(method==null){
 			String name = NameConverter.underscoredToCamelCase(name().toLowerCase());
 			try {
-				method=PlanItemInstance.class.getMethod(name);
+				method=ControllablePlanItemInstanceLifecycle.class.getMethod(name);
 			} catch (NoSuchMethodException e) {
 				e.printStackTrace();
 			} catch (SecurityException e) {
@@ -34,12 +35,8 @@ public enum PlanItemTransition {
 		}
 		return BY_NAME.get(name.toLowerCase());
 	}
-	public static void main(String[] args) {
-		for (PlanItemTransition p : values()) {
-			System.out.println(p.getMethod());
-		}
-	}
-	public void invokeOn(PlanItemInstance target) {
+
+	public void invokeOn(CaseElementLifecycle target) {
 		try {
 			getMethod().invoke(target);
 		} catch (IllegalAccessException e) {

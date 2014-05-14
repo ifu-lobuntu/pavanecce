@@ -1,4 +1,4 @@
-package org.pavanecce.cmmn.jbpm.instance;
+package org.pavanecce.cmmn.jbpm.instance.impl;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -20,16 +20,24 @@ import org.kie.api.runtime.process.NodeInstance;
 import org.kie.api.task.model.Task;
 import org.kie.internal.runtime.KnowledgeRuntime;
 import org.pavanecce.cmmn.jbpm.flow.PlanItem;
+import org.pavanecce.cmmn.jbpm.flow.PlanItemContainer;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemTransition;
+import org.pavanecce.cmmn.jbpm.flow.Stage;
 import org.pavanecce.cmmn.jbpm.flow.StagePlanItem;
+import org.pavanecce.cmmn.jbpm.instance.CaseElementLifecycleWithTask;
+import org.pavanecce.cmmn.jbpm.instance.ControllablePlanItemInstanceLifecycle;
+import org.pavanecce.cmmn.jbpm.instance.PlanElementState;
+import org.pavanecce.cmmn.jbpm.instance.PlanItemInstanceContainer;
+import org.pavanecce.cmmn.jbpm.instance.PlanItemInstanceLifecycle;
 
-public class StagePlanItemInstance extends CompositeNodeInstance implements PlanItemInstanceContainer {
+public class StagePlanItemInstance extends CompositeNodeInstance implements PlanItemInstanceContainer, ControllablePlanItemInstanceLifecycle<Stage> {
 
 	private static final long serialVersionUID = 112341234123L;
 	private long workItemId;
 	transient private WorkItem workItem;
-	private PlanItemState planItemState=PlanItemState.AVAILABLE;
-	private PlanItemState lastBusyState=PlanItemState.NONE;
+	private PlanElementState planElementState = PlanElementState.AVAILABLE;
+	private PlanElementState lastBusyState = PlanElementState.NONE;
+	private Boolean isCompletionRequired;
 
 	@Override
 	protected CompositeNode getCompositeNode() {
@@ -43,6 +51,10 @@ public class StagePlanItemInstance extends CompositeNodeInstance implements Plan
 		return workItem;
 	}
 
+	public boolean isCompletionStillRequired() {
+		return isCompletionRequired && !(planElementState.isTerminalState() || planElementState.isSemiTerminalState());
+	}
+
 	public long getWorkItemId() {
 		return workItemId;
 	}
@@ -52,6 +64,7 @@ public class StagePlanItemInstance extends CompositeNodeInstance implements Plan
 	}
 
 	public void internalTrigger(final NodeInstance from, String type) {
+		this.isCompletionRequired=false;
 		super.internalTrigger(from, type);
 		StagePlanItem workItemNode = getStagePlanItem();
 		createWorkItem(workItemNode);
@@ -140,7 +153,7 @@ public class StagePlanItemInstance extends CompositeNodeInstance implements Plan
 	public void signalEvent(String type, Object event) {
 		if (type.equals("workItemUpdated") && isMyWorkItem((WorkItem) event)) {
 			this.workItem = (WorkItem) event;
-			PlanItemTransition transition = (PlanItemTransition) workItem.getResult(HumanControlledPlanItemInstance.TRANSITION);
+			PlanItemTransition transition = (PlanItemTransition) workItem.getResult(CaseElementLifecycleWithTask.TRANSITION);
 			transition.invokeOn(this);
 		} else {
 			super.signalEvent(type, event);
@@ -156,121 +169,106 @@ public class StagePlanItemInstance extends CompositeNodeInstance implements Plan
 	}
 
 	@Override
-	public PlanItem getPlanItem() {
+	public PlanItem<Stage> getPlanItem() {
 		return getStagePlanItem();
 	}
 
 	@Override
-	public void setPlanItemState(PlanItemState s) {
-		this.planItemState = s;
+	public void setPlanElementState(PlanElementState s) {
+		this.planElementState = s;
 	}
 
 	@Override
-	public void setLastBusyState(PlanItemState s) {
+	public void setLastBusyState(PlanElementState s) {
 		this.lastBusyState = s;
 	}
 
 	@Override
 	public void enable() {
-		planItemState.enable(this);
+		planElementState.enable(this);
 	}
 
 	@Override
 	public void disable() {
-		planItemState.disable(this);
+		planElementState.disable(this);
 	}
 
 	@Override
 	public void reenable() {
-		planItemState.reenable(this);
+		planElementState.reenable(this);
 	}
 
 	@Override
 	public void manualStart() {
-		planItemState.manualStart(this);
+		planElementState.manualStart(this);
 	}
 
 	@Override
 	public void reactivate() {
-		planItemState.reactivate(this);
+		planElementState.reactivate(this);
 	}
 
 	@Override
 	public void suspend() {
-		planItemState.suspend(this);
+		planElementState.suspend(this);
 	}
 
 	@Override
 	public void resume() {
-		planItemState.resume(this);
+		planElementState.resume(this);
 	}
 
 	@Override
 	public void terminate() {
-		planItemState.terminate(this);
+		planElementState.terminate(this);
 	}
 
 	@Override
 	public void exit() {
-		planItemState.exit(this);
+		planElementState.exit(this);
 	}
 
 	@Override
 	public void complete() {
-		planItemState.complete(this);
+		planElementState.complete(this);
 	}
 
 	@Override
 	public void parentSuspend() {
-		planItemState.parentSuspend(this);
+		planElementState.parentSuspend(this);
 	}
 
 	@Override
 	public void parentResume() {
-		planItemState.parentResume(this);
-	}
-
-	@Override
-	public void parentTerminate() {
-		planItemState.parentTerminate(this);
+		planElementState.parentResume(this);
 	}
 
 	@Override
 	public void create() {
-		planItemState.create(this);
+		planElementState.create(this);
 	}
 
 	@Override
 	public void fault() {
-		planItemState.fault(this);
+		planElementState.fault(this);
 	}
 
 	@Override
-	public void occur() {
-		planItemState.occur(this);
-	}
-
-	@Override
-	public void close() {
-		planItemState.close(this);
-	}
-
-	@Override
-	public PlanItemState getLastBusyState() {
+	public PlanElementState getLastBusyState() {
 		return lastBusyState;
 	}
 
 	@Override
-	public PlanItemState getPlanItemState() {
-		return planItemState;
+	public PlanElementState getPlanElementState() {
+		return planElementState;
 	}
 
 	@Override
-	public Collection<PlanItemInstance> getChildren() {
-		Set<PlanItemInstance> result = new HashSet<PlanItemInstance>();
+	public Collection<PlanItemInstanceLifecycle> getChildren() {
+		Set<PlanItemInstanceLifecycle> result = new HashSet<PlanItemInstanceLifecycle>();
 		for (NodeInstance nodeInstance : getNodeInstances()) {
-			if (nodeInstance instanceof PlanItemInstance) {
-				result.add((PlanItemInstance) nodeInstance);
+			if (nodeInstance instanceof PlanItemInstanceLifecycle) {
+				result.add((PlanItemInstanceLifecycle) nodeInstance);
 			}
 		}
 		return result;
@@ -283,13 +281,13 @@ public class StagePlanItemInstance extends CompositeNodeInstance implements Plan
 
 	@Override
 	public void start() {
-		planItemState.start(this);
+		planElementState.start(this);
 	}
 
 	@Override
 	public Task getTask() {
 		if (getWorkItem() != null) {
-			return (Task) getWorkItem().getResult(HumanControlledPlanItemInstance.TASK);
+			return (Task) getWorkItem().getResult(CaseElementLifecycleWithTask.TASK);
 		}
 		return null;
 	}
@@ -297,6 +295,31 @@ public class StagePlanItemInstance extends CompositeNodeInstance implements Plan
 	@Override
 	public String getPlanItemName() {
 		return getPlanItem().getName();
+	}
+
+	@Override
+	public String getHumanTaskName() {
+		return getPlanItemName();
+	}
+
+	@Override
+	public boolean canComplete() {
+		return false;
+	}
+
+	@Override
+	public PlanItemContainer getPlanItemContainer() {
+		return getStagePlanItem().getStage();
+	}
+
+	@Override
+	public boolean isCompletionRequired() {
+		return isCompletionRequired;
+	}
+
+	@Override
+	public void internalSetCompletionRequired(boolean b) {
+		this.isCompletionRequired = b;
 	}
 
 }

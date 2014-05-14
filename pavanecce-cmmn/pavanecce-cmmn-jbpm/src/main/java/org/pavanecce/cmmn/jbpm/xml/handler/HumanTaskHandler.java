@@ -7,7 +7,7 @@ import org.pavanecce.cmmn.jbpm.flow.HumanTask;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-public class HumanTaskHandler extends AbstractPlanModelElementHandler implements Handler {
+public class HumanTaskHandler extends AbstractCaseElementHandler implements Handler {
 	public HumanTaskHandler() {
 
 	}
@@ -32,6 +32,7 @@ public class HumanTaskHandler extends AbstractPlanModelElementHandler implements
 
 	@Override
 	public Object end(String uri, String localName, ExtensibleXmlParser xmlPackageReader) throws SAXException {
+		xmlPackageReader.endElementBuilder();
 		return xmlPackageReader.getCurrent();
 	}
 

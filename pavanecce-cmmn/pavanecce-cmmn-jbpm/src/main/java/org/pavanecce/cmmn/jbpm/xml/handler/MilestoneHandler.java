@@ -10,9 +10,9 @@ public class MilestoneHandler extends AbstractCaseElementHandler {
 
 	@Override
 	public Object start(String uri, String localName, Attributes attrs, ExtensibleXmlParser xmlPackageReader) throws SAXException {
+		xmlPackageReader.startElementBuilder(localName, attrs);
 		Milestone node = new Milestone();
 		node.setId(IdGenerator.next(xmlPackageReader));
-		xmlPackageReader.startElementBuilder(localName, attrs);
 		node.setElementId(attrs.getValue("id"));
 		node.setName(attrs.getValue("name"));
 		((Case) xmlPackageReader.getParent(Case.class)).addPlanItemDefinition(node);
@@ -22,6 +22,12 @@ public class MilestoneHandler extends AbstractCaseElementHandler {
 	@Override
 	public Class<?> generateNodeFor() {
 		return Milestone.class;
+	}
+
+	@Override
+	public Object end(String uri, String localName, ExtensibleXmlParser xmlPackageReader) throws SAXException {
+		xmlPackageReader.endElementBuilder();
+		return xmlPackageReader.getCurrent();
 	}
 
 }

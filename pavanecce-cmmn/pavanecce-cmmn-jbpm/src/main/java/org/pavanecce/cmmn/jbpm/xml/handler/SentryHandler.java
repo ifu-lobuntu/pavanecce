@@ -16,7 +16,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-public class SentryHandler extends AbstractPlanModelElementHandler implements Handler {
+public class SentryHandler extends AbstractCaseElementHandler implements Handler {
 	private static final String DEFAULT = Node.CONNECTION_DEFAULT_TYPE;
 
 	public SentryHandler() {

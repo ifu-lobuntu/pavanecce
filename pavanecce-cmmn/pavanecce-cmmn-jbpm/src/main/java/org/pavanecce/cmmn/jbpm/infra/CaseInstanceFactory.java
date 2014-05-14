@@ -20,9 +20,12 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.drools.core.common.InternalKnowledgeRuntime;
 import org.jbpm.process.core.ContextContainer;
@@ -35,7 +38,7 @@ import org.kie.api.definition.process.Process;
 import org.kie.internal.process.CorrelationKey;
 import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
-import org.pavanecce.cmmn.jbpm.instance.CaseInstance;
+import org.pavanecce.cmmn.jbpm.instance.impl.CaseInstance;
 
 public class CaseInstanceFactory extends AbstractProcessInstanceFactory implements Externalizable {
 	// Temporary HACK - find the right place to map caseKeys with
@@ -55,7 +58,7 @@ public class CaseInstanceFactory extends AbstractProcessInstanceFactory implemen
 	@Override
 	public void writeExternal(ObjectOutput out) throws IOException {
 	}
-	
+
 	@Override
 	public ProcessInstance createProcessInstance(Process process, CorrelationKey correlationKey, InternalKnowledgeRuntime kruntime, Map<String, Object> parameters) {
 		CaseInstance processInstance = (CaseInstance) createProcessInstance();
@@ -77,6 +80,13 @@ public class CaseInstanceFactory extends AbstractProcessInstanceFactory implemen
 				List<CaseParameter> inputParameters = theCase.getInputParameters();
 				for (CaseParameter caseParameter : inputParameters) {
 					Object var = parameters.get(caseParameter.getName());
+					if (caseParameter.getBoundVariable().isCollection() && !(var instanceof Collection)) {
+						Set<Object> newVal = new HashSet<Object>();
+						if (var != null) {
+							newVal.add(var);
+						}
+						var=newVal;
+					}
 					variableScopeInstance.setVariable(caseParameter.getBoundVariable().getName(), var);
 				}
 			} else {

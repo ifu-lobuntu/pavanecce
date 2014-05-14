@@ -7,7 +7,7 @@ import org.pavanecce.cmmn.jbpm.flow.CaseTask;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-public class CaseTaskHandler extends AbstractPlanModelElementHandler implements Handler {
+public class CaseTaskHandler extends AbstractCaseElementHandler implements Handler {
 	public CaseTaskHandler() {
 
 	}
@@ -40,6 +40,7 @@ public class CaseTaskHandler extends AbstractPlanModelElementHandler implements 
 
 	@Override
 	public Object end(String uri, String localName, ExtensibleXmlParser xmlPackageReader) throws SAXException {
+		xmlPackageReader.endElementBuilder();
 		CaseTask node = (CaseTask) xmlPackageReader.getCurrent();
 		node.mapParameters();
 		return xmlPackageReader.getCurrent();

@@ -19,7 +19,7 @@ public class Case extends RuleFlowProcess implements PlanItemContainer {
 	private List<CaseParameter> inputParameters = new ArrayList<CaseParameter>();
 	private List<CaseParameter> outputParameters = new ArrayList<CaseParameter>();
 	private Collection<PlanItemDefinition> planItemDefinitions = new ArrayList<PlanItemDefinition>();
-	private Collection<PlanItemInfo> planItemInfo = new ArrayList<PlanItemInfo>();
+	private Collection<PlanItemInfo<?>> planItemInfo = new ArrayList<PlanItemInfo<?>>();
 	private Collection<Role> roles = new ArrayList<Role>();
 	private StartNode defaultStart;
 	private Split defaultSplit;
@@ -125,7 +125,7 @@ public class Case extends RuleFlowProcess implements PlanItemContainer {
 	}
 
 	@Override
-	public void addPlanItemInfo(PlanItemInfo d) {
+	public void addPlanItemInfo(PlanItemInfo<?> d) {
 		planItemInfo.add(d);
 	}
 
@@ -141,7 +141,7 @@ public class Case extends RuleFlowProcess implements PlanItemContainer {
 		roles.add(r);
 	}
 	@Override
-	public Collection<PlanItemInfo> getPlanItemInfo() {
+	public Collection<PlanItemInfo<?>> getPlanItemInfo() {
 		return this.planItemInfo;
 	}
 }

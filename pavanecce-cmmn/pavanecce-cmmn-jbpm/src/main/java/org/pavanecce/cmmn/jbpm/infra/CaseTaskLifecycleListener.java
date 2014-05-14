@@ -33,8 +33,8 @@ import org.kie.api.task.model.Task;
 import org.kie.internal.runtime.manager.InternalRuntimeManager;
 import org.kie.internal.runtime.manager.context.ProcessInstanceIdContext;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemTransition;
-import org.pavanecce.cmmn.jbpm.instance.CaseInstance;
-import org.pavanecce.cmmn.jbpm.instance.HumanControlledPlanItemInstance;
+import org.pavanecce.cmmn.jbpm.instance.CaseElementLifecycleWithTask;
+import org.pavanecce.cmmn.jbpm.instance.impl.CaseInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,8 +93,8 @@ public class CaseTaskLifecycleListener extends ExternalTaskEventListener {
 			if (workItem != null) {
 				Map<String, Object> results = buildWorkItemResults(task, standardEvent, runtime, session, manager);
 				workItem.setResults(results);
-				//In CMMN we need the state of the PlanItemInstance for completion calculations
-				workItemManager.signalEvent("workItemUpdated", workItem, processInstanceId);
+				// In CMMN we need the state of the PlanItemInstance for completion calculations
+				workItemManager.signalEvent(CaseElementLifecycleWithTask.WORK_ITEM_UPDATED, workItem, processInstanceId);
 			}
 		} else {
 			super.processTaskState(task);
@@ -103,9 +103,11 @@ public class CaseTaskLifecycleListener extends ExternalTaskEventListener {
 	}
 
 	protected Map<String, Object> buildWorkItemResults(Task task, PlanItemTransition standardEvent, RuntimeEngine runtime, KieSession session, RuntimeManager manager) {
-		String userId = task.getTaskData().getActualOwner().getId();
 		Map<String, Object> results = new HashMap<String, Object>();
-		results.put("ActorId", userId);
+		if (task.getTaskData().getActualOwner() != null) {
+			String userId = task.getTaskData().getActualOwner().getId();
+			results.put("ActorId", userId);
+		}
 		long contentId = task.getTaskData().getOutputContentId();
 		if (contentId != -1) {
 			Content content = runtime.getTaskService().getContentById(contentId);
@@ -124,15 +126,14 @@ public class CaseTaskLifecycleListener extends ExternalTaskEventListener {
 				}
 			}
 		}
-		results.put(HumanControlledPlanItemInstance.TRANSITION, standardEvent);
-		results.put(HumanControlledPlanItemInstance.TASK, task);
+		results.put(CaseElementLifecycleWithTask.TRANSITION, standardEvent);
+		results.put(CaseElementLifecycleWithTask.TASK, task);
 		return results;
 	}
 
 	protected KieSession getKieSession(Task ti) {
 		return getManager(ti).getRuntimeEngine(ProcessInstanceIdContext.get(ti.getTaskData().getProcessInstanceId())).getKieSession();
 	}
-
 
 	@Override
 	public void afterTaskFailedEvent(@Observes(notifyObserver = Reception.IF_EXISTS) @AfterTaskFailedEvent Task ti) {

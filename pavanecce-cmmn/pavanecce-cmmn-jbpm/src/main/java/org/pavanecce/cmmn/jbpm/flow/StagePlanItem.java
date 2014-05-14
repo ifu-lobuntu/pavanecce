@@ -9,12 +9,12 @@ import org.drools.core.process.core.impl.WorkImpl;
 import org.jbpm.workflow.core.node.CompositeNode;
 import org.kie.api.definition.process.Node;
 
-public class StagePlanItem extends CompositeNode implements PlanItem {
+public class StagePlanItem extends CompositeNode implements PlanItem <Stage>{
 	private static final long serialVersionUID = -4998194330899363230L;
 	private String elementId;
-	private PlanItemInfo info = new PlanItemInfo();
+	private PlanItemInfo<Stage> info;
 
-	public StagePlanItem(PlanItemInfo info) {
+	public StagePlanItem(PlanItemInfo<Stage> info) {
 		this.info = info;
 	}
 
@@ -23,7 +23,7 @@ public class StagePlanItem extends CompositeNode implements PlanItem {
 	}
 
 	@Override
-	public PlanItemInfo getPlanInfo() {
+	public PlanItemInfo<Stage> getPlanInfo() {
 		return info;
 	}
 

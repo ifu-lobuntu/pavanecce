@@ -10,12 +10,28 @@
 	&structureDefs;
 	<cmmn:case name="MilestoneTests" id="MilestoneTests">
 		&caseFileModel;
-		<cmmn:casePlanModel name="MilestoneTests">
+		<cmmn:casePlanModel name="CompletionTests">
 			<cmmn:planItem definitionRef="theUserEventId" name="TheUserEventPlanItem" id="theUserEventPlanItemId">
 			</cmmn:planItem>
 			<cmmn:planItem definitionRef="theMilestoneId" name="TheMilestonePlanItem" id="theMilestonePlanItemId" entryCriteriaRefs="waitingForTheUserEventSentryId">
+				<cmmn:itemControl>
+					<cmmn:requiredRule>
+						<cmmn:condition language="http://www.java.com/java">
+							<cmmn:body>return true;</cmmn:body>
+						</cmmn:condition>
+					</cmmn:requiredRule>
+				</cmmn:itemControl>
+
 			</cmmn:planItem>
 			<cmmn:planItem definitionRef="theTask" name="TheTask" id="theTaskId" entryCriteriaRefs="waitingForTheMilestoneSentryId">
+				<cmmn:itemControl>
+					<cmmn:requiredRule>
+						<cmmn:condition language="http://www.java.com/java">
+							<cmmn:body>return true;</cmmn:body>
+						</cmmn:condition>
+					</cmmn:requiredRule>
+				</cmmn:itemControl>
+
 			</cmmn:planItem>
 			<cmmn:sentry id="waitingForTheMilestoneSentryId" name="WaitingForTheMilestoneSentry">
 				<cmmn:planItemOnPart id="onTheMilestoneOccurPartId" sourceRef="theMilestonePlanItemId">

@@ -1,28 +1,39 @@
 package org.pavanecce.cmmn.jbpm.flow;
 
 import java.util.List;
+import java.util.Map.Entry;
 
+import org.drools.core.process.core.ParameterDefinition;
+import org.drools.core.process.core.Work;
+import org.drools.core.process.core.impl.ParameterDefinitionImpl;
+import org.drools.core.process.core.impl.WorkImpl;
 import org.jbpm.workflow.core.node.SubProcessNode;
 import org.kie.api.definition.process.Connection;
 
-public class CaseTaskPlanItem extends SubProcessNode implements PlanItem {
+public class CaseTaskPlanItem extends SubProcessNode implements PlanItem<CaseTask> {
 
 	private static final long serialVersionUID = 76131417693392877L;
 	private String elementId;
-	private PlanItemInfo info;
+	private PlanItemInfo<CaseTask> info;
+	private Work work;
 
-	public CaseTaskPlanItem(PlanItemInfo info) {
+	public CaseTaskPlanItem(PlanItemInfo<CaseTask> info) {
 		this.info = info;
 	}
 
 	@Override
 	public String getProcessId() {
-		return ((CaseTask)info.getDefinition()).getProcessId();
+		return ((CaseTask) info.getDefinition()).getProcessId();
 	}
 
 	@Override
-	public PlanItemInfo getPlanInfo() {
+	public PlanItemInfo<CaseTask> getPlanInfo() {
 		return info;
+	}
+
+	@Override
+	public boolean isWaitForCompletion() {
+		return ((CaseTask) getPlanInfo().getDefinition()).isBlocking();
 	}
 
 	@Override
@@ -46,6 +57,22 @@ public class CaseTaskPlanItem extends SubProcessNode implements PlanItem {
 			throw new IllegalArgumentException("This type of node only accepts default incoming connection type!");
 		}
 
+	}
+
+	public Work getWork() {
+		if (work == null) {
+			work = new WorkImpl();
+			Work sourceWork = info.getDefinition().getWork();
+			work.setName(sourceWork.getName());
+			for (ParameterDefinition pd : sourceWork.getParameterDefinitions()) {
+				work.addParameterDefinition(new ParameterDefinitionImpl(pd.getName(), pd.getType()));
+			}
+			for (Entry<String, Object> entry : sourceWork.getParameters().entrySet()) {
+				work.setParameter(entry.getKey(), entry.getValue());
+			}
+			work.setParameter("NodeName", getName());
+		}
+		return work;
 	}
 
 	@Override

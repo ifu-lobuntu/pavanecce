@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItem;
-import org.pavanecce.cmmn.jbpm.instance.CaseInstance;
+import org.pavanecce.cmmn.jbpm.instance.impl.CaseInstance;
 import org.pavanecce.common.ObjectPersistence;
 
 public interface SubscriptionManager {

@@ -10,21 +10,21 @@ import org.jbpm.workflow.core.Node;
 import org.jbpm.workflow.core.NodeContainer;
 import org.jbpm.workflow.core.impl.ConnectionImpl;
 
-public class PlanItemInfo {
+public class PlanItemInfo<T extends PlanItemDefinition> {
 	private Map<String, Sentry> entryCriteria = new HashMap<String, Sentry>();
 	private Map<String, Sentry> exitCriteria = new HashMap<String, Sentry>();
 	private String definitionRef;
-	private PlanItem planItem;
-	private PlanItemDefinition definition;
+	private PlanItem<T> planItem;
+	private T definition;
 	private String elementId;
 	private String name;
 	private long id;
 	private NodeContainer nodeContainer;
 	private PlanItemControl itemControl;
-	
+
 	public PlanItemInfo() {
 	}
-	
+
 	public Map<String, Sentry> getEntryCriteria() {
 		return Collections.unmodifiableMap(entryCriteria);
 	}
@@ -41,19 +41,20 @@ public class PlanItemInfo {
 		exitCriteria.put(s, null);
 	}
 
-	public PlanItem buildPlanItem() {
+	@SuppressWarnings("unchecked")
+	public PlanItem<T> buildPlanItem() {
 		if (definition instanceof HumanTask) {
-			planItem = new HumanTaskPlanItem(this);
+			planItem = (PlanItem<T>) new HumanTaskPlanItem((PlanItemInfo<HumanTask>) this);
 		} else if (definition instanceof Stage) {
-			planItem = new StagePlanItem(this);
+			planItem = (PlanItem<T>) new StagePlanItem((PlanItemInfo<Stage>) this);
 		} else if (definition instanceof UserEventListener) {
-			planItem = new UserEventPlanItem(this);
+			planItem = (PlanItem<T>) new UserEventPlanItem((PlanItemInfo<UserEventListener>) this);
 		} else if (definition instanceof TimerEventListener) {
-			planItem = new TimerEventPlanItem(this);
+			planItem = (PlanItem<T>) new TimerEventPlanItem((PlanItemInfo<TimerEventListener>) this);
 		} else if (definition instanceof Milestone) {
-			planItem = new MilestonePlanItem(this);
+			planItem = (PlanItem<T>) new MilestonePlanItem((PlanItemInfo<Milestone>) this);
 		} else if (definition instanceof CaseTask) {
-			planItem = new CaseTaskPlanItem(this);
+			planItem = (PlanItem<T>) new CaseTaskPlanItem((PlanItemInfo<CaseTask>) this);
 		}
 		planItem.setElementId(getElementId());
 		planItem.setName(getName());
@@ -91,11 +92,11 @@ public class PlanItemInfo {
 		this.definitionRef = definitionRef;
 	}
 
-	public void setDefinition(PlanItemDefinition findPlanItemDefinition) {
+	public void setDefinition(T findPlanItemDefinition) {
 		this.definition = findPlanItemDefinition;
 	}
 
-	public PlanItemDefinition getDefinition() {
+	public T getDefinition() {
 		return definition;
 	}
 
@@ -126,7 +127,7 @@ public class PlanItemInfo {
 	}
 
 	public PlanItemControl getItemControl() {
-		if(itemControl==null && definition!=null){
+		if (itemControl == null && definition != null) {
 			return definition.getDefaultControl();
 		}
 		return itemControl;

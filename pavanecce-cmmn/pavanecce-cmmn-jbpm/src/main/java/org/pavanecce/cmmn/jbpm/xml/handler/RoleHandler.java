@@ -7,7 +7,7 @@ import org.pavanecce.cmmn.jbpm.flow.Role;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-public class RoleHandler extends AbstractCaseElementHandler implements Handler{
+public class RoleHandler extends AbstractCaseElementHandler implements Handler {
 
 	@Override
 	public Object start(String uri, String localName, Attributes attrs, ExtensibleXmlParser xmlPackageReader) throws SAXException {
@@ -21,6 +21,11 @@ public class RoleHandler extends AbstractCaseElementHandler implements Handler{
 		return role;
 	}
 
+	@Override
+	public Object end(String uri, String localName, ExtensibleXmlParser xmlPackageReader) throws SAXException {
+		xmlPackageReader.endElementBuilder();
+		return xmlPackageReader.getCurrent();
+	}
 
 	@Override
 	public Class<?> generateNodeFor() {

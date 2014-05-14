@@ -1,4 +1,4 @@
-package org.pavanecce.cmmn.jbpm.instance;
+package org.pavanecce.cmmn.jbpm.instance.impl;
 
 import java.util.ArrayDeque;
 import java.util.Collection;
@@ -16,6 +16,10 @@ import org.pavanecce.cmmn.jbpm.event.CaseEvent;
 import org.pavanecce.cmmn.jbpm.flow.OnPart;
 import org.pavanecce.cmmn.jbpm.flow.PlanItem;
 import org.pavanecce.cmmn.jbpm.flow.Sentry;
+import org.pavanecce.cmmn.jbpm.flow.TimerEventPlanItem;
+import org.pavanecce.cmmn.jbpm.flow.UserEventPlanItem;
+import org.pavanecce.cmmn.jbpm.instance.ControllablePlanItemInstanceLifecycle;
+import org.pavanecce.cmmn.jbpm.instance.OnPartInstance;
 
 public class SentryInstance extends JoinInstance {
 	private static ThreadLocal<Deque<Collection<CaseEvent>>> currentEvents = new ThreadLocal<Deque<Collection<CaseEvent>>>();
@@ -26,16 +30,25 @@ public class SentryInstance extends JoinInstance {
 
 	private static final long serialVersionUID = -4302504131617050844L;
 	private Boolean isPlanItemInstanceRequired;
+	private Boolean isPlanItemInstanceStillRequired;
 
 	@Override
 	public void internalTrigger(NodeInstance from, String type) {
-		PlanItem toEnter = getSentry().getPlanItemEntering();
-		if (isPlanItemInstanceRequired == null && toEnter != null && toEnter.getPlanInfo().getItemControl() != null
-				&& toEnter.getPlanInfo().getItemControl().getRequiredRule() instanceof ConstraintEvaluator) {
-			ConstraintEvaluator constraintEvaluator = (ConstraintEvaluator) toEnter.getPlanInfo().getItemControl().getRequiredRule();
-			isPlanItemInstanceRequired = constraintEvaluator.evaluate(this, null, constraintEvaluator);
-		} else {
-			isPlanItemInstanceRequired = Boolean.FALSE;
+		PlanItem<?> toEnter = getSentry().getPlanItemEntering();
+		if (toEnter instanceof UserEventPlanItem || toEnter instanceof TimerEventPlanItem) {
+			isPlanItemInstanceStillRequired = false;
+			isPlanItemInstanceRequired = false;
+		}
+		if (isPlanItemInstanceRequired == null) {
+			if (toEnter != null && toEnter.getPlanInfo().getItemControl() != null && toEnter.getPlanInfo().getItemControl().getRequiredRule() instanceof ConstraintEvaluator) {
+				ConstraintEvaluator constraintEvaluator = (ConstraintEvaluator) toEnter.getPlanInfo().getItemControl().getRequiredRule();
+				isPlanItemInstanceRequired = constraintEvaluator.evaluate(this, null, constraintEvaluator);
+			} else {
+				isPlanItemInstanceRequired = Boolean.FALSE;
+			}
+		}
+		if (isPlanItemInstanceStillRequired == null) {
+			isPlanItemInstanceStillRequired = isPlanItemInstanceRequired;
 		}
 		super.internalTrigger(from, type);
 	}
@@ -44,8 +57,20 @@ public class SentryInstance extends JoinInstance {
 		return isPlanItemInstanceRequired;
 	}
 
-	public void setPlanItemInstanceRequired(boolean isPlanItemInstanceRequired) {
+	public void internalSetPlanItemInstanceRequired(boolean isPlanItemInstanceRequired) {
 		this.isPlanItemInstanceRequired = isPlanItemInstanceRequired;
+	}
+
+	public boolean isPlanItemInstanceStillRequired() {
+		if (isPlanItemInstanceStillRequired == null) {
+			// still initializing
+			return true;
+		}
+		return isPlanItemInstanceStillRequired;
+	}
+
+	public void internalSetPlanItemInstanceStillRequired(boolean val) {
+		this.isPlanItemInstanceStillRequired = val;
 	}
 
 	public Sentry getSentry() {
@@ -63,6 +88,18 @@ public class SentryInstance extends JoinInstance {
 			}
 		}
 		return result;
+	}
+
+	@Override
+	protected void triggerNodeInstance(org.jbpm.workflow.instance.NodeInstance nodeInstance, String type) {
+		if (nodeInstance instanceof MilestonePlanItemInstance) {
+			this.isPlanItemInstanceStillRequired = false;
+			((MilestonePlanItemInstance) nodeInstance).internalSetRequired(this.isPlanItemInstanceRequired);
+		} else if (nodeInstance instanceof AbstractControllablePlanInstance) {
+			((AbstractControllablePlanInstance<?>) nodeInstance).internalSetCompletionRequired(this.isPlanItemInstanceRequired);
+			this.isPlanItemInstanceStillRequired = false;
+		}
+		super.triggerNodeInstance(nodeInstance, type);
 	}
 
 	@Override
@@ -92,7 +129,10 @@ public class SentryInstance extends JoinInstance {
 			if (connection.getFrom() instanceof OnPart) {
 				NodeInstance ni = findNodeInstance((NodeInstanceContainer) getNodeInstanceContainer(), (OnPart) connection.getFrom());
 				OnPartInstance opi = (OnPartInstance) ni;
-				opi.popEvent();
+				if (opi != null) {
+					// coud be after process completion
+					opi.popEvent();
+				}
 			}
 		}
 		for (Connection connection : values) {
@@ -118,9 +158,9 @@ public class SentryInstance extends JoinInstance {
 			NodeInstance found = findNodeInstance(nic, sentry.getPlanItemExiting());
 			// TODO refine which PlannItemInstance to exit, e.g. look at the
 			// output and see if the caseFileITem Instance associated matches
-			if (found instanceof PlanItemInstance) {
+			if (found instanceof ControllablePlanItemInstanceLifecycle) {
 				// Task planItem
-				PlanItemInstance pii = (PlanItemInstance) found;
+				ControllablePlanItemInstanceLifecycle<?> pii = (ControllablePlanItemInstanceLifecycle<?>) found;
 				pii.exit();
 				hasTriggered = true;
 			} else {

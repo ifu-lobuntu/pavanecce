@@ -8,7 +8,7 @@ import org.pavanecce.cmmn.jbpm.event.PlanItemEvent;
 public class PlanItemOnPart extends OnPart implements Serializable {
 	private static final long serialVersionUID = -9167236068103073693L;
 	private PlanItemTransition standardEvent;
-	private PlanItem planSourceItem;
+	private PlanItem<?> planSourceItem;
 	private String sourceRef;
 
 	public PlanItemTransition getStandardEvent() {
@@ -17,10 +17,10 @@ public class PlanItemOnPart extends OnPart implements Serializable {
 	public void setStandardEvent(PlanItemTransition transition) {
 		this.standardEvent = transition;
 	}
-	public PlanItem getSourcePlanItem() {
+	public PlanItem<?> getSourcePlanItem() {
 		return planSourceItem;
 	}
-	public void setSourcePlanItem(PlanItem planItem) {
+	public void setSourcePlanItem(PlanItem<?> planItem) {
 		this.planSourceItem = planItem;
 	}
 	public void setSourceRef(String value) {

@@ -8,7 +8,7 @@ import org.pavanecce.cmmn.jbpm.flow.Stage;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-public class PlanItemHandler extends AbstractPlanModelElementHandler implements Handler {
+public class PlanItemHandler extends AbstractCaseElementHandler implements Handler {
 	public PlanItemHandler(){
 		super();
 		super.validParents.add(Stage.class);
@@ -17,6 +17,7 @@ public class PlanItemHandler extends AbstractPlanModelElementHandler implements 
 	@Override
 	public Object start(String uri, String localName, Attributes attrs, ExtensibleXmlParser xmlPackageReader) throws SAXException {
 		xmlPackageReader.startElementBuilder(localName, attrs);
+		@SuppressWarnings("rawtypes")
 		PlanItemInfo planItem = new PlanItemInfo();
 		planItem.setId(IdGenerator.next(xmlPackageReader));
 		planItem.setContainer(((PlanItemContainer) xmlPackageReader.getParent()));
@@ -40,6 +41,7 @@ public class PlanItemHandler extends AbstractPlanModelElementHandler implements 
 
 	@Override
 	public Object end(String uri, String localName, ExtensibleXmlParser xmlPackageReader) throws SAXException {
+		xmlPackageReader.endElementBuilder();
 		return xmlPackageReader.getCurrent();
 	}
 

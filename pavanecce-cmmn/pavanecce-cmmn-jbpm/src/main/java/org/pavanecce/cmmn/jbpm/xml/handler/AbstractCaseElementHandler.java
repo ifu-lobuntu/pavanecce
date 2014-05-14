@@ -12,6 +12,7 @@ import org.pavanecce.cmmn.jbpm.flow.CaseTask;
 import org.pavanecce.cmmn.jbpm.flow.HumanTask;
 import org.pavanecce.cmmn.jbpm.flow.Milestone;
 import org.pavanecce.cmmn.jbpm.flow.PlanItem;
+import org.pavanecce.cmmn.jbpm.flow.PlanItemInfo;
 import org.pavanecce.cmmn.jbpm.flow.Role;
 import org.pavanecce.cmmn.jbpm.flow.Sentry;
 import org.pavanecce.cmmn.jbpm.flow.Stage;
@@ -19,7 +20,7 @@ import org.pavanecce.cmmn.jbpm.flow.TimerEventListener;
 import org.pavanecce.cmmn.jbpm.flow.UserEventListener;
 import org.xml.sax.SAXException;
 
-public abstract class AbstractCaseElementHandler extends BaseAbstractHandler implements Handler{
+public abstract class AbstractCaseElementHandler extends BaseAbstractHandler implements Handler {
 
 	public AbstractCaseElementHandler() {
 		this.validParents = new HashSet<Class<?>>();
@@ -38,11 +39,8 @@ public abstract class AbstractCaseElementHandler extends BaseAbstractHandler imp
 		this.validPeers.add(CaseParameter.class);
 		this.validPeers.add(UserEventListener.class);
 		this.validPeers.add(TimerEventListener.class);
+		this.validPeers.add(PlanItemInfo.class);
+		this.validPeers.add(PlanItem.class);
 	}
-	@Override
-	public Object end(String uri, String localName, ExtensibleXmlParser xmlPackageReader) throws SAXException {
-		return xmlPackageReader.getCurrent();
-	}
-
 
 }

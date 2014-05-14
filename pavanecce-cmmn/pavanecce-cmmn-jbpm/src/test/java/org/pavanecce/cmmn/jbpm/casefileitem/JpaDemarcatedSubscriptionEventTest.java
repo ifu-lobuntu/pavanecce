@@ -3,7 +3,7 @@ package org.pavanecce.cmmn.jbpm.casefileitem;
 import org.junit.Test;
 import org.pavanecce.cmmn.jbpm.event.AbstractPersistentSubscriptionManager;
 import org.pavanecce.cmmn.jbpm.event.DemarcatedSubscriptionContext;
-import org.pavanecce.cmmn.jbpm.instance.CaseInstance;
+import org.pavanecce.cmmn.jbpm.instance.impl.CaseInstance;
 
 public class JpaDemarcatedSubscriptionEventTest extends JpaPersistentSubscriptionEventTest {
 	@Override

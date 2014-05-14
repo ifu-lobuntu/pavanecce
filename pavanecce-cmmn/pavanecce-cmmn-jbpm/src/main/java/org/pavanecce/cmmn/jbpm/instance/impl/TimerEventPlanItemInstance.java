@@ -1,4 +1,4 @@
-package org.pavanecce.cmmn.jbpm.instance;
+package org.pavanecce.cmmn.jbpm.instance.impl;
 
 import org.jbpm.process.instance.timer.TimerInstance;
 import org.jbpm.workflow.instance.node.TimerNodeInstance;

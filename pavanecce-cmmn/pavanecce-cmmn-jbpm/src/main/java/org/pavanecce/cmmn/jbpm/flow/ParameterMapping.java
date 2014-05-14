@@ -11,7 +11,8 @@ public class ParameterMapping implements Serializable, CMMNElement {
 	private CaseParameter sourceParameter;
 	private String targetRef;
 	private Constraint transformation;
-	
+	private String targetParameterName;
+
 	public String getSourceRef() {
 		return sourceRef;
 	}
@@ -51,6 +52,22 @@ public class ParameterMapping implements Serializable, CMMNElement {
 
 	public void setTransformation(Constraint transformation) {
 		this.transformation = transformation;
+	}
+
+	public void setTargetParameterName(String targetParameterName) {
+		this.targetParameterName = targetParameterName;
+	}
+
+	public String getTargetParameterName() {
+		if(targetParameterName==null){
+			return getTargetParameterId();
+		}
+		return targetParameterName;
+	}
+
+	public String getTargetParameterId() {
+		String[] split = targetRef.split("\\#");
+		return split[split.length-1];
 	}
 
 }

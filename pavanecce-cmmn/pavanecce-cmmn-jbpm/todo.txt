@@ -89,12 +89,10 @@ Milestone
 
 UserEvent
  - no sentry
- - requiredRule
  - CREATE,SUSPEND,RESUME,TERMINATE,PARENT_TERMINATE
 
 TimerEvent
  - no sentry
- - requiredRule
  - CREATE,SUSPEND,RESUME,TERMINATE,PARENT_TERMINATE
 
 Planning Tables:

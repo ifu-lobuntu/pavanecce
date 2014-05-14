@@ -16,6 +16,7 @@ import org.kie.api.definition.process.Node;
 import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItem;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemOnPart;
+import org.pavanecce.cmmn.jbpm.flow.DefaultJoin;
 import org.pavanecce.cmmn.jbpm.flow.OnPart;
 import org.pavanecce.cmmn.jbpm.flow.PlanItem;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemContainer;
@@ -34,15 +35,17 @@ public abstract class PlanItemContainerHandler extends BaseAbstractHandler {
 		super();
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected void linkPlanItems(PlanItemContainer container, ExtensibleXmlParser p) {
 		VariableScope variableScope = container.getCase().getVariableScope();
 		Split defaultSplit = container.getDefaultSplit();
 		EndNode defaultEnd = container.getDefaultEnd();
+		defaultEnd.setTerminate(container instanceof Case);
 		for (PlanItemInfo pi : container.getPlanItemInfo()) {
 			pi.setDefinition(findPlanItemDefinition(container.getCase(), pi.getDefinitionRef()));
 			pi.buildPlanItem();
 		}
-		Join defaultJoin = new Join();
+		DefaultJoin defaultJoin = new DefaultJoin();
 		defaultJoin.setId(IdGenerator.next(p));
 		defaultJoin.setType(Join.TYPE_AND);
 		container.addNode(defaultJoin);
@@ -53,14 +56,14 @@ public abstract class PlanItemContainerHandler extends BaseAbstractHandler {
 			if (node instanceof PlanItem) {
 				linkPlanItemCriteria(container, defaultJoin, (PlanItem) node);
 			} else if (node instanceof Sentry) {
-				//We need to activate sentries immediately to indicate that the associated PLanItem is available
+				// We need to activate sentries immediately to indicate that the associated PLanItem is available
 				new ConnectionImpl(defaultSplit, DEFAULT, node, DEFAULT);
 				linkSentryOnPart(container, defaultSplit, variableScope, (Sentry) node);
 			}
 		}
 	}
 
-	private void linkPlanItemCriteria(PlanItemContainer process, Join defaultJoin, PlanItem node) {
+	private void linkPlanItemCriteria(PlanItemContainer process, DefaultJoin defaultJoin, PlanItem<?> node) {
 		if (defaultJoin != null) {
 			new ConnectionImpl(node, DEFAULT, defaultJoin, DEFAULT);
 		}
@@ -108,10 +111,10 @@ public abstract class PlanItemContainerHandler extends BaseAbstractHandler {
 		return binding;
 	}
 
-	private PlanItem findPlanItem(PlanItemContainer process, String sourceRef) {
+	private PlanItem<?> findPlanItem(PlanItemContainer process, String sourceRef) {
 		for (Node node : process.getNodes()) {
-			if (node instanceof PlanItem && ((PlanItem) node).getElementId().equals(sourceRef)) {
-				return (PlanItem) node;
+			if (node instanceof PlanItem && ((PlanItem<?>) node).getElementId().equals(sourceRef)) {
+				return (PlanItem<?>) node;
 			}
 		}
 		return null;

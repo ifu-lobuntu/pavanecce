@@ -9,20 +9,26 @@
 	targetNamespace="http://ifu-lobuntu.org/test">
 	
 	&structureDefs;
-	<cmmn:case name="SubCase" id="SubCase">
+	<cmmn:case name="SubCase" id="SubCase" >
 		&caseFileModel;
-		<cmmn:casePlanModel name="SubCase">
+		<cmmn:casePlanModel name="SubCase" autoComplete="true">
 			<cmmn:planItem definitionRef="theUserEventId" name="TheUserEventPlanItem" id="theUserEventPlanItemId">
 			</cmmn:planItem>
-			<cmmn:planItem definitionRef="theTask" name="TheTask" id="theTaskId" entryCriteriaRefs="waitingForTheUserEventSentryId">
+			<cmmn:planItem definitionRef="theMilestone" name="TheMilestonePlanItem" id="TheMilestonePlanItemId" entryCriteriaRefs="waitingForTheUserEventSentryId">
+				<cmmn:itemControl>
+					<cmmn:requiredRule>
+						<cmmn:condition language="http://www.java.com/java">
+							<cmmn:body>return true;</cmmn:body>
+						</cmmn:condition>
+					</cmmn:requiredRule>
+				</cmmn:itemControl>
 			</cmmn:planItem>
 			<cmmn:sentry id="waitingForTheUserEventSentryId" name="WaitingForTheUserEventSentry">
 				<cmmn:planItemOnPart id="onTheUserEventOccurPartId" sourceRef="theUserEventPlanItemId">
 					<cmmn:standardEvent>occur</cmmn:standardEvent>
 				</cmmn:planItemOnPart>
 			</cmmn:sentry>
-			<cmmn:humanTask id="theTask" name="TheTask" isBlocking="true" performerRef="builderRoleId">
-			</cmmn:humanTask>
+			<cmmn:milestone id="theMilestone" name="TheMilestone"/>
 			<cmmn:userEvent id="theUserEventId" name="TheUserEvent"></cmmn:userEvent>
 		</cmmn:casePlanModel>
 		<cmmn:caseRoles name="Builder" id="builderRoleId" />

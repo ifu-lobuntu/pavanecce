@@ -52,6 +52,7 @@ public class StageHandler extends PlanItemContainerHandler implements Handler {
 
 	@Override
 	public Object end(String uri, String localName, ExtensibleXmlParser parser) throws SAXException {
+		parser.endElementBuilder();
 		return parser.getCurrent();
 	}
 

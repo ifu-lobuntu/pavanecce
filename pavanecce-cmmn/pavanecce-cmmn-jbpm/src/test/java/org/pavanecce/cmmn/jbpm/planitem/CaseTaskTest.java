@@ -1,86 +1,85 @@
 package org.pavanecce.cmmn.jbpm.planitem;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 import org.junit.Test;
 import org.kie.api.runtime.process.NodeInstance;
-import org.kie.api.runtime.process.ProcessInstance;
-import org.pavanecce.cmmn.jbpm.AbstractConstructionTestCase;
-import org.pavanecce.cmmn.jbpm.instance.CaseInstance;
-import org.pavanecce.cmmn.jbpm.instance.CaseTaskPlanItemInstance;
+import org.kie.api.task.model.TaskSummary;
+import org.pavanecce.cmmn.jbpm.instance.impl.CaseInstance;
+import org.pavanecce.cmmn.jbpm.instance.impl.CaseTaskPlanItemInstance;
 
-import test.ConstructionCase;
-import test.House;
 import test.HousePlan;
+import test.WallPlan;
 
-public class CaseTaskTest extends AbstractConstructionTestCase {
-	protected HousePlan housePlan;
-	protected House house;
-	private CaseInstance caseInstance;
-
+public class CaseTaskTest extends AbstractTasklifecycleTests {
+	{
+		super.isJpa = true;
+	}
 	public CaseTaskTest() {
 		super(true, true, "org.jbpm.persistence.jpa");
 	}
-
+	public String getEventGeneratingTaskRole() {
+		return "Administrator";
+	}
 	@Test
-	public void testCreateAndDeleteSubscriptionsAgainstParent() throws Exception {
+	public void testParameterMappings() throws Exception{
 		// *****GIVEN
 		givenThatTheTestCaseIsStarted();
 		// *****WHEN
-
-		triggerStartOfCaseTask();
+		triggerStartOfTask();
+		List<TaskSummary> list = getRuntimeEngine().getTaskService().getTasksAssignedAsPotentialOwner(getEventGeneratingTaskRole(), "en-UK");
+		
+		assertEquals(1, list.size());
+		getRuntimeEngine().getTaskService().start(list.get(0).getId(), "Administrator");
+		// *******THEN
 		getPersistence().start();
-		assertProcessInstanceActive(caseInstance.getId(), getRuntimeEngine().getKieSession());
+		long id = getSubProcessInstanceId(list.get(0).getId());
+		CaseInstance pi = (CaseInstance) getRuntimeEngine().getKieSession().getProcessInstance(id);
+		HousePlan housePlan = (HousePlan) pi.getVariable("housePlan");
+		@SuppressWarnings("unchecked")
+		Collection<WallPlan> wallPlans = (Collection<WallPlan>) pi.getVariable("wallPlans");
+		assertEquals(super.housePlan.getId(), housePlan.getId());
+		assertEquals(1, wallPlans.size());
 		getPersistence().commit();
 		// *****THEN
-		assertNodeTriggered(caseInstance.getId(), "TheCaseTaskPlanItem");
+	}
+	@Override
+	public String[] getProcessFileNames() {
+		return new String[] { "test/CaseTaskTests.cmmn", "test/SubCase.cmmn" };
+	}
+
+	@Override
+	public String getNameOfProcessToStart() {
+		return "CaseTaskTests";
+	}
+
+	@Override
+	public void failTask(long taskId) {
+		long subProccessInstanceId = getSubProcessInstanceId(taskId);
+		if (subProccessInstanceId >= 0) {
+			getRuntimeEngine().getKieSession().abortProcessInstance(subProccessInstanceId);
+		}
+	}
+
+	private long getSubProcessInstanceId(long taskId) {
+		long workItemId = getRuntimeEngine().getTaskService().getTaskById(taskId).getTaskData().getWorkItemId();
 		getPersistence().start();
 		caseInstance = (CaseInstance) getRuntimeEngine().getKieSession().getProcessInstance(caseInstance.getId());
-		boolean found=false;
+		long subProccessInstanceId = -1;
 		for (NodeInstance nodeInstance : caseInstance.getNodeInstances()) {
-			if(nodeInstance instanceof CaseTaskPlanItemInstance){
-				found=true;
-				assertProcessInstanceActive(((CaseTaskPlanItemInstance) nodeInstance).getProcessInstanceId(), getRuntimeEngine().getKieSession());
+			if (nodeInstance instanceof CaseTaskPlanItemInstance && ((CaseTaskPlanItemInstance) nodeInstance).getWorkItemId() == workItemId) {
+				subProccessInstanceId = ((CaseTaskPlanItemInstance) nodeInstance).getProcessInstanceId();
 			}
 		}
-		assertTrue(found);
 		getPersistence().commit();
-
+		return subProccessInstanceId;
 	}
 
-	protected void givenThatTheTestCaseIsStarted() {
-		createRuntimeManager("test/CaseTaskTests.cmmn", "test/SubCase.cmmn");
-		Map<String, Object> params = new HashMap<String, Object>();
+	@Override
+	public void completeTask(long taskId) {
 		getPersistence().start();
-
-		ConstructionCase cc = new ConstructionCase("/cases/case1");
-		housePlan = new HousePlan(cc);
-		house = new House(cc);
-		getPersistence().persist(cc);
-		getPersistence().commit();
-		params.put("housePlan", housePlan);
-		params.put("house", house);
-		getPersistence().start();
-		caseInstance = (CaseInstance) getRuntimeEngine().getKieSession().startProcess("CaseTaskTests", params);
-		Collection<ProcessInstance> processInstances = getRuntimeEngine().getKieSession().getProcessInstances();
-		assertEquals(1, processInstances.size());
-		getPersistence().commit();
-		assertProcessInstanceActive(caseInstance.getId(), getRuntimeEngine().getKieSession());
-		assertNodeTriggered(caseInstance.getId(), "defaultSplit");
-		getPersistence().start();
-		assertNodeActive(caseInstance.getId(), getRuntimeEngine().getKieSession(), "onTheUserEventOccurPartId");
-		getPersistence().commit();
-		getPersistence().start();
-		assertProcessInstanceActive(caseInstance.getId(), getRuntimeEngine().getKieSession());
-		getPersistence().commit();
-	}
-
-	private void triggerStartOfCaseTask() throws Exception {
-		getPersistence().start();
-		caseInstance = (CaseInstance) getRuntimeEngine().getKieSession().getProcessInstance(caseInstance.getId());
-		caseInstance.signalEvent("TheUserEvent", new Object());
+		getRuntimeEngine().getKieSession().signalEvent("TheUserEvent", new Object(), getSubProcessInstanceId(taskId));
 		getPersistence().commit();
 	}
 

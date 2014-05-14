@@ -26,7 +26,7 @@ public class TimerEventHandler extends AbstractCaseElementHandler {
 		Element el = xmlPackageReader.endElementBuilder();
 		TimerEventListener l = (TimerEventListener) xmlPackageReader.getCurrent();
 		l.setTimerExpression(ConstraintExtractor.extractExpression(el, "timerExpression"));
-		return super.end(uri, localName, xmlPackageReader);
+		return l;
 	}
 
 	@Override

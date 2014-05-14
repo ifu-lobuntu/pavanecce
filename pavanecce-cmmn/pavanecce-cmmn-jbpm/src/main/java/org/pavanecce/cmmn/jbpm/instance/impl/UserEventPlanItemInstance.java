@@ -1,4 +1,4 @@
-package org.pavanecce.cmmn.jbpm.instance;
+package org.pavanecce.cmmn.jbpm.instance.impl;
 
 import org.jbpm.workflow.instance.node.EventNodeInstance;
 import org.pavanecce.cmmn.jbpm.event.PlanItemEvent;

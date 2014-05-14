@@ -2,6 +2,10 @@ package org.pavanecce.cmmn.jbpm.instance;
 
 import java.util.Collection;
 
-public interface PlanItemInstanceContainer extends PlanItemInstance,HumanControlledPlanItemInstance {
-	Collection<PlanItemInstance> getChildren();
+import org.pavanecce.cmmn.jbpm.flow.PlanItemContainer;
+
+public interface PlanItemInstanceContainer{
+	Collection<? extends PlanItemInstanceLifecycle> getChildren();
+	boolean canComplete();
+	PlanItemContainer getPlanItemContainer();
 }

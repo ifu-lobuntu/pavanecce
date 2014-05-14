@@ -1,8 +1,16 @@
 package org.pavanecce.cmmn.jbpm.flow;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.drools.core.process.core.ParameterDefinition;
+import org.drools.core.process.core.Work;
+import org.drools.core.process.core.datatype.impl.type.StringDataType;
+import org.drools.core.process.core.impl.ParameterDefinitionImpl;
+import org.drools.core.process.core.impl.WorkImpl;
+import org.jbpm.services.task.wih.util.PeopleAssignmentHelper;
 import org.jbpm.workflow.core.node.SubProcessNode;
 
 public class CaseTask extends SubProcessNode implements TaskDefinition {
@@ -13,7 +21,41 @@ public class CaseTask extends SubProcessNode implements TaskDefinition {
 	String elementId;
 	private boolean blocking;
 	private PlanItemControl defaultControl;
+	private Work work;
 
+	public CaseTask() {
+		Work work = new WorkImpl();
+		work.setName("Human Task");
+		Set<ParameterDefinition> parameterDefinitions = new HashSet<ParameterDefinition>();
+		parameterDefinitions.add(new ParameterDefinitionImpl("TaskName", new StringDataType()));
+		parameterDefinitions.add(new ParameterDefinitionImpl("ActorId", new StringDataType()));
+		parameterDefinitions.add(new ParameterDefinitionImpl("Priority", new StringDataType()));
+		parameterDefinitions.add(new ParameterDefinitionImpl("Comment", new StringDataType()));
+		parameterDefinitions.add(new ParameterDefinitionImpl("Skippable", new StringDataType()));
+		parameterDefinitions.add(new ParameterDefinitionImpl("Content", new StringDataType()));
+		// TODO: initiator
+		// TODO: attachments
+		// TODO: deadlines
+		// TODO: delegates
+		// TODO: recipients
+		// TODO: ...
+		work.setParameterDefinitions(parameterDefinitions);
+		setWork(work);
+	}
+
+	public void setWork(Work work) {
+		this.work = work;
+	}
+
+	@Override
+	public Work getWork() {
+		Work result = work;
+		// Think about this - case owner??
+		result.setParameter(PeopleAssignmentHelper.GROUP_ID, "Administrators");
+		result.setParameter(PeopleAssignmentHelper.BUSINESSADMINISTRATOR_ID, "Administrator");
+
+		return result;
+	}
 
 	@Override
 	public List<CaseParameter> getInputs() {
@@ -57,9 +99,11 @@ public class CaseTask extends SubProcessNode implements TaskDefinition {
 		mappings.add(cp);
 
 	}
+
 	public List<ParameterMapping> getParameterMappings() {
 		return mappings;
 	}
+
 	public void mapParameters() {
 		for (ParameterMapping parameterMapping : this.mappings) {
 			if (!findMapping(this.inputs, parameterMapping)) {
@@ -68,7 +112,7 @@ public class CaseTask extends SubProcessNode implements TaskDefinition {
 		}
 	}
 
-	protected boolean findMapping(List<CaseParameter> inputs2, ParameterMapping parameterMapping) {
+	private boolean findMapping(List<CaseParameter> inputs2, ParameterMapping parameterMapping) {
 		for (CaseParameter caseParameter : inputs2) {
 			if (parameterMapping.getSourceRef().equals(caseParameter.getElementId())) {
 				parameterMapping.setSourceParameter(caseParameter);

@@ -3,12 +3,12 @@ package org.pavanecce.cmmn.jbpm.flow;
 import org.jbpm.process.core.timer.Timer;
 import org.jbpm.workflow.core.node.TimerNode;
 
-public class TimerEventPlanItem extends TimerNode implements PlanItem {
+public class TimerEventPlanItem extends TimerNode implements PlanItem<TimerEventListener> {
 	private static final long serialVersionUID = 3392205893370057689L;
 	private String elementId;
-	private PlanItemInfo planInfo;
+	private PlanItemInfo<TimerEventListener> planInfo;
 
-	public TimerEventPlanItem(PlanItemInfo info) {
+	public TimerEventPlanItem(PlanItemInfo<TimerEventListener> info) {
 		this.planInfo = info;
 	}
 
@@ -21,7 +21,7 @@ public class TimerEventPlanItem extends TimerNode implements PlanItem {
 	}
 
 	@Override
-	public PlanItemInfo getPlanInfo() {
+	public PlanItemInfo<TimerEventListener> getPlanInfo() {
 		return planInfo;
 	}
 	public TimerEventListener getTimerEventListener(){

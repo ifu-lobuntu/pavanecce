@@ -25,6 +25,7 @@ import org.pavanecce.cmmn.jbpm.flow.TaskDefinition;
 
 public class PlanItemBuilder implements ProcessNodeBuilder {
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void build(Process process, ProcessDescr processDescr, ProcessBuildContext context, Node node) {
 		processCaseInputParameters(process, context); // TODO find a better place to do this?

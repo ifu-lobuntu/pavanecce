@@ -22,7 +22,7 @@ public class Stage extends CompositeContextNode implements PlanItemDefinition, P
 	private static final long serialVersionUID = 3123425777169912160L;
 	private String elementId;
 	private boolean autoComplete;
-	private Collection<PlanItemInfo> planItemInfo = new ArrayList<PlanItemInfo>();
+	private Collection<PlanItemInfo<?>> planItemInfo = new ArrayList<PlanItemInfo<?>>();
 	private StartNode defaultStart;
 	private Split defaultSplit;
 	private EndNode defaultEnd;
@@ -106,12 +106,12 @@ public class Stage extends CompositeContextNode implements PlanItemDefinition, P
 	}
 
 	@Override
-	public void addPlanItemInfo(PlanItemInfo d) {
+	public void addPlanItemInfo(PlanItemInfo<?> d) {
 		planItemInfo.add(d);
 	}
 
 	@Override
-	public Collection<PlanItemInfo> getPlanItemInfo() {
+	public Collection<PlanItemInfo<?>> getPlanItemInfo() {
 		return planItemInfo;
 	}
 

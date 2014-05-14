@@ -19,7 +19,7 @@ import org.kie.internal.task.api.EventService;
 import org.kie.internal.task.api.model.NotificationEvent;
 import org.pavanecce.cmmn.jbpm.infra.CaseTaskLifecycleListener;
 import org.pavanecce.cmmn.jbpm.infra.CaseTaskWorkItemHandler;
-import org.pavanecce.cmmn.jbpm.instance.CaseInstance;
+import org.pavanecce.cmmn.jbpm.instance.impl.CaseInstance;
 import org.pavanecce.cmmn.jbpm.ocm.OcmCaseFileItemSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.ocm.OcmCaseSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.test.AbstractCmmnCaseTestCase;

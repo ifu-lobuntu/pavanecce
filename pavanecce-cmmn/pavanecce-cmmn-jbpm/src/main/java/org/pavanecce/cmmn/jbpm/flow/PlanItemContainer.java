@@ -10,9 +10,9 @@ import org.jbpm.workflow.core.node.StartNode;
 
 public interface PlanItemContainer extends NodeContainer {
 
-	public void addPlanItemInfo(PlanItemInfo d);
+	public void addPlanItemInfo(PlanItemInfo<?> d);
 
-	public Collection<PlanItemInfo> getPlanItemInfo();
+	public Collection<PlanItemInfo<?>> getPlanItemInfo();
 
 	void setDefaultStart(StartNode n);
 
@@ -31,4 +31,6 @@ public interface PlanItemContainer extends NodeContainer {
 	Join getDefaultJoin();
 	
 	Case getCase();
+	
+	boolean isAutoComplete();
 }

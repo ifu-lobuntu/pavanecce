@@ -22,6 +22,12 @@ public class UserEventHandler extends AbstractCaseElementHandler {
 	}
 
 	@Override
+	public Object end(String uri, String localName, ExtensibleXmlParser xmlPackageReader) throws SAXException {
+		xmlPackageReader.endElementBuilder();
+		return xmlPackageReader.getCurrent();
+	}
+
+	@Override
 	public Class<?> generateNodeFor() {
 		return UserEventListener.class;
 	}

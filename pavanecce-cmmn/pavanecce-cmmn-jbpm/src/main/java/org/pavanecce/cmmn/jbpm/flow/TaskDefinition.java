@@ -2,10 +2,17 @@ package org.pavanecce.cmmn.jbpm.flow;
 
 import java.util.List;
 
+import org.drools.core.process.core.Work;
+
 public interface TaskDefinition extends PlanItemDefinition {
-	public List<CaseParameter> getInputs();
-	public List<CaseParameter> getOutputs();
-	public void addOutputParameter(CaseParameter cp);
-	public void addInputParameter(CaseParameter cp);
+	List<CaseParameter> getInputs();
+
+	List<CaseParameter> getOutputs();
+
+	void addOutputParameter(CaseParameter cp);
+
+	void addInputParameter(CaseParameter cp);
+
+	Work getWork();
 
 }

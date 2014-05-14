@@ -21,6 +21,8 @@ import org.pavanecce.cmmn.jbpm.flow.HumanTask;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 import org.pavanecce.cmmn.jbpm.flow.Role;
 import org.pavanecce.cmmn.jbpm.flow.Stage;
+import org.pavanecce.cmmn.jbpm.flow.TaskDefinition;
+import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -70,7 +72,6 @@ public class CaseHandler extends PlanItemContainerHandler implements Handler {
 		}
 		process.setPackageName(packageName);
 		process.setDynamic(true);
-		process.setAutoComplete(false);
 		// if (version != null) {
 		// process.setVersion(version);
 		// }
@@ -81,7 +82,7 @@ public class CaseHandler extends PlanItemContainerHandler implements Handler {
 		// register bpmn2 imports as meta data of process
 		// for unique id's of nodes, start with one to avoid returning wrong
 		// nodes for dynamic nodes
-		super.startNodeContainer(process,parser);
+		super.startNodeContainer(process, parser);
 		VariableScope variableScope = (VariableScope) process.getDefaultContext(VariableScope.VARIABLE_SCOPE);
 		List<Variable> variables = variableScope.getVariables();
 		Variable var = new Variable();
@@ -91,13 +92,13 @@ public class CaseHandler extends PlanItemContainerHandler implements Handler {
 		return process;
 	}
 
-
-
 	@Override
 	public Object end(final String uri, final String localName, final ExtensibleXmlParser parser) throws SAXException {
-		parser.endElementBuilder();
-
+		Element el = (Element) parser.endElementBuilder();
 		Case process = (Case) parser.getCurrent();
+		Element cpm=(Element) el.getElementsByTagName("casePlanModel").item(0);
+		process.setAutoComplete("true".equals(cpm.getAttribute("autoComplete")));
+		
 		VariableScope variableScope = process.getVariableScope();
 		List<Variable> variables = variableScope.getVariables();
 		for (Variable variable : variables) {
@@ -114,21 +115,23 @@ public class CaseHandler extends PlanItemContainerHandler implements Handler {
 		linkParametersToCaseFileItems(variableScope, process.getOutputParameters());
 		Collection<PlanItemDefinition> planItemDefinitions = process.getPlanItemDefinitions();
 		for (PlanItemDefinition pi : planItemDefinitions) {
-			if (pi instanceof HumanTask) {
-				HumanTask ht = (HumanTask) pi;
-				for (Role role : process.getRoles()) {
-					if (role.getElementId().equals(ht.getPerformerRef())) {
-						ht.setPerformer(role);
-						ht.getWork().setParameter("ActorId", role.getName());
+			if (pi instanceof TaskDefinition) {
+				if (pi instanceof HumanTask) {
+					HumanTask ht = (HumanTask) pi;
+					for (Role role : process.getRoles()) {
+						if (role.getElementId().equals(ht.getPerformerRef())) {
+							ht.setPerformer(role);
+							ht.getWork().setParameter("ActorId", role.getName());
+						}
 					}
 				}
-				linkParametersToCaseFileItems(variableScope, ht.getInputs());
-				linkParametersToCaseFileItems(variableScope, ht.getOutputs());
+				linkParametersToCaseFileItems(variableScope, ((TaskDefinition) pi).getInputs());
+				linkParametersToCaseFileItems(variableScope, ((TaskDefinition) pi).getOutputs());
 			}
 		}
-		linkPlanItems(process,parser);
+		linkPlanItems(process, parser);
 		for (PlanItemDefinition planItemDefinition : planItemDefinitions) {
-			if(planItemDefinition instanceof Stage){
+			if (planItemDefinition instanceof Stage) {
 				super.linkPlanItems((Stage) planItemDefinition, parser);
 			}
 		}

@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.pavanecce.cmmn.jbpm.AbstractConstructionTestCase;
-import org.pavanecce.cmmn.jbpm.instance.CaseInstance;
+import org.pavanecce.cmmn.jbpm.instance.impl.CaseInstance;
 
 import test.ConstructionCase;
 import test.House;

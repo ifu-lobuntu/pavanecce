@@ -5,12 +5,12 @@ import java.util.List;
 import org.jbpm.process.core.event.EventFilter;
 import org.jbpm.workflow.core.node.EventNode;
 
-public class UserEventPlanItem extends EventNode implements PlanItem {
+public class UserEventPlanItem extends EventNode implements PlanItem<UserEventListener> {
 	private static final long serialVersionUID = 3392205893370057689L;
 	private String elementId;
-	private PlanItemInfo planInfo;
+	private PlanItemInfo<UserEventListener> planInfo;
 
-	public UserEventPlanItem(PlanItemInfo info) {
+	public UserEventPlanItem(PlanItemInfo<UserEventListener> info) {
 		this.planInfo = info;
 	}
 
@@ -23,7 +23,7 @@ public class UserEventPlanItem extends EventNode implements PlanItem {
 	}
 
 	@Override
-	public PlanItemInfo getPlanInfo() {
+	public PlanItemInfo<UserEventListener> getPlanInfo() {
 		return planInfo;
 	}
 	public UserEventListener getUserEvent(){

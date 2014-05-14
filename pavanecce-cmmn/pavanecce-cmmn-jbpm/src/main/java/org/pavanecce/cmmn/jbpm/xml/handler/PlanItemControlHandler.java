@@ -18,7 +18,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-public class PlanItemControlHandler extends AbstractPlanModelElementHandler implements Handler {
+public class PlanItemControlHandler extends AbstractCaseElementHandler implements Handler {
 	public PlanItemControlHandler() {
 		super();
 		super.validParents.add(PlanItemInfo.class);
@@ -36,11 +36,12 @@ public class PlanItemControlHandler extends AbstractPlanModelElementHandler impl
 
 	@Override
 	public Object start(String uri, String localName, Attributes attrs, ExtensibleXmlParser xmlPackageReader) throws SAXException {
+		xmlPackageReader.startElementBuilder(localName, attrs);
 		PlanItemControl planItemControl = new PlanItemControl();
 		planItemControl.setElementId(attrs.getValue("id"));
 		Object parent = xmlPackageReader.getParent();
 		if (parent instanceof PlanItemInfo) {
-			((PlanItemInfo) parent).setItemControl(planItemControl);
+			((PlanItemInfo<?>) parent).setItemControl(planItemControl);
 		} else if (parent instanceof PlanItemDefinition) {
 			((PlanItemDefinition) parent).setDefaultControl(planItemControl);
 		}

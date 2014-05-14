@@ -24,7 +24,6 @@ public class OcmCaseSubscriptionInfo extends AbstractCaseSubscriptionInfo<OcmCas
 	}
 
 	public OcmCaseSubscriptionInfo() {
-		System.out.println();
 	}
 
 	public OcmCaseSubscriptionInfo(Object o) {
