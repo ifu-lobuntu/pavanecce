@@ -1,5 +1,7 @@
 package org.pavanecce.cmmn.jbpm.flow;
 
-public interface CMMNElement {
+import java.io.Serializable;
+
+public interface CMMNElement extends Serializable{
 	String getElementId();
 }

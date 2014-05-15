@@ -18,8 +18,8 @@ public class CaseTaskHandler extends AbstractCaseElementHandler implements Handl
 	}
 
 	@Override
-	public Object start(String uri, String localName, Attributes attrs, ExtensibleXmlParser xmlPackageReader) throws SAXException {
-		xmlPackageReader.startElementBuilder(localName, attrs);
+	public Object start(String uri, String localName, Attributes attrs, ExtensibleXmlParser parser) throws SAXException {
+		parser.startElementBuilder(localName, attrs);
 		CaseTask node = new CaseTask();
 		node.setElementId(attrs.getValue("id"));
 		node.setBlocking(!"false".equals(attrs.getValue("isBlocking")));
@@ -34,16 +34,16 @@ public class CaseTaskHandler extends AbstractCaseElementHandler implements Handl
 				node.setProcessId(split[1]);
 			}
 		}
-		((Case) xmlPackageReader.getParent(Case.class)).addPlanItemDefinition(node);
+		((Case) parser.getParent(Case.class)).addPlanItemDefinition(node);
 		return node;
 	}
 
 	@Override
-	public Object end(String uri, String localName, ExtensibleXmlParser xmlPackageReader) throws SAXException {
-		xmlPackageReader.endElementBuilder();
-		CaseTask node = (CaseTask) xmlPackageReader.getCurrent();
+	public Object end(String uri, String localName, ExtensibleXmlParser parser) throws SAXException {
+		parser.endElementBuilder();
+		CaseTask node = (CaseTask) parser.getCurrent();
 		node.mapParameters();
-		return xmlPackageReader.getCurrent();
+		return parser.getCurrent();
 	}
 
 }

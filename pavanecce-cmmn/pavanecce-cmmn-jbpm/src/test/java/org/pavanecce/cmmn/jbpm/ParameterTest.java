@@ -38,7 +38,7 @@ public class ParameterTest extends AbstractConstructionTestCase {
 		triggerStartOfTask();
 		// *****THEN
 		assertNodeTriggered(caseInstance.getId(), "TheTask");
-		List<TaskSummary> list = getRuntimeEngine().getTaskService().getTasksOwned("Builder", "en-UK");
+		List<TaskSummary> list = getRuntimeEngine().getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
 		assertEquals(1, list.size());
 		Task task = getRuntimeEngine().getTaskService().getTaskById(list.get(0).getId());
 		Content input = getRuntimeEngine().getTaskService().getContentById(task.getTaskData().getDocumentContentId());

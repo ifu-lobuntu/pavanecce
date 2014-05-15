@@ -31,7 +31,7 @@
 			<cmmn:milestone id="theMilestone" name="TheMilestone"/>
 			<cmmn:userEvent id="theUserEventId" name="TheUserEvent"></cmmn:userEvent>
 		</cmmn:casePlanModel>
-		<cmmn:caseRoles name="Builder" id="builderRoleId" />
+		<cmmn:caseRoles name="Builders" id="builderRoleId" />
 		<cmmn:input bindingRef="housePlanFileItemId" id="housePlanSubCaseParameterId" name="housePlanSubCaseParameter">
 		</cmmn:input>
 		<cmmn:input bindingRef="wallPlanFileItemId" id="wallPlanSubCaseParameterId" name="wallPlanSubCaseParameter">

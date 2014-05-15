@@ -32,7 +32,7 @@ public class StageTest extends AbstractConstructionTestCase {
 		givenThatTheTestCaseIsStarted();
 		triggerStartOfTask();
 		assertNodeTriggered(caseInstance.getId(), "TopLevelTask");
-		List<TaskSummary> list = getRuntimeEngine().getTaskService().getTasksOwned("Builder", "en-UK");
+		List<TaskSummary> list = getRuntimeEngine().getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
 		assertEquals(1, list.size());
 		getRuntimeEngine().getTaskService().start(list.get(0).getId(), "Builder");
 		// *****WHEN

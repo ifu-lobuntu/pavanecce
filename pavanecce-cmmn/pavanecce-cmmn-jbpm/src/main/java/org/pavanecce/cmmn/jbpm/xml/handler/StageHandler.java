@@ -37,16 +37,16 @@ public class StageHandler extends PlanItemContainerHandler implements Handler {
 	}
 
 	@Override
-	public Object start(String uri, String localName, Attributes attrs, ExtensibleXmlParser xmlPackageReader) throws SAXException {
-		xmlPackageReader.startElementBuilder(localName, attrs);
+	public Object start(String uri, String localName, Attributes attrs, ExtensibleXmlParser parser) throws SAXException {
+		parser.startElementBuilder(localName, attrs);
 		Stage node = new Stage();
-		node.setId(IdGenerator.next(xmlPackageReader));
+		node.setId(IdGenerator.next(parser));
 		node.setElementId(attrs.getValue("id"));
 		node.setAutoComplete("true".equals(attrs.getValue("autoComplete")));
 		node.setName(attrs.getValue("name"));
-		Case theCase = (Case) xmlPackageReader.getParent(Case.class);
+		Case theCase = (Case) parser.getParent(Case.class);
 		theCase.addPlanItemDefinition(node);
-		super.startNodeContainer(node,xmlPackageReader);
+		super.startNodeContainer(node,parser);
 		return node;
 	}
 

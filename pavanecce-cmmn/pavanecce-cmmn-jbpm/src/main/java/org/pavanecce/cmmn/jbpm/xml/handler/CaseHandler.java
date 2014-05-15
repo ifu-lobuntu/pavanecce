@@ -3,6 +3,9 @@ package org.pavanecce.cmmn.jbpm.xml.handler;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.drools.core.process.core.datatype.impl.type.ObjectDataType;
 import org.drools.core.xml.ExtensibleXmlParser;
@@ -19,8 +22,10 @@ import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
 import org.pavanecce.cmmn.jbpm.flow.Definitions;
 import org.pavanecce.cmmn.jbpm.flow.HumanTask;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
+import org.pavanecce.cmmn.jbpm.flow.PlanningTable;
 import org.pavanecce.cmmn.jbpm.flow.Role;
 import org.pavanecce.cmmn.jbpm.flow.Stage;
+import org.pavanecce.cmmn.jbpm.flow.TableItem;
 import org.pavanecce.cmmn.jbpm.flow.TaskDefinition;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
@@ -96,37 +101,41 @@ public class CaseHandler extends PlanItemContainerHandler implements Handler {
 	public Object end(final String uri, final String localName, final ExtensibleXmlParser parser) throws SAXException {
 		Element el = (Element) parser.endElementBuilder();
 		Case process = (Case) parser.getCurrent();
-		Element cpm=(Element) el.getElementsByTagName("casePlanModel").item(0);
+		Element cpm = (Element) el.getElementsByTagName("casePlanModel").item(0);
 		process.setAutoComplete("true".equals(cpm.getAttribute("autoComplete")));
-		
+
 		VariableScope variableScope = process.getVariableScope();
 		List<Variable> variables = variableScope.getVariables();
 		for (Variable variable : variables) {
 			if (variable instanceof CaseFileItem) {
 				CaseFileItem c = (CaseFileItem) variable;
-				if (c.getTargetRefs() != null) {
-					for (String string : c.getTargetRefs()) {
-						c.addTarget(findCaseFileItemById(variableScope, string));
+				for (Entry<String, CaseFileItem> entry : c.getTargets().entrySet()) {
+					if (entry.getValue() == null) {
+						entry.setValue(findCaseFileItemById(variableScope, entry.getKey()));
 					}
 				}
 			}
 		}
 		linkParametersToCaseFileItems(variableScope, process.getInputParameters());
 		linkParametersToCaseFileItems(variableScope, process.getOutputParameters());
+		doRoleMapping(process.getRoles(), process.getPlanningTable());
 		Collection<PlanItemDefinition> planItemDefinitions = process.getPlanItemDefinitions();
 		for (PlanItemDefinition pi : planItemDefinitions) {
 			if (pi instanceof TaskDefinition) {
 				if (pi instanceof HumanTask) {
 					HumanTask ht = (HumanTask) pi;
-					for (Role role : process.getRoles()) {
+					Collection<Role> roles = process.getRoles();
+					for (Role role : roles) {
 						if (role.getElementId().equals(ht.getPerformerRef())) {
 							ht.setPerformer(role);
-							ht.getWork().setParameter("ActorId", role.getName());
 						}
 					}
+					doRoleMapping(roles, ht.getPlanningTable());
 				}
 				linkParametersToCaseFileItems(variableScope, ((TaskDefinition) pi).getInputs());
 				linkParametersToCaseFileItems(variableScope, ((TaskDefinition) pi).getOutputs());
+			} else if (pi instanceof Stage) {
+				doRoleMapping(process.getRoles(), ((Stage) pi).getPlanningTable());
 			}
 		}
 		linkPlanItems(process, parser);
@@ -136,6 +145,29 @@ public class CaseHandler extends PlanItemContainerHandler implements Handler {
 			}
 		}
 		return process;
+	}
+
+	protected void doRoleMapping(Collection<Role> roles, TableItem pt) {
+		if (pt != null) {
+			doRoleMapping(roles, pt.getAuthorizedRoles());
+			if (pt instanceof PlanningTable) {
+				Collection<TableItem> tableItems = ((PlanningTable) pt).getTableItems();
+				for (TableItem tableItem : tableItems) {
+					doRoleMapping(roles, tableItem.getAuthorizedRoles());
+				}
+			}
+		}
+	}
+
+	protected void doRoleMapping(Collection<Role> roles, Map<String, Role> authorizedRoles) {
+		Set<Entry<String, Role>> entrySet = authorizedRoles.entrySet();
+		for (Entry<String, Role> entry : entrySet) {
+			for (Role role : roles) {
+				if (entry.getValue() == null && entry.getKey().equals(role.getElementId())) {
+					entry.setValue(role);
+				}
+			}
+		}
 	}
 
 	private void linkParametersToCaseFileItems(VariableScope variableScope, List<CaseParameter> inputParameters) {

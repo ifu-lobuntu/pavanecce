@@ -25,6 +25,7 @@ public class Case extends RuleFlowProcess implements PlanItemContainer {
 	private Split defaultSplit;
 	private EndNode defaultEnd;
 	private Join defaultJoin;
+	private PlanningTable planningTable;
 
 	@Override
 	public StartNode getDefaultStart() {
@@ -143,5 +144,15 @@ public class Case extends RuleFlowProcess implements PlanItemContainer {
 	@Override
 	public Collection<PlanItemInfo<?>> getPlanItemInfo() {
 		return this.planItemInfo;
+	}
+
+	@Override
+	public PlanningTable getPlanningTable() {
+		return planningTable;
+	}
+
+	@Override
+	public void setPlanningTable(PlanningTable planningTable) {
+		this.planningTable = planningTable;
 	}
 }

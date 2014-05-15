@@ -49,7 +49,7 @@
 			</cmmn:milestone>
 			<cmmn:userEvent id="theUserEventId" name="TheUserEvent"></cmmn:userEvent>
 		</cmmn:casePlanModel>
-		<cmmn:caseRoles name="Builder" id="builderRoleId" />
+		<cmmn:caseRoles name="Builders" id="builderRoleId" />
 		<cmmn:input bindingRef="housePlanFileItemId" id="housePlanInputId" name="housePlan">
 		</cmmn:input>
 		<cmmn:input bindingRef="houseFileItemId" id="houseInputId" name="house">

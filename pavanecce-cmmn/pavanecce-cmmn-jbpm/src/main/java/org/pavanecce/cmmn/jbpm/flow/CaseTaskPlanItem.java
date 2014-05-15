@@ -7,6 +7,7 @@ import org.drools.core.process.core.ParameterDefinition;
 import org.drools.core.process.core.Work;
 import org.drools.core.process.core.impl.ParameterDefinitionImpl;
 import org.drools.core.process.core.impl.WorkImpl;
+import org.jbpm.services.task.wih.util.PeopleAssignmentHelper;
 import org.jbpm.workflow.core.node.SubProcessNode;
 import org.kie.api.definition.process.Connection;
 
@@ -16,9 +17,19 @@ public class CaseTaskPlanItem extends SubProcessNode implements PlanItem<CaseTas
 	private String elementId;
 	private PlanItemInfo<CaseTask> info;
 	private Work work;
+	private PlanItemContainer planItemContainer;
+	private String description;
 
 	public CaseTaskPlanItem(PlanItemInfo<CaseTask> info) {
 		this.info = info;
+	}
+
+	@Override
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String s){
+		this.description=s;
 	}
 
 	@Override
@@ -71,6 +82,8 @@ public class CaseTaskPlanItem extends SubProcessNode implements PlanItem<CaseTas
 				work.setParameter(entry.getKey(), entry.getValue());
 			}
 			work.setParameter("NodeName", getName());
+			work.setParameter(PeopleAssignmentHelper.GROUP_ID, TableItem.getPlannerRoles(this));
+			work.setParameter(PeopleAssignmentHelper.BUSINESSADMINISTRATOR_ID, TableItem.getPlannerRoles(this));
 		}
 		return work;
 	}
@@ -83,6 +96,14 @@ public class CaseTaskPlanItem extends SubProcessNode implements PlanItem<CaseTas
 	@Override
 	public void setElementId(String elementId) {
 		this.elementId = elementId;
+	}
+
+	public PlanItemContainer getPlanItemContainer() {
+		return planItemContainer;
+	}
+
+	public void setPlanItemContainer(PlanItemContainer planItemContainer) {
+		this.planItemContainer = planItemContainer;
 	}
 
 }

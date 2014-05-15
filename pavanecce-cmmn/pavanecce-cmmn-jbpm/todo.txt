@@ -20,20 +20,29 @@ Timer Event
 
 Milestone
  - entry criteria achieved
+ - requiredRule
  - OCCUR
 
 CaseTask
  - basic call
  - entry criteria achieved
+ - automaticActivationRule
+ - exit criteria achieved
+ - parameterMapping
+ - EXIT,DISABLE,ENABLE,MANUAL_START,START,COMPLETE,TERMINATE,FAULT,SUSPEND,RESUME
 
 Human Task
  - automaticActivationRule
  - entry criteria achieved
  - exit criteria achieved
- - EXIT,DISABLE,ENABLE,START,COMPLETE,TERMINATE,FAULT,SUSPEND,RESUME events
+ - EXIT,DISABLE,ENABLE,MANUAL_START,START,COMPLETE,TERMINATE,FAULT,SUSPEND,RESUME
 
 UserEvent
  - OCCUR 
+ 
+CaseModel
+ - auto completion
+
 
 Generate OCM and JPA test Java classes from UML along with CaseFileItemDefinition includes
 Implement OCLProcessDialect that extends JavaProcessDialect
@@ -49,51 +58,43 @@ Sentries with multiple onParts
 3. To implement
 
 Process/Case Task
- - no sentry
- - repetitionRule
- - requiredRule
- - automaticActivationRule
- - parameterMapping
- - transformation
- - exit criteria achieved
- - EXIT,DISABLE,ENABLE,MANUAL_START,START,COMPLETE,TERMINATE,FAULT,SUSPEND,RESUME,CREATE,REENABLE,REACTIVATE,PARENT_SUSPEND, PARENT_RESUME
+ - no sentry *
+ - repetitionRule *
+ - requiredRule *
+ - parameter transformation
+ - REENABLE,REACTIVATE,PARENT_SUSPEND*, PARENT_RESUME*, CREATE
 
 CaseModel:
- - direct exit Criteria
- - manual completion
- - auto completion
- - CREATE, TERMINATE,FAULT,CLOSE, COMPLETE,SUSPEND,REACTIVATE
+ - direct exit Criteria *
+ - manual completion *
+ - CREATE, TERMINATE*,FAULT*, CLOSE *, COMPLETE*,SUSPEND*,REACTIVATE*
  
 Stage:
- - no sentry
- - repetitionRule
- - requiredRule
- - automaticActivationRule
- - stagePlanItem's exit and its event
- - manual completion
- - exit criteria achieved
- - EXIT,DISABLE,ENABLE,MANUAL_START,START,COMPLETE,TERMINATE,FAULT,SUSPEND,RESUME,CREATE,REENABLE,REACTIVATE,PARENT_SUSPEND, PARENT_RESUME
- - auto completion, use ItemControl.requiredRule
+ - no sentry *
+ - repetitionRule *
+ - requiredRule *
+ - automaticActivationRule *
+ - stagePlanItem's exit and its event *
+ - manual completion *
+ - exit criteria achieved *
+ - EXIT*,DISABLE*,ENABLE*,MANUAL_START*,START*,COMPLETE?,TERMINATE*,FAULT*,SUSPEND*,RESUME*,CREATE,REENABLE,REACTIVATE,PARENT_SUSPEND*, PARENT_RESUME*
+ - auto completion, use ItemControl.requiredRule *
 
 Human Task
- - no sentry
- - repetitionRule
- - requiredRule
- - CREATE,REENABLE,REACTIVATE,PARENT_SUSPEND, PARENT_RESUME
+ - no sentry *
+ - repetitionRule *
+ - requiredRule *
+ - CREATE,REENABLE,REACTIVATE,PARENT_SUSPEND*, PARENT_RESUME*
 
 Milestone
- - no sentry
- - requiredRule
- - repetitionRule
- - CREATE,SUSPEND,RESUME,TERMINATE,PARENT_TERMINATE
+ - repetitionRule *
+ - CREATE,SUSPEND*,RESUME*,TERMINATE*,PARENT_TERMINATE*
 
 UserEvent
- - no sentry
- - CREATE,SUSPEND,RESUME,TERMINATE,PARENT_TERMINATE
+ - CREATE,SUSPEND*,RESUME*,TERMINATE*,PARENT_TERMINATE*
 
 TimerEvent
- - no sentry
- - CREATE,SUSPEND,RESUME,TERMINATE,PARENT_TERMINATE
+ - CREATE,SUSPEND*,RESUME*,TERMINATE*,PARENT_TERMINATE*
 
 Planning Tables:
  - Planning Table object (string/xml representing the current state of tasks and assignments of roles/parameters)

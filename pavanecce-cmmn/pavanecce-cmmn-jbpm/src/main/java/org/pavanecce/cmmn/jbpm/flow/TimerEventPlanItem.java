@@ -7,9 +7,17 @@ public class TimerEventPlanItem extends TimerNode implements PlanItem<TimerEvent
 	private static final long serialVersionUID = 3392205893370057689L;
 	private String elementId;
 	private PlanItemInfo<TimerEventListener> planInfo;
+	private PlanItemContainer planItemContainer;
+	private String description;
 
 	public TimerEventPlanItem(PlanItemInfo<TimerEventListener> info) {
 		this.planInfo = info;
+	}
+	public String getDescription() {
+		return this.description;
+	}
+	public void setDescription(String s){
+		this.description=s;
 	}
 
 	public String getElementId() {
@@ -30,6 +38,14 @@ public class TimerEventPlanItem extends TimerNode implements PlanItem<TimerEvent
 	@Override
 	public Timer getTimer() {
 		return getTimerEventListener().getTimer();
+	}
+
+	public PlanItemContainer getPlanItemContainer() {
+		return planItemContainer;
+	}
+
+	public void setPlanItemContainer(PlanItemContainer planItemContainer) {
+		this.planItemContainer = planItemContainer;
 	}
 
 }

@@ -1,5 +1,7 @@
 package org.pavanecce.cmmn.jbpm.instance.impl;
 
+import java.util.Iterator;
+
 import org.drools.core.WorkItemHandlerNotFoundException;
 import org.drools.core.process.instance.WorkItem;
 import org.drools.core.process.instance.WorkItemManager;
@@ -8,19 +10,26 @@ import org.jbpm.process.core.context.variable.VariableScope;
 import org.jbpm.process.instance.ContextInstance;
 import org.jbpm.process.instance.ProcessInstance;
 import org.jbpm.process.instance.context.exception.ExceptionScopeInstance;
+import org.jbpm.services.task.wih.util.PeopleAssignmentHelper;
 import org.jbpm.workflow.instance.WorkflowRuntimeException;
 import org.jbpm.workflow.instance.node.EventBasedNodeInstanceInterface;
 import org.jbpm.workflow.instance.node.StateBasedNodeInstance;
 import org.kie.api.runtime.process.NodeInstance;
+import org.kie.api.task.model.PeopleAssignments;
 import org.kie.api.task.model.Task;
 import org.pavanecce.cmmn.jbpm.flow.PlanItem;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemTransition;
+import org.pavanecce.cmmn.jbpm.flow.PlanningTable;
+import org.pavanecce.cmmn.jbpm.flow.Role;
+import org.pavanecce.cmmn.jbpm.instance.CaseElementLifecycleWithTask;
 import org.pavanecce.cmmn.jbpm.instance.ControllablePlanItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.instance.CustomVariableScopeInstance;
 import org.pavanecce.cmmn.jbpm.instance.PlanElementState;
+import org.pavanecce.cmmn.jbpm.instance.PlanItemInstanceContainer;
 
-public abstract class AbstractControllablePlanInstance <T extends PlanItemDefinition> extends StateBasedNodeInstance implements ControllablePlanItemInstanceLifecycle<T>, EventBasedNodeInstanceInterface {
+public abstract class AbstractControllablePlanInstance<T extends PlanItemDefinition> extends StateBasedNodeInstance implements ControllablePlanItemInstanceLifecycle<T>,
+		EventBasedNodeInstanceInterface {
 
 	private static final long serialVersionUID = 3200294767777991641L;
 
@@ -35,16 +44,19 @@ public abstract class AbstractControllablePlanInstance <T extends PlanItemDefini
 	public AbstractControllablePlanInstance() {
 		super();
 	}
-	public boolean isCompletionStillRequired(){
+
+	public boolean isCompletionStillRequired() {
 		return completionRequired && !planElementState.isTerminalState() && !planElementState.isSemiTerminalState();
 	}
-	public boolean isCompletionRequired(){
+
+	public boolean isCompletionRequired() {
 		return completionRequired;
 	}
-	public void internalSetCompletionRequired(boolean b){
-		this.completionRequired=b;
+
+	public void internalSetCompletionRequired(boolean b) {
+		this.completionRequired = b;
 	}
-	
+
 	protected abstract boolean isWaitForCompletion();
 
 	@Override
@@ -57,6 +69,14 @@ public abstract class AbstractControllablePlanInstance <T extends PlanItemDefini
 		}
 		String deploymentId = (String) getProcessInstance().getKnowledgeRuntime().getEnvironment().get("deploymentId");
 		workItem.setDeploymentId(deploymentId);
+		workItem.setParameter(COMMENT, getPlanItem().getDescription());
+		if (getNodeInstanceContainer() instanceof CaseElementLifecycleWithTask) {
+			long parentWorkItemId = ((CaseElementLifecycleWithTask) getNodeInstanceContainer()).getWorkItemId();
+			if (parentWorkItemId >= 0) {
+				workItem.setParameter(PARENT_WORK_ITEM_ID, parentWorkItemId);
+			}
+		}
+
 		if (isInversionOfControl()) {
 			((ProcessInstance) getProcessInstance()).getKnowledgeRuntime().update(((ProcessInstance) getProcessInstance()).getKnowledgeRuntime().getFactHandle(this), this);
 		} else {
@@ -77,7 +97,7 @@ public abstract class AbstractControllablePlanInstance <T extends PlanItemDefini
 			}
 		}
 		this.workItemId = workItem.getId();
-	
+
 		if (PlanItemInstanceUtil.isActivatedAutomatically(this)) {
 			this.start();
 		} else {
@@ -95,7 +115,7 @@ public abstract class AbstractControllablePlanInstance <T extends PlanItemDefini
 
 	@Override
 	public ContextInstance resolveContextInstance(String contextId, Object param) {
-	
+
 		final ContextInstance result = super.resolveContextInstance(contextId, param);
 		if (contextId.equals(VariableScope.VARIABLE_SCOPE)) {
 			// TODO make caseParameters available??
@@ -124,7 +144,7 @@ public abstract class AbstractControllablePlanInstance <T extends PlanItemDefini
 	public WorkItem getWorkItem() {
 		if (this.workItem == null) {
 			workItem = ((WorkItemManager) ((ProcessInstance) getProcessInstance()).getKnowledgeRuntime().getWorkItemManager()).getWorkItem(workItemId);
-	
+
 		}
 		return this.workItem;
 	}

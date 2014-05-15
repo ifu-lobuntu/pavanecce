@@ -104,7 +104,6 @@ public class StagePlanItemInstance extends CompositeNodeInstance implements Plan
 		((WorkItem) workItem).setProcessInstanceId(getProcessInstance().getId());
 		((WorkItem) workItem).setParameters(new HashMap<String, Object>(work.getParameters()));
 		((WorkItem) workItem).setParameter("planningTable", "");// TODO
-		((WorkItem) workItem).setParameter("planningTable", "");// TODO
 		return workItem;
 	}
 

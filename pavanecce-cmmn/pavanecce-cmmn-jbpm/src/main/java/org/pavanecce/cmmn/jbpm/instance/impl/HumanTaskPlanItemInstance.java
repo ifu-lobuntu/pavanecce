@@ -11,7 +11,6 @@ public class HumanTaskPlanItemInstance extends TaskPlanItemInstance<HumanTask> {
 	protected boolean isWaitForCompletion() {
 		return getPlanItem().isWaitForCompletion();
 	}
-
 	@Override
 	public HumanTaskPlanItem getPlanItem() {
 		return (HumanTaskPlanItem) super.getPlanItem();

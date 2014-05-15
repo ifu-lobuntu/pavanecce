@@ -7,6 +7,9 @@ public interface CaseElementLifecycleWithTask extends CaseElementLifecycle {
 	String TRANSITION = "Transition";
 	String TASK = "Task";
 	String WORK_ITEM_UPDATED = "workItemUpdated";
+	String TASK_NODE_NAME = "NodeName";
+	String COMMENT = "Comment";
+	String PARENT_WORK_ITEM_ID = "ParentId";
 
 	WorkItem getWorkItem();
 

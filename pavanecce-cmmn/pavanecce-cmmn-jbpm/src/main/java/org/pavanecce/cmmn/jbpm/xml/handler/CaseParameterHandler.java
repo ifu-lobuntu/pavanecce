@@ -24,21 +24,21 @@ public class CaseParameterHandler extends AbstractCaseElementHandler implements 
 	}
 
 	@Override
-	public Object start(String uri, String localName, Attributes attrs, ExtensibleXmlParser xmlPackageReader) throws SAXException {
-		xmlPackageReader.startElementBuilder(localName, attrs);
+	public Object start(String uri, String localName, Attributes attrs, ExtensibleXmlParser parser) throws SAXException {
+		parser.startElementBuilder(localName, attrs);
 		CaseParameter cp = new CaseParameter();
 		cp.setBindingRef(attrs.getValue("bindingRef"));
 		cp.setElementId(attrs.getValue("id"));
 		cp.setName(attrs.getValue("name"));
-		if(xmlPackageReader.getParent() instanceof Case){
-			Case p = (Case) xmlPackageReader.getParent();
+		if(parser.getParent() instanceof Case){
+			Case p = (Case) parser.getParent();
 			if(localName.equals("output")){
 				p.addOutputParameter(cp);
 			}else{
 				p.addInputParameter(cp);
 			}
-		}else if(xmlPackageReader.getParent() instanceof TaskDefinition){
-			TaskDefinition ht = (TaskDefinition) xmlPackageReader.getParent();
+		}else if(parser.getParent() instanceof TaskDefinition){
+			TaskDefinition ht = (TaskDefinition) parser.getParent();
 			if(localName.equals("outputs")){
 				ht.addOutputParameter(cp);
 			}else{
@@ -48,9 +48,9 @@ public class CaseParameterHandler extends AbstractCaseElementHandler implements 
 		return cp;
 	}
 	@Override
-	public Object end(String uri, String localName, ExtensibleXmlParser xmlPackageReader) throws SAXException {
-		Element el = xmlPackageReader.endElementBuilder();
-		CaseParameter caseParameter = (CaseParameter) xmlPackageReader.getCurrent();
+	public Object end(String uri, String localName, ExtensibleXmlParser parser) throws SAXException {
+		Element el = parser.endElementBuilder();
+		CaseParameter caseParameter = (CaseParameter) parser.getCurrent();
 		caseParameter.setBindingRefinement(ConstraintExtractor.extractExpression(el, "bindingRefinement"));
 		return caseParameter;
 	}

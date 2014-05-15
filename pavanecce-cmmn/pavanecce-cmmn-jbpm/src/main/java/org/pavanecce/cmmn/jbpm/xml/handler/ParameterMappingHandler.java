@@ -21,23 +21,23 @@ public class ParameterMappingHandler extends AbstractCaseElementHandler implemen
 	}
 
 	@Override
-	public Object start(String uri, String localName, Attributes attrs, ExtensibleXmlParser xmlPackageReader) throws SAXException {
-		xmlPackageReader.startElementBuilder(localName, attrs);
+	public Object start(String uri, String localName, Attributes attrs, ExtensibleXmlParser parser) throws SAXException {
+		parser.startElementBuilder(localName, attrs);
 		ParameterMapping cp = new ParameterMapping();
 		cp.setSourceRef(attrs.getValue("sourceRef"));
 		cp.setTargetRef(attrs.getValue("targetRef"));
 		cp.setElementId(attrs.getValue("id"));
-		if (xmlPackageReader.getParent() instanceof CaseTask) {
-			CaseTask ht = (CaseTask) xmlPackageReader.getParent();
+		if (parser.getParent() instanceof CaseTask) {
+			CaseTask ht = (CaseTask) parser.getParent();
 			ht.addParameterMapping(cp);
 		}
 		return cp;
 	}
 
 	@Override
-	public Object end(String uri, String localName, ExtensibleXmlParser xmlPackageReader) throws SAXException {
-		Element el = xmlPackageReader.endElementBuilder();
-		ParameterMapping ParameterMapping = (ParameterMapping) xmlPackageReader.getCurrent();
+	public Object end(String uri, String localName, ExtensibleXmlParser parser) throws SAXException {
+		Element el = parser.endElementBuilder();
+		ParameterMapping ParameterMapping = (ParameterMapping) parser.getCurrent();
 		ParameterMapping.setTransformation(ConstraintExtractor.extractExpression(el, "transformation"));
 		return ParameterMapping;
 	}

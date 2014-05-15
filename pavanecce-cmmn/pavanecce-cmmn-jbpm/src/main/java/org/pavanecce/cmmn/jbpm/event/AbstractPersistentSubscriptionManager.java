@@ -6,7 +6,6 @@ import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -151,7 +150,7 @@ public abstract class AbstractPersistentSubscriptionManager<T extends CaseSubscr
 				}
 				if (sub.isListeningTo(target, sub.getTransition())) {
 					cascadeSubscribe(caseInstance, target, sub.getVariable().getChildren(), em, subs);
-					cascadeSubscribe(caseInstance, target, sub.getVariable().getTargets(), em, subs);
+					cascadeSubscribe(caseInstance, target, sub.getVariable().getTargets().values(), em, subs);
 				}
 			}
 		}
@@ -249,7 +248,7 @@ public abstract class AbstractPersistentSubscriptionManager<T extends CaseSubscr
 		}
 	}
 
-	private void cascadeSubscribe(CaseInstance process, Object target, List<CaseFileItem> related, ObjectPersistence em, Collection<OnPartInstanceSubscription> subs) {
+	private void cascadeSubscribe(CaseInstance process, Object target, Collection<CaseFileItem> related, ObjectPersistence em, Collection<OnPartInstanceSubscription> subs) {
 		for (CaseFileItem caseFileItem : related) {
 			String propName = caseFileItem.getName();
 			try {

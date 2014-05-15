@@ -7,6 +7,7 @@ import org.drools.core.process.core.ParameterDefinition;
 import org.drools.core.process.core.Work;
 import org.drools.core.process.core.impl.ParameterDefinitionImpl;
 import org.drools.core.process.core.impl.WorkImpl;
+import org.jbpm.services.task.wih.util.PeopleAssignmentHelper;
 import org.jbpm.workflow.core.node.WorkItemNode;
 import org.kie.api.definition.process.Connection;
 
@@ -20,8 +21,16 @@ public class HumanTaskPlanItem extends WorkItemNode implements PlanItem<HumanTas
 	private Work work;
 	private String elementId;
 	private PlanItemInfo<HumanTask> info;
+	private PlanItemContainer planItemContainer;
+	private String description;
 	public HumanTaskPlanItem(PlanItemInfo<HumanTask> info){
 		this.info=info;
+	}
+	public String getDescription() {
+		return this.description;
+	}
+	public void setDescription(String s){
+		this.description=s;
 	}
 	@Override
 	public boolean isWaitForCompletion() {
@@ -75,7 +84,7 @@ public class HumanTaskPlanItem extends WorkItemNode implements PlanItem<HumanTas
 		if (work == null) {
 			if (info.getDefinition() instanceof WorkItemNode) {
 				work = new WorkImpl();
-				Work sourceWork = ((WorkItemNode) info.getDefinition()).getWork();
+				Work sourceWork = info.getDefinition().getWork();
 				work.setName(sourceWork.getName());
 				for (ParameterDefinition pd : sourceWork.getParameterDefinitions()) {
 					work.addParameterDefinition(new ParameterDefinitionImpl(pd.getName(), pd.getType()));
@@ -84,12 +93,19 @@ public class HumanTaskPlanItem extends WorkItemNode implements PlanItem<HumanTas
 					work.setParameter(entry.getKey(), entry.getValue());
 				}
 				work.setParameter("NodeName", getName());
+				work.setParameter(PeopleAssignmentHelper.BUSINESSADMINISTRATOR_ID, TableItem.getPlannerRoles(this));
 			} else {
 				// TODO rethink this
 				return NO_WORK;
 			}
 		}
 		return work;
+	}
+	public PlanItemContainer getPlanItemContainer() {
+		return planItemContainer;
+	}
+	public void setPlanItemContainer(PlanItemContainer planItemContainer) {
+		this.planItemContainer = planItemContainer;
 	}
 
 }

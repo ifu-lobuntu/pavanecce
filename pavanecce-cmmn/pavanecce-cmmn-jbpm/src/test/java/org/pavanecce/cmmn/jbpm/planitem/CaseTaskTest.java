@@ -20,7 +20,11 @@ public class CaseTaskTest extends AbstractTasklifecycleTests {
 		super(true, true, "org.jbpm.persistence.jpa");
 	}
 	public String getEventGeneratingTaskRole() {
-		return "Administrator";
+		return "ConstructionProjectManager";
+	}
+	@Override
+	protected String getBusinessAdministratorRole() {
+		return "ConstructionProjectManager";
 	}
 	@Test
 	public void testParameterMappings() throws Exception{
@@ -31,7 +35,7 @@ public class CaseTaskTest extends AbstractTasklifecycleTests {
 		List<TaskSummary> list = getRuntimeEngine().getTaskService().getTasksAssignedAsPotentialOwner(getEventGeneratingTaskRole(), "en-UK");
 		
 		assertEquals(1, list.size());
-		getRuntimeEngine().getTaskService().start(list.get(0).getId(), "Administrator");
+		getRuntimeEngine().getTaskService().start(list.get(0).getId(), "ConstructionProjectManager");
 		// *******THEN
 		getPersistence().start();
 		long id = getSubProcessInstanceId(list.get(0).getId());

@@ -13,9 +13,17 @@ public class StagePlanItem extends CompositeNode implements PlanItem <Stage>{
 	private static final long serialVersionUID = -4998194330899363230L;
 	private String elementId;
 	private PlanItemInfo<Stage> info;
+	private PlanItemContainer planItemContainer;
+	private String description;
 
 	public StagePlanItem(PlanItemInfo<Stage> info) {
 		this.info = info;
+	}
+	public String getDescription() {
+		return this.description;
+	}
+	public void setDescription(String s){
+		this.description=s;
 	}
 
 	public Stage getStage() {
@@ -59,5 +67,13 @@ public class StagePlanItem extends CompositeNode implements PlanItem <Stage>{
 		}
 		work.setParameter("NodeName", getName());
 		return work;
+	}
+
+	public PlanItemContainer getPlanItemContainer() {
+		return planItemContainer;
+	}
+
+	public void setPlanItemContainer(PlanItemContainer planItemContainer) {
+		this.planItemContainer = planItemContainer;
 	}
 }

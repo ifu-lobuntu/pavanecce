@@ -30,6 +30,9 @@ public class CMMNSemanticModule extends DefaultSemanticModule{
 		super.addHandler("stage", new StageHandler());
 		super.addHandler("defaultControl", new PlanItemControlHandler());
 		super.addHandler("itemControl", new PlanItemControlHandler());
+		super.addHandler("planningTable", new PlanningTableHandler());
+		super.addHandler("discretionaryItem", new DiscretionaryItemHandler());
+		super.addHandler("applicabilityRule", new ApplicabilityRuleHandler());
         this.handlersByClass.put( Sentry.class, sentryHandler);
 
 	}

@@ -13,6 +13,7 @@ import org.jbpm.workflow.instance.node.JoinInstance;
 import org.kie.api.definition.process.Connection;
 import org.kie.api.runtime.process.NodeInstance;
 import org.pavanecce.cmmn.jbpm.event.CaseEvent;
+import org.pavanecce.cmmn.jbpm.flow.MilestonePlanItem;
 import org.pavanecce.cmmn.jbpm.flow.OnPart;
 import org.pavanecce.cmmn.jbpm.flow.PlanItem;
 import org.pavanecce.cmmn.jbpm.flow.Sentry;
@@ -36,6 +37,7 @@ public class SentryInstance extends JoinInstance {
 	public void internalTrigger(NodeInstance from, String type) {
 		PlanItem<?> toEnter = getSentry().getPlanItemEntering();
 		if (toEnter instanceof UserEventPlanItem || toEnter instanceof TimerEventPlanItem) {
+			//TODO this will never happen?
 			isPlanItemInstanceStillRequired = false;
 			isPlanItemInstanceRequired = false;
 		}
@@ -45,6 +47,10 @@ public class SentryInstance extends JoinInstance {
 				isPlanItemInstanceRequired = constraintEvaluator.evaluate(this, null, constraintEvaluator);
 			} else {
 				isPlanItemInstanceRequired = Boolean.FALSE;
+			}
+			if(toEnter instanceof MilestonePlanItem){
+				MilestonePlanItemInstance ni = (MilestonePlanItemInstance) ((NodeInstanceContainer)getNodeInstanceContainer()).getNodeInstance(toEnter);
+				ni.internalSetRequired(isPlanItemInstanceRequired);
 			}
 		}
 		if (isPlanItemInstanceStillRequired == null) {

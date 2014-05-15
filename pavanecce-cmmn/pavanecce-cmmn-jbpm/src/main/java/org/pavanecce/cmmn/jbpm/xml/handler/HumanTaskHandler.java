@@ -18,22 +18,22 @@ public class HumanTaskHandler extends AbstractCaseElementHandler implements Hand
 	}
 
 	@Override
-	public Object start(String uri, String localName, Attributes attrs, ExtensibleXmlParser xmlPackageReader) throws SAXException {
-		xmlPackageReader.startElementBuilder(localName, attrs);
+	public Object start(String uri, String localName, Attributes attrs, ExtensibleXmlParser parser) throws SAXException {
+		parser.startElementBuilder(localName, attrs);
 		HumanTask node = new HumanTask();
 		node.setElementId(attrs.getValue("id"));
 		node.setBlocking(!"false".equals(attrs.getValue("isBlocking")));
 		node.setPerformerRef(attrs.getValue("performerRef"));
 		node.setName(attrs.getValue("name"));
 		node.setWaitForCompletion(node.isBlocking());
-		((Case) xmlPackageReader.getParent(Case.class)).addPlanItemDefinition(node);
+		((Case) parser.getParent(Case.class)).addPlanItemDefinition(node);
 		return node;
 	}
 
 	@Override
-	public Object end(String uri, String localName, ExtensibleXmlParser xmlPackageReader) throws SAXException {
-		xmlPackageReader.endElementBuilder();
-		return xmlPackageReader.getCurrent();
+	public Object end(String uri, String localName, ExtensibleXmlParser parser) throws SAXException {
+		parser.endElementBuilder();
+		return parser.getCurrent();
 	}
 
 }

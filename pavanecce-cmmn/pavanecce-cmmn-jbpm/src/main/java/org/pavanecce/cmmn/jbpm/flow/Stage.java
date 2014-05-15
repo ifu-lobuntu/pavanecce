@@ -131,4 +131,11 @@ public class Stage extends CompositeContextNode implements PlanItemDefinition, P
 		this.defaultControl = defaultControl;
 	}
 
+	public void setPlanningTable(PlanningTable planningTable) {
+	}
+
+	public PlanningTable getPlanningTable() {
+		return null;
+	}
+
 }

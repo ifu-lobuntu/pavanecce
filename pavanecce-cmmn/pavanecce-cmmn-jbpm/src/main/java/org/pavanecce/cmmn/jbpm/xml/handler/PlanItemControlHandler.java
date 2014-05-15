@@ -5,6 +5,7 @@ import org.drools.core.xml.Handler;
 import org.jbpm.workflow.core.impl.ConstraintImpl;
 import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
 import org.pavanecce.cmmn.jbpm.flow.CaseTask;
+import org.pavanecce.cmmn.jbpm.flow.DiscretionaryItem;
 import org.pavanecce.cmmn.jbpm.flow.HumanTask;
 import org.pavanecce.cmmn.jbpm.flow.Milestone;
 import org.pavanecce.cmmn.jbpm.flow.ParameterMapping;
@@ -27,6 +28,7 @@ public class PlanItemControlHandler extends AbstractCaseElementHandler implement
 		super.validParents.add(UserEventListener.class);
 		super.validParents.add(TimerEventListener.class);
 		super.validParents.add(Milestone.class);
+		super.validParents.add(DiscretionaryItem.class);
 		super.validPeers.add(null);
 		this.validPeers.add(CaseParameter.class);
 		this.validPeers.add(ParameterMapping.class);
@@ -35,11 +37,11 @@ public class PlanItemControlHandler extends AbstractCaseElementHandler implement
 	}
 
 	@Override
-	public Object start(String uri, String localName, Attributes attrs, ExtensibleXmlParser xmlPackageReader) throws SAXException {
-		xmlPackageReader.startElementBuilder(localName, attrs);
+	public Object start(String uri, String localName, Attributes attrs, ExtensibleXmlParser parser) throws SAXException {
+		parser.startElementBuilder(localName, attrs);
 		PlanItemControl planItemControl = new PlanItemControl();
 		planItemControl.setElementId(attrs.getValue("id"));
-		Object parent = xmlPackageReader.getParent();
+		Object parent = parser.getParent();
 		if (parent instanceof PlanItemInfo) {
 			((PlanItemInfo<?>) parent).setItemControl(planItemControl);
 		} else if (parent instanceof PlanItemDefinition) {
@@ -49,13 +51,13 @@ public class PlanItemControlHandler extends AbstractCaseElementHandler implement
 	}
 
 	@Override
-	public Object end(String uri, String localName, ExtensibleXmlParser xmlPackageReader) throws SAXException {
-		Element el = xmlPackageReader.endElementBuilder();
-		PlanItemControl planItemControl = (PlanItemControl) xmlPackageReader.getCurrent();
+	public Object end(String uri, String localName, ExtensibleXmlParser parser) throws SAXException {
+		Element el = parser.endElementBuilder();
+		PlanItemControl planItemControl = (PlanItemControl) parser.getCurrent();
 		planItemControl .setAutomaticActivationRule(extractRule(el, "automaticActivationRule"));
 		planItemControl .setRepetitionRule(extractRule(el, "repetitionRule"));
 		planItemControl .setRequiredRule(extractRule(el, "requiredRule"));
-		return xmlPackageReader.getCurrent();
+		return parser.getCurrent();
 	}
 
 	protected ConstraintImpl extractRule(Element el, String epxressionElementName3) {

@@ -79,7 +79,7 @@ public class CaseInstance extends RuleFlowProcessInstance implements PlanItemIns
 		((WorkItem) workItem).setProcessInstanceId(getId());
 		((WorkItem) workItem).setParameters(new HashMap<String, Object>());
 		((WorkItem) workItem).setParameter("planningTable", "");// TODO
-		((WorkItem) workItem).setParameter("nodeName", getCase().getName());// TODO
+		((WorkItem) workItem).setParameter("NodeName", getCase().getName());
 		return workItem;
 	}
 
@@ -335,6 +335,10 @@ public class CaseInstance extends RuleFlowProcessInstance implements PlanItemIns
 	@Override
 	public PlanItemContainer getPlanItemContainer() {
 		return getCase();
+	}
+
+	public void setWorkItemId(long readLong) {
+		this.workItemId=readLong;
 	}
 
 }

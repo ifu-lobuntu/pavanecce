@@ -33,4 +33,8 @@ public interface PlanItemContainer extends NodeContainer {
 	Case getCase();
 	
 	boolean isAutoComplete();
+
+	public abstract void setPlanningTable(PlanningTable planningTable);
+
+	public abstract PlanningTable getPlanningTable();
 }

@@ -1,7 +1,9 @@
 package org.pavanecce.cmmn.jbpm.flow;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.jbpm.process.core.context.variable.Variable;
 
@@ -15,8 +17,7 @@ public class CaseFileItem extends Variable implements CMMNElement {
 	private CaseFileItemDefinition definition;
 	private boolean isCollection;
 	private List<CaseFileItem> children = new ArrayList<CaseFileItem>();
-	private List<CaseFileItem> targets = new ArrayList<CaseFileItem>();
-	private List<String> targetRefs;
+	private Map<String,CaseFileItem> targets = new HashMap<String,CaseFileItem>();
 
 	@Override
 	public String getElementId() {
@@ -27,11 +28,11 @@ public class CaseFileItem extends Variable implements CMMNElement {
 		return children;
 	}
 
-	public List<CaseFileItem> getTargets() {
+	public Map<String, CaseFileItem> getTargets() {
 		return targets;
 	}
-	public void addTarget(CaseFileItem t){
-		targets.add(t);
+	public void putTarget(String id, CaseFileItem t){
+		targets.put(id, t);
 	}
 
 	public void addChild(CaseFileItem c) {
@@ -66,12 +67,5 @@ public class CaseFileItem extends Variable implements CMMNElement {
 		this.isCollection = isCollection;
 	}
 
-	public void setTargetRefs(List<String> asList) {
-		this.targetRefs = asList;
 
-	}
-
-	public List<String> getTargetRefs() {
-		return targetRefs;
-	}
 }

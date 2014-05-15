@@ -25,22 +25,22 @@ public class PlanItemOnPartHandler extends BaseAbstractHandler implements Handle
 
 	}
 	@Override
-	public Object start(String uri, String localName, Attributes attrs, ExtensibleXmlParser xmlPackageReader) throws SAXException {
-		xmlPackageReader.startElementBuilder(localName, attrs);
+	public Object start(String uri, String localName, Attributes attrs, ExtensibleXmlParser parser) throws SAXException {
+		parser.startElementBuilder(localName, attrs);
 		PlanItemOnPart part = new PlanItemOnPart();
-		part.setId(IdGenerator.next(xmlPackageReader));
+		part.setId(IdGenerator.next(parser));
 		part.setName(attrs.getValue("id"));
 		part.setSourceRef(attrs.getValue("sourceRef"));
-		((Sentry)xmlPackageReader.getParent()).addOnPart(part);
+		((Sentry)parser.getParent()).addOnPart(part);
 		return part;
 	}
 
 	@Override
-	public Object end(String uri, String localName, ExtensibleXmlParser xmlPackageReader) throws SAXException {
-		PlanItemOnPart part =(PlanItemOnPart) xmlPackageReader.getCurrent();
-		NodeList elementsByTagName = xmlPackageReader.endElementBuilder().getElementsByTagName("standardEvent");
+	public Object end(String uri, String localName, ExtensibleXmlParser parser) throws SAXException {
+		PlanItemOnPart part =(PlanItemOnPart) parser.getCurrent();
+		NodeList elementsByTagName = parser.endElementBuilder().getElementsByTagName("standardEvent");
 		part.setStandardEvent(PlanItemTransition.resolveByName(elementsByTagName.item(0).getFirstChild().getNodeValue()));
-		return xmlPackageReader.getCurrent();
+		return parser.getCurrent();
 	}
 
 	@Override

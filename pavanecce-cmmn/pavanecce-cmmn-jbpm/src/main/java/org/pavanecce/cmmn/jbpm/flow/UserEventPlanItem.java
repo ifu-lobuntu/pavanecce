@@ -9,9 +9,17 @@ public class UserEventPlanItem extends EventNode implements PlanItem<UserEventLi
 	private static final long serialVersionUID = 3392205893370057689L;
 	private String elementId;
 	private PlanItemInfo<UserEventListener> planInfo;
+	private PlanItemContainer planItemContainer;
+	private String description;
 
 	public UserEventPlanItem(PlanItemInfo<UserEventListener> info) {
 		this.planInfo = info;
+	}
+	public String getDescription() {
+		return this.description;
+	}
+	public void setDescription(String s){
+		this.description=s;
 	}
 
 	public String getElementId() {
@@ -39,5 +47,13 @@ public class UserEventPlanItem extends EventNode implements PlanItem<UserEventLi
 	@Override
 	public String getType() {
 		return getUserEvent().getType();
+	}
+
+	public PlanItemContainer getPlanItemContainer() {
+		return planItemContainer;
+	}
+
+	public void setPlanItemContainer(PlanItemContainer planItemContainer) {
+		this.planItemContainer = planItemContainer;
 	}
 }

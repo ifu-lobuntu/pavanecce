@@ -20,6 +20,7 @@ import org.jbpm.process.instance.impl.ContextInstanceFactory;
 import org.jbpm.process.instance.impl.ContextInstanceFactoryRegistry;
 import org.jbpm.process.instance.impl.ProcessInstanceImpl;
 import org.jbpm.process.instance.impl.ReturnValueConstraintEvaluator;
+import org.jbpm.services.task.wih.util.PeopleAssignmentHelper;
 import org.jbpm.workflow.instance.WorkflowProcessInstance;
 import org.kie.api.KieBase;
 import org.kie.api.definition.process.Node;
@@ -52,6 +53,7 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask> imp
 	protected CaseTaskPlanItem getSubProcessNode() {
 		return (CaseTaskPlanItem) getNode();
 	}
+
 
 	@Override
 	public void start() {

@@ -15,12 +15,12 @@ public class PlanItemHandler extends AbstractCaseElementHandler implements Handl
 	}
 
 	@Override
-	public Object start(String uri, String localName, Attributes attrs, ExtensibleXmlParser xmlPackageReader) throws SAXException {
-		xmlPackageReader.startElementBuilder(localName, attrs);
+	public Object start(String uri, String localName, Attributes attrs, ExtensibleXmlParser parser) throws SAXException {
+		parser.startElementBuilder(localName, attrs);
 		@SuppressWarnings("rawtypes")
 		PlanItemInfo planItem = new PlanItemInfo();
-		planItem.setId(IdGenerator.next(xmlPackageReader));
-		planItem.setContainer(((PlanItemContainer) xmlPackageReader.getParent()));
+		planItem.setId(IdGenerator.next(parser));
+		planItem.setContainer(((PlanItemContainer) parser.getParent()));
 		planItem.setName(attrs.getValue("name"));
 		String entry = attrs.getValue("entryCriteriaRefs");
 		if (entry != null) {
@@ -40,9 +40,9 @@ public class PlanItemHandler extends AbstractCaseElementHandler implements Handl
 	}
 
 	@Override
-	public Object end(String uri, String localName, ExtensibleXmlParser xmlPackageReader) throws SAXException {
-		xmlPackageReader.endElementBuilder();
-		return xmlPackageReader.getCurrent();
+	public Object end(String uri, String localName, ExtensibleXmlParser parser) throws SAXException {
+		parser.endElementBuilder();
+		return parser.getCurrent();
 	}
 
 	@Override

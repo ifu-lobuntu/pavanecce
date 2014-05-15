@@ -23,7 +23,7 @@ public class HumanTask extends WorkItemNode implements TaskDefinition {
 	private List<CaseParameter> inputParameters = new ArrayList<CaseParameter>();
 	private List<CaseParameter> outputParameters = new ArrayList<CaseParameter>();
 	private PlanItemControl defaultControl;
-
+	private PlanningTable planningTable;
 
 	public HumanTask() {
 		Work work = new WorkImpl();
@@ -100,9 +100,9 @@ public class HumanTask extends WorkItemNode implements TaskDefinition {
 	@Override
 	public Work getWork() {
 		Work result = super.getWork();
-		// Think about this - case owner??
-		result.setParameter(PeopleAssignmentHelper.BUSINESSADMINISTRATOR_ID, getPerformer().getName());
-
+		if (getPerformer() != null) {
+			result.setParameter(PeopleAssignmentHelper.GROUP_ID, getPerformer().getName());
+		}
 		return result;
 	}
 
@@ -112,6 +112,14 @@ public class HumanTask extends WorkItemNode implements TaskDefinition {
 
 	public void setDefaultControl(PlanItemControl defaultControl) {
 		this.defaultControl = defaultControl;
+	}
+
+	public void setPlanningTable(PlanningTable item) {
+		this.planningTable = item;
+	}
+
+	public PlanningTable getPlanningTable() {
+		return planningTable;
 	}
 
 }

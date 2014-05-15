@@ -8,6 +8,7 @@ import org.drools.core.xml.ExtensibleXmlParser;
 import org.jbpm.process.core.context.variable.Variable;
 import org.jbpm.process.core.context.variable.VariableScope;
 import org.jbpm.workflow.core.impl.ConnectionImpl;
+import org.jbpm.workflow.core.impl.NodeImpl;
 import org.jbpm.workflow.core.node.EndNode;
 import org.jbpm.workflow.core.node.Join;
 import org.jbpm.workflow.core.node.Split;
@@ -75,10 +76,10 @@ public abstract class PlanItemContainerHandler extends BaseAbstractHandler {
 			Sentry exit = findSentry(process, string);
 			node.getPlanInfo().putExitCriterion(string, exit);
 		}
-		if (node instanceof UserEventPlanItem || node instanceof TimerEventPlanItem) {
+		node.getPlanInfo().linkPlanItem();
+		if (node.getIncomingConnections(NodeImpl.CONNECTION_DEFAULT_TYPE).isEmpty()) {
 			new ConnectionImpl(process.getDefaultSplit(), DEFAULT, node, DEFAULT);
 		}
-		node.getPlanInfo().linkPlanItem();
 	}
 
 	private void linkSentryOnPart(PlanItemContainer process, Split defaultSplit, VariableScope variableScope, Sentry sentry) {

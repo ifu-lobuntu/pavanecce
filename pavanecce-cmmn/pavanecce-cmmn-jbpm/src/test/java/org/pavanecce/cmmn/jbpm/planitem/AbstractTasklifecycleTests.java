@@ -75,7 +75,7 @@ public abstract class AbstractTasklifecycleTests extends AbstractConstructionTes
 		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.SUSPENDED);
 		getRuntimeEngine().getTaskService().resume(list.get(0).getId(), getEventGeneratingTaskRole());
 		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.ACTIVE);
-		getRuntimeEngine().getTaskService().exit(list.get(0).getId(), getEventGeneratingTaskRole());
+		getRuntimeEngine().getTaskService().exit(list.get(0).getId(), getBusinessAdministratorRole());
 		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.TERMINATED);
 		// *****THEN
 	}
@@ -194,13 +194,17 @@ public abstract class AbstractTasklifecycleTests extends AbstractConstructionTes
 		// *****WHEN
 		// *****WHEN
 		getRuntimeEngine().getTaskService().start(list.get(0).getId(), getEventGeneratingTaskRole());
-		getRuntimeEngine().getTaskService().exit(list.get(0).getId(), getEventGeneratingTaskRole());
+		getRuntimeEngine().getTaskService().exit(list.get(0).getId(), getBusinessAdministratorRole());
 		// *****THEN
 		list = getRuntimeEngine().getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
 		assertEquals(1, list.size());
 
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenTaskTerminated");
 		assertEquals("PlanItemEnteredWhenTaskTerminated", list.get(0).getName());
+	}
+
+	protected String getBusinessAdministratorRole() {
+		return "Administrator";
 	}
 
 	@Test

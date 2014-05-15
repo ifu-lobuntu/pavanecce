@@ -56,6 +56,7 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 		Object result = super.writeProcessInstance(context, processInstance);
 		if (processInstance instanceof CaseInstance) {
 			context.stream.writeInt(((CaseInstance) processInstance).getPlanElementState().ordinal());
+			context.stream.writeLong(((CaseInstance) processInstance).getWorkItemId());
 		}
 		return result;
 	}
@@ -66,6 +67,7 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 		ProcessInstance read = super.readProcessInstance(context);
 		if (read instanceof CaseInstance) {
 			((CaseInstance) read).setPlanElementState(PlanElementState.values()[stream.readInt()]);
+			((CaseInstance) read).setWorkItemId(stream.readLong());
 		}
 		return read;
 	}

@@ -114,7 +114,7 @@
 				<cmmn:outputs name="wall" bindingRef="wallFileItemId"></cmmn:outputs>
 			</cmmn:humanTask>
 		</cmmn:casePlanModel>
-		<cmmn:caseRoles name="Builder" id="builderRoleId" />
+		<cmmn:caseRoles name="Builders" id="builderRoleId" />
 		<cmmn:input bindingRef="housePlanFileItemId" id="housePlanInputId" name="housePlan">
 		</cmmn:input>
 		<cmmn:input bindingRef="houseFileItemId" id="houseInputId" name="house">

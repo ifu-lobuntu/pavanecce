@@ -25,12 +25,12 @@ public class CaseFileItemOnPartHandler extends BaseAbstractHandler implements Ha
 	}
 
 	@Override
-	public Object start(String uri, String localName, Attributes attrs, ExtensibleXmlParser xmlPackageReader) throws SAXException {
-		xmlPackageReader.startElementBuilder(localName, attrs);
+	public Object start(String uri, String localName, Attributes attrs, ExtensibleXmlParser parser) throws SAXException {
+		parser.startElementBuilder(localName, attrs);
 		CaseFileItemOnPart part = new CaseFileItemOnPart();
-		part.setId(IdGenerator.next(xmlPackageReader));
+		part.setId(IdGenerator.next(parser));
 		part.setName(attrs.getValue("id"));
-		((Sentry) xmlPackageReader.getParent()).addOnPart(part);
+		((Sentry) parser.getParent()).addOnPart(part);
 		part.setSourceRef(attrs.getValue("sourceRef"));
 		part.setRelationRef(attrs.getValue("relationRef"));
 
@@ -38,11 +38,11 @@ public class CaseFileItemOnPartHandler extends BaseAbstractHandler implements Ha
 	}
 
 	@Override
-	public Object end(String uri, String localName, ExtensibleXmlParser xmlPackageReader) throws SAXException {
-		CaseFileItemOnPart part = (CaseFileItemOnPart) xmlPackageReader.getCurrent();
-		NodeList standardEvents = xmlPackageReader.endElementBuilder().getElementsByTagName("standardEvent");
+	public Object end(String uri, String localName, ExtensibleXmlParser parser) throws SAXException {
+		CaseFileItemOnPart part = (CaseFileItemOnPart) parser.getCurrent();
+		NodeList standardEvents = parser.endElementBuilder().getElementsByTagName("standardEvent");
 		part.setStandardEvent(CaseFileItemTransition.resolveByName(standardEvents.item(0).getFirstChild().getNodeValue()));
-		return xmlPackageReader.getCurrent();
+		return parser.getCurrent();
 	}
 
 	@Override

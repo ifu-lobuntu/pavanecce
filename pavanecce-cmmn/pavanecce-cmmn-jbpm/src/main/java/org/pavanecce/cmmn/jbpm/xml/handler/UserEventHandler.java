@@ -9,22 +9,22 @@ import org.xml.sax.SAXException;
 public class UserEventHandler extends AbstractCaseElementHandler {
 
 	@Override
-	public Object start(String uri, String localName, Attributes attrs, ExtensibleXmlParser xmlPackageReader) throws SAXException {
+	public Object start(String uri, String localName, Attributes attrs, ExtensibleXmlParser parser) throws SAXException {
 		UserEventListener node = new UserEventListener();
-		xmlPackageReader.startElementBuilder(localName, attrs);
-		node.setId(IdGenerator.next(xmlPackageReader));
+		parser.startElementBuilder(localName, attrs);
+		node.setId(IdGenerator.next(parser));
 
 		node.setElementId(attrs.getValue("id"));
 		node.setName(attrs.getValue("name"));
 		node.setEventName(attrs.getValue("name"));
-		((Case) xmlPackageReader.getParent(Case.class)).addPlanItemDefinition(node);
+		((Case) parser.getParent(Case.class)).addPlanItemDefinition(node);
 		return node;
 	}
 
 	@Override
-	public Object end(String uri, String localName, ExtensibleXmlParser xmlPackageReader) throws SAXException {
-		xmlPackageReader.endElementBuilder();
-		return xmlPackageReader.getCurrent();
+	public Object end(String uri, String localName, ExtensibleXmlParser parser) throws SAXException {
+		parser.endElementBuilder();
+		return parser.getCurrent();
 	}
 
 	@Override

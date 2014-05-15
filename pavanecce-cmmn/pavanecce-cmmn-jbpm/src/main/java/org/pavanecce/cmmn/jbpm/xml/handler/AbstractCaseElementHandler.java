@@ -9,10 +9,12 @@ import org.jbpm.process.core.context.variable.Variable;
 import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
 import org.pavanecce.cmmn.jbpm.flow.CaseTask;
+import org.pavanecce.cmmn.jbpm.flow.DiscretionaryItem;
 import org.pavanecce.cmmn.jbpm.flow.HumanTask;
 import org.pavanecce.cmmn.jbpm.flow.Milestone;
 import org.pavanecce.cmmn.jbpm.flow.PlanItem;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemInfo;
+import org.pavanecce.cmmn.jbpm.flow.PlanningTable;
 import org.pavanecce.cmmn.jbpm.flow.Role;
 import org.pavanecce.cmmn.jbpm.flow.Sentry;
 import org.pavanecce.cmmn.jbpm.flow.Stage;
@@ -25,7 +27,8 @@ public abstract class AbstractCaseElementHandler extends BaseAbstractHandler imp
 	public AbstractCaseElementHandler() {
 		this.validParents = new HashSet<Class<?>>();
 		this.validParents.add(Case.class);
-
+		super.validParents.add(Stage.class);
+		
 		this.validPeers = new HashSet<Class<?>>();
 		this.validPeers.add(null);
 		this.validPeers.add(Sentry.class);
@@ -41,6 +44,8 @@ public abstract class AbstractCaseElementHandler extends BaseAbstractHandler imp
 		this.validPeers.add(TimerEventListener.class);
 		this.validPeers.add(PlanItemInfo.class);
 		this.validPeers.add(PlanItem.class);
+		this.validPeers.add(DiscretionaryItem.class);
+		this.validPeers.add(PlanningTable.class);
 	}
 
 }

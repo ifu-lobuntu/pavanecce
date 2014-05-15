@@ -3,12 +3,14 @@ package org.pavanecce.cmmn.jbpm.test;
 import static org.kie.api.runtime.EnvironmentName.*;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
@@ -141,17 +143,19 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 
 	public void assertPlanItemInState(long processInstanceId, String planItemName, PlanElementState s) {
 		getPersistence().start();
-		CaseInstance ci= (CaseInstance) getRuntimeEngine().getKieSession().getProcessInstance(processInstanceId);
-		boolean found=false;
-		String foundState="";
+		CaseInstance ci = (CaseInstance) getRuntimeEngine().getKieSession().getProcessInstance(processInstanceId);
+		boolean found = false;
+		String foundState = "";
 		for (NodeInstance ni : ci.getNodeInstances()) {
-			if(ni instanceof ControllablePlanItemInstanceLifecycle && ni.getNodeName().equals(planItemName) ){
-				if(((ControllablePlanItemInstanceLifecycle<?>) ni).getPlanElementState()==s){
-				found=true;}else{
-				foundState=((ControllablePlanItemInstanceLifecycle<?>) ni).getPlanElementState().name();
-			}}
+			if (ni instanceof ControllablePlanItemInstanceLifecycle && ni.getNodeName().equals(planItemName)) {
+				if (((ControllablePlanItemInstanceLifecycle<?>) ni).getPlanElementState() == s) {
+					found = true;
+				} else {
+					foundState = ((ControllablePlanItemInstanceLifecycle<?>) ni).getPlanElementState().name();
+				}
+			}
 		}
-		assertTrue(planItemName + " should be in state " + s.name() + " but was in " +foundState, found);
+		assertTrue(planItemName + " should be in state " + s.name() + " but was in " + foundState, found);
 		getPersistence().commit();
 	}
 
@@ -305,7 +309,7 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 		nodeInstanceFactoryRegistry.register(OnPart.class, new ReuseNodeFactory(OnPartInstance.class));
 		nodeInstanceFactoryRegistry.register(UserEventPlanItem.class, new ReuseNodeFactory(UserEventPlanItemInstance.class));
 		nodeInstanceFactoryRegistry.register(TimerEventPlanItem.class, new ReuseNodeFactory(TimerEventPlanItemInstance.class));
-		nodeInstanceFactoryRegistry.register(MilestonePlanItem.class, new CreateNewNodeFactory(MilestonePlanItemInstance.class));
+		nodeInstanceFactoryRegistry.register(MilestonePlanItem.class, new ReuseNodeFactory(MilestonePlanItemInstance.class));
 		nodeInstanceFactoryRegistry.register(CaseFileItemOnPart.class, new ReuseNodeFactory(OnPartInstance.class));
 		nodeInstanceFactoryRegistry.register(PlanItemOnPart.class, new ReuseNodeFactory(OnPartInstance.class));
 		nodeInstanceFactoryRegistry.register(StagePlanItem.class, new CreateNewNodeFactory(StagePlanItemInstance.class));
@@ -316,29 +320,38 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 			((InternalTaskService) ts).addMarshallerContext(rm.getIdentifier(), new ContentMarshallerContext(env, getClass().getClassLoader()));
 		}
 		// for some reason the task service does not persist the users and groups ???
-		populateUsers("Builder","EventGeneratingBuilder", "Administrator");
+		populateUsers();
 		return rm;
 	}
 
-	protected void populateUsers(String... userIds) {
+	protected void populateUsers() {
 		JBossUserGroupCallbackImpl users = new JBossUserGroupCallbackImpl("classpath:/usergroups.properties");
-		getPersistence().start();
-		EntityManager em = getEmf().createEntityManager();
-		for (String userId : userIds) {
-			UserImpl builder = em.find(UserImpl.class, userId);
-			if (builder == null) {
-				em.persist(new UserImpl(userId));
-				em.flush();
-			}
-			for (String g : users.getGroupsForUser(userId, null, null)) {
-				GroupImpl group = em.find(GroupImpl.class, g);
-				if (group == null) {
-					em.persist(new GroupImpl(g));
+		Properties props = new Properties();
+		try {
+			props.load(getClass().getClassLoader().getResourceAsStream("usergroups.properties"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		for (Object userId : props.keySet()) {
+			getPersistence().start();
+			EntityManager em = getEmf().createEntityManager();
+			GroupImpl group = em.find(GroupImpl.class, userId);
+			if (group == null) {
+				UserImpl builder = em.find(UserImpl.class, userId);
+				if (builder == null) {
+					em.persist(new UserImpl((String) userId));
 					em.flush();
 				}
+				for (String g : users.getGroupsForUser((String) userId, null, null)) {
+					group = em.find(GroupImpl.class, g);
+					if (group == null) {
+						em.persist(new GroupImpl(g));
+						em.flush();
+					}
+				}
 			}
+			getPersistence().commit();
 		}
-		getPersistence().commit();
 	}
 
 	protected ObjectMarshallingStrategy[] getPlaceholdStrategies(Environment env) {

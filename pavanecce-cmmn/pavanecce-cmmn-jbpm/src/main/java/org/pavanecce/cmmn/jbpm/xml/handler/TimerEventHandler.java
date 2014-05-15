@@ -10,21 +10,21 @@ import org.xml.sax.SAXException;
 public class TimerEventHandler extends AbstractCaseElementHandler {
 
 	@Override
-	public Object start(String uri, String localName, Attributes attrs, ExtensibleXmlParser xmlPackageReader) throws SAXException {
+	public Object start(String uri, String localName, Attributes attrs, ExtensibleXmlParser parser) throws SAXException {
 		TimerEventListener node = new TimerEventListener();
-		xmlPackageReader.startElementBuilder(localName, attrs);
+		parser.startElementBuilder(localName, attrs);
 		node.setElementId(attrs.getValue("id"));
-		node.setId(IdGenerator.next(xmlPackageReader));
+		node.setId(IdGenerator.next(parser));
 
 		node.setName(attrs.getValue("name"));
-		((Case) xmlPackageReader.getParent(Case.class)).addPlanItemDefinition(node);
+		((Case) parser.getParent(Case.class)).addPlanItemDefinition(node);
 		return node;
 	}
 
 	@Override
-	public Object end(String uri, String localName, ExtensibleXmlParser xmlPackageReader) throws SAXException {
-		Element el = xmlPackageReader.endElementBuilder();
-		TimerEventListener l = (TimerEventListener) xmlPackageReader.getCurrent();
+	public Object end(String uri, String localName, ExtensibleXmlParser parser) throws SAXException {
+		Element el = parser.endElementBuilder();
+		TimerEventListener l = (TimerEventListener) parser.getCurrent();
 		l.setTimerExpression(ConstraintExtractor.extractExpression(el, "timerExpression"));
 		return l;
 	}

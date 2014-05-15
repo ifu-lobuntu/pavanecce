@@ -7,9 +7,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.jbpm.workflow.core.Node;
-import org.jbpm.workflow.core.NodeContainer;
 import org.jbpm.workflow.core.impl.ConnectionImpl;
-
+/**
+ * This class represents a workaround for the parallel inheritance trees between PlanItems and PlanItemDefinitions
+ * Not sure if we can circumvent this problem
+ */
 public class PlanItemInfo<T extends PlanItemDefinition> {
 	private Map<String, Sentry> entryCriteria = new HashMap<String, Sentry>();
 	private Map<String, Sentry> exitCriteria = new HashMap<String, Sentry>();
@@ -19,7 +21,7 @@ public class PlanItemInfo<T extends PlanItemDefinition> {
 	private String elementId;
 	private String name;
 	private long id;
-	private NodeContainer nodeContainer;
+	private PlanItemContainer nodeContainer;
 	private PlanItemControl itemControl;
 
 	public PlanItemInfo() {
@@ -56,6 +58,7 @@ public class PlanItemInfo<T extends PlanItemDefinition> {
 		} else if (definition instanceof CaseTask) {
 			planItem = (PlanItem<T>) new CaseTaskPlanItem((PlanItemInfo<CaseTask>) this);
 		}
+		planItem.setPlanItemContainer(nodeContainer);//possible duplication here of setNodeContainer
 		planItem.setElementId(getElementId());
 		planItem.setName(getName());
 		planItem.setId(id);

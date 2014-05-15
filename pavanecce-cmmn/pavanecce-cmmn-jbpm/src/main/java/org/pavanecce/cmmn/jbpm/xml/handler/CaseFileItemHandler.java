@@ -53,8 +53,9 @@ public class CaseFileItemHandler extends BaseAbstractHandler implements Handler 
 			variable.setCollection(!multiplicity.endsWith("One"));
 		}
 		if(targetRefs!=null){
-			variable.setTargetRefs(Arrays.asList(targetRefs.split("\\ ")));
-			
+			for (String string : targetRefs.split("\\ ")) {
+				variable.putTarget(string, null);
+			}
 		}
 		Case parent = (Case) parser.getParent(Case.class);
 		// All CaseFileItems are at the Case level - Stages do not have

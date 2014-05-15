@@ -9,13 +9,13 @@ import org.xml.sax.SAXException;
 public class MilestoneHandler extends AbstractCaseElementHandler {
 
 	@Override
-	public Object start(String uri, String localName, Attributes attrs, ExtensibleXmlParser xmlPackageReader) throws SAXException {
-		xmlPackageReader.startElementBuilder(localName, attrs);
+	public Object start(String uri, String localName, Attributes attrs, ExtensibleXmlParser parser) throws SAXException {
+		parser.startElementBuilder(localName, attrs);
 		Milestone node = new Milestone();
-		node.setId(IdGenerator.next(xmlPackageReader));
+		node.setId(IdGenerator.next(parser));
 		node.setElementId(attrs.getValue("id"));
 		node.setName(attrs.getValue("name"));
-		((Case) xmlPackageReader.getParent(Case.class)).addPlanItemDefinition(node);
+		((Case) parser.getParent(Case.class)).addPlanItemDefinition(node);
 		return node;
 	}
 
@@ -25,9 +25,9 @@ public class MilestoneHandler extends AbstractCaseElementHandler {
 	}
 
 	@Override
-	public Object end(String uri, String localName, ExtensibleXmlParser xmlPackageReader) throws SAXException {
-		xmlPackageReader.endElementBuilder();
-		return xmlPackageReader.getCurrent();
+	public Object end(String uri, String localName, ExtensibleXmlParser parser) throws SAXException {
+		parser.endElementBuilder();
+		return parser.getCurrent();
 	}
 
 }

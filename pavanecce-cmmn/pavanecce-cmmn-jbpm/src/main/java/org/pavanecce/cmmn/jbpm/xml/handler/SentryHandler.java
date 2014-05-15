@@ -40,14 +40,14 @@ public class SentryHandler extends AbstractCaseElementHandler implements Handler
 	}
 
 	@Override
-	public Object end(String uri, String localName, ExtensibleXmlParser xmlPackageReader) throws SAXException {
-		Sentry node = (Sentry) xmlPackageReader.getCurrent();
+	public Object end(String uri, String localName, ExtensibleXmlParser parser) throws SAXException {
+		Sentry node = (Sentry) parser.getCurrent();
 		Collection<? extends OnPart> onParts = node.getOnParts();
-		Element el = xmlPackageReader.endElementBuilder();
+		Element el = parser.endElementBuilder();
 		ConstraintImpl constraint = maybeCreateConstraint(node, el);
 		node.setCondition(constraint);
-		node.setId(IdGenerator.next(xmlPackageReader));
-		NodeContainer parent = (NodeContainer) xmlPackageReader.getParent();
+		node.setId(IdGenerator.next(parser));
+		NodeContainer parent = (NodeContainer) parser.getParent();
 		parent.addNode(node);
 		for (OnPart onPart : onParts) {
 			new ConnectionImpl(onPart, DEFAULT, node, DEFAULT);
