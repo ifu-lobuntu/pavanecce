@@ -21,6 +21,13 @@
 			<cmmn:planItem definitionRef="theTimerEventId" name="TheTimerEventPlanItem" id="theTimerEventPlanItemId" />
 			<cmmn:planItem definitionRef="theUserEventId" name="TheUserEventPlanItem" id="theUserEventPlanItemId" />
 			<cmmn:caseTask id="theCaseTaskId" name="TheCaseTask" caseRef="SubCase.cmmn#SubCase" isBlocking="true">
+				<cmmn:defaultControl>
+					<cmmn:requiredRule>
+						<cmmn:condition language="http://www.java.com/java">
+							<cmmn:body>return true;</cmmn:body>
+						</cmmn:condition>
+					</cmmn:requiredRule>
+				</cmmn:defaultControl>
 				<cmmn:inputs bindingRef="housePlanFileItemId" id="housePlanTaskParameter" name="housePlanTaskParameter">
 				</cmmn:inputs>
 				<cmmn:inputs bindingRef="wallPlanFileItemId" id="wallPlanTaskParameter" name="wallPlanTaskParameter">
@@ -29,27 +36,43 @@
 				<cmmn:parameterMapping sourceRef="wallPlanTaskParameter" targetRef="SubCase.cmmn#wallPlanSubCaseParameterId">
 				</cmmn:parameterMapping>
 			</cmmn:caseTask>
-			<cmmn:humanTask id="theHumanTaskId" name="TheHumanTask" performerRef="builderRoleId"></cmmn:humanTask>
-			<cmmn:milestone id="theMilestoneId" name="TheMilestone" />
+			<cmmn:humanTask id="theHumanTaskId" name="TheHumanTask" performerRef="builderRoleId">
+				<cmmn:defaultControl>
+					<cmmn:requiredRule>
+						<cmmn:condition language="http://www.java.com/java">
+							<cmmn:body>return true;</cmmn:body>
+						</cmmn:condition>
+					</cmmn:requiredRule>
+				</cmmn:defaultControl>
+			</cmmn:humanTask>
+			<cmmn:milestone id="theMilestoneId" name="TheMilestone">
+				<cmmn:defaultControl>
+					<cmmn:requiredRule>
+						<cmmn:condition language="http://www.java.com/java">
+							<cmmn:body>return true;</cmmn:body>
+						</cmmn:condition>
+					</cmmn:requiredRule>
+				</cmmn:defaultControl>
+			</cmmn:milestone>
 			<cmmn:timerEvent id="theTimerEventId" name="TheTimerEvent">
-				<cmmn:timerExpression language="http://www.mvel.org/mvel">
-					<cmmn:body>1h</cmmn:body>
+				<cmmn:timerExpression language="ISO 8601">
+					<cmmn:body>R5/2028-03-01T13:00:00Z/P2D</cmmn:body>
 				</cmmn:timerExpression>
 			</cmmn:timerEvent>
 			<cmmn:userEvent id="theUserEventId" name="TheUserEvent" />
 			<cmmn:userEvent id="startUserEventId" name="StartUserEvent" />
 			<cmmn:sentry id="waitingForStartUserEventSentryId1" name="WaitingForStartUserEventSentry1">
-				<cmmn:planItemOnPart id="onStartUserEventOccurred" sourceRef="startUserEventPlanItemId">
+				<cmmn:planItemOnPart id="onStartUserEventOccurred1" sourceRef="startUserEventPlanItemId">
 					<cmmn:standardEvent>occur</cmmn:standardEvent>
 				</cmmn:planItemOnPart>
 			</cmmn:sentry>
 			<cmmn:sentry id="waitingForStartUserEventSentryId2" name="WaitingForStartUserEventSentry2">
-				<cmmn:planItemOnPart id="onStartUserEventOccurred" sourceRef="startUserEventPlanItemId">
+				<cmmn:planItemOnPart id="onStartUserEventOccurred2" sourceRef="startUserEventPlanItemId">
 					<cmmn:standardEvent>occur</cmmn:standardEvent>
 				</cmmn:planItemOnPart>
 			</cmmn:sentry>
 			<cmmn:sentry id="waitingForStartUserEventSentryId3" name="WaitingForStartUserEventSentry3">
-				<cmmn:planItemOnPart id="onStartUserEventOccurred" sourceRef="startUserEventPlanItemId">
+				<cmmn:planItemOnPart id="onStartUserEventOccurred3" sourceRef="startUserEventPlanItemId">
 					<cmmn:standardEvent>occur</cmmn:standardEvent>
 				</cmmn:planItemOnPart>
 			</cmmn:sentry>

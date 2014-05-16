@@ -57,6 +57,7 @@ public class CaseHandler extends PlanItemContainerHandler implements Handler {
 	@Override
 	public Object start(final String uri, final String localName, final Attributes attrs, final ExtensibleXmlParser parser) throws SAXException {
 		parser.startElementBuilder(localName, attrs);
+		IdGenerator.reset();
 		String id = attrs.getValue("id");
 		String name = attrs.getValue("name");
 		String packageName = attrs.getValue("http://www.jboss.org/drools", "packageName");

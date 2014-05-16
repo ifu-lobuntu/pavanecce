@@ -28,8 +28,8 @@ public class PlanItemOnPartHandler extends BaseAbstractHandler implements Handle
 	public Object start(String uri, String localName, Attributes attrs, ExtensibleXmlParser parser) throws SAXException {
 		parser.startElementBuilder(localName, attrs);
 		PlanItemOnPart part = new PlanItemOnPart();
-		part.setId(IdGenerator.next(parser));
 		part.setName(attrs.getValue("id"));
+		part.setId(IdGenerator.getIdAsUniqueAsUuid(parser,part));
 		part.setSourceRef(attrs.getValue("sourceRef"));
 		((Sentry)parser.getParent()).addOnPart(part);
 		return part;

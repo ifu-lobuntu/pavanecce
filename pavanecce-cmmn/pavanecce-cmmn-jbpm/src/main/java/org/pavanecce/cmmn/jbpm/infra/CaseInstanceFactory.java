@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.drools.core.common.InternalKnowledgeRuntime;
+import org.drools.core.process.instance.WorkItem;
 import org.jbpm.process.core.ContextContainer;
 import org.jbpm.process.core.context.variable.VariableScope;
 import org.jbpm.process.instance.AbstractProcessInstanceFactory;
@@ -92,6 +93,10 @@ public class CaseInstanceFactory extends AbstractProcessInstanceFactory implemen
 			} else {
 				throw new IllegalArgumentException("This process does not support parameters!");
 			}
+		}
+		WorkItem workItem = (WorkItem) parameters.get(Case.WORK_ITEM);
+		if(workItem!=null){
+			processInstance.setWorkItem(workItem);
 		}
 
 		return processInstance;

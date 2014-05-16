@@ -11,7 +11,7 @@ import org.jbpm.services.task.wih.util.PeopleAssignmentHelper;
 import org.jbpm.workflow.core.node.WorkItemNode;
 import org.kie.api.definition.process.Connection;
 
-public class HumanTaskPlanItem extends WorkItemNode implements PlanItem<HumanTask> {
+public class HumanTaskPlanItem extends WorkItemNode implements PlanItem<HumanTask>,MultiInstancePlanItem {
 
 	private static final long serialVersionUID = 7613141769339402877L;
 	private static final Work NO_WORK = new WorkImpl();
@@ -23,8 +23,14 @@ public class HumanTaskPlanItem extends WorkItemNode implements PlanItem<HumanTas
 	private PlanItemInfo<HumanTask> info;
 	private PlanItemContainer planItemContainer;
 	private String description;
-	public HumanTaskPlanItem(PlanItemInfo<HumanTask> info){
+	private PlanItemInstanceFactoryNode factoryNode;
+	public HumanTaskPlanItem(PlanItemInfo<HumanTask> info, PlanItemInstanceFactoryNode factorNode){
 		this.info=info;
+		this.factoryNode=factorNode;
+	}
+	@Override
+	public PlanItemInstanceFactoryNode getFactoryNode() {
+		return factoryNode;
 	}
 	public String getDescription() {
 		return this.description;

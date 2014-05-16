@@ -8,9 +8,10 @@ import java.util.Set;
 
 import org.jbpm.workflow.core.Node;
 import org.jbpm.workflow.core.impl.ConnectionImpl;
+
 /**
- * This class represents a workaround for the parallel inheritance trees between PlanItems and PlanItemDefinitions
- * Not sure if we can circumvent this problem
+ * This class represents a workaround for the parallel inheritance trees between PlanItems and PlanItemDefinitions Not
+ * sure if we can circumvent this problem
  */
 public class PlanItemInfo<T extends PlanItemDefinition> {
 	private Map<String, Sentry> entryCriteria = new HashMap<String, Sentry>();
@@ -42,13 +43,18 @@ public class PlanItemInfo<T extends PlanItemDefinition> {
 	public void addExitCriterionRef(String s) {
 		exitCriteria.put(s, null);
 	}
-
+	private PlanItemInstanceFactoryNode createFactoryNode(){
+		PlanItemInstanceFactoryNode result = new PlanItemInstanceFactoryNode();
+		result.setId(id/34123);
+		result.setName(getName()+"Factory");
+		return result;
+	}
 	@SuppressWarnings("unchecked")
 	public PlanItem<T> buildPlanItem() {
 		if (definition instanceof HumanTask) {
-			planItem = (PlanItem<T>) new HumanTaskPlanItem((PlanItemInfo<HumanTask>) this);
+			planItem = (PlanItem<T>) new HumanTaskPlanItem((PlanItemInfo<HumanTask>) this,createFactoryNode());
 		} else if (definition instanceof Stage) {
-			planItem = (PlanItem<T>) new StagePlanItem((PlanItemInfo<Stage>) this);
+			planItem = (PlanItem<T>) new StagePlanItem((PlanItemInfo<Stage>) this,createFactoryNode());
 		} else if (definition instanceof UserEventListener) {
 			planItem = (PlanItem<T>) new UserEventPlanItem((PlanItemInfo<UserEventListener>) this);
 		} else if (definition instanceof TimerEventListener) {
@@ -56,13 +62,17 @@ public class PlanItemInfo<T extends PlanItemDefinition> {
 		} else if (definition instanceof Milestone) {
 			planItem = (PlanItem<T>) new MilestonePlanItem((PlanItemInfo<Milestone>) this);
 		} else if (definition instanceof CaseTask) {
-			planItem = (PlanItem<T>) new CaseTaskPlanItem((PlanItemInfo<CaseTask>) this);
+			planItem = (PlanItem<T>) new CaseTaskPlanItem((PlanItemInfo<CaseTask>) this,createFactoryNode());
 		}
-		planItem.setPlanItemContainer(nodeContainer);//possible duplication here of setNodeContainer
+		planItem.setPlanItemContainer(nodeContainer);// possible duplication here of setNodeContainer
 		planItem.setElementId(getElementId());
 		planItem.setName(getName());
 		planItem.setId(id);
 		nodeContainer.addNode(planItem);
+		if (planItem instanceof MultiInstancePlanItem) {
+			nodeContainer.addNode(((MultiInstancePlanItem) planItem).getFactoryNode());
+			((MultiInstancePlanItem) planItem).getFactoryNode().setPlanItem(planItem);
+		}
 
 		return planItem;
 	}
@@ -71,11 +81,18 @@ public class PlanItemInfo<T extends PlanItemDefinition> {
 		Set<Entry<String, Sentry>> entrySet = entryCriteria.entrySet();
 		for (Entry<String, Sentry> entry : entrySet) {
 			entry.getValue().setPlanItemEntering(this.planItem);
-			new ConnectionImpl(entry.getValue(), Node.CONNECTION_DEFAULT_TYPE, planItem, Node.CONNECTION_DEFAULT_TYPE);
+			if (planItem instanceof MultiInstancePlanItem) {
+				new ConnectionImpl(entry.getValue(), Node.CONNECTION_DEFAULT_TYPE, ((MultiInstancePlanItem) planItem).getFactoryNode(), Node.CONNECTION_DEFAULT_TYPE);
+			} else {
+				new ConnectionImpl(entry.getValue(), Node.CONNECTION_DEFAULT_TYPE, planItem, Node.CONNECTION_DEFAULT_TYPE);
+			}
 		}
 		Set<Entry<String, Sentry>> exitSet = exitCriteria.entrySet();
 		for (Entry<String, Sentry> entry : exitSet) {
 			entry.getValue().setPlanItemExiting(this.planItem);
+		}
+		if (planItem instanceof MultiInstancePlanItem) {
+			new ConnectionImpl(((MultiInstancePlanItem) planItem).getFactoryNode(), Node.CONNECTION_DEFAULT_TYPE, planItem, Node.CONNECTION_DEFAULT_TYPE);
 		}
 	}
 

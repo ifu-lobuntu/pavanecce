@@ -4,8 +4,6 @@ import java.util.Collection;
 
 import org.jbpm.workflow.core.NodeContainer;
 import org.jbpm.workflow.core.node.EndNode;
-import org.jbpm.workflow.core.node.Join;
-import org.jbpm.workflow.core.node.Split;
 import org.jbpm.workflow.core.node.StartNode;
 
 public interface PlanItemContainer extends NodeContainer {
@@ -18,17 +16,17 @@ public interface PlanItemContainer extends NodeContainer {
 
 	StartNode getDefaultStart();
 
-	void setDefaultSplit(Split n);
+	void setDefaultSplit(DefaultSplit n);
 
-	Split getDefaultSplit();
+	DefaultSplit getDefaultSplit();
 
 	void setDefaultEnd(EndNode n);
 
 	EndNode getDefaultEnd();
 
-	void setDefaultJoin(Join n);
+	void setDefaultJoin(DefaultJoin n);
 
-	Join getDefaultJoin();
+	DefaultJoin getDefaultJoin();
 	
 	Case getCase();
 	

@@ -1,12 +1,6 @@
 package org.pavanecce.cmmn.jbpm.instance;
 
-public interface CaseInstanceLifecycle extends CaseElementLifecycle, CaseElementLifecycleWithTask{
+public interface CaseInstanceLifecycle extends CaseElementLifecycle, CaseElementLifecycleWithTask, PlanItemInstanceContainerLifecycle{
 	void close();
-
-	void fault();
-
-	void complete();
-
-	void reactivate();
 
 }

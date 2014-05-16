@@ -1,15 +1,13 @@
 package org.pavanecce.cmmn.jbpm.instance;
 
-import org.pavanecce.cmmn.jbpm.flow.PlanItem;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 
-public interface ControllablePlanItemInstanceLifecycle <T extends PlanItemDefinition> extends PlanItemInstanceLifecycle, CaseElementLifecycleWithTask {
+public interface ControllablePlanItemInstanceLifecycle <T extends PlanItemDefinition> extends PlanItemInstanceLifecycle<T>, CaseElementLifecycleWithTask {
 
 	void parentSuspend();
 
 	void parentResume();
 
-	PlanItem<T> getPlanItem();
 
 	void setLastBusyState(PlanElementState s);
 

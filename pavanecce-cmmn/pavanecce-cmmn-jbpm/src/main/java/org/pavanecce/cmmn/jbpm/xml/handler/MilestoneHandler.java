@@ -12,9 +12,9 @@ public class MilestoneHandler extends AbstractCaseElementHandler {
 	public Object start(String uri, String localName, Attributes attrs, ExtensibleXmlParser parser) throws SAXException {
 		parser.startElementBuilder(localName, attrs);
 		Milestone node = new Milestone();
-		node.setId(IdGenerator.next(parser));
 		node.setElementId(attrs.getValue("id"));
 		node.setName(attrs.getValue("name"));
+		node.setId(IdGenerator.getIdAsUniqueAsUuid(parser,node));
 		((Case) parser.getParent(Case.class)).addPlanItemDefinition(node);
 		return node;
 	}

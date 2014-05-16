@@ -42,7 +42,7 @@ public class CaseInstance extends RuleFlowProcessInstance implements PlanItemIns
 	private boolean shouldUpdateSubscriptions;
 	private transient int signalCount = 0;
 	private PlanElementState planElementState = PlanElementState.ACTIVE;
-	private long workItemId;
+	private long workItemId = -1;
 	transient private WorkItem workItem;
 
 	public Case getCase() {
@@ -87,18 +87,20 @@ public class CaseInstance extends RuleFlowProcessInstance implements PlanItemIns
 	public void start() {
 		super.start();
 		updateSubscriptions();
-		createWorkItem();
-		String deploymentId = (String) getKnowledgeRuntime().getEnvironment().get("deploymentId");
-		((WorkItem) workItem).setDeploymentId(deploymentId);
-		try {
-			((WorkItemManager) getKnowledgeRuntime().getWorkItemManager()).internalExecuteWorkItem((org.drools.core.process.instance.WorkItem) workItem);
-		} catch (WorkItemHandlerNotFoundException wihnfe) {
-			setState(ProcessInstance.STATE_ABORTED);
-			throw wihnfe;
-		} catch (Exception e) {
-			throw new RuntimeException(e);
+		if (workItemId < 0) {
+			createWorkItem();
+			String deploymentId = (String) getKnowledgeRuntime().getEnvironment().get("deploymentId");
+			((WorkItem) workItem).setDeploymentId(deploymentId);
+			try {
+				((WorkItemManager) getKnowledgeRuntime().getWorkItemManager()).internalExecuteWorkItem((org.drools.core.process.instance.WorkItem) workItem);
+			} catch (WorkItemHandlerNotFoundException wihnfe) {
+				setState(ProcessInstance.STATE_ABORTED);
+				throw wihnfe;
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+			this.workItemId = workItem.getId();
 		}
-		this.workItemId = workItem.getId();
 	}
 
 	@Override
@@ -254,6 +256,7 @@ public class CaseInstance extends RuleFlowProcessInstance implements PlanItemIns
 	@Override
 	public void complete() {
 		planElementState.complete(this);
+		((WorkItemManager) getKnowledgeRuntime().getWorkItemManager()).internalAbortWorkItem(getWorkItemId());
 	}
 
 	@Override
@@ -277,11 +280,11 @@ public class CaseInstance extends RuleFlowProcessInstance implements PlanItemIns
 	}
 
 	@Override
-	public Collection<? extends PlanItemInstanceLifecycle> getChildren() {
-		Set<PlanItemInstanceLifecycle> result = new HashSet<PlanItemInstanceLifecycle>();
+	public Collection<? extends PlanItemInstanceLifecycle<?>> getChildren() {
+		Set<PlanItemInstanceLifecycle<?>> result = new HashSet<PlanItemInstanceLifecycle<?>>();
 		for (NodeInstance nodeInstance : getNodeInstances()) {
 			if (nodeInstance instanceof PlanItemInstanceLifecycle) {
-				result.add((PlanItemInstanceLifecycle) nodeInstance);
+				result.add((PlanItemInstanceLifecycle<?>) nodeInstance);
 			}
 		}
 		return result;
@@ -319,8 +322,9 @@ public class CaseInstance extends RuleFlowProcessInstance implements PlanItemIns
 
 	@Override
 	public boolean canComplete() {
-		for (NodeInstance nodeInstance : getNodeInstances()) {
-			if (nodeInstance instanceof SentryInstance && ((SentryInstance) nodeInstance).isPlanItemInstanceStillRequired()) {
+		Collection<NodeInstance> nodeInstances = getNodeInstances();
+		for (NodeInstance nodeInstance : nodeInstances) {
+			if (nodeInstance instanceof PlanItemInstanceFactoryNodeInstance && ((PlanItemInstanceFactoryNodeInstance) nodeInstance).isPlanItemInstanceStillRequired()) {
 				return false;
 			} else if (nodeInstance instanceof MilestonePlanItemInstance && ((MilestonePlanItemInstance) nodeInstance).isCompletionStillRequired()) {
 				return false;
@@ -338,7 +342,21 @@ public class CaseInstance extends RuleFlowProcessInstance implements PlanItemIns
 	}
 
 	public void setWorkItemId(long readLong) {
-		this.workItemId=readLong;
+		this.workItemId = readLong;
+	}
+
+	public void setWorkItem(WorkItem w) {
+		this.workItem = w;
+		this.workItemId = w.getId();
+	}
+
+	public NodeInstance findNodeForWorkItem(long id) {
+		for (NodeInstance ni : getNodeInstances()) {
+			if(ni instanceof ControllablePlanItemInstanceLifecycle && ((ControllablePlanItemInstanceLifecycle<?>)ni).getWorkItemId()==id){
+				return ni;
+			}
+		}
+		return null;
 	}
 
 }

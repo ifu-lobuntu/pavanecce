@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.drools.core.process.instance.impl.WorkItemImpl;
-import org.drools.persistence.PersistenceContext;
-import org.drools.persistence.PersistenceContextManager;
 import org.jbpm.services.task.impl.model.GroupImpl;
 import org.jbpm.services.task.impl.model.I18NTextImpl;
 import org.jbpm.services.task.impl.model.TaskDataImpl;
@@ -19,7 +17,6 @@ import org.jbpm.services.task.wih.LocalHTWorkItemHandler;
 import org.jbpm.services.task.wih.util.HumanTaskHandlerHelper;
 import org.jbpm.services.task.wih.util.PeopleAssignmentHelper;
 import org.kie.api.runtime.Environment;
-import org.kie.api.runtime.EnvironmentName;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.manager.RuntimeEngine;
 import org.kie.api.runtime.process.WorkItem;
@@ -37,8 +34,6 @@ import org.pavanecce.cmmn.jbpm.instance.CaseElementLifecycleWithTask;
 import org.pavanecce.cmmn.jbpm.instance.ControllablePlanItemInstanceLifecycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.sun.corba.se.spi.legacy.connection.GetEndPointInfoAgainException;
 
 public class CaseTaskWorkItemHandler extends LocalHTWorkItemHandler {
 	private Logger logger = LoggerFactory.getLogger(CaseTaskWorkItemHandler.class);

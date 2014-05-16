@@ -13,8 +13,6 @@ import org.drools.core.process.core.impl.WorkImpl;
 import org.jbpm.services.task.wih.util.PeopleAssignmentHelper;
 import org.jbpm.workflow.core.node.CompositeContextNode;
 import org.jbpm.workflow.core.node.EndNode;
-import org.jbpm.workflow.core.node.Join;
-import org.jbpm.workflow.core.node.Split;
 import org.jbpm.workflow.core.node.StartNode;
 
 public class Stage extends CompositeContextNode implements PlanItemDefinition, PlanItemContainer {
@@ -24,9 +22,9 @@ public class Stage extends CompositeContextNode implements PlanItemDefinition, P
 	private boolean autoComplete;
 	private Collection<PlanItemInfo<?>> planItemInfo = new ArrayList<PlanItemInfo<?>>();
 	private StartNode defaultStart;
-	private Split defaultSplit;
+	private DefaultSplit defaultSplit;
 	private EndNode defaultEnd;
-	private Join defaultJoin;
+	private DefaultJoin defaultJoin;
 	private Case theCase;
 	private PlanItemControl defaultControl;
 
@@ -67,12 +65,12 @@ public class Stage extends CompositeContextNode implements PlanItemDefinition, P
 	}
 
 	@Override
-	public Split getDefaultSplit() {
+	public DefaultSplit getDefaultSplit() {
 		return defaultSplit;
 	}
 
 	@Override
-	public void setDefaultSplit(Split defaultSplit) {
+	public void setDefaultSplit(DefaultSplit defaultSplit) {
 		this.defaultSplit = defaultSplit;
 	}
 
@@ -87,12 +85,12 @@ public class Stage extends CompositeContextNode implements PlanItemDefinition, P
 	}
 
 	@Override
-	public Join getDefaultJoin() {
+	public DefaultJoin getDefaultJoin() {
 		return defaultJoin;
 	}
 
 	@Override
-	public void setDefaultJoin(Join defaultJoin) {
+	public void setDefaultJoin(DefaultJoin defaultJoin) {
 		this.defaultJoin = defaultJoin;
 	}
 

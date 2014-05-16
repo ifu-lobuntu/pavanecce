@@ -4,10 +4,12 @@ import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.HashSet;
+import java.util.List;
 
 import org.jbpm.process.instance.impl.ConstraintEvaluator;
 import org.jbpm.workflow.core.Constraint;
 import org.jbpm.workflow.core.Node;
+import org.jbpm.workflow.core.impl.NodeImpl;
 import org.jbpm.workflow.instance.NodeInstanceContainer;
 import org.jbpm.workflow.instance.node.JoinInstance;
 import org.kie.api.definition.process.Connection;
@@ -15,12 +17,11 @@ import org.kie.api.runtime.process.NodeInstance;
 import org.pavanecce.cmmn.jbpm.event.CaseEvent;
 import org.pavanecce.cmmn.jbpm.flow.MilestonePlanItem;
 import org.pavanecce.cmmn.jbpm.flow.OnPart;
-import org.pavanecce.cmmn.jbpm.flow.PlanItem;
+import org.pavanecce.cmmn.jbpm.flow.PlanItemInstanceFactoryNode;
 import org.pavanecce.cmmn.jbpm.flow.Sentry;
-import org.pavanecce.cmmn.jbpm.flow.TimerEventPlanItem;
-import org.pavanecce.cmmn.jbpm.flow.UserEventPlanItem;
 import org.pavanecce.cmmn.jbpm.instance.ControllablePlanItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.instance.OnPartInstance;
+import org.pavanecce.cmmn.jbpm.instance.PlanItemInstanceLifecycle;
 
 public class SentryInstance extends JoinInstance {
 	private static ThreadLocal<Deque<Collection<CaseEvent>>> currentEvents = new ThreadLocal<Deque<Collection<CaseEvent>>>();
@@ -30,57 +31,31 @@ public class SentryInstance extends JoinInstance {
 	}
 
 	private static final long serialVersionUID = -4302504131617050844L;
-	private Boolean isPlanItemInstanceRequired;
-	private Boolean isPlanItemInstanceStillRequired;
-
-	@Override
-	public void internalTrigger(NodeInstance from, String type) {
-		PlanItem<?> toEnter = getSentry().getPlanItemEntering();
-		if (toEnter instanceof UserEventPlanItem || toEnter instanceof TimerEventPlanItem) {
-			//TODO this will never happen?
-			isPlanItemInstanceStillRequired = false;
-			isPlanItemInstanceRequired = false;
-		}
-		if (isPlanItemInstanceRequired == null) {
-			if (toEnter != null && toEnter.getPlanInfo().getItemControl() != null && toEnter.getPlanInfo().getItemControl().getRequiredRule() instanceof ConstraintEvaluator) {
-				ConstraintEvaluator constraintEvaluator = (ConstraintEvaluator) toEnter.getPlanInfo().getItemControl().getRequiredRule();
-				isPlanItemInstanceRequired = constraintEvaluator.evaluate(this, null, constraintEvaluator);
-			} else {
-				isPlanItemInstanceRequired = Boolean.FALSE;
-			}
-			if(toEnter instanceof MilestonePlanItem){
-				MilestonePlanItemInstance ni = (MilestonePlanItemInstance) ((NodeInstanceContainer)getNodeInstanceContainer()).getNodeInstance(toEnter);
-				ni.internalSetRequired(isPlanItemInstanceRequired);
-			}
-		}
-		if (isPlanItemInstanceStillRequired == null) {
-			isPlanItemInstanceStillRequired = isPlanItemInstanceRequired;
-		}
-		super.internalTrigger(from, type);
-	}
-
-	public boolean isPlanItemInstanceRequired() {
-		return isPlanItemInstanceRequired;
-	}
-
-	public void internalSetPlanItemInstanceRequired(boolean isPlanItemInstanceRequired) {
-		this.isPlanItemInstanceRequired = isPlanItemInstanceRequired;
-	}
-
-	public boolean isPlanItemInstanceStillRequired() {
-		if (isPlanItemInstanceStillRequired == null) {
-			// still initializing
-			return true;
-		}
-		return isPlanItemInstanceStillRequired;
-	}
-
-	public void internalSetPlanItemInstanceStillRequired(boolean val) {
-		this.isPlanItemInstanceStillRequired = val;
-	}
 
 	public Sentry getSentry() {
 		return (Sentry) getNode();
+	}
+
+	@Override
+	public void internalTrigger(NodeInstance from, String type) {
+		List<Connection> outgoingConnections = getNode().getOutgoingConnections(NodeImpl.CONNECTION_DEFAULT_TYPE);
+		if (outgoingConnections.isEmpty()) {
+//			System.out.println(getNodeName());
+		} else {
+			Connection next = outgoingConnections.get(0);
+			System.out.println(next.getTo().getName() + ":" + next.getTo().getClass().getName());
+			if (next.getTo() instanceof MilestonePlanItem) {
+				org.jbpm.workflow.instance.NodeInstance ni = ((NodeInstanceContainer) getNodeInstanceContainer()).getNodeInstance(next.getTo());
+				((PlanItemInstanceLifecycle<?>) ni).calcIsRequired();
+			} else if (next.getTo() instanceof PlanItemInstanceFactoryNode) {
+				org.jbpm.workflow.instance.NodeInstance ni = ((NodeInstanceContainer) getNodeInstanceContainer()).getNodeInstance(next.getTo());
+				((PlanItemInstanceFactoryNodeInstance) ni).calcIsRequired();
+			}else{
+				throw new IllegalStateException("Unknown to-node:"+next.getTo().getName() + ":" + next.getTo().getClass().getName() );
+				
+			}
+		}
+		super.internalTrigger(from, type);
 	}
 
 	protected Collection<CaseEvent> getEvents() {
@@ -94,18 +69,6 @@ public class SentryInstance extends JoinInstance {
 			}
 		}
 		return result;
-	}
-
-	@Override
-	protected void triggerNodeInstance(org.jbpm.workflow.instance.NodeInstance nodeInstance, String type) {
-		if (nodeInstance instanceof MilestonePlanItemInstance) {
-			this.isPlanItemInstanceStillRequired = false;
-			((MilestonePlanItemInstance) nodeInstance).internalSetRequired(this.isPlanItemInstanceRequired);
-		} else if (nodeInstance instanceof AbstractControllablePlanInstance) {
-			((AbstractControllablePlanInstance<?>) nodeInstance).internalSetCompletionRequired(this.isPlanItemInstanceRequired);
-			this.isPlanItemInstanceStillRequired = false;
-		}
-		super.triggerNodeInstance(nodeInstance, type);
 	}
 
 	@Override

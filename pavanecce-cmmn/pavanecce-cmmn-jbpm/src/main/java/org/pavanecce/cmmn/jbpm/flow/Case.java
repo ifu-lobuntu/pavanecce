@@ -9,22 +9,21 @@ import java.util.Map;
 import org.jbpm.ruleflow.core.RuleFlowProcess;
 import org.jbpm.workflow.core.node.CompositeNode;
 import org.jbpm.workflow.core.node.EndNode;
-import org.jbpm.workflow.core.node.Join;
-import org.jbpm.workflow.core.node.Split;
 import org.jbpm.workflow.core.node.StartNode;
 import org.kie.api.definition.process.Node;
 
 public class Case extends RuleFlowProcess implements PlanItemContainer {
 	private static final long serialVersionUID = -2253866933695827108L;
+	public static final String WORK_ITEM = "WorkItem";
 	private List<CaseParameter> inputParameters = new ArrayList<CaseParameter>();
 	private List<CaseParameter> outputParameters = new ArrayList<CaseParameter>();
 	private Collection<PlanItemDefinition> planItemDefinitions = new ArrayList<PlanItemDefinition>();
 	private Collection<PlanItemInfo<?>> planItemInfo = new ArrayList<PlanItemInfo<?>>();
 	private Collection<Role> roles = new ArrayList<Role>();
 	private StartNode defaultStart;
-	private Split defaultSplit;
+	private DefaultSplit defaultSplit;
 	private EndNode defaultEnd;
-	private Join defaultJoin;
+	private DefaultJoin defaultJoin;
 	private PlanningTable planningTable;
 
 	@Override
@@ -38,12 +37,12 @@ public class Case extends RuleFlowProcess implements PlanItemContainer {
 	}
 
 	@Override
-	public Split getDefaultSplit() {
+	public DefaultSplit getDefaultSplit() {
 		return defaultSplit;
 	}
 
 	@Override
-	public void setDefaultSplit(Split defaultSplit) {
+	public void setDefaultSplit(DefaultSplit defaultSplit) {
 		this.defaultSplit = defaultSplit;
 	}
 
@@ -63,12 +62,12 @@ public class Case extends RuleFlowProcess implements PlanItemContainer {
 	}
 
 	@Override
-	public void setDefaultJoin(Join n) {
+	public void setDefaultJoin(DefaultJoin n) {
 		this.defaultJoin = n;
 	}
 
 	@Override
-	public Join getDefaultJoin() {
+	public DefaultJoin getDefaultJoin() {
 		return defaultJoin;
 	}
 

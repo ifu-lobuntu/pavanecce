@@ -25,7 +25,7 @@ public class DiscretionaryItemHandler extends AbstractTableItemHandler implement
 		DiscretionaryItem item = new DiscretionaryItem<>();
 		item.setDefinitionRef(attrs.getValue("definitionRef"));
 		populateCommonItems(attrs, item);
-		item.setId(IdGenerator.next(parser));
+		item.setId(IdGenerator.getIdAsUniqueAsUuid(parser,item));
 		PlanningTable parent = (PlanningTable) parser.getParent();
 		parent.addTableItem(item);
 		return item;

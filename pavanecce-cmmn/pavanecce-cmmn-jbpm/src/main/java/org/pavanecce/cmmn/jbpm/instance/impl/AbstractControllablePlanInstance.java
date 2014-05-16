@@ -1,7 +1,5 @@
 package org.pavanecce.cmmn.jbpm.instance.impl;
 
-import java.util.Iterator;
-
 import org.drools.core.WorkItemHandlerNotFoundException;
 import org.drools.core.process.instance.WorkItem;
 import org.drools.core.process.instance.WorkItemManager;
@@ -10,23 +8,19 @@ import org.jbpm.process.core.context.variable.VariableScope;
 import org.jbpm.process.instance.ContextInstance;
 import org.jbpm.process.instance.ProcessInstance;
 import org.jbpm.process.instance.context.exception.ExceptionScopeInstance;
-import org.jbpm.services.task.wih.util.PeopleAssignmentHelper;
+import org.jbpm.process.instance.impl.ConstraintEvaluator;
 import org.jbpm.workflow.instance.WorkflowRuntimeException;
 import org.jbpm.workflow.instance.node.EventBasedNodeInstanceInterface;
 import org.jbpm.workflow.instance.node.StateBasedNodeInstance;
 import org.kie.api.runtime.process.NodeInstance;
-import org.kie.api.task.model.PeopleAssignments;
 import org.kie.api.task.model.Task;
 import org.pavanecce.cmmn.jbpm.flow.PlanItem;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemTransition;
-import org.pavanecce.cmmn.jbpm.flow.PlanningTable;
-import org.pavanecce.cmmn.jbpm.flow.Role;
 import org.pavanecce.cmmn.jbpm.instance.CaseElementLifecycleWithTask;
 import org.pavanecce.cmmn.jbpm.instance.ControllablePlanItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.instance.CustomVariableScopeInstance;
 import org.pavanecce.cmmn.jbpm.instance.PlanElementState;
-import org.pavanecce.cmmn.jbpm.instance.PlanItemInstanceContainer;
 
 public abstract class AbstractControllablePlanInstance<T extends PlanItemDefinition> extends StateBasedNodeInstance implements ControllablePlanItemInstanceLifecycle<T>,
 		EventBasedNodeInstanceInterface {
@@ -39,22 +33,34 @@ public abstract class AbstractControllablePlanInstance<T extends PlanItemDefinit
 	private PlanElementState lastBusyState = PlanElementState.NONE;
 	protected WorkItem workItem;
 	private long workItemId;
-	private Boolean completionRequired;
+	private Boolean isCompletionRequired;
 
 	public AbstractControllablePlanInstance() {
 		super();
 	}
 
 	public boolean isCompletionStillRequired() {
-		return completionRequired && !planElementState.isTerminalState() && !planElementState.isSemiTerminalState();
+		return isCompletionRequired && !planElementState.isTerminalState() && !planElementState.isSemiTerminalState();
 	}
 
 	public boolean isCompletionRequired() {
-		return completionRequired;
+		return isCompletionRequired;
 	}
 
 	public void internalSetCompletionRequired(boolean b) {
-		this.completionRequired = b;
+		this.isCompletionRequired = b;
+	}
+
+	public void calcIsRequired() {
+		if (isCompletionRequired == null) {
+			PlanItem<T> toEnter = getPlanItem();
+			if (toEnter.getPlanInfo().getItemControl() != null && toEnter.getPlanInfo().getItemControl().getRequiredRule() instanceof ConstraintEvaluator) {
+				ConstraintEvaluator constraintEvaluator = (ConstraintEvaluator) toEnter.getPlanInfo().getItemControl().getRequiredRule();
+				isCompletionRequired = constraintEvaluator.evaluate(this, null, constraintEvaluator);
+			} else {
+				isCompletionRequired = Boolean.FALSE;
+			}
+		}
 	}
 
 	protected abstract boolean isWaitForCompletion();
@@ -159,7 +165,12 @@ public abstract class AbstractControllablePlanInstance<T extends PlanItemDefinit
 		if (type.equals(WORK_ITEM_UPDATED) && isMyWorkItem((WorkItem) event)) {
 			this.workItem = (WorkItem) event;
 			PlanItemTransition transition = (PlanItemTransition) workItem.getResult(HumanTaskPlanItemInstance.TRANSITION);
-			transition.invokeOn(this);
+			if (transition == PlanItemTransition.TERMINATE && getPlanElementState().isTerminalState()) {
+				// do nothing - triggered by TaskService in reaction to an event, e.g. exit or case closed from the
+				// process
+			} else {
+				transition.invokeOn(this);
+			}
 		} else {
 			super.signalEvent(type, event);
 		}

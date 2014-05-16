@@ -9,15 +9,17 @@ import org.drools.core.process.core.impl.WorkImpl;
 import org.jbpm.workflow.core.node.CompositeNode;
 import org.kie.api.definition.process.Node;
 
-public class StagePlanItem extends CompositeNode implements PlanItem <Stage>{
+public class StagePlanItem extends CompositeNode implements PlanItem <Stage>,MultiInstancePlanItem{
 	private static final long serialVersionUID = -4998194330899363230L;
 	private String elementId;
 	private PlanItemInfo<Stage> info;
 	private PlanItemContainer planItemContainer;
 	private String description;
+	private PlanItemInstanceFactoryNode factoryNode;
 
-	public StagePlanItem(PlanItemInfo<Stage> info) {
+	public StagePlanItem(PlanItemInfo<Stage> info, PlanItemInstanceFactoryNode planItemInstanceFactoryNode) {
 		this.info = info;
+		this.factoryNode=planItemInstanceFactoryNode;
 	}
 	public String getDescription() {
 		return this.description;
@@ -75,5 +77,9 @@ public class StagePlanItem extends CompositeNode implements PlanItem <Stage>{
 
 	public void setPlanItemContainer(PlanItemContainer planItemContainer) {
 		this.planItemContainer = planItemContainer;
+	}
+	@Override
+	public PlanItemInstanceFactoryNode getFactoryNode() {
+		return factoryNode;
 	}
 }

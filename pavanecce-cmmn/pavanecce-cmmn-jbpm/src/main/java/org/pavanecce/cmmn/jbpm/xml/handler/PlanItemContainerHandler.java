@@ -18,6 +18,7 @@ import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItem;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemOnPart;
 import org.pavanecce.cmmn.jbpm.flow.DefaultJoin;
+import org.pavanecce.cmmn.jbpm.flow.DefaultSplit;
 import org.pavanecce.cmmn.jbpm.flow.OnPart;
 import org.pavanecce.cmmn.jbpm.flow.PlanItem;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemContainer;
@@ -25,8 +26,6 @@ import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemInfo;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemOnPart;
 import org.pavanecce.cmmn.jbpm.flow.Sentry;
-import org.pavanecce.cmmn.jbpm.flow.TimerEventPlanItem;
-import org.pavanecce.cmmn.jbpm.flow.UserEventPlanItem;
 
 public abstract class PlanItemContainerHandler extends BaseAbstractHandler {
 
@@ -52,21 +51,21 @@ public abstract class PlanItemContainerHandler extends BaseAbstractHandler {
 		container.addNode(defaultJoin);
 		container.setDefaultJoin(defaultJoin);
 		new ConnectionImpl(defaultSplit, DEFAULT, defaultJoin, DEFAULT);
-		new ConnectionImpl(defaultJoin, DEFAULT, defaultEnd, DEFAULT);
+		new ConnectionImpl(container.getDefaultJoin(), DEFAULT, defaultEnd, DEFAULT);
 		for (Node node : container.getNodes()) {
 			if (node instanceof PlanItem) {
-				linkPlanItemCriteria(container, defaultJoin, (PlanItem) node);
+				linkPlanItemCriteria(container, (PlanItem) node);
 			} else if (node instanceof Sentry) {
 				// We need to activate sentries immediately to indicate that the associated PLanItem is available
 				new ConnectionImpl(defaultSplit, DEFAULT, node, DEFAULT);
-				linkSentryOnPart(container, defaultSplit, variableScope, (Sentry) node);
+				linkSentryOnPart(container, variableScope, (Sentry) node);
 			}
 		}
 	}
 
-	private void linkPlanItemCriteria(PlanItemContainer process, DefaultJoin defaultJoin, PlanItem<?> node) {
-		if (defaultJoin != null) {
-			new ConnectionImpl(node, DEFAULT, defaultJoin, DEFAULT);
+	private void linkPlanItemCriteria(PlanItemContainer process, PlanItem<?> node) {
+		if (process.getDefaultJoin() != null) {
+			new ConnectionImpl(node, DEFAULT, process.getDefaultJoin(), DEFAULT);
 		}
 		for (String string : new ArrayList<String>(node.getPlanInfo().getEntryCriteria().keySet())) {
 			Sentry entry = findSentry(process, string);
@@ -82,9 +81,9 @@ public abstract class PlanItemContainerHandler extends BaseAbstractHandler {
 		}
 	}
 
-	private void linkSentryOnPart(PlanItemContainer process, Split defaultSplit, VariableScope variableScope, Sentry sentry) {
+	private void linkSentryOnPart(PlanItemContainer process, VariableScope variableScope, Sentry sentry) {
 		for (OnPart onPart : sentry.getOnParts()) {
-			new ConnectionImpl(defaultSplit, DEFAULT, onPart, DEFAULT);
+			new ConnectionImpl(process.getDefaultSplit(), DEFAULT, onPart, DEFAULT);
 			if (onPart instanceof PlanItemOnPart) {
 				PlanItemOnPart apip = (PlanItemOnPart) onPart;
 				apip.setSourcePlanItem(findPlanItem(process, apip.getSourceRef()));
@@ -146,7 +145,7 @@ public abstract class PlanItemContainerHandler extends BaseAbstractHandler {
 		process.addNode(start);
 		start.setName("defaultStart");
 		process.setDefaultStart(start);
-		Split split = new Split(Split.TYPE_AND);
+		DefaultSplit split = new DefaultSplit();
 		split.setId(IdGenerator.next(p));
 		process.addNode(split);
 		split.setName("defaultSplit");

@@ -1,6 +1,5 @@
 package org.pavanecce.cmmn.jbpm.xml.handler;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 

@@ -57,7 +57,7 @@ public class PlanningTableHandler extends AbstractTableItemHandler implements Ha
 		parser.startElementBuilder(localName, attrs);
 		PlanningTable table = new PlanningTable();
 		super.populateCommonItems(attrs, table);
-		table.setId(IdGenerator.next(parser));
+		table.setId(IdGenerator.getIdAsUniqueAsUuid(parser,table));
 		Object parent = parser.getParent();
 		if (parent instanceof PlanningTable) {
 			((PlanningTable) parent).addTableItem(table);

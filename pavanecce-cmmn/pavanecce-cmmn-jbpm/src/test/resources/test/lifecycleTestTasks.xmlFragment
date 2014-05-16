@@ -105,12 +105,6 @@
 					<cmmn:standardEvent>occur</cmmn:standardEvent>
 				</cmmn:planItemOnPart>
 			</cmmn:sentry>
-			<cmmn:sentry id="waitingForUserEventSentryId" name="WaitingForUserEventSentry">
-				<cmmn:planItemOnPart id="onUserEventOccurred" sourceRef="theUserEventPlanItemId">
-					<cmmn:standardEvent>occur</cmmn:standardEvent>
-				</cmmn:planItemOnPart>
-			</cmmn:sentry>
-
 			<cmmn:humanTask id="theTask" name="The Task" performerRef="builderRoleId" isBlocking="true">
 				<cmmn:defaultControl>
 					<cmmn:requiredRule>

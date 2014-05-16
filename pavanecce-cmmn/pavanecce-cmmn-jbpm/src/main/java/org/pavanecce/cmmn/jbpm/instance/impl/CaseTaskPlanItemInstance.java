@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.drools.core.RuntimeDroolsException;
 import org.drools.core.process.core.Work;
+import org.drools.core.process.instance.WorkItem;
+import org.drools.core.process.instance.WorkItemManager;
 import org.drools.core.spi.ProcessContext;
 import org.jbpm.process.core.Context;
 import org.jbpm.process.core.ContextContainer;
@@ -20,7 +22,6 @@ import org.jbpm.process.instance.impl.ContextInstanceFactory;
 import org.jbpm.process.instance.impl.ContextInstanceFactoryRegistry;
 import org.jbpm.process.instance.impl.ProcessInstanceImpl;
 import org.jbpm.process.instance.impl.ReturnValueConstraintEvaluator;
-import org.jbpm.services.task.wih.util.PeopleAssignmentHelper;
 import org.jbpm.workflow.instance.WorkflowProcessInstance;
 import org.kie.api.KieBase;
 import org.kie.api.definition.process.Node;
@@ -36,7 +37,11 @@ import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
 import org.pavanecce.cmmn.jbpm.flow.CaseTask;
 import org.pavanecce.cmmn.jbpm.flow.CaseTaskPlanItem;
 import org.pavanecce.cmmn.jbpm.flow.ParameterMapping;
+import org.pavanecce.cmmn.jbpm.flow.PlanItemTransition;
+import org.pavanecce.cmmn.jbpm.instance.CaseElementLifecycleWithTask;
 import org.pavanecce.cmmn.jbpm.instance.ControllablePlanItemInstanceLifecycle;
+import org.pavanecce.cmmn.jbpm.instance.PlanElementState;
+import org.pavanecce.cmmn.jbpm.planitem.CompletionTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +59,6 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask> imp
 		return (CaseTaskPlanItem) getNode();
 	}
 
-
 	@Override
 	public void start() {
 		super.start();
@@ -64,6 +68,12 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask> imp
 	@Override
 	public void manualStart() {
 		super.manualStart();
+		startProcess();
+	}
+
+	@Override
+	public void reactivate() {
+		super.reactivate();
 		startProcess();
 	}
 
@@ -111,6 +121,7 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask> imp
 				}
 				inputParameters.put(pm.getTargetParameterName(), sourceValue);
 			}
+			inputParameters.put(Case.WORK_ITEM, getWorkItem());
 			KnowledgeRuntime kruntime = ((ProcessInstance) getProcessInstance()).getKnowledgeRuntime();
 			RuntimeManager manager = (RuntimeManager) kruntime.getEnvironment().get("RuntimeManager");
 			if (manager != null) {
@@ -214,7 +225,27 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask> imp
 	}
 
 	public void signalEvent(String type, Object event) {
-		if (("processInstanceCompleted:" + processInstanceId).equals(type) && !getPlanElementState().isTerminalState()) {
+		if (type.equals(WORK_ITEM_UPDATED) && isMyWorkItem((WorkItem) event)) {
+			this.workItem = (WorkItem) event;
+			PlanItemTransition transition = (PlanItemTransition) workItem.getResult(HumanTaskPlanItemInstance.TRANSITION);
+			if (transition == PlanItemTransition.TERMINATE) {
+				boolean isCompletionTransition = false;
+				if (getPlanElementState() == PlanElementState.ACTIVE) {
+					ProcessInstance pi = (ProcessInstance) getProcessInstance().getKnowledgeRuntime().getProcessInstance(getProcessInstanceId());
+					if (pi instanceof CaseInstance && ((CaseInstance) pi).getPlanElementState() == PlanElementState.COMPLETED) {
+						// triggered by TaskService in reaction to case closed from the process
+						isCompletionTransition = true;
+					}
+				}
+				if (isCompletionTransition) {
+					complete();
+				} else if (!getPlanElementState().isTerminalState()) {
+					transition.invokeOn(this);
+				}
+			} else {
+				transition.invokeOn(this);
+			}
+		} else if (("processInstanceCompleted:" + processInstanceId).equals(type) && !getPlanElementState().isTerminalState()) {
 			processInstanceCompleted((ProcessInstance) event);
 		} else {
 			super.signalEvent(type, event);
@@ -237,7 +268,14 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask> imp
 			}
 			fault();
 		} else {
-			complete();
+			ProcessInstance pi = (ProcessInstance) getProcessInstance().getKnowledgeRuntime().getProcessInstance(getProcessInstanceId());
+			if (pi instanceof CaseInstance) {
+				// This actually happens when the process is closed - we do nothing here
+			} else {
+				complete();
+				WorkItemManager workItemManager = (WorkItemManager) getCaseInstance().getKnowledgeRuntime().getWorkItemManager();
+				workItemManager.internalAbortWorkItem(getWorkItemId());
+			}
 		}
 	}
 

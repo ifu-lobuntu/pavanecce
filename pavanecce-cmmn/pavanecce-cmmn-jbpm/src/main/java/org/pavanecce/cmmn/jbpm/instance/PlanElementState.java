@@ -5,6 +5,7 @@ import static org.pavanecce.cmmn.jbpm.flow.PlanItemTransition.*;
 import org.pavanecce.cmmn.jbpm.event.PlanItemEvent;
 import org.pavanecce.cmmn.jbpm.flow.OnPart;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemTransition;
+import org.pavanecce.cmmn.jbpm.instance.impl.PlanItemInstanceFactoryNodeInstance;
 import org.pavanecce.cmmn.jbpm.instance.impl.PlanItemInstanceUtil;
 
 public enum PlanElementState {
@@ -124,7 +125,7 @@ public enum PlanElementState {
 		pi.setPlanElementState(ENABLED);
 	}
 
-	private void signalEvent(PlanItemInstanceLifecycle pi, PlanItemTransition transition) {
+	private void signalEvent(PlanItemInstanceLifecycle<?> pi, PlanItemTransition transition) {
 		String eventToTrigger = OnPart.getType(pi.getPlanItemName(), transition);
 		Object eventObject = null;
 		if (pi instanceof CaseElementLifecycleWithTask) {
@@ -164,7 +165,7 @@ public enum PlanElementState {
 	public void reactivate(CaseElementLifecycle pi) {
 		validateTransition(pi, REACTIVATE);
 		if (pi instanceof PlanItemInstanceLifecycle) {
-			signalEvent((PlanItemInstanceLifecycle) pi, PlanItemTransition.REACTIVATE);
+			signalEvent((PlanItemInstanceLifecycle<?>) pi, PlanItemTransition.REACTIVATE);
 		}
 		pi.setPlanElementState(ACTIVE);
 	}
@@ -172,14 +173,14 @@ public enum PlanElementState {
 	public void suspend(CaseElementLifecycle pi) {
 		validateTransition(pi, SUSPEND);
 		if (pi instanceof PlanItemInstanceLifecycle) {
-			signalEvent((PlanItemInstanceLifecycle) pi, PlanItemTransition.SUSPEND);
+			signalEvent((PlanItemInstanceLifecycle<?>) pi, PlanItemTransition.SUSPEND);
 		}
 		pi.setPlanElementState(SUSPENDED);
 		if (pi instanceof PlanItemInstanceContainer) {
-			for (PlanItemInstanceLifecycle child : ((PlanItemInstanceContainer) pi).getChildren()) {
+			for (PlanItemInstanceLifecycle<?> child : ((PlanItemInstanceContainer) pi).getChildren()) {
 				if (child.getPlanElementState().isBusyState()) {
 					if (child instanceof OccurrablePlanItemInstanceLifecycle && child.getPlanElementState() == AVAILABLE) {
-						((OccurrablePlanItemInstanceLifecycle) child).resume();
+						((OccurrablePlanItemInstanceLifecycle<?>) child).resume();
 					} else if (child instanceof ControllablePlanItemInstanceLifecycle) {
 						((ControllablePlanItemInstanceLifecycle<?>) child).parentSuspend();
 					}
@@ -188,7 +189,7 @@ public enum PlanElementState {
 		}
 	}
 
-	public void resume(PlanItemInstanceLifecycle pi) {
+	public void resume(PlanItemInstanceLifecycle<?> pi) {
 		validateTransition(pi, RESUME);
 		signalEvent(pi, PlanItemTransition.RESUME);
 		if (pi instanceof ControllablePlanItemInstanceLifecycle) {
@@ -197,12 +198,12 @@ public enum PlanElementState {
 			pi.setPlanElementState(AVAILABLE);
 		}
 		if (pi instanceof PlanItemInstanceContainer) {
-			for (PlanItemInstanceLifecycle child : ((PlanItemInstanceContainer) pi).getChildren()) {
+			for (PlanItemInstanceLifecycle<?> child : ((PlanItemInstanceContainer) pi).getChildren()) {
 				if (child.getPlanElementState() == SUSPENDED) {
 					if (child instanceof ControllablePlanItemInstanceLifecycle) {
 						((ControllablePlanItemInstanceLifecycle<?>) child).parentResume();
 					} else if (child instanceof OccurrablePlanItemInstanceLifecycle) {
-						((OccurrablePlanItemInstanceLifecycle) child).resume();
+						((OccurrablePlanItemInstanceLifecycle<?>) child).resume();
 					}
 				}
 			}
@@ -212,15 +213,15 @@ public enum PlanElementState {
 	public void terminate(CaseElementLifecycle pi) {
 		validateTransition(pi, TERMINATE);
 		if (pi instanceof PlanItemInstanceLifecycle) {
-			signalEvent((PlanItemInstanceLifecycle) pi, PlanItemTransition.TERMINATE);
+			signalEvent((PlanItemInstanceLifecycle<?>) pi, PlanItemTransition.TERMINATE);
 		}
 		pi.setPlanElementState(TERMINATED);
 		if (pi instanceof PlanItemInstanceContainer) {
-			for (PlanItemInstanceLifecycle child : ((PlanItemInstanceContainer) pi).getChildren()) {
-				if(!child.getPlanElementState().isTerminalState()){
-					if(child instanceof OccurrablePlanItemInstanceLifecycle){
-						((OccurrablePlanItemInstanceLifecycle) child).parentTerminate();
-					}else if(child instanceof ControllablePlanItemInstanceLifecycle){
+			for (PlanItemInstanceLifecycle<?> child : ((PlanItemInstanceContainer) pi).getChildren()) {
+				if (!child.getPlanElementState().isTerminalState()) {
+					if (child instanceof OccurrablePlanItemInstanceLifecycle) {
+						((OccurrablePlanItemInstanceLifecycle<?>) child).parentTerminate();
+					} else if (child instanceof ControllablePlanItemInstanceLifecycle) {
 						((ControllablePlanItemInstanceLifecycle<?>) child).exit();
 					}
 				}
@@ -238,7 +239,7 @@ public enum PlanElementState {
 	public void complete(CaseElementLifecycle pi) {
 		validateTransition(pi, COMPLETE);
 		if (pi instanceof PlanItemInstanceLifecycle) {
-			signalEvent((PlanItemInstanceLifecycle) pi, PlanItemTransition.COMPLETE);
+			signalEvent((PlanItemInstanceLifecycle<?>) pi, PlanItemTransition.COMPLETE);
 		}
 		pi.setPlanElementState(COMPLETED);
 		pi.getCaseInstance().markSubscriptionsForUpdate();
@@ -257,7 +258,7 @@ public enum PlanElementState {
 		pi.setPlanElementState(pi.getLastBusyState());
 	}
 
-	public void parentTerminate(OccurrablePlanItemInstanceLifecycle pi) {
+	public void parentTerminate(OccurrablePlanItemInstanceLifecycle<?> pi) {
 		validateTransition(pi, PARENT_TERMINATE);
 		signalEvent(pi, PlanItemTransition.PARENT_TERMINATE);
 		pi.setPlanElementState(TERMINATED);
@@ -266,20 +267,31 @@ public enum PlanElementState {
 	public void create(CaseElementLifecycle pi) {
 		validateTransition(pi, CREATE);
 		if (pi instanceof PlanItemInstanceLifecycle) {
-			signalEvent((PlanItemInstanceLifecycle) pi, PlanItemTransition.CREATE);
+			signalEvent((PlanItemInstanceLifecycle<?>) pi, PlanItemTransition.CREATE);
 		}
 		pi.setPlanElementState(AVAILABLE);
+	}
+
+	public void create(PlanItemInstanceFactoryNodeInstance pi) {
+		PlanItemTransition transition = PlanItemTransition.CREATE;
+			String eventToTrigger = OnPart.getType(pi.getNode().getPlanItem().getName(), transition);
+			Object eventObject = null;
+			if (eventObject == null) {
+				eventObject = new Object();
+			}
+			PlanItemEvent event = new PlanItemEvent(pi.getNode().getPlanItem().getName(), transition, eventObject);
+			pi.getCaseInstance().signalEvent(eventToTrigger, event);
 	}
 
 	public void fault(CaseElementLifecycle pi) {
 		validateTransition(pi, FAULT);
 		if (pi instanceof PlanItemInstanceLifecycle) {
-			signalEvent((PlanItemInstanceLifecycle) pi, PlanItemTransition.FAULT);
+			signalEvent((PlanItemInstanceLifecycle<?>) pi, PlanItemTransition.FAULT);
 		}
 		pi.setPlanElementState(FAILED);
 	}
 
-	public void occur(OccurrablePlanItemInstanceLifecycle pi) {
+	public void occur(OccurrablePlanItemInstanceLifecycle<?> pi) {
 		validateTransition(pi, OCCUR);
 		signalEvent(pi, PlanItemTransition.OCCUR);
 		pi.setPlanElementState(COMPLETED);
@@ -288,7 +300,7 @@ public enum PlanElementState {
 	public void close(CaseInstanceLifecycle pi) {
 		validateTransition(pi, CLOSE);
 		if (pi instanceof PlanItemInstanceLifecycle) {
-			signalEvent((PlanItemInstanceLifecycle) pi, PlanItemTransition.CLOSE);
+			signalEvent((PlanItemInstanceLifecycle<?>) pi, PlanItemTransition.CLOSE);
 		}
 		pi.setPlanElementState(CLOSED);
 	}

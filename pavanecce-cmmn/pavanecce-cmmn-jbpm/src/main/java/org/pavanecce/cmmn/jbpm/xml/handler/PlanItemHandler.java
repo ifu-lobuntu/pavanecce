@@ -19,9 +19,10 @@ public class PlanItemHandler extends AbstractCaseElementHandler implements Handl
 		parser.startElementBuilder(localName, attrs);
 		@SuppressWarnings("rawtypes")
 		PlanItemInfo planItem = new PlanItemInfo();
-		planItem.setId(IdGenerator.next(parser));
 		planItem.setContainer(((PlanItemContainer) parser.getParent()));
 		planItem.setName(attrs.getValue("name"));
+		planItem.setElementId(attrs.getValue("id"));
+		planItem.setId(IdGenerator.getIdAsUniqueAsUuid(parser,planItem));
 		String entry = attrs.getValue("entryCriteriaRefs");
 		if (entry != null) {
 			for (String string : entry.split("\\ ")) {

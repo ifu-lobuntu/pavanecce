@@ -12,11 +12,11 @@ public class UserEventHandler extends AbstractCaseElementHandler {
 	public Object start(String uri, String localName, Attributes attrs, ExtensibleXmlParser parser) throws SAXException {
 		UserEventListener node = new UserEventListener();
 		parser.startElementBuilder(localName, attrs);
-		node.setId(IdGenerator.next(parser));
 
 		node.setElementId(attrs.getValue("id"));
 		node.setName(attrs.getValue("name"));
 		node.setEventName(attrs.getValue("name"));
+		node.setId(IdGenerator.getIdAsUniqueAsUuid(parser,node));
 		((Case) parser.getParent(Case.class)).addPlanItemDefinition(node);
 		return node;
 	}

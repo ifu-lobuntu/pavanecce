@@ -3,7 +3,6 @@ package org.pavanecce.cmmn.jbpm.xml.handler;
 import java.util.HashSet;
 
 import org.drools.core.xml.BaseAbstractHandler;
-import org.drools.core.xml.ExtensibleXmlParser;
 import org.drools.core.xml.Handler;
 import org.jbpm.process.core.context.variable.Variable;
 import org.pavanecce.cmmn.jbpm.flow.Case;
@@ -20,7 +19,6 @@ import org.pavanecce.cmmn.jbpm.flow.Sentry;
 import org.pavanecce.cmmn.jbpm.flow.Stage;
 import org.pavanecce.cmmn.jbpm.flow.TimerEventListener;
 import org.pavanecce.cmmn.jbpm.flow.UserEventListener;
-import org.xml.sax.SAXException;
 
 public abstract class AbstractCaseElementHandler extends BaseAbstractHandler implements Handler {
 

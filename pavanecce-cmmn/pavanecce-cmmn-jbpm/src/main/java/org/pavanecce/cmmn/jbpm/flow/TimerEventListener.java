@@ -1,10 +1,9 @@
 package org.pavanecce.cmmn.jbpm.flow;
 
-import org.jbpm.process.core.timer.Timer;
 import org.jbpm.workflow.core.Constraint;
-import org.jbpm.workflow.core.node.TimerNode;
+import org.jbpm.workflow.core.impl.ExtendedNodeImpl;
 
-public class TimerEventListener extends TimerNode implements PlanItemDefinition {
+public class TimerEventListener extends ExtendedNodeImpl implements PlanItemDefinition {
 
 	private static final long serialVersionUID = 123L;
 	private String elementId;
@@ -26,12 +25,6 @@ public class TimerEventListener extends TimerNode implements PlanItemDefinition 
 
 	public void setTimerExpression(Constraint timerExpression) {
 		this.timerExpression = timerExpression;
-		if (timerExpression != null) {
-			Timer t = new Timer();
-			t.setDelay(timerExpression.getConstraint());
-			t.setPeriod(timerExpression.getConstraint());
-			super.setTimer(t);
-		}
 	}
 
 	public PlanItemControl getDefaultControl() {

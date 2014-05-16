@@ -13,6 +13,7 @@ import org.drools.core.process.instance.impl.WorkItemImpl;
 import org.jbpm.process.core.context.exception.ExceptionScope;
 import org.jbpm.process.instance.ProcessInstance;
 import org.jbpm.process.instance.context.exception.ExceptionScopeInstance;
+import org.jbpm.process.instance.impl.ConstraintEvaluator;
 import org.jbpm.workflow.core.node.CompositeNode;
 import org.jbpm.workflow.instance.WorkflowRuntimeException;
 import org.jbpm.workflow.instance.node.CompositeNodeInstance;
@@ -44,6 +45,20 @@ public class StagePlanItemInstance extends CompositeNodeInstance implements Plan
 		return super.getCompositeNode();
 	}
 
+	@Override
+	public void calcIsRequired() {
+		if (isCompletionRequired == null) {
+			PlanItem<?> toEnter = getPlanItem();
+			if (toEnter.getPlanInfo().getItemControl() != null && toEnter.getPlanInfo().getItemControl().getRequiredRule() instanceof ConstraintEvaluator) {
+				ConstraintEvaluator constraintEvaluator = (ConstraintEvaluator) toEnter.getPlanInfo().getItemControl().getRequiredRule();
+				isCompletionRequired = constraintEvaluator.evaluate(this, null, constraintEvaluator);
+			} else {
+				isCompletionRequired = Boolean.FALSE;
+			}
+		}
+
+	}
+
 	public WorkItem getWorkItem() {
 		if (workItem == null && workItemId >= 0) {
 			workItem = ((WorkItemManager) ((ProcessInstance) getProcessInstance()).getKnowledgeRuntime().getWorkItemManager()).getWorkItem(workItemId);
@@ -64,7 +79,7 @@ public class StagePlanItemInstance extends CompositeNodeInstance implements Plan
 	}
 
 	public void internalTrigger(final NodeInstance from, String type) {
-		this.isCompletionRequired=false;
+		this.isCompletionRequired = false;
 		super.internalTrigger(from, type);
 		StagePlanItem workItemNode = getStagePlanItem();
 		createWorkItem(workItemNode);
@@ -263,11 +278,11 @@ public class StagePlanItemInstance extends CompositeNodeInstance implements Plan
 	}
 
 	@Override
-	public Collection<PlanItemInstanceLifecycle> getChildren() {
-		Set<PlanItemInstanceLifecycle> result = new HashSet<PlanItemInstanceLifecycle>();
+	public Collection<PlanItemInstanceLifecycle<?>> getChildren() {
+		Set<PlanItemInstanceLifecycle<?>> result = new HashSet<PlanItemInstanceLifecycle<?>>();
 		for (NodeInstance nodeInstance : getNodeInstances()) {
 			if (nodeInstance instanceof PlanItemInstanceLifecycle) {
-				result.add((PlanItemInstanceLifecycle) nodeInstance);
+				result.add((PlanItemInstanceLifecycle<?>) nodeInstance);
 			}
 		}
 		return result;

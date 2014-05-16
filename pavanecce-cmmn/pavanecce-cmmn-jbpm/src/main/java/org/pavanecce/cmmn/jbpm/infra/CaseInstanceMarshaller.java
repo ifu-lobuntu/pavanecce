@@ -18,18 +18,20 @@ import org.jbpm.workflow.instance.impl.NodeInstanceImpl;
 import org.jbpm.workflow.instance.impl.WorkflowProcessInstanceImpl;
 import org.jbpm.workflow.instance.node.CompositeContextNodeInstance;
 import org.jbpm.workflow.instance.node.JoinInstance;
-import org.jbpm.workflow.instance.node.TimerNodeInstance;
 import org.kie.api.runtime.process.NodeInstance;
 import org.kie.api.runtime.process.ProcessInstance;
 import org.kie.api.runtime.process.WorkflowProcessInstance;
 import org.pavanecce.cmmn.jbpm.instance.ControllablePlanItemInstanceLifecycle;
+import org.pavanecce.cmmn.jbpm.instance.OccurrablePlanItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.instance.OnPartInstance;
 import org.pavanecce.cmmn.jbpm.instance.PlanElementState;
 import org.pavanecce.cmmn.jbpm.instance.impl.CaseInstance;
 import org.pavanecce.cmmn.jbpm.instance.impl.CaseTaskPlanItemInstance;
 import org.pavanecce.cmmn.jbpm.instance.impl.DefaultJoinInstance;
+import org.pavanecce.cmmn.jbpm.instance.impl.DefaultSplitInstance;
 import org.pavanecce.cmmn.jbpm.instance.impl.HumanTaskPlanItemInstance;
 import org.pavanecce.cmmn.jbpm.instance.impl.MilestonePlanItemInstance;
+import org.pavanecce.cmmn.jbpm.instance.impl.PlanItemInstanceFactoryNodeInstance;
 import org.pavanecce.cmmn.jbpm.instance.impl.SentryInstance;
 import org.pavanecce.cmmn.jbpm.instance.impl.StagePlanItemInstance;
 import org.pavanecce.cmmn.jbpm.instance.impl.TimerEventPlanItemInstance;
@@ -45,6 +47,8 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 	private static final int MILESTONE_PLAN_ITEM_INSTANCE = 182;
 	private static final int CASE_TASK_PLAN_ITEM_INSTANCE = 183;
 	private static final int DEFAULT_JOIN_INSTANCE = 184;
+	private static final int PLAN_ITEM_INSTANCE_FACTORY_NODE_INSTANCE = 185;
+	private static final int DEFAULT_SPLIT_INSTANCE = 186;
 
 	@Override
 	protected WorkflowProcessInstanceImpl createProcessInstance() {
@@ -88,10 +92,14 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 	protected NodeInstanceImpl readNodeInstanceContent(int nodeType, ObjectInputStream stream, MarshallerReaderContext context, WorkflowProcessInstance processInstance) throws IOException {
 		NodeInstanceImpl nodeInstance = null;
 		switch (nodeType) {
+		case PLAN_ITEM_INSTANCE_FACTORY_NODE_INSTANCE:
+			PlanItemInstanceFactoryNodeInstance piifni = new PlanItemInstanceFactoryNodeInstance();
+			piifni.internalSetPlanItemInstanceRequired(context.stream.readBoolean());
+			piifni.internalSetPlanItemInstanceStillRequired(context.stream.readBoolean());
+			nodeInstance = piifni;
+			break;
 		case SENTRY_INSTANCE:
 			SentryInstance sentryInstance = new SentryInstance();
-			sentryInstance.internalSetPlanItemInstanceRequired(context.stream.readBoolean());
-			sentryInstance.internalSetPlanItemInstanceStillRequired(context.stream.readBoolean());
 			int number = stream.readInt();
 			if (number > 0) {
 				Map<Long, Integer> triggers = new HashMap<Long, Integer>();
@@ -110,8 +118,7 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 			break;
 		case MILESTONE_PLAN_ITEM_INSTANCE:
 			nodeInstance = new MilestonePlanItemInstance();
-			((MilestonePlanItemInstance) nodeInstance).internalSetRequired(stream.readBoolean());
-			((MilestonePlanItemInstance) nodeInstance).setPlanElementState(PlanElementState.values()[stream.readInt()]);
+			readOccurrablePlanItemInstance(stream, (MilestonePlanItemInstance) nodeInstance);
 			break;
 		case CASE_TASK_PLAN_ITEM_INSTANCE:
 			nodeInstance = new CaseTaskPlanItemInstance();
@@ -129,10 +136,12 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 			break;
 		case USER_EVENT_PLAN_ITEM_INSTANCE:
 			nodeInstance = new UserEventPlanItemInstance();
+			readOccurrablePlanItemInstance(stream, (UserEventPlanItemInstance) nodeInstance);
 			break;
 		case TIMER_EVENT_PLAN_ITEM_INSTANCE:
 			nodeInstance = new TimerEventPlanItemInstance();
-			((TimerEventPlanItemInstance) nodeInstance).internalSetTimerId(stream.readLong());
+			readOccurrablePlanItemInstance(stream, (TimerEventPlanItemInstance) nodeInstance);
+			((TimerEventPlanItemInstance) nodeInstance).internalSetTimerInstanceId(stream.readLong());
 			break;
 		case HUMAN_TASK_PLAN_ITEM_INSTANCE:
 			HumanTaskPlanItemInstance planItemInstance = new HumanTaskPlanItemInstance();
@@ -147,6 +156,9 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 				planItemInstance.internalSetTimerInstances(timerInstances);
 			}
 			nodeInstance = planItemInstance;
+			break;
+		case DEFAULT_SPLIT_INSTANCE:
+			nodeInstance = new DefaultSplitInstance();
 			break;
 		case DEFAULT_JOIN_INSTANCE:
 			nodeInstance = new DefaultJoinInstance();
@@ -181,12 +193,15 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 		return nodeInstance;
 	}
 
+	protected void readOccurrablePlanItemInstance(ObjectInputStream stream, OccurrablePlanItemInstanceLifecycle<?> nodeInstance) throws IOException {
+		nodeInstance.internalSetRequired(stream.readBoolean());
+		nodeInstance.setPlanElementState(PlanElementState.values()[stream.readInt()]);
+	}
+
 	@Override
 	protected void writeNodeInstanceContent(ObjectOutputStream stream, NodeInstance nodeInstance, MarshallerWriteContext context) throws IOException {
 		if (nodeInstance instanceof SentryInstance) {
 			stream.writeShort(SENTRY_INSTANCE);
-			stream.writeBoolean(((SentryInstance) nodeInstance).isPlanItemInstanceRequired());
-			stream.writeBoolean(((SentryInstance) nodeInstance).isPlanItemInstanceStillRequired());
 			Map<Long, Integer> triggers = ((JoinInstance) nodeInstance).getTriggers();
 			stream.writeInt(triggers.size());
 			List<Long> keys = new ArrayList<Long>(triggers.keySet());
@@ -201,12 +216,15 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 				stream.writeInt(triggers.get(key));
 			}
 
+		} else if (nodeInstance instanceof PlanItemInstanceFactoryNodeInstance) {
+			stream.writeShort(PLAN_ITEM_INSTANCE_FACTORY_NODE_INSTANCE);
+			stream.writeBoolean(((PlanItemInstanceFactoryNodeInstance) nodeInstance).isPlanItemInstanceRequired());
+			stream.writeBoolean(((PlanItemInstanceFactoryNodeInstance) nodeInstance).isPlanItemInstanceStillRequired());
 		} else if (nodeInstance instanceof OnPartInstance) {
 			stream.writeShort(ON_PART_INSTANCE);
 		} else if (nodeInstance instanceof MilestonePlanItemInstance) {
 			stream.writeShort(MILESTONE_PLAN_ITEM_INSTANCE);
-			stream.writeBoolean(((MilestonePlanItemInstance) nodeInstance).isCompletionRequired());
-			stream.writeInt(((MilestonePlanItemInstance) nodeInstance).getPlanElementState().ordinal());
+			writeOccurrableNodeInstance(stream, (MilestonePlanItemInstance) nodeInstance);
 		} else if (nodeInstance instanceof CaseTaskPlanItemInstance) {
 			stream.writeShort(CASE_TASK_PLAN_ITEM_INSTANCE);
 			stream.writeLong(((CaseTaskPlanItemInstance) nodeInstance).getProcessInstanceId());
@@ -223,9 +241,11 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 			}
 		} else if (nodeInstance instanceof UserEventPlanItemInstance) {
 			stream.writeShort(USER_EVENT_PLAN_ITEM_INSTANCE);
+			writeOccurrableNodeInstance(stream, (UserEventPlanItemInstance) nodeInstance);
 		} else if (nodeInstance instanceof TimerEventPlanItemInstance) {
 			stream.writeShort(TIMER_EVENT_PLAN_ITEM_INSTANCE);
-			stream.writeLong(((TimerNodeInstance) nodeInstance).getTimerId());
+			writeOccurrableNodeInstance(stream, (TimerEventPlanItemInstance) nodeInstance);
+			stream.writeLong(((TimerEventPlanItemInstance) nodeInstance).getTimerInstanceId());
 		} else if (nodeInstance instanceof HumanTaskPlanItemInstance) {
 			stream.writeShort(HUMAN_TASK_PLAN_ITEM_INSTANCE);
 			HumanTaskPlanItemInstance hpii = (HumanTaskPlanItemInstance) nodeInstance;
@@ -267,6 +287,8 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 				writeNodeInstance(context, subNodeInstance);
 			}
 			stream.writeShort(PersisterEnums.END);
+		} else if (nodeInstance instanceof DefaultSplitInstance) {
+			stream.writeShort(DEFAULT_SPLIT_INSTANCE);
 		} else if (nodeInstance instanceof DefaultJoinInstance) {
 			stream.writeShort(DEFAULT_JOIN_INSTANCE);
 			Map<Long, Integer> triggers = ((DefaultJoinInstance) nodeInstance).getTriggers();
@@ -285,6 +307,11 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 		} else {
 			super.writeNodeInstanceContent(stream, nodeInstance, context);
 		}
+	}
+
+	protected void writeOccurrableNodeInstance(ObjectOutputStream stream, OccurrablePlanItemInstanceLifecycle<?> nodeInstance) throws IOException {
+		stream.writeBoolean(nodeInstance.isCompletionRequired());
+		stream.writeInt(nodeInstance.getPlanElementState().ordinal());
 	}
 
 }

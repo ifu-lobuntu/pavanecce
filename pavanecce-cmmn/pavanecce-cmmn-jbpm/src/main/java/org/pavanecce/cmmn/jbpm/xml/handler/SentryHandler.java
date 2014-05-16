@@ -30,6 +30,7 @@ public class SentryHandler extends AbstractCaseElementHandler implements Handler
 		Sentry node = new Sentry();
 		node.setElementId(attrs.getValue("id"));
 		node.setName(attrs.getValue("name"));
+		node.setId(IdGenerator.getIdAsUniqueAsUuid(parser, node));
 		return node;
 	}
 
@@ -46,7 +47,6 @@ public class SentryHandler extends AbstractCaseElementHandler implements Handler
 		Element el = parser.endElementBuilder();
 		ConstraintImpl constraint = maybeCreateConstraint(node, el);
 		node.setCondition(constraint);
-		node.setId(IdGenerator.next(parser));
 		NodeContainer parent = (NodeContainer) parser.getParent();
 		parent.addNode(node);
 		for (OnPart onPart : onParts) {
@@ -58,11 +58,11 @@ public class SentryHandler extends AbstractCaseElementHandler implements Handler
 
 	protected ConstraintImpl maybeCreateConstraint(Sentry node, Element el) {
 		NodeList ifPartList = el.getElementsByTagName("ifPart");
-		ConstraintImpl result=null;
+		ConstraintImpl result = null;
 		if (ifPartList.getLength() == 1) {
 			Element ifPart = (Element) ifPartList.item(0);
 			String name = "condition";
-			result=ConstraintExtractor.extractExpression(ifPart, name);
+			result = ConstraintExtractor.extractExpression(ifPart, name);
 		}
 		return result;
 	}

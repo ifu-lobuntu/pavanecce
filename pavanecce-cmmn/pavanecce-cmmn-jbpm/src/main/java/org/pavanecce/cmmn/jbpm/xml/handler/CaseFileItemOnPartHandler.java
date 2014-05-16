@@ -28,8 +28,9 @@ public class CaseFileItemOnPartHandler extends BaseAbstractHandler implements Ha
 	public Object start(String uri, String localName, Attributes attrs, ExtensibleXmlParser parser) throws SAXException {
 		parser.startElementBuilder(localName, attrs);
 		CaseFileItemOnPart part = new CaseFileItemOnPart();
-		part.setId(IdGenerator.next(parser));
 		part.setName(attrs.getValue("id"));
+		part.setId(IdGenerator.getIdAsUniqueAsUuid(parser,part));
+
 		((Sentry) parser.getParent()).addOnPart(part);
 		part.setSourceRef(attrs.getValue("sourceRef"));
 		part.setRelationRef(attrs.getValue("relationRef"));

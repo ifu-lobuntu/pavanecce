@@ -61,9 +61,11 @@ import org.pavanecce.cmmn.jbpm.flow.CaseFileItemDefinitionType;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemOnPart;
 import org.pavanecce.cmmn.jbpm.flow.CaseTaskPlanItem;
 import org.pavanecce.cmmn.jbpm.flow.DefaultJoin;
+import org.pavanecce.cmmn.jbpm.flow.DefaultSplit;
 import org.pavanecce.cmmn.jbpm.flow.HumanTaskPlanItem;
 import org.pavanecce.cmmn.jbpm.flow.MilestonePlanItem;
 import org.pavanecce.cmmn.jbpm.flow.OnPart;
+import org.pavanecce.cmmn.jbpm.flow.PlanItemInstanceFactoryNode;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemOnPart;
 import org.pavanecce.cmmn.jbpm.flow.Sentry;
 import org.pavanecce.cmmn.jbpm.flow.StagePlanItem;
@@ -74,14 +76,16 @@ import org.pavanecce.cmmn.jbpm.infra.CaseInstanceMarshaller;
 import org.pavanecce.cmmn.jbpm.infra.CaseRegisterableItemsFactory;
 import org.pavanecce.cmmn.jbpm.infra.PlanItemBuilder;
 import org.pavanecce.cmmn.jbpm.infra.SentryBuilder;
-import org.pavanecce.cmmn.jbpm.instance.ControllablePlanItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.instance.OnPartInstance;
 import org.pavanecce.cmmn.jbpm.instance.PlanElementState;
+import org.pavanecce.cmmn.jbpm.instance.PlanItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.instance.impl.CaseInstance;
 import org.pavanecce.cmmn.jbpm.instance.impl.CaseTaskPlanItemInstance;
 import org.pavanecce.cmmn.jbpm.instance.impl.DefaultJoinInstance;
+import org.pavanecce.cmmn.jbpm.instance.impl.DefaultSplitInstance;
 import org.pavanecce.cmmn.jbpm.instance.impl.HumanTaskPlanItemInstance;
 import org.pavanecce.cmmn.jbpm.instance.impl.MilestonePlanItemInstance;
+import org.pavanecce.cmmn.jbpm.instance.impl.PlanItemInstanceFactoryNodeInstance;
 import org.pavanecce.cmmn.jbpm.instance.impl.SentryInstance;
 import org.pavanecce.cmmn.jbpm.instance.impl.StagePlanItemInstance;
 import org.pavanecce.cmmn.jbpm.instance.impl.TimerEventPlanItemInstance;
@@ -147,11 +151,23 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 		boolean found = false;
 		String foundState = "";
 		for (NodeInstance ni : ci.getNodeInstances()) {
-			if (ni instanceof ControllablePlanItemInstanceLifecycle && ni.getNodeName().equals(planItemName)) {
-				if (((ControllablePlanItemInstanceLifecycle<?>) ni).getPlanElementState() == s) {
-					found = true;
-				} else {
-					foundState = ((ControllablePlanItemInstanceLifecycle<?>) ni).getPlanElementState().name();
+			if (ni instanceof PlanItemInstanceFactoryNodeInstance) {
+				PlanItemInstanceFactoryNode node = (PlanItemInstanceFactoryNode) ni.getNode();
+				if (node.getPlanItem().getName().equals(planItemName)) {
+					if (((PlanItemInstanceFactoryNodeInstance) ni).isPlanItemInstanceStillRequired() && s == PlanElementState.AVAILABLE) {
+						found = true;
+					}
+				}
+			}
+		}
+		if (!found) {
+			for (NodeInstance ni : ci.getNodeInstances()) {
+				if (ni instanceof PlanItemInstanceLifecycle && ni.getNodeName().equals(planItemName)) {
+					if (((PlanItemInstanceLifecycle<?>) ni).getPlanElementState() == s) {
+						found = true;
+					} else {
+						foundState = ((PlanItemInstanceLifecycle<?>) ni).getPlanElementState().name();
+					}
 				}
 			}
 		}
@@ -306,6 +322,7 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 		NodeInstanceFactoryRegistry nodeInstanceFactoryRegistry = NodeInstanceFactoryRegistry.getInstance(env);
 		nodeInstanceFactoryRegistry.register(DefaultJoin.class, new ReuseNodeFactory(DefaultJoinInstance.class));
 		nodeInstanceFactoryRegistry.register(Sentry.class, new ReuseNodeFactory(SentryInstance.class));
+		nodeInstanceFactoryRegistry.register(PlanItemInstanceFactoryNode.class, new ReuseNodeFactory(PlanItemInstanceFactoryNodeInstance.class));
 		nodeInstanceFactoryRegistry.register(OnPart.class, new ReuseNodeFactory(OnPartInstance.class));
 		nodeInstanceFactoryRegistry.register(UserEventPlanItem.class, new ReuseNodeFactory(UserEventPlanItemInstance.class));
 		nodeInstanceFactoryRegistry.register(TimerEventPlanItem.class, new ReuseNodeFactory(TimerEventPlanItemInstance.class));
@@ -313,6 +330,7 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 		nodeInstanceFactoryRegistry.register(CaseFileItemOnPart.class, new ReuseNodeFactory(OnPartInstance.class));
 		nodeInstanceFactoryRegistry.register(PlanItemOnPart.class, new ReuseNodeFactory(OnPartInstance.class));
 		nodeInstanceFactoryRegistry.register(StagePlanItem.class, new CreateNewNodeFactory(StagePlanItemInstance.class));
+		nodeInstanceFactoryRegistry.register(DefaultSplit.class, new CreateNewNodeFactory(DefaultSplitInstance.class));
 		nodeInstanceFactoryRegistry.register(HumanTaskPlanItem.class, new CreateNewNodeFactory(HumanTaskPlanItemInstance.class));
 		nodeInstanceFactoryRegistry.register(CaseTaskPlanItem.class, new CreateNewNodeFactory(CaseTaskPlanItemInstance.class));
 		TaskService ts = runtimeEngine.getTaskService();

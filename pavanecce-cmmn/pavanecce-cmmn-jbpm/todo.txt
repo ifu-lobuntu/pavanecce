@@ -130,6 +130,9 @@ When a Stage needs to be closed manually, which users should be allowed to do th
 In the notation examples, it seems there are Discretionary items that also have entryCriteratia. How so?
 For stages and tasks, when they are enabled and repititionRule=true, it should create a new instance, but what happens to the
 instance that was already in the available state?
+Understood that repetitionRules are not relevant tot EventListeners. However, it is acknowledged that timer events can repeat, and it is imaginable that a UserEvent occur more than once. Milestones can definitely occur many times.
+7.5.3. does not include Timer/UserEvents in the discussion of RequiredRules, however 5.4.11.2 does, but again it is excluded in table 42. It is easy to imagine that an event is required. 
+
 Discrepancies in XSD:
   In the XSD, TimerEventListener.timerExpression is a fully fledged expression, but in the spec it is just string. Does the result still have to be ISO-8601 compliant?
   AuthoizedRoleRefs for user events?

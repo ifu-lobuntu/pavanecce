@@ -1,6 +1,5 @@
 package org.pavanecce.cmmn.jbpm.flow;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;

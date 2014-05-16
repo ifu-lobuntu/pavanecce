@@ -118,6 +118,7 @@ Import-Package: bitronix.tm.resource.common,
  org.kie.internal.runtime.manager.context,
  org.kie.internal.task.api,
  org.kie.internal.task.api.model,
+ org.mvel2,
  org.slf4j
 Require-Bundle: org.pavanecce.common.util
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

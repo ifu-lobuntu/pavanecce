@@ -14,10 +14,10 @@ public class TimerEventHandler extends AbstractCaseElementHandler {
 		TimerEventListener node = new TimerEventListener();
 		parser.startElementBuilder(localName, attrs);
 		node.setElementId(attrs.getValue("id"));
-		node.setId(IdGenerator.next(parser));
-
+		Case theCase = (Case) parser.getParent(Case.class);
+		node.setId(IdGenerator.getIdAsUniqueAsUuid(parser, node));
 		node.setName(attrs.getValue("name"));
-		((Case) parser.getParent(Case.class)).addPlanItemDefinition(node);
+		theCase.addPlanItemDefinition(node);
 		return node;
 	}
 
