@@ -15,13 +15,10 @@ import org.jbpm.workflow.instance.node.JoinInstance;
 import org.kie.api.definition.process.Connection;
 import org.kie.api.runtime.process.NodeInstance;
 import org.pavanecce.cmmn.jbpm.event.CaseEvent;
-import org.pavanecce.cmmn.jbpm.flow.MilestonePlanItem;
 import org.pavanecce.cmmn.jbpm.flow.OnPart;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemInstanceFactoryNode;
 import org.pavanecce.cmmn.jbpm.flow.Sentry;
 import org.pavanecce.cmmn.jbpm.instance.ControllablePlanItemInstanceLifecycle;
-import org.pavanecce.cmmn.jbpm.instance.OnPartInstance;
-import org.pavanecce.cmmn.jbpm.instance.PlanItemInstanceLifecycle;
 
 public class SentryInstance extends JoinInstance {
 	private static ThreadLocal<Deque<Collection<CaseEvent>>> currentEvents = new ThreadLocal<Deque<Collection<CaseEvent>>>();
@@ -38,21 +35,15 @@ public class SentryInstance extends JoinInstance {
 
 	@Override
 	public void internalTrigger(NodeInstance from, String type) {
-		List<Connection> outgoingConnections = getNode().getOutgoingConnections(NodeImpl.CONNECTION_DEFAULT_TYPE);
-		if (outgoingConnections.isEmpty()) {
-//			System.out.println(getNodeName());
-		} else {
-			Connection next = outgoingConnections.get(0);
-			System.out.println(next.getTo().getName() + ":" + next.getTo().getClass().getName());
-			if (next.getTo() instanceof MilestonePlanItem) {
-				org.jbpm.workflow.instance.NodeInstance ni = ((NodeInstanceContainer) getNodeInstanceContainer()).getNodeInstance(next.getTo());
-				((MilestonePlanItemInstance) ni).calcIsRequired();
-			} else if (next.getTo() instanceof PlanItemInstanceFactoryNode) {
-				org.jbpm.workflow.instance.NodeInstance ni = ((NodeInstanceContainer) getNodeInstanceContainer()).getNodeInstance(next.getTo());
-				((PlanItemInstanceFactoryNodeInstance) ni).calcIsRequired();
-			}else{
-				throw new IllegalStateException("Unknown to-node:"+next.getTo().getName() + ":" + next.getTo().getClass().getName() );
-				
+		if (getSentry().getPlanItemContainer()!=null && from.getNodeId() == getSentry().getPlanItemContainer().getDefaultSplit().getId()) {
+			List<Connection> outgoingConnections = getNode().getOutgoingConnections(NodeImpl.CONNECTION_DEFAULT_TYPE);
+			if (outgoingConnections.isEmpty()) {
+				// an exit criterion
+			} else {
+				Connection next = outgoingConnections.get(0);
+				PlanItemInstanceFactoryNode to = (PlanItemInstanceFactoryNode) next.getTo();
+				NodeInstance ni = ((NodeInstanceContainer) getNodeInstanceContainer()).getNodeInstance(to);
+				((PlanItemInstanceFactoryNodeInstance<?>) ni).ensureCreationIsTriggered();
 			}
 		}
 		super.internalTrigger(from, type);
@@ -73,43 +64,48 @@ public class SentryInstance extends JoinInstance {
 
 	@Override
 	public void triggerCompleted() {
-		Sentry sentry = (Sentry) getNode();
-		Constraint c = sentry.getCondition();
-		if (c instanceof ConstraintEvaluator) {
-			Connection conn = getNode().getIncomingConnections(Node.CONNECTION_DEFAULT_TYPE).get(0);
-			if (!((ConstraintEvaluator) c).evaluate(this, conn, c)) {
-				return;
+		if (isConditionTrue()) {
+			NodeInstanceContainer nic = (org.jbpm.workflow.instance.NodeInstanceContainer) getNodeInstanceContainer();
+			nic.setCurrentLevel(getLevel());
+			maybeTriggerExit(nic);
+			// Default behavior is to keep this SentryInstance active so that it can
+			// continue to listen to transitions/standardEvents
+			Deque<Collection<CaseEvent>> deque = getEventQueue();
+			deque.push(getEvents());
+			try {
+				triggerCompleted(org.jbpm.workflow.core.Node.CONNECTION_DEFAULT_TYPE, false);
+			} finally {
+				deque.pop();
 			}
-		}
-		NodeInstanceContainer nic = (org.jbpm.workflow.instance.NodeInstanceContainer) getNodeInstanceContainer();
-		nic.setCurrentLevel(getLevel());
-		maybeTriggerExit(nic);
-		// Default behavior is to keep this SentryInstance active so that it can
-		// continue to listen to transitions/standardEvents
-		Deque<Collection<CaseEvent>> deque = getEventQueue();
-		deque.push(getEvents());
-		try {
-			triggerCompleted(org.jbpm.workflow.core.Node.CONNECTION_DEFAULT_TYPE, false);
-		} finally {
-			deque.pop();
-		}
-		Collection<Connection> values = getNode().getIncomingConnections(Node.CONNECTION_DEFAULT_TYPE);
-		for (Connection connection : values) {
-			if (connection.getFrom() instanceof OnPart) {
-				NodeInstance ni = findNodeInstance((NodeInstanceContainer) getNodeInstanceContainer(), (OnPart) connection.getFrom());
-				OnPartInstance opi = (OnPartInstance) ni;
-				if (opi != null) {
-					// coud be after process completion
-					opi.popEvent();
+			Collection<Connection> values = getNode().getIncomingConnections(Node.CONNECTION_DEFAULT_TYPE);
+			for (Connection connection : values) {
+				if (connection.getFrom() instanceof OnPart) {
+					NodeInstance ni = findNodeInstance((NodeInstanceContainer) getNodeInstanceContainer(), (OnPart) connection.getFrom());
+					OnPartInstance opi = (OnPartInstance) ni;
+					if (opi != null) {
+						// coud be after process completion
+						opi.popEvent();
+					}
+				}
+			}
+			for (Connection connection : values) {
+				if (!(connection.getFrom() instanceof OnPart)) {
+					// Once activated, we keep the originating "from" active to indicate an "Available" state
+					super.getTriggers().put(connection.getFrom().getId(), 1);
 				}
 			}
 		}
-		for (Connection connection : values) {
-			if (!(connection.getFrom() instanceof OnPart)) {
-				// Once activated, we keep the originating "from" active to indicate an "Available" state
-				super.getTriggers().put(connection.getFrom().getId(), 1);
-			}
+	}
+
+	private boolean isConditionTrue() {
+		Sentry sentry = (Sentry) getNode();
+		boolean condition = true;
+		Constraint c = sentry.getCondition();
+		if (c instanceof ConstraintEvaluator) {
+			Connection conn = getNode().getIncomingConnections(Node.CONNECTION_DEFAULT_TYPE).get(0);
+			condition = ((ConstraintEvaluator) c).evaluate(this, conn, c);
 		}
+		return condition;
 	}
 
 	protected static Deque<Collection<CaseEvent>> getEventQueue() {

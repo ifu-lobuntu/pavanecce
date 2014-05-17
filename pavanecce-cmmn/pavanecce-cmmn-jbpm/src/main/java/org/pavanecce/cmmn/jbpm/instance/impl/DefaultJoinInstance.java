@@ -10,6 +10,9 @@ import org.pavanecce.cmmn.jbpm.instance.PlanItemInstanceContainer;
 public class DefaultJoinInstance extends JoinInstance implements EventNodeInstanceInterface {
 	private static final long serialVersionUID = -8715207082336857538L;
 	private transient boolean isInitializing = false;
+	public DefaultJoinInstance() {
+		System.out.println();
+	}
 
 	@Override
 	public void internalTrigger(NodeInstance from, String type) {

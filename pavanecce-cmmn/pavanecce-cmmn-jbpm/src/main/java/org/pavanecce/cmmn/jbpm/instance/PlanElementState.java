@@ -5,7 +5,6 @@ import static org.pavanecce.cmmn.jbpm.flow.PlanItemTransition.*;
 import org.pavanecce.cmmn.jbpm.event.PlanItemEvent;
 import org.pavanecce.cmmn.jbpm.flow.OnPart;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemTransition;
-import org.pavanecce.cmmn.jbpm.instance.impl.PlanItemInstanceUtil;
 
 public enum PlanElementState {
 	AVAILABLE() {
@@ -121,10 +120,10 @@ public enum PlanElementState {
 	public final boolean isBusyState(PlanElementLifecycle pl) {
 		if (pl instanceof CaseInstanceLifecycle) {
 			return this == ACTIVE;
-		} else if (pl instanceof OccurrablePlanItemInstanceLifecycle) {
-			return this == AVAILABLE;
-		} else {
+		} else if (isComplexLifecycle(pl)) {
 			return this == ACTIVE || this == DISABLED || this == ENABLED || this == AVAILABLE;
+		} else {
+			return this == AVAILABLE;
 		}
 	}
 
@@ -196,10 +195,10 @@ public enum PlanElementState {
 			PlanItemInstanceContainer pic = (PlanItemInstanceContainer) pi;
 			for (PlanItemInstanceLifecycle<?> child : pic.getChildren()) {
 				if (child.getPlanElementState().isBusyState(child)) {
-					if (child instanceof OccurrablePlanItemInstanceLifecycle) {
-						((OccurrablePlanItemInstanceLifecycle<?>) child).suspend();
-					} else if (child instanceof PlanItemInstanceLifecycleWithHistory<?>) {
+					if(isComplexLifecycle(child)){
 						((PlanItemInstanceLifecycleWithHistory<?>) child).parentSuspend();
+					}else if (child instanceof OccurrablePlanItemInstanceLifecycle) {
+						((OccurrablePlanItemInstanceLifecycle<?>) child).suspend();
 					}
 				}
 			}
@@ -219,13 +218,13 @@ public enum PlanElementState {
 		}
 	}
 
-	private void resumeChildren(PlanItemInstanceContainer pi) {
+	public static void resumeChildren(PlanItemInstanceContainer pi) {
 		for (PlanItemInstanceLifecycle<?> child : pi.getChildren()) {
 			if (child.getPlanElementState() == SUSPENDED) {
-				if (child instanceof ControllablePlanItemInstanceLifecycle) {
-					((ControllablePlanItemInstanceLifecycle<?>) child).parentResume();
-				} else if (child instanceof OccurrablePlanItemInstanceLifecycle) {
+				if (child instanceof OccurrablePlanItemInstanceLifecycle) {
 					((OccurrablePlanItemInstanceLifecycle<?>) child).resume();
+				} else if (isComplexLifecycle(child)) {
+					((PlanItemInstanceLifecycleWithHistory<?>)child).parentResume();
 				}
 			}
 		}
@@ -238,13 +237,18 @@ public enum PlanElementState {
 		}
 		pi.setPlanElementState(TERMINATED);
 		if (pi instanceof PlanItemInstanceContainer) {
-			for (PlanItemInstanceLifecycle<?> child : ((PlanItemInstanceContainer) pi).getChildren()) {
-				if (!child.getPlanElementState().isTerminalState()) {
-					if (child instanceof OccurrablePlanItemInstanceLifecycle) {
-						((OccurrablePlanItemInstanceLifecycle<?>) child).parentTerminate();
-					} else if (child instanceof ControllablePlanItemInstanceLifecycle) {
-						((ControllablePlanItemInstanceLifecycle<?>) child).exit();
-					}
+			PlanItemInstanceContainer pi2 = (PlanItemInstanceContainer) pi;
+			terminateChildren(pi2);
+		}
+	}
+
+	public static void terminateChildren(PlanItemInstanceContainer pi2) {
+		for (PlanItemInstanceLifecycle<?> child : pi2.getChildren()) {
+			if (!child.getPlanElementState().isTerminalState()) {
+				if (child instanceof OccurrablePlanItemInstanceLifecycle) {
+					((OccurrablePlanItemInstanceLifecycle<?>) child).parentTerminate();
+				} else if (child instanceof ControllablePlanItemInstanceLifecycle) {
+					((ControllablePlanItemInstanceLifecycle<?>) child).exit();
 				}
 			}
 		}
@@ -302,6 +306,7 @@ public enum PlanElementState {
 		}
 		PlanItemEvent event = new PlanItemEvent(pi.getPlanItem().getName(), transition, eventObject);
 		pi.getCaseInstance().signalEvent(eventToTrigger, event);
+		pi.setPlanElementState(AVAILABLE);
 	}
 
 	public void fault(PlanElementLifecycle pi) {
@@ -337,10 +342,19 @@ public enum PlanElementState {
 	public boolean isSemiTerminalState(PlanElementLifecycle pe) {
 		if (pe instanceof CaseInstanceLifecycle) {
 			return this == DISABLED || this == FAILED || this == COMPLETED;
-		} else if (pe instanceof PlanItemInstanceLifecycleWithHistory<?>) {
-			return this == DISABLED || this == FAILED;
 		} else {
-			return false;
+			if (isComplexLifecycle(pe)) {
+				return this == DISABLED || this == FAILED;
+			} else {
+				return false;
+			}
 		}
+	}
+
+	private static boolean isComplexLifecycle(PlanElementLifecycle pe) {
+		if (pe instanceof PlanItemInstanceLifecycleWithHistory) {
+			return ((PlanItemInstanceLifecycleWithHistory<?>) pe).isComplexLifecycle();
+		}
+		return false;
 	}
 }

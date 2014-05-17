@@ -65,4 +65,14 @@ public class Sentry extends Join implements CMMNElement {
 		this.planItemEntering = planItemEntering;
 	}
 
+	public PlanItemContainer getPlanItemContainer() {
+		if(planItemEntering!=null){
+			return planItemEntering.getPlanItemContainer();
+		}
+		if(planItemExiting!=null){
+			return planItemExiting.getPlanItemContainer();
+		}
+		return null;
+	}
+
 }

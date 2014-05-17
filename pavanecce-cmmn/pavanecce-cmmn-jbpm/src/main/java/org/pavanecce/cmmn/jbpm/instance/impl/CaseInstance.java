@@ -16,6 +16,7 @@ import org.jbpm.process.instance.ProcessInstance;
 import org.jbpm.ruleflow.instance.RuleFlowProcessInstance;
 import org.jbpm.services.task.wih.util.PeopleAssignmentHelper;
 import org.jbpm.workflow.instance.NodeInstanceContainer;
+import org.kie.api.definition.process.Node;
 import org.kie.api.runtime.process.NodeInstance;
 import org.kie.api.task.model.Task;
 import org.pavanecce.cmmn.jbpm.event.SubscriptionManager;
@@ -23,6 +24,7 @@ import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItem;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemOnPart;
 import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
+import org.pavanecce.cmmn.jbpm.flow.DefaultJoin;
 import org.pavanecce.cmmn.jbpm.flow.PlanItem;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemContainer;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
@@ -32,7 +34,6 @@ import org.pavanecce.cmmn.jbpm.flow.TaskDefinition;
 import org.pavanecce.cmmn.jbpm.infra.OnPartInstanceSubscription;
 import org.pavanecce.cmmn.jbpm.instance.CaseInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.instance.ControllablePlanItemInstanceLifecycle;
-import org.pavanecce.cmmn.jbpm.instance.OnPartInstance;
 import org.pavanecce.cmmn.jbpm.instance.PlanElementLifecycleWithTask;
 import org.pavanecce.cmmn.jbpm.instance.PlanElementState;
 import org.pavanecce.cmmn.jbpm.instance.PlanItemInstanceContainer;
@@ -54,6 +55,15 @@ public class CaseInstance extends RuleFlowProcessInstance implements PlanItemIns
 	public void markSubscriptionsForUpdate() {
 		this.shouldUpdateSubscriptions = true;
 	}
+
+	@Override
+	public org.jbpm.workflow.instance.NodeInstance getNodeInstance(Node node) {
+		if (node instanceof DefaultJoin) {
+			System.out.println();
+		}
+		return super.getNodeInstance(node);
+	}
+
 	@Override
 	public void signalEvent(String type, Object event) {
 		signalCount++;
@@ -78,6 +88,16 @@ public class CaseInstance extends RuleFlowProcessInstance implements PlanItemIns
 		if (shouldUpdateSubscriptions && signalCount == 0) {
 			updateSubscriptions();
 		}
+	}
+
+	public org.jbpm.workflow.instance.NodeInstance getFirstNodeInstance(final long nodeId) {
+		//level logic not relevant.
+		for (NodeInstance ni : this.getNodeInstances()) {
+			if(ni.getNodeId()==nodeId){
+				return (org.jbpm.workflow.instance.NodeInstance) ni;
+			}
+		}
+		return null;
 	}
 
 	protected boolean isMyWorkItem(WorkItem event) {
@@ -377,12 +397,13 @@ public class CaseInstance extends RuleFlowProcessInstance implements PlanItemIns
 		}
 		return null;
 	}
+
 	@Override
 	public void setState(int state) {
 		super.setState(state);
-		if(state==STATE_SUSPENDED){
+		if (state == STATE_SUSPENDED) {
 			suspend();
-		}else if(state==STATE_ACTIVE && getPlanElementState().isSemiTerminalState(this) || getPlanElementState()==PlanElementState.SUSPENDED){
+		} else if (state == STATE_ACTIVE && (getPlanElementState().isSemiTerminalState(this) || getPlanElementState() == PlanElementState.SUSPENDED)) {
 			reactivate();
 		}
 	}

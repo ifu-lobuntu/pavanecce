@@ -16,10 +16,8 @@ import org.jbpm.workflow.core.Constraint;
 import org.jbpm.workflow.instance.WorkflowProcessInstance;
 import org.jbpm.workflow.instance.node.TimerNodeInstance;
 import org.kie.api.runtime.process.NodeInstance;
-import org.pavanecce.cmmn.jbpm.event.PlanItemEvent;
-import org.pavanecce.cmmn.jbpm.flow.OnPart;
-import org.pavanecce.cmmn.jbpm.flow.PlanItemTransition;
 import org.pavanecce.cmmn.jbpm.flow.TimerEventListener;
+import org.pavanecce.cmmn.jbpm.instance.PlanElementState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,13 +25,17 @@ public class TimerEventPlanItemInstance extends AbstractOccurrablePlanItemInstan
 
 	private static final long serialVersionUID = 3034509023L;
 
+	public TimerEventPlanItemInstance() {
+		super.internalSetCompletionRequired(false);
+	}
+
 	public void signalEvent(String type, Object event) {
 		if ("timerTriggered".equals(type)) {
 			TimerInstance timer = (TimerInstance) event;
-			if (timer.getId() == getTimerInstanceId()) {
-				triggerCompleted(false);
+			if (timer.getId() == getTimerInstanceId() && canOccur()) {
+				setPlanElementState(PlanElementState.AVAILABLE);
+				occur();
 			}
-			getProcessInstance().signalEvent(OnPart.getType(getPlanItem().getName(), PlanItemTransition.OCCUR), new PlanItemEvent(getPlanItem().getName(), PlanItemTransition.OCCUR, event));
 		}
 	}
 
@@ -58,8 +60,6 @@ public class TimerEventPlanItemInstance extends AbstractOccurrablePlanItemInstan
 		timerInstance = createTimerInstance(kruntime);
 		((InternalProcessRuntime) kruntime.getProcessRuntime()).getTimerManager().registerTimer(timerInstance, (ProcessInstance) getProcessInstance());
 		timerInstanceId = timerInstance.getId();
-		calcIsRequired();
-
 	}
 
 	protected TimerInstance createTimerInstance(InternalKnowledgeRuntime kruntime) {
@@ -73,12 +73,12 @@ public class TimerEventPlanItemInstance extends AbstractOccurrablePlanItemInstan
 			ProcessContext ctx = new ProcessContext(getProcessInstance().getKnowledgeRuntime());
 			ctx.setProcessInstance(getProcessInstance());
 			ctx.setNodeInstance(this);
-			Object val=null;
+			Object val = null;
 			try {
 				val = evaluator.evaluate(ctx);
 			} catch (Exception e) {
-				logger.error("Could not evaluate timer expression",e);
-				//now what?
+				logger.error("Could not evaluate timer expression", e);
+				// now what?
 			}
 			if (val instanceof Calendar) {
 				Date date = ((Calendar) val).getTime();
@@ -104,8 +104,8 @@ public class TimerEventPlanItemInstance extends AbstractOccurrablePlanItemInstan
 				BusinessCalendar businessCalendar = (BusinessCalendar) kruntime.getEnvironment().get("jbpm.business.calendar");
 				timerInstance.setDelay(businessCalendar.calculateBusinessTimeAsDuration(expression));
 			} else {
-//				MVEL
-				//now what?
+				// MVEL
+				// now what?
 			}
 		}
 		timerInstance.setTimerId(getPlanItem().getId());

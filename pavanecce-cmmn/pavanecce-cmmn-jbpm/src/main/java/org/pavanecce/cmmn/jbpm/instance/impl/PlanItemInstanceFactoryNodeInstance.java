@@ -2,13 +2,13 @@ package org.pavanecce.cmmn.jbpm.instance.impl;
 
 import org.jbpm.process.instance.impl.ConstraintEvaluator;
 import org.jbpm.workflow.core.impl.NodeImpl;
-import org.jbpm.workflow.instance.NodeInstanceContainer;
 import org.jbpm.workflow.instance.node.StateNodeInstance;
 import org.kie.api.runtime.process.NodeInstance;
-import org.pavanecce.cmmn.jbpm.flow.MilestonePlanItem;
 import org.pavanecce.cmmn.jbpm.flow.PlanItem;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemInstanceFactoryNode;
+import org.pavanecce.cmmn.jbpm.flow.Stage;
+import org.pavanecce.cmmn.jbpm.flow.TaskDefinition;
 import org.pavanecce.cmmn.jbpm.instance.PlanElementState;
 import org.pavanecce.cmmn.jbpm.instance.PlanItemInstanceLifecycleWithHistory;
 
@@ -23,8 +23,12 @@ public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> e
 	private static final long serialVersionUID = -5291618101988431033L;
 	private Boolean isPlanItemInstanceRequired;
 	private Boolean isPlanItemInstanceStillRequired;
+	private Boolean isRepeating;
 	private PlanElementState planElementState = PlanElementState.INITIAL;
 	private PlanElementState lastBusyState = PlanElementState.NONE;
+
+	public PlanItemInstanceFactoryNodeInstance() {
+	}
 
 	public PlanElementState getPlanElementState() {
 		return planElementState;
@@ -32,6 +36,19 @@ public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> e
 
 	public void setPlanElementState(PlanElementState planElementState) {
 		this.planElementState = planElementState;
+	}
+
+	public void ensureCreationIsTriggered() {
+		if (planElementState == PlanElementState.INITIAL) {
+			create();
+			setLastBusyState(getPlanElementState());
+		}
+	}
+
+	@Override
+	public boolean isComplexLifecycle() {
+		PlanItemDefinition def = getPlanItem().getPlanInfo().getDefinition();
+		return def instanceof TaskDefinition || def instanceof Stage;
 	}
 
 	@Override
@@ -43,46 +60,20 @@ public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> e
 	public void internalTrigger(NodeInstance from, String type) {
 		if (planElementState == PlanElementState.SUSPENDED || planElementState == PlanElementState.TERMINATED) {
 			// do nothing
-		} else {
+		} else if (planElementState == PlanElementState.AVAILABLE || isRepeating()) {
 			super.internalTrigger(from, type);
 			isPlanItemInstanceStillRequired = false;
 			triggerCompleted(NodeImpl.CONNECTION_DEFAULT_TYPE, false);
-		}
-	}
-
-	public void calcIsRequired() {
-		PlanItem<?> toEnter = getNode().getPlanItem();
-		if (isPlanItemInstanceRequired == null) {
-			if (toEnter.getPlanInfo().getItemControl() != null && toEnter.getPlanInfo().getItemControl().getRequiredRule() instanceof ConstraintEvaluator) {
-				ConstraintEvaluator constraintEvaluator = (ConstraintEvaluator) toEnter.getPlanInfo().getItemControl().getRequiredRule();
-				isPlanItemInstanceRequired = constraintEvaluator.evaluate(this, null, constraintEvaluator);
-			} else {
-				isPlanItemInstanceRequired = Boolean.FALSE;
-			}
-			if (toEnter instanceof MilestonePlanItem) {
-				MilestonePlanItemInstance ni = (MilestonePlanItemInstance) ((NodeInstanceContainer) getNodeInstanceContainer()).getNodeInstance(toEnter);
-				ni.internalSetRequired(isPlanItemInstanceRequired);
-			}
-		}
-		if (isPlanItemInstanceStillRequired == null) {
-			isPlanItemInstanceStillRequired = isPlanItemInstanceRequired;
+			setLastBusyState(getPlanElementState());
+		} else {
+			System.out.println();
 		}
 	}
 
 	@Override
 	protected void triggerNodeInstance(org.jbpm.workflow.instance.NodeInstance nodeInstance, String type) {
-		((AbstractControllablePlanInstance<?>) nodeInstance).internalSetCompletionRequired(isPlanItemInstanceRequired);
+		((AbstractPlanItemInstance<?>) nodeInstance).internalSetCompletionRequired(isPlanItemInstanceRequired);
 		super.triggerNodeInstance(nodeInstance, type);
-	}
-
-	public boolean shouldRepeat() {
-		PlanItem<?> toEnter = getNode().getPlanItem();
-		boolean val = false;
-		if (toEnter.getPlanInfo().getItemControl() != null && toEnter.getPlanInfo().getItemControl().getRepetitionRule() instanceof ConstraintEvaluator) {
-			ConstraintEvaluator constraintEvaluator = (ConstraintEvaluator) toEnter.getPlanInfo().getItemControl().getRepetitionRule();
-			val = constraintEvaluator.evaluate(this, null, constraintEvaluator);
-		}
-		return val;
 	}
 
 	public boolean isPlanItemInstanceRequired() {
@@ -115,7 +106,27 @@ public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> e
 
 	@Override
 	public void create() {
+		if (getPlanItem().getPlanInfo().getItemControl() != null && getPlanItem().getPlanInfo().getItemControl().getRequiredRule() instanceof ConstraintEvaluator) {
+			ConstraintEvaluator constraintEvaluator = (ConstraintEvaluator) getPlanItem().getPlanInfo().getItemControl().getRequiredRule();
+			isPlanItemInstanceRequired = constraintEvaluator.evaluate(this, null, constraintEvaluator);
+		} else {
+			isPlanItemInstanceRequired = Boolean.FALSE;
+		}
+		if (getPlanItem().getPlanInfo().getItemControl() != null && getPlanItem().getPlanInfo().getItemControl().getRepetitionRule() instanceof ConstraintEvaluator) {
+			ConstraintEvaluator constraintEvaluator = (ConstraintEvaluator) getPlanItem().getPlanInfo().getItemControl().getRepetitionRule();
+			isRepeating = constraintEvaluator.evaluate(this, null, constraintEvaluator);
+		} else {
+			isRepeating = false;
+		}
+		isPlanItemInstanceStillRequired = isPlanItemInstanceRequired;
 		planElementState.create(this);
+	}
+
+	public boolean isRepeating() {
+		if (isRepeating == null) {
+			System.out.println();
+		}
+		return isRepeating;
 	}
 
 	@Override
@@ -152,5 +163,9 @@ public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> e
 	@Override
 	public PlanElementState getLastBusyState() {
 		return this.lastBusyState;
+	}
+
+	public void internalSetRepeating(boolean readBoolean) {
+		this.isRepeating = readBoolean;
 	}
 }

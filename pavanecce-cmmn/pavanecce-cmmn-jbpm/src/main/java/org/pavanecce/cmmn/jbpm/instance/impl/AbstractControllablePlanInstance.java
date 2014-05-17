@@ -15,9 +15,9 @@ import org.kie.api.task.model.Task;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemTransition;
 import org.pavanecce.cmmn.jbpm.instance.ControllablePlanItemInstanceLifecycle;
-import org.pavanecce.cmmn.jbpm.instance.CustomVariableScopeInstance;
 import org.pavanecce.cmmn.jbpm.instance.PlanElementLifecycleWithTask;
 import org.pavanecce.cmmn.jbpm.instance.PlanElementState;
+import org.pavanecce.cmmn.jbpm.instance.PlanItemInstanceUtil;
 
 public abstract class AbstractControllablePlanInstance<T extends PlanItemDefinition> extends AbstractPlanItemInstance<T> implements ControllablePlanItemInstanceLifecycle<T>,
 		EventBasedNodeInstanceInterface {
@@ -34,6 +34,10 @@ public abstract class AbstractControllablePlanInstance<T extends PlanItemDefinit
 		super();
 	}
 
+	@Override
+	public boolean isComplexLifecycle() {
+		return true;
+	}
 
 	protected abstract boolean isWaitForCompletion();
 

@@ -77,7 +77,6 @@ import org.pavanecce.cmmn.jbpm.infra.CaseInstanceMarshaller;
 import org.pavanecce.cmmn.jbpm.infra.CaseRegisterableItemsFactory;
 import org.pavanecce.cmmn.jbpm.infra.PlanItemBuilder;
 import org.pavanecce.cmmn.jbpm.infra.SentryBuilder;
-import org.pavanecce.cmmn.jbpm.instance.OnPartInstance;
 import org.pavanecce.cmmn.jbpm.instance.PlanElementState;
 import org.pavanecce.cmmn.jbpm.instance.PlanItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.instance.impl.CaseInstance;
@@ -86,6 +85,7 @@ import org.pavanecce.cmmn.jbpm.instance.impl.DefaultJoinInstance;
 import org.pavanecce.cmmn.jbpm.instance.impl.DefaultSplitInstance;
 import org.pavanecce.cmmn.jbpm.instance.impl.HumanTaskPlanItemInstance;
 import org.pavanecce.cmmn.jbpm.instance.impl.MilestonePlanItemInstance;
+import org.pavanecce.cmmn.jbpm.instance.impl.OnPartInstance;
 import org.pavanecce.cmmn.jbpm.instance.impl.PlanItemInstanceFactoryNodeInstance;
 import org.pavanecce.cmmn.jbpm.instance.impl.SentryInstance;
 import org.pavanecce.cmmn.jbpm.instance.impl.StagePlanItemInstance;
@@ -163,7 +163,7 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 			if (ni instanceof PlanItemInstanceFactoryNodeInstance) {
 				PlanItemInstanceFactoryNode node = (PlanItemInstanceFactoryNode) ni.getNode();
 				if (node.getPlanItem().getName().equals(planItemName)) {
-					if (((PlanItemInstanceFactoryNodeInstance) ni).isPlanItemInstanceStillRequired() && s == PlanElementState.AVAILABLE) {
+					if (((PlanItemInstanceFactoryNodeInstance<?>) ni).isPlanItemInstanceStillRequired() && s == PlanElementState.AVAILABLE) {
 						found = true;
 					}
 				}
@@ -335,7 +335,7 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 		nodeInstanceFactoryRegistry.register(OnPart.class, new ReuseNodeFactory(OnPartInstance.class));
 		nodeInstanceFactoryRegistry.register(UserEventPlanItem.class, new ReuseNodeFactory(UserEventPlanItemInstance.class));
 		nodeInstanceFactoryRegistry.register(TimerEventPlanItem.class, new ReuseNodeFactory(TimerEventPlanItemInstance.class));
-		nodeInstanceFactoryRegistry.register(MilestonePlanItem.class, new ReuseNodeFactory(MilestonePlanItemInstance.class));
+		nodeInstanceFactoryRegistry.register(MilestonePlanItem.class, new CreateNewNodeFactory(MilestonePlanItemInstance.class));
 		nodeInstanceFactoryRegistry.register(CaseFileItemOnPart.class, new ReuseNodeFactory(OnPartInstance.class));
 		nodeInstanceFactoryRegistry.register(PlanItemOnPart.class, new ReuseNodeFactory(OnPartInstance.class));
 		nodeInstanceFactoryRegistry.register(StagePlanItem.class, new CreateNewNodeFactory(StagePlanItemInstance.class));

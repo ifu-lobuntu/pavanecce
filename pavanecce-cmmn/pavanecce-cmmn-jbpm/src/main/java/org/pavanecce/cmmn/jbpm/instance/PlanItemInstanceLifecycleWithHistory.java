@@ -11,4 +11,6 @@ public interface PlanItemInstanceLifecycleWithHistory<T extends PlanItemDefiniti
 
 	PlanElementState getLastBusyState();
 
+	boolean isComplexLifecycle();
+
 }

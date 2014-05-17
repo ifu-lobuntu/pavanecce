@@ -1,11 +1,9 @@
-package org.pavanecce.cmmn.jbpm.instance.impl;
+package org.pavanecce.cmmn.jbpm.instance;
 
 import org.drools.core.process.instance.WorkItemManager;
 import org.jbpm.process.instance.impl.ConstraintEvaluator;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemControl;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemInfo;
-import org.pavanecce.cmmn.jbpm.instance.ControllablePlanItemInstanceLifecycle;
-import org.pavanecce.cmmn.jbpm.instance.PlanElementLifecycleWithTask;
 
 public class PlanItemInstanceUtil {
 

@@ -6,6 +6,8 @@ public class PlanItemInstanceFactoryNode extends StateNode {
 
 	private static final long serialVersionUID = -3811996856528514976L;
 	private PlanItem<?> planItem;
+	public PlanItemInstanceFactoryNode() {
+	}
 	public PlanItem<?> getPlanItem() {
 		return planItem;
 	}

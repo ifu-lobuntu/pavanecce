@@ -1,9 +1,6 @@
 package org.pavanecce.cmmn.jbpm.instance.impl;
 
-import org.jbpm.process.instance.impl.ConstraintEvaluator;
-import org.jbpm.workflow.instance.node.StateNodeInstance;
 import org.kie.api.runtime.process.NodeInstance;
-import org.pavanecce.cmmn.jbpm.flow.PlanItem;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 import org.pavanecce.cmmn.jbpm.instance.OccurrablePlanItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.instance.PlanElementState;
@@ -23,16 +20,11 @@ public abstract class AbstractOccurrablePlanItemInstance<T extends PlanItemDefin
 
 	@Override
 	public void internalTrigger(NodeInstance from, String type) {
-		calcIsRequired();
 		super.internalTrigger(from, type);
 	}
 
-	@Override
-	protected void triggerCompleted(String type, boolean remove) {
-		if (getPlanElementState() == PlanElementState.AVAILABLE || (getPlanElementState() == PlanElementState.COMPLETED && canRepeat())) {
-			occur();
-			super.triggerCompleted(type, false);
-		}
+	public boolean canOccur() {
+		return getPlanElementState() == PlanElementState.AVAILABLE || (getPlanElementState() == PlanElementState.COMPLETED);
 	}
 
 	public void internalSetRequired(Boolean isPlanItemInstanceRequired) {

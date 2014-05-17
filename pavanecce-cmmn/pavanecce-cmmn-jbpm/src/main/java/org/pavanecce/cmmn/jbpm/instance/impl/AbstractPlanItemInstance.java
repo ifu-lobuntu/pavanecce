@@ -1,6 +1,5 @@
 package org.pavanecce.cmmn.jbpm.instance.impl;
 
-import org.jbpm.process.instance.impl.ConstraintEvaluator;
 import org.jbpm.workflow.instance.node.StateBasedNodeInstance;
 import org.pavanecce.cmmn.jbpm.flow.PlanItem;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
@@ -28,29 +27,10 @@ public abstract class AbstractPlanItemInstance<T extends PlanItemDefinition> ext
 		this.planElementState = s;
 	}
 
-	public void calcIsRequired() {
-		if (isCompletionRequired == null) {
-			PlanItem<T> toEnter = getPlanItem();
-			if (toEnter.getPlanInfo().getItemControl() != null && toEnter.getPlanInfo().getItemControl().getRequiredRule() instanceof ConstraintEvaluator) {
-				ConstraintEvaluator constraintEvaluator = (ConstraintEvaluator) toEnter.getPlanInfo().getItemControl().getRequiredRule();
-				isCompletionRequired = constraintEvaluator.evaluate(this, null, constraintEvaluator);
-			} else {
-				isCompletionRequired = Boolean.FALSE;
-			}
-		}
-	}
-
-	public boolean canRepeat() {
-		PlanItem<T> toEnter = getPlanItem();
-		if (toEnter.getPlanInfo().getItemControl() != null && toEnter.getPlanInfo().getItemControl().getRepetitionRule() instanceof ConstraintEvaluator) {
-			ConstraintEvaluator constraintEvaluator = (ConstraintEvaluator) toEnter.getPlanInfo().getItemControl().getRepetitionRule();
-			return constraintEvaluator.evaluate(this, null, constraintEvaluator);
-		} else {
-			return false;
-		}
-	}
-
 	public boolean isCompletionRequired() {
+		if(isCompletionRequired==null){
+			System.out.println();
+		}
 		return isCompletionRequired;
 	}
 

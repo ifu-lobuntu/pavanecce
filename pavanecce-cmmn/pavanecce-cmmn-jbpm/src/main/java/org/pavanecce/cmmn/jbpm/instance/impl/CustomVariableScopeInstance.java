@@ -1,4 +1,4 @@
-package org.pavanecce.cmmn.jbpm.instance;
+package org.pavanecce.cmmn.jbpm.instance.impl;
 
 import java.util.Map;
 
@@ -8,7 +8,6 @@ import org.jbpm.process.instance.ContextInstance;
 import org.jbpm.process.instance.ContextInstanceContainer;
 import org.jbpm.process.instance.ProcessInstance;
 import org.jbpm.process.instance.context.variable.VariableScopeInstance;
-import org.pavanecce.cmmn.jbpm.instance.impl.SentryInstance;
 /**
  * The purpose of this class is to make "special" variables available from the environment
  * TODO find a better way of doing this

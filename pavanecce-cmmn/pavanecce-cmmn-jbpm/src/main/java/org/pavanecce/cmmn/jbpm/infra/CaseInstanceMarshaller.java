@@ -23,7 +23,6 @@ import org.kie.api.runtime.process.ProcessInstance;
 import org.kie.api.runtime.process.WorkflowProcessInstance;
 import org.pavanecce.cmmn.jbpm.instance.ControllablePlanItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.instance.OccurrablePlanItemInstanceLifecycle;
-import org.pavanecce.cmmn.jbpm.instance.OnPartInstance;
 import org.pavanecce.cmmn.jbpm.instance.PlanElementState;
 import org.pavanecce.cmmn.jbpm.instance.PlanItemInstanceLifecycleWithHistory;
 import org.pavanecce.cmmn.jbpm.instance.impl.CaseInstance;
@@ -32,6 +31,7 @@ import org.pavanecce.cmmn.jbpm.instance.impl.DefaultJoinInstance;
 import org.pavanecce.cmmn.jbpm.instance.impl.DefaultSplitInstance;
 import org.pavanecce.cmmn.jbpm.instance.impl.HumanTaskPlanItemInstance;
 import org.pavanecce.cmmn.jbpm.instance.impl.MilestonePlanItemInstance;
+import org.pavanecce.cmmn.jbpm.instance.impl.OnPartInstance;
 import org.pavanecce.cmmn.jbpm.instance.impl.PlanItemInstanceFactoryNodeInstance;
 import org.pavanecce.cmmn.jbpm.instance.impl.SentryInstance;
 import org.pavanecce.cmmn.jbpm.instance.impl.StagePlanItemInstance;
@@ -103,6 +103,7 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 			readPlanItemStates(piifni, stream);
 			piifni.internalSetPlanItemInstanceRequired(context.stream.readBoolean());
 			piifni.internalSetPlanItemInstanceStillRequired(context.stream.readBoolean());
+			piifni.internalSetRepeating(context.stream.readBoolean());
 			nodeInstance = piifni;
 			break;
 		case SENTRY_INSTANCE:
@@ -228,6 +229,7 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 			writePlanItemStates((PlanItemInstanceFactoryNodeInstance<?>) nodeInstance, stream);
 			stream.writeBoolean(((PlanItemInstanceFactoryNodeInstance<?>) nodeInstance).isPlanItemInstanceRequired());
 			stream.writeBoolean(((PlanItemInstanceFactoryNodeInstance<?>) nodeInstance).isPlanItemInstanceStillRequired());
+			stream.writeBoolean(((PlanItemInstanceFactoryNodeInstance<?>) nodeInstance).isRepeating());
 		} else if (nodeInstance instanceof OnPartInstance) {
 			stream.writeShort(ON_PART_INSTANCE);
 		} else if (nodeInstance instanceof MilestonePlanItemInstance) {

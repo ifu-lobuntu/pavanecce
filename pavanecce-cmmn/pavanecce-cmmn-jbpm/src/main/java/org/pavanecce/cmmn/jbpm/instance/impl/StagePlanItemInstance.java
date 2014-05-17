@@ -30,11 +30,10 @@ import org.kie.api.runtime.process.NodeInstance;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemContainer;
 import org.pavanecce.cmmn.jbpm.flow.Stage;
 import org.pavanecce.cmmn.jbpm.flow.StagePlanItem;
-import org.pavanecce.cmmn.jbpm.instance.ControllablePlanItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.instance.PlanItemInstanceContainer;
 import org.pavanecce.cmmn.jbpm.instance.PlanItemInstanceLifecycle;
 
-public class StagePlanItemInstance extends AbstractControllablePlanInstance<Stage> implements PlanItemInstanceContainer, ControllablePlanItemInstanceLifecycle<Stage>, NodeInstanceContainer,
+public class StagePlanItemInstance extends AbstractControllablePlanInstance<Stage> implements PlanItemInstanceContainer, NodeInstanceContainer,
 		EventNodeInstanceInterface, EventBasedNodeInstanceInterface {
 
 	private static final long serialVersionUID = 112341234123L;
@@ -93,6 +92,7 @@ public class StagePlanItemInstance extends AbstractControllablePlanInstance<Stag
 		super.start();
 		triggerDefaultStart();
 	}
+
 	@Override
 	public void manualStart() {
 		super.manualStart();
@@ -104,7 +104,6 @@ public class StagePlanItemInstance extends AbstractControllablePlanInstance<Stag
 		NodeInstance nodeInstance = getNodeInstance(defaultStart);
 		((org.jbpm.workflow.instance.NodeInstance) nodeInstance).trigger(null, null);
 	}
-
 
 	public void cancel() {
 		while (!nodeInstances.isEmpty()) {
@@ -152,10 +151,10 @@ public class StagePlanItemInstance extends AbstractControllablePlanInstance<Stag
 	}
 
 	public org.jbpm.workflow.instance.NodeInstance getFirstNodeInstance(final long nodeId) {
-		for (final Iterator<NodeInstance> iterator = this.nodeInstances.iterator(); iterator.hasNext();) {
-			final org.jbpm.workflow.instance.NodeInstance nodeInstance = (org.jbpm.workflow.instance.NodeInstance) iterator.next();
-			if (nodeInstance.getNodeId() == nodeId && nodeInstance.getLevel() == getCurrentLevel()) {
-				return nodeInstance;
+		// level logic not relevant.
+		for (NodeInstance ni : this.getNodeInstances()) {
+			if (ni.getNodeId() == nodeId) {
+				return (org.jbpm.workflow.instance.NodeInstance) ni;
 			}
 		}
 		return null;

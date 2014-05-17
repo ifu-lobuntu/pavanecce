@@ -60,7 +60,7 @@ public class PlanItemInfo<T extends PlanItemDefinition> {
 		} else if (definition instanceof TimerEventListener) {
 			planItem = (PlanItem<T>) new TimerEventPlanItem((PlanItemInfo<TimerEventListener>) this);
 		} else if (definition instanceof Milestone) {
-			planItem = (PlanItem<T>) new MilestonePlanItem((PlanItemInfo<Milestone>) this);
+			planItem = (PlanItem<T>) new MilestonePlanItem((PlanItemInfo<Milestone>) this,createFactoryNode());
 		} else if (definition instanceof CaseTask) {
 			planItem = (PlanItem<T>) new CaseTaskPlanItem((PlanItemInfo<CaseTask>) this,createFactoryNode());
 		}

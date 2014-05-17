@@ -1,4 +1,4 @@
-package org.pavanecce.cmmn.jbpm.instance;
+package org.pavanecce.cmmn.jbpm.instance.impl;
 
 import java.util.Stack;
 
