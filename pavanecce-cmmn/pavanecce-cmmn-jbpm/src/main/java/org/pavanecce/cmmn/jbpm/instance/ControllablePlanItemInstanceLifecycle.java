@@ -15,15 +15,9 @@ public interface ControllablePlanItemInstanceLifecycle<T extends PlanItemDefinit
 
 	void manualStart();
 
-	void reactivate();
-
 	void resume();
 
 	void exit();
-
-	void complete();
-
-	void fault();
 
 	boolean isCompletionRequired();
 

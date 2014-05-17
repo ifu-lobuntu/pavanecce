@@ -25,6 +25,11 @@ public class TimerEventPlanItemInstance extends AbstractOccurrablePlanItemInstan
 
 	private static final long serialVersionUID = 3034509023L;
 
+	private static final Logger logger = LoggerFactory.getLogger(TimerNodeInstance.class);
+
+	private long timerInstanceId;
+	private TimerInstance timerInstance;
+
 	public TimerEventPlanItemInstance() {
 		super.internalSetCompletionRequired(false);
 	}
@@ -38,11 +43,6 @@ public class TimerEventPlanItemInstance extends AbstractOccurrablePlanItemInstan
 			}
 		}
 	}
-
-	private static final Logger logger = LoggerFactory.getLogger(TimerNodeInstance.class);
-
-	private long timerInstanceId;
-	private TimerInstance timerInstance;
 
 	public long getTimerInstanceId() {
 		return timerInstanceId;

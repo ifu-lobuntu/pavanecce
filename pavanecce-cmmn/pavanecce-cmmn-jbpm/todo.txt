@@ -59,6 +59,7 @@ CaseTask.no sentry
 CaseTask.requiredRule
 HumanTask.no sentry
 HumanTask.requiredRule
+*.repetitionRule
 Test that suspension works for PlanItemInstanceFactories and Event
 
 3. To implement
@@ -66,7 +67,6 @@ Test that suspension works for PlanItemInstanceFactories and Event
 Sentry.condition without onParts
 
 Process/Case Task
- - repetitionRule *
  - parameter transformation
  - REENABLE,REACTIVATE,PARENT_SUSPEND*, PARENT_RESUME*, CREATE
 
@@ -76,7 +76,6 @@ CaseModel:
  
 Stage:
  - no sentry *
- - repetitionRule *
  - requiredRule *
  - automaticActivationRule *
  - stagePlanItem's exit and its event *
@@ -86,11 +85,9 @@ Stage:
  - auto completion, use ItemControl.requiredRule *
 
 Human Task
- - repetitionRule *
  - CREATE,REENABLE,REACTIVATE,PARENT_SUSPEND*, PARENT_RESUME*
 
 Milestone
- - repetitionRule *
  - CREATE,SUSPEND*,RESUME*,TERMINATE*,PARENT_TERMINATE*
 
 UserEvent

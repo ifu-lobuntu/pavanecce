@@ -1,6 +1,5 @@
 package org.pavanecce.cmmn.jbpm.instance.impl;
 
-import org.kie.api.runtime.process.NodeInstance;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 import org.pavanecce.cmmn.jbpm.instance.OccurrablePlanItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.instance.PlanElementState;
@@ -16,11 +15,6 @@ public abstract class AbstractOccurrablePlanItemInstance<T extends PlanItemDefin
 	@Override
 	public void internalSetRequired(boolean readBoolean) {
 		this.isCompletionRequired = readBoolean;
-	}
-
-	@Override
-	public void internalTrigger(NodeInstance from, String type) {
-		super.internalTrigger(from, type);
 	}
 
 	public boolean canOccur() {

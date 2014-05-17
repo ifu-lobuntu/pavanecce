@@ -1,7 +1,5 @@
-package org.pavanecce.cmmn.jbpm.instance;
+package org.pavanecce.cmmn.jbpm.event;
 
-import org.pavanecce.cmmn.jbpm.event.CaseSubscriptionInfo;
-import org.pavanecce.cmmn.jbpm.event.PersistedCaseFileItemSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
 
 public abstract class AbstractCaseSubscriptionInfo<X extends PersistedCaseFileItemSubscriptionInfo> implements CaseSubscriptionInfo<X> {

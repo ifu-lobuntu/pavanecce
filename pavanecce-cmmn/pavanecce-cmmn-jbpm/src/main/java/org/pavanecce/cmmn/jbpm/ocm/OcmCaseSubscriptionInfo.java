@@ -6,7 +6,7 @@ import java.util.Set;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Collection;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
-import org.pavanecce.cmmn.jbpm.instance.AbstractCaseSubscriptionInfo;
+import org.pavanecce.cmmn.jbpm.event.AbstractCaseSubscriptionInfo;
 
 @Node(discriminator=false,jcrType="i:caseSubscriptionInfo")
 public class OcmCaseSubscriptionInfo extends AbstractCaseSubscriptionInfo<OcmCaseFileItemSubscriptionInfo> {

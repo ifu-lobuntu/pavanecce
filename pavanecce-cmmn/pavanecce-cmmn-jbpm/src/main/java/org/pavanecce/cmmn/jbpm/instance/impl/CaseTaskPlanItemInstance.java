@@ -39,7 +39,7 @@ import org.pavanecce.cmmn.jbpm.flow.CaseTaskPlanItem;
 import org.pavanecce.cmmn.jbpm.flow.ParameterMapping;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemTransition;
 import org.pavanecce.cmmn.jbpm.instance.PlanElementState;
-import org.pavanecce.cmmn.jbpm.instance.PlanItemInstanceContainer;
+import org.pavanecce.cmmn.jbpm.instance.PlanItemInstanceContainerLifecycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -197,7 +197,7 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask> imp
 	private void killSubprocessGracefully() {
 		WorkflowProcessInstance subProcess = (WorkflowProcessInstance) getProcessInstance().getKnowledgeRuntime().getProcessInstance(getProcessInstanceId());
 		if (subProcess instanceof CaseInstance) {
-			PlanElementState.terminateChildren((PlanItemInstanceContainer) subProcess);
+			PlanElementState.terminateChildren((PlanItemInstanceContainerLifecycle) subProcess);
 		} else {
 			for (NodeInstance nodeInstance : subProcess.getNodeInstances()) {
 				if (nodeInstance instanceof org.jbpm.workflow.instance.NodeInstance) {

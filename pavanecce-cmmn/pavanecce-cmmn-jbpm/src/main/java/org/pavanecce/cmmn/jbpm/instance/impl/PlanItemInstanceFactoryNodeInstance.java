@@ -65,8 +65,6 @@ public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> e
 			isPlanItemInstanceStillRequired = false;
 			triggerCompleted(NodeImpl.CONNECTION_DEFAULT_TYPE, false);
 			setLastBusyState(getPlanElementState());
-		} else {
-			System.out.println();
 		}
 	}
 
@@ -123,9 +121,6 @@ public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> e
 	}
 
 	public boolean isRepeating() {
-		if (isRepeating == null) {
-			System.out.println();
-		}
 		return isRepeating;
 	}
 

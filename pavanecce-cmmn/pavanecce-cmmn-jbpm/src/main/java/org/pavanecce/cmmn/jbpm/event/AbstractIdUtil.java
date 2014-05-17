@@ -1,4 +1,4 @@
-package org.pavanecce.cmmn.jbpm.instance;
+package org.pavanecce.cmmn.jbpm.event;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.AnnotatedElement;

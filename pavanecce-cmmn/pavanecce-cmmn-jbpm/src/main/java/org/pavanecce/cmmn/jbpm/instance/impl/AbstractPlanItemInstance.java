@@ -28,9 +28,6 @@ public abstract class AbstractPlanItemInstance<T extends PlanItemDefinition> ext
 	}
 
 	public boolean isCompletionRequired() {
-		if(isCompletionRequired==null){
-			System.out.println();
-		}
 		return isCompletionRequired;
 	}
 

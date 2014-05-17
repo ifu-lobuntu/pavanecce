@@ -36,11 +36,10 @@ import org.pavanecce.cmmn.jbpm.instance.CaseInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.instance.ControllablePlanItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.instance.PlanElementLifecycleWithTask;
 import org.pavanecce.cmmn.jbpm.instance.PlanElementState;
-import org.pavanecce.cmmn.jbpm.instance.PlanItemInstanceContainer;
 import org.pavanecce.cmmn.jbpm.instance.PlanItemInstanceLifecycle;
 import org.pavanecce.common.ObjectPersistence;
 
-public class CaseInstance extends RuleFlowProcessInstance implements PlanItemInstanceContainer, CaseInstanceLifecycle {
+public class CaseInstance extends RuleFlowProcessInstance implements  CaseInstanceLifecycle {
 	private static final long serialVersionUID = 8715128915363796623L;
 	private boolean shouldUpdateSubscriptions;
 	private transient int signalCount = 0;

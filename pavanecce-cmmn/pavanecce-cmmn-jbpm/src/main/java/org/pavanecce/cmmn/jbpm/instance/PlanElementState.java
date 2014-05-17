@@ -177,7 +177,7 @@ public enum PlanElementState {
 		}
 		if (pi instanceof CaseInstanceLifecycle) {
 			if (pi.getPlanElementState() == SUSPENDED) {
-				resumeChildren((PlanItemInstanceContainer) pi);
+				resumeChildren((PlanItemInstanceContainerLifecycle) pi);
 			} else {
 				// TODO find out
 			}
@@ -191,8 +191,8 @@ public enum PlanElementState {
 			signalEvent((PlanItemInstanceLifecycle<?>) pi, PlanItemTransition.SUSPEND);
 		}
 		pi.setPlanElementState(SUSPENDED);
-		if (pi instanceof PlanItemInstanceContainer) {
-			PlanItemInstanceContainer pic = (PlanItemInstanceContainer) pi;
+		if (pi instanceof PlanItemInstanceContainerLifecycle) {
+			PlanItemInstanceContainerLifecycle pic = (PlanItemInstanceContainerLifecycle) pi;
 			for (PlanItemInstanceLifecycle<?> child : pic.getChildren()) {
 				if (child.getPlanElementState().isBusyState(child)) {
 					if(isComplexLifecycle(child)){
@@ -213,12 +213,12 @@ public enum PlanElementState {
 		} else {
 			pi.setPlanElementState(AVAILABLE);
 		}
-		if (pi instanceof PlanItemInstanceContainer) {
-			resumeChildren((PlanItemInstanceContainer) pi);
+		if (pi instanceof PlanItemInstanceContainerLifecycle) {
+			resumeChildren((PlanItemInstanceContainerLifecycle) pi);
 		}
 	}
 
-	public static void resumeChildren(PlanItemInstanceContainer pi) {
+	public static void resumeChildren(PlanItemInstanceContainerLifecycle pi) {
 		for (PlanItemInstanceLifecycle<?> child : pi.getChildren()) {
 			if (child.getPlanElementState() == SUSPENDED) {
 				if (child instanceof OccurrablePlanItemInstanceLifecycle) {
@@ -236,13 +236,13 @@ public enum PlanElementState {
 			signalEvent((PlanItemInstanceLifecycle<?>) pi, PlanItemTransition.TERMINATE);
 		}
 		pi.setPlanElementState(TERMINATED);
-		if (pi instanceof PlanItemInstanceContainer) {
-			PlanItemInstanceContainer pi2 = (PlanItemInstanceContainer) pi;
+		if (pi instanceof PlanItemInstanceContainerLifecycle) {
+			PlanItemInstanceContainerLifecycle pi2 = (PlanItemInstanceContainerLifecycle) pi;
 			terminateChildren(pi2);
 		}
 	}
 
-	public static void terminateChildren(PlanItemInstanceContainer pi2) {
+	public static void terminateChildren(PlanItemInstanceContainerLifecycle pi2) {
 		for (PlanItemInstanceLifecycle<?> child : pi2.getChildren()) {
 			if (!child.getPlanElementState().isTerminalState()) {
 				if (child instanceof OccurrablePlanItemInstanceLifecycle) {

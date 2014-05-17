@@ -13,6 +13,12 @@ public interface PlanElementLifecycleWithTask extends PlanElementLifecycle {
 
 	WorkItem getWorkItem();
 
+	void reactivate();
+
+	void complete();
+
+	void fault();
+
 	Task getTask();
 
 	long getWorkItemId();

@@ -1,10 +1,18 @@
 package org.pavanecce.cmmn.jbpm.instance;
 
+import java.util.Collection;
+
+import org.pavanecce.cmmn.jbpm.flow.PlanItemContainer;
+
 public interface PlanItemInstanceContainerLifecycle extends PlanElementLifecycleWithTask {
-	public abstract void fault();
+	
 
-	public abstract void complete();
+	Collection<? extends PlanItemInstanceLifecycle<?>> getChildren();
 
-	public abstract void reactivate();
+	boolean canComplete();
+
+	PlanItemContainer getPlanItemContainer();
+
+
 
 }

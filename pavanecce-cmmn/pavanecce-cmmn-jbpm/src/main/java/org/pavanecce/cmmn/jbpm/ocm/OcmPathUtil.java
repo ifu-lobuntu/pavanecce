@@ -3,7 +3,7 @@ package org.pavanecce.cmmn.jbpm.ocm;
 import java.lang.reflect.AnnotatedElement;
 
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
-import org.pavanecce.cmmn.jbpm.instance.AbstractIdUtil;
+import org.pavanecce.cmmn.jbpm.event.AbstractIdUtil;
 
 public class OcmPathUtil extends AbstractIdUtil<String>{
 	public static OcmPathUtil INSTANCE= new OcmPathUtil();

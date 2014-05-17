@@ -10,7 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
-import org.pavanecce.cmmn.jbpm.instance.AbstractCaseSubscriptionInfo;
+import org.pavanecce.cmmn.jbpm.event.AbstractCaseSubscriptionInfo;
 
 @Entity
 public class JpaCaseSubscriptionInfo extends AbstractCaseSubscriptionInfo<JpaCaseFileItemSubscriptionInfo> {

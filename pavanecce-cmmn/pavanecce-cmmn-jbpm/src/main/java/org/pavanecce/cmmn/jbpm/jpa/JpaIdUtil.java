@@ -7,7 +7,7 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-import org.pavanecce.cmmn.jbpm.instance.AbstractIdUtil;
+import org.pavanecce.cmmn.jbpm.event.AbstractIdUtil;
 
 public class JpaIdUtil extends AbstractIdUtil<Serializable> {
 	public static JpaIdUtil INSTANCE =new JpaIdUtil();

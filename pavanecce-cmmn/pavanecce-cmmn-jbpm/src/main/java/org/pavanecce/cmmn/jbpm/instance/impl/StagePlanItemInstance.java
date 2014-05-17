@@ -30,10 +30,10 @@ import org.kie.api.runtime.process.NodeInstance;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemContainer;
 import org.pavanecce.cmmn.jbpm.flow.Stage;
 import org.pavanecce.cmmn.jbpm.flow.StagePlanItem;
-import org.pavanecce.cmmn.jbpm.instance.PlanItemInstanceContainer;
+import org.pavanecce.cmmn.jbpm.instance.PlanItemInstanceContainerLifecycle;
 import org.pavanecce.cmmn.jbpm.instance.PlanItemInstanceLifecycle;
 
-public class StagePlanItemInstance extends AbstractControllablePlanInstance<Stage> implements PlanItemInstanceContainer, NodeInstanceContainer,
+public class StagePlanItemInstance extends AbstractControllablePlanInstance<Stage> implements PlanItemInstanceContainerLifecycle, NodeInstanceContainer,
 		EventNodeInstanceInterface, EventBasedNodeInstanceInterface {
 
 	private static final long serialVersionUID = 112341234123L;

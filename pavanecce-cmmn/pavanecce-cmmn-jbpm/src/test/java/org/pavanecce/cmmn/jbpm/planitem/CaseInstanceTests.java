@@ -11,7 +11,7 @@ import org.kie.api.task.model.TaskSummary;
 import org.pavanecce.cmmn.jbpm.AbstractConstructionTestCase;
 import org.pavanecce.cmmn.jbpm.flow.DefaultJoin;
 import org.pavanecce.cmmn.jbpm.instance.PlanElementState;
-import org.pavanecce.cmmn.jbpm.instance.PlanItemInstanceContainer;
+import org.pavanecce.cmmn.jbpm.instance.PlanItemInstanceContainerLifecycle;
 import org.pavanecce.cmmn.jbpm.instance.PlanItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.instance.impl.CaseInstance;
 import org.pavanecce.cmmn.jbpm.instance.impl.CaseTaskPlanItemInstance;
@@ -139,7 +139,7 @@ public class CaseInstanceTests extends AbstractConstructionTestCase {
 		// *****GIVEN
 		givenThatTheTestCaseIsStarted();
 		CaseInstance subCase = triggerInitialActivity();
-		Task taskByWorkItemId = getTaskService().getTaskByWorkItemId(caseInstance.getWorkItemId());
+//		Task taskByWorkItemId = getTaskService().getTaskByWorkItemId(caseInstance.getWorkItemId());
 		// *****WHEN
 		getPersistence().start();
 		CaseInstance ci5 = reloadCaseInstance();
@@ -277,7 +277,7 @@ public class CaseInstanceTests extends AbstractConstructionTestCase {
 
 	}
 
-	protected void printState(String s, PlanItemInstanceContainer pi) {
+	protected void printState(String s, PlanItemInstanceContainerLifecycle pi) {
 		System.out.println(pi);
 		for (PlanItemInstanceLifecycle<?> ni : pi.getChildren()) {
 			if (ni instanceof PlanItemInstanceLifecycle) {
@@ -285,8 +285,8 @@ public class CaseInstanceTests extends AbstractConstructionTestCase {
 			} else {
 				System.out.println(s + ni.getPlanItemName());
 			}
-			if (ni instanceof PlanItemInstanceContainer) {
-				printState(s + " ", (PlanItemInstanceContainer) ni);
+			if (ni instanceof PlanItemInstanceContainerLifecycle) {
+				printState(s + " ", (PlanItemInstanceContainerLifecycle) ni);
 			}
 		}
 	}
