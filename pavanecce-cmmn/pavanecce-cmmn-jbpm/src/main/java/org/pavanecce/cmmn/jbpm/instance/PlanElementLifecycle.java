@@ -2,7 +2,7 @@ package org.pavanecce.cmmn.jbpm.instance;
 
 import org.pavanecce.cmmn.jbpm.instance.impl.CaseInstance;
 
-public interface CaseElementLifecycle {
+public interface PlanElementLifecycle {
 	void create();
 
 	void suspend();

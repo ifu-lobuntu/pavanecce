@@ -1,7 +1,6 @@
 package org.pavanecce.cmmn.jbpm.instance;
 
-public interface PlanItemInstanceContainerLifecycle {
-	PlanElementState getPlanElementState();
+public interface PlanItemInstanceContainerLifecycle extends PlanElementLifecycleWithTask {
 	public abstract void fault();
 
 	public abstract void complete();

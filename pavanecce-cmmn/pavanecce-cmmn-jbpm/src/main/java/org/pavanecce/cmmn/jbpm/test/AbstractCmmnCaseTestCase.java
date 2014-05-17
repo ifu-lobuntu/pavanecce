@@ -33,6 +33,7 @@ import org.jbpm.process.instance.event.DefaultSignalManagerFactory;
 import org.jbpm.process.instance.impl.DefaultProcessInstanceManagerFactory;
 import org.jbpm.ruleflow.core.RuleFlowProcess;
 import org.jbpm.services.task.identity.JBossUserGroupCallbackImpl;
+import org.jbpm.services.task.identity.PropertyUserInfoImpl;
 import org.jbpm.services.task.impl.model.GroupImpl;
 import org.jbpm.services.task.impl.model.UserImpl;
 import org.jbpm.shared.services.impl.JbpmServicesPersistenceManagerImpl;
@@ -136,6 +137,14 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 	@Override
 	public void assertNodeActive(long processInstanceId, KieSession ksession, String... name) {
 		super.assertNodeActive(processInstanceId, ksession, name);
+	}
+
+	protected CaseInstance reloadCaseInstance(CaseInstance caseInstance2) {
+		return (CaseInstance) getRuntimeEngine().getKieSession().getProcessInstance(caseInstance2.getId());
+	}
+
+	protected InternalTaskService getTaskService() {
+		return (InternalTaskService) getRuntimeEngine().getTaskService();
 	}
 
 	@Override
@@ -335,7 +344,9 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 		nodeInstanceFactoryRegistry.register(CaseTaskPlanItem.class, new CreateNewNodeFactory(CaseTaskPlanItemInstance.class));
 		TaskService ts = runtimeEngine.getTaskService();
 		if (ts instanceof InternalTaskService) {
-			((InternalTaskService) ts).addMarshallerContext(rm.getIdentifier(), new ContentMarshallerContext(env, getClass().getClassLoader()));
+			InternalTaskService its = (InternalTaskService) ts;
+			its.addMarshallerContext(rm.getIdentifier(), new ContentMarshallerContext(env, getClass().getClassLoader()));
+			its.setUserInfo(new PropertyUserInfoImpl());
 		}
 		// for some reason the task service does not persist the users and groups ???
 		populateUsers();
@@ -344,12 +355,7 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 
 	protected void populateUsers() {
 		JBossUserGroupCallbackImpl users = new JBossUserGroupCallbackImpl("classpath:/usergroups.properties");
-		Properties props = new Properties();
-		try {
-			props.load(getClass().getClassLoader().getResourceAsStream("usergroups.properties"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		Properties props = buildUserGroupProperties();
 		for (Object userId : props.keySet()) {
 			getPersistence().start();
 			EntityManager em = getEmf().createEntityManager();
@@ -370,6 +376,16 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 			}
 			getPersistence().commit();
 		}
+	}
+
+	private Properties buildUserGroupProperties() {
+		Properties props = new Properties();
+		try {
+			props.load(getClass().getClassLoader().getResourceAsStream("usergroups.properties"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return props;
 	}
 
 	protected ObjectMarshallingStrategy[] getPlaceholdStrategies(Environment env) {

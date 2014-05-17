@@ -42,6 +42,8 @@ UserEvent
  
 CaseModel
  - auto completion
+ - manual completion
+ - CLOSE, COMPLETE,CREATE, SUSPEND, REACTIVATE (from suspended),TERMINATE,FAULT
 
 
 Generate OCM and JPA test Java classes from UML along with CaseFileItemDefinition includes
@@ -53,21 +55,24 @@ Recursive subscriptions, parameterizable
 2. To test
 Sentry.Conditions
 Sentries with multiple onParts
-
+CaseTask.no sentry
+CaseTask.requiredRule
+HumanTask.no sentry
+HumanTask.requiredRule
+Test that suspension works for PlanItemInstanceFactories and Event
 
 3. To implement
 
+Sentry.condition without onParts
+
 Process/Case Task
- - no sentry *
  - repetitionRule *
- - requiredRule *
  - parameter transformation
  - REENABLE,REACTIVATE,PARENT_SUSPEND*, PARENT_RESUME*, CREATE
 
 CaseModel:
  - direct exit Criteria *
- - manual completion *
- - CREATE, TERMINATE*,FAULT*, CLOSE *, COMPLETE*,SUSPEND*,REACTIVATE*
+ - REACTIVATE (from Failed,Terminated, Completed?)*
  
 Stage:
  - no sentry *
@@ -81,9 +86,7 @@ Stage:
  - auto completion, use ItemControl.requiredRule *
 
 Human Task
- - no sentry *
  - repetitionRule *
- - requiredRule *
  - CREATE,REENABLE,REACTIVATE,PARENT_SUSPEND*, PARENT_RESUME*
 
 Milestone
@@ -100,12 +103,19 @@ Planning Tables:
  - Planning Table object (string/xml representing the current state of tasks and assignments of roles/parameters)
  - Marshal this from/to the workItem
  - DiscretionaryItem
+ - DiscretionaryItem.itemControl.requiredRule
  - ApplicabilityRule
  - Assigning tasks at runtime
  - Assigning caseParameters at runtime
 
 plan fragment
 contextRefs for rules
+
+
+
+
+
+
 
 
 4. Difficult
@@ -122,19 +132,28 @@ Reversing Java classes to UML for OCL expressions
 Allowing SentryInstances and OnPartInstances to be created at runtime
 
 6.Refactoring:
-Clear up confusion between org.pavanecce.cmmn.jbpm.flow.builder.AbstractCaseElementHandler and org.pavanecce.cmmn.jbpm.flow.builder.AbstractPlanModelElementHandler
+Clean up all the validPeers and validParents
 
 
 7. Questions for OMG:
-When a Stage needs to be closed manually, which users should be allowed to do that? Same goes for suspend/resume/terminate etc.
+When a Stage needs to be completed manually, which users should be allowed to do that? Same goes for suspend/resume/terminate/close etc.
 In the notation examples, it seems there are Discretionary items that also have entryCriteratia. How so?
 For stages and tasks, when they are enabled and repititionRule=true, it should create a new instance, but what happens to the
 instance that was already in the available state?
 Understood that repetitionRules are not relevant tot EventListeners. However, it is acknowledged that timer events can repeat, and it is imaginable that a UserEvent occur more than once. Milestones can definitely occur many times.
 7.5.3. does not include Timer/UserEvents in the discussion of RequiredRules, however 5.4.11.2 does, but again it is excluded in table 42. It is easy to imagine that an event is required. 
+Table 49 does not list the exit transition for CaseInstances - which transition will occur when the Case's casePlanModel Stage reaches its exitCriteria? 
+Does table 52 pertain to the Stage instance representing the casePLanModel as well? If so, what do we do with the re-active transition propagation to subelements?
+
 
 Discrepancies in XSD:
   In the XSD, TimerEventListener.timerExpression is a fully fledged expression, but in the spec it is just string. Does the result still have to be ISO-8601 compliant?
   AuthoizedRoleRefs for user events?
 
-
+8. Mismatches with jBPM/WS-Human Task:
+8.1. For a Task representing a Case, Completed is semi-terminal state, but for WS-human Task it is terminal - no "re-activate" transition
+8.2. For a Task representing a Human/Case/Process Task, Failed is a semi-terminal state, bit for WS-human Task it is terminal
+8.3. For a Task representing a Case, there is no "close" transition.
+8.4. For a Task representing a Human/Case/Process Task, WS:Obsolete/CMMN:Disabled is a semi-terminal state, bit for WS-human Task it is terminal - no "re-enable" transition
+8.5. I need to update Task parameters without performing a transition at all. (e.g. canComplete, input assignment during planning,fault info) - maybe I can use a workItemHandler that connects directly to the TaskService
+8.6. 

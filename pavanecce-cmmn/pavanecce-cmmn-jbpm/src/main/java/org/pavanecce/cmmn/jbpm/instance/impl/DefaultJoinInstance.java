@@ -5,7 +5,6 @@ import org.jbpm.workflow.instance.node.EventNodeInstanceInterface;
 import org.jbpm.workflow.instance.node.JoinInstance;
 import org.kie.api.runtime.process.NodeInstance;
 import org.pavanecce.cmmn.jbpm.flow.DefaultJoin;
-import org.pavanecce.cmmn.jbpm.instance.PlanElementState;
 import org.pavanecce.cmmn.jbpm.instance.PlanItemInstanceContainer;
 
 public class DefaultJoinInstance extends JoinInstance implements EventNodeInstanceInterface {
@@ -30,17 +29,13 @@ public class DefaultJoinInstance extends JoinInstance implements EventNodeInstan
 	public void setInitializing(boolean b) {
 		this.isInitializing = b;
 	}
-	
+
 	@Override
 	public void signalEvent(String type, Object event) {
 		if (getNodeInstanceContainer() instanceof PlanItemInstanceContainer) {
 			PlanItemInstanceContainer piic = (PlanItemInstanceContainer) getNodeInstanceContainer();
-			if (type.equals(DefaultJoin.COMPLETE)) {
-				if (piic.canComplete() && piic.getPlanElementState() == PlanElementState.ACTIVE) {
-					piic.complete();
-				}
-			}else if(type.equals(DefaultJoin.CLOSE) && piic instanceof CaseInstance){
-				if(piic.getPlanElementState().isTerminalState()){
+			if (type.equals(DefaultJoin.CLOSE) && piic instanceof CaseInstance) {
+				if (piic.getPlanElementState().isTerminalState()) {
 					((CaseInstance) piic).close();
 					triggerCompleted(NodeImpl.CONNECTION_DEFAULT_TYPE, true);
 				}
@@ -48,6 +43,5 @@ public class DefaultJoinInstance extends JoinInstance implements EventNodeInstan
 		}
 
 	}
-
 
 }

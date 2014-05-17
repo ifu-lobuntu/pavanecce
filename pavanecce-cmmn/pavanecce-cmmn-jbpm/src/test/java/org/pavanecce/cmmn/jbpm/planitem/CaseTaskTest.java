@@ -20,12 +20,16 @@ public class CaseTaskTest extends AbstractTasklifecycleTests {
 	public CaseTaskTest() {
 		super(true, true, "org.jbpm.persistence.jpa");
 	}
-	public String getEventGeneratingTaskRole() {
+	public String getEventGeneratingTaskUser() {
 		return "ConstructionProjectManager";
 	}
 	@Override
-	protected String getBusinessAdministratorRole() {
+	protected String getBusinessAdministratorUser() {
 		return "ConstructionProjectManager";
+	}
+	@Override
+	protected String getCaseOwner() {
+		return "Spielman";
 	}
 	@Test
 	public void testParameterMappings() throws Exception{
@@ -33,13 +37,18 @@ public class CaseTaskTest extends AbstractTasklifecycleTests {
 		givenThatTheTestCaseIsStarted();
 		// *****WHEN
 		triggerStartOfTask();
-		List<TaskSummary> list = getRuntimeEngine().getTaskService().getTasksAssignedAsPotentialOwner(getEventGeneratingTaskRole(), "en-UK");
-		
-		assertEquals(1, list.size());
-		getRuntimeEngine().getTaskService().start(list.get(0).getId(), "ConstructionProjectManager");
+		List<TaskSummary> list = getTaskService().getTasksAssignedAsPotentialOwner("ConstructionProjectManager", "en-UK");
+		assertEquals(2, list.size());
+		long subTaskId=-1;
+		for (TaskSummary taskSummary : list) {
+			if(taskSummary.getName().equals("TheEventGeneratingTaskPlanItem")){
+				subTaskId=taskSummary.getId();
+			}
+		}
+		getRuntimeEngine().getTaskService().start(subTaskId, "ConstructionProjectManager");
 		// *******THEN
 		getPersistence().start();
-		long id = getSubProcessInstanceId(list.get(0).getId());
+		long id = getSubProcessInstanceId(subTaskId);
 		CaseInstance pi = (CaseInstance) getRuntimeEngine().getKieSession().getProcessInstance(id);
 		HousePlan housePlan = (HousePlan) pi.getVariable("housePlan");
 		@SuppressWarnings("unchecked")

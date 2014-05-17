@@ -8,6 +8,7 @@ import org.drools.core.spi.ProcessContext;
 import org.jbpm.process.core.context.variable.VariableScope;
 import org.jbpm.process.instance.context.variable.VariableScopeInstance;
 import org.jbpm.process.instance.impl.ReturnValueEvaluator;
+import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItem;
 import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
 import org.pavanecce.cmmn.jbpm.flow.TaskDefinition;
@@ -32,7 +33,6 @@ public abstract class TaskPlanItemInstance <T extends TaskDefinition> extends Ab
 	}
 	protected HashMap<String, Object> buildParameters(Work work) {
 		HashMap<String, Object> parameters = new HashMap<String, Object>(work.getParameters());
-
 		for (CaseParameter cp : ((TaskDefinition) getPlanItem().getPlanInfo().getDefinition()).getInputs()) {
 			ReturnValueEvaluator el = cp.getBindingRefinementEvaluator();
 			if (el != null) {
@@ -48,6 +48,11 @@ public abstract class TaskPlanItemInstance <T extends TaskDefinition> extends Ab
 				VariableScopeInstance varContext = (VariableScopeInstance) resolveContextInstance(VariableScope.VARIABLE_SCOPE, variable.getName());
 				parameters.put(cp.getName(), varContext.getVariable(variable.getName()));
 			}
+		}
+		if(getCaseInstance().getCaseOwner()!=null){
+			parameters.put(Case.INITIATOR,getCaseInstance().getCaseOwner());
+		}else if(getCaseInstance().getInitiator()!=null){
+			parameters.put(Case.INITIATOR,getCaseInstance().getInitiator());
 		}
 		return parameters;
 	}

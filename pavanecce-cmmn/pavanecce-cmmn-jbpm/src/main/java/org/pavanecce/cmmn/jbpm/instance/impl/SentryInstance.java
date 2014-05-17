@@ -46,7 +46,7 @@ public class SentryInstance extends JoinInstance {
 			System.out.println(next.getTo().getName() + ":" + next.getTo().getClass().getName());
 			if (next.getTo() instanceof MilestonePlanItem) {
 				org.jbpm.workflow.instance.NodeInstance ni = ((NodeInstanceContainer) getNodeInstanceContainer()).getNodeInstance(next.getTo());
-				((PlanItemInstanceLifecycle<?>) ni).calcIsRequired();
+				((MilestonePlanItemInstance) ni).calcIsRequired();
 			} else if (next.getTo() instanceof PlanItemInstanceFactoryNode) {
 				org.jbpm.workflow.instance.NodeInstance ni = ((NodeInstanceContainer) getNodeInstanceContainer()).getNodeInstance(next.getTo());
 				((PlanItemInstanceFactoryNodeInstance) ni).calcIsRequired();

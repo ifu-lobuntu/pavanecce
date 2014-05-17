@@ -7,6 +7,7 @@ import java.util.Map;
 import org.junit.Test;
 import org.kie.api.task.model.TaskSummary;
 import org.pavanecce.cmmn.jbpm.AbstractConstructionTestCase;
+import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.instance.PlanElementState;
 import org.pavanecce.cmmn.jbpm.instance.impl.CaseInstance;
 
@@ -43,16 +44,16 @@ public abstract class AbstractTasklifecycleTests extends AbstractConstructionTes
 		givenThatTheTestCaseIsStarted();
 		// *****WHEN
 		triggerStartOfTask();
-		List<TaskSummary> list = getRuntimeEngine().getTaskService().getTasksAssignedAsPotentialOwner(getEventGeneratingTaskRole(), "en-UK");
+		List<TaskSummary> list = getTaskService().getTasksOwned(getEventGeneratingTaskUser(), "en-UK");
 		// *******THEN
 		assertEquals(1, list.size());
 		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.ENABLED);
 		long taskId = list.get(0).getId();
-		getRuntimeEngine().getTaskService().start(taskId, getEventGeneratingTaskRole());
+		getTaskService().start(taskId, getEventGeneratingTaskUser());
 		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.ACTIVE);
-		getRuntimeEngine().getTaskService().suspend(taskId, getEventGeneratingTaskRole());
+		getTaskService().suspend(taskId, getEventGeneratingTaskUser());
 		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.SUSPENDED);
-		getRuntimeEngine().getTaskService().resume(taskId, getEventGeneratingTaskRole());
+		getTaskService().resume(taskId, getEventGeneratingTaskUser());
 		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.ACTIVE);
 		completeTask(taskId);
 		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.COMPLETED);
@@ -65,17 +66,17 @@ public abstract class AbstractTasklifecycleTests extends AbstractConstructionTes
 		givenThatTheTestCaseIsStarted();
 		// *****WHEN
 		triggerStartOfTask();
-		List<TaskSummary> list = getRuntimeEngine().getTaskService().getTasksAssignedAsPotentialOwner(getEventGeneratingTaskRole(), "en-UK");
+		List<TaskSummary> list = getTaskService().getTasksOwned(getEventGeneratingTaskUser(), "en-UK");
 		// *******THEN
 		assertEquals(1, list.size());
 		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.ENABLED);
-		getRuntimeEngine().getTaskService().start(list.get(0).getId(), getEventGeneratingTaskRole());
+		getTaskService().start(list.get(0).getId(), getEventGeneratingTaskUser());
 		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.ACTIVE);
-		getRuntimeEngine().getTaskService().suspend(list.get(0).getId(), getEventGeneratingTaskRole());
+		getTaskService().suspend(list.get(0).getId(), getEventGeneratingTaskUser());
 		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.SUSPENDED);
-		getRuntimeEngine().getTaskService().resume(list.get(0).getId(), getEventGeneratingTaskRole());
+		getTaskService().resume(list.get(0).getId(), getEventGeneratingTaskUser());
 		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.ACTIVE);
-		getRuntimeEngine().getTaskService().exit(list.get(0).getId(), getBusinessAdministratorRole());
+		getTaskService().exit(list.get(0).getId(), getBusinessAdministratorUser());
 		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.TERMINATED);
 		// *****THEN
 	}
@@ -86,16 +87,16 @@ public abstract class AbstractTasklifecycleTests extends AbstractConstructionTes
 		givenThatTheTestCaseIsStarted();
 		// *****WHEN
 		triggerStartOfTask();
-		List<TaskSummary> list = getRuntimeEngine().getTaskService().getTasksAssignedAsPotentialOwner(getEventGeneratingTaskRole(), "en-UK");
+		List<TaskSummary> list = getTaskService().getTasksOwned(getEventGeneratingTaskUser(), "en-UK");
 		// *******THEN
 		assertEquals(1, list.size());
 		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.ENABLED);
 		long taskId = list.get(0).getId();
-		getRuntimeEngine().getTaskService().start(taskId, getEventGeneratingTaskRole());
+		getTaskService().start(taskId, getEventGeneratingTaskUser());
 		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.ACTIVE);
-		getRuntimeEngine().getTaskService().suspend(taskId, getEventGeneratingTaskRole());
+		getTaskService().suspend(taskId, getEventGeneratingTaskUser());
 		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.SUSPENDED);
-		getRuntimeEngine().getTaskService().resume(taskId, getEventGeneratingTaskRole());
+		getTaskService().resume(taskId, getEventGeneratingTaskUser());
 		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.ACTIVE);
 		failTask(taskId);
 		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.FAILED);
@@ -108,15 +109,15 @@ public abstract class AbstractTasklifecycleTests extends AbstractConstructionTes
 		givenThatTheTestCaseIsStarted();
 		// *****WHEN
 		triggerStartOfTask();
-		List<TaskSummary> list = getRuntimeEngine().getTaskService().getTasksAssignedAsPotentialOwner(getEventGeneratingTaskRole(), "en-UK");
+		List<TaskSummary> list = getTaskService().getTasksOwned(getEventGeneratingTaskUser(), "en-UK");
 		// *******THEN
 		assertEquals(1, list.size());
 		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.ENABLED);
-		getRuntimeEngine().getTaskService().start(list.get(0).getId(), getEventGeneratingTaskRole());
+		getTaskService().start(list.get(0).getId(), getEventGeneratingTaskUser());
 		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.ACTIVE);
-		getRuntimeEngine().getTaskService().suspend(list.get(0).getId(), getEventGeneratingTaskRole());
+		getTaskService().suspend(list.get(0).getId(), getEventGeneratingTaskUser());
 		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.SUSPENDED);
-		getRuntimeEngine().getTaskService().resume(list.get(0).getId(), getEventGeneratingTaskRole());
+		getTaskService().resume(list.get(0).getId(), getEventGeneratingTaskUser());
 		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.ACTIVE);
 		getPersistence().start();
 		getRuntimeEngine().getKieSession().signalEvent("TheUserEvent", new Object(), caseInstance.getId());
@@ -124,7 +125,7 @@ public abstract class AbstractTasklifecycleTests extends AbstractConstructionTes
 		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.TERMINATED);
 	}
 
-	public abstract String getEventGeneratingTaskRole();
+	public abstract String getEventGeneratingTaskUser();
 
 	@Test
 	public void testEventGeneratedOnCompletionOfTask() throws Exception {
@@ -132,16 +133,16 @@ public abstract class AbstractTasklifecycleTests extends AbstractConstructionTes
 		givenThatTheTestCaseIsStarted();
 		triggerStartOfTask();
 		assertNodeTriggered(caseInstance.getId(), "TheEventGeneratingTaskPlanItem");
-		List<TaskSummary> list = getRuntimeEngine().getTaskService().getTasksAssignedAsPotentialOwner(getEventGeneratingTaskRole(), "en-UK");
+		List<TaskSummary> list = getTaskService().getTasksOwned(getEventGeneratingTaskUser(), "en-UK");
 		assertEquals(1, list.size());
 		// *****WHEN
 		long id = list.get(0).getId();
-		getRuntimeEngine().getTaskService().start(id, getEventGeneratingTaskRole());
+		getTaskService().start(id, getEventGeneratingTaskUser());
 		completeTask(id);
 		// *****THEN
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenTaskCompleted");
 		assertPlanItemInState(caseInstance.getId(), "PlanItemEnteredWhenTaskCompleted", PlanElementState.ENABLED);
-		list = getRuntimeEngine().getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
+		list = getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
 		assertEquals(1, list.size());
 		assertEquals("PlanItemEnteredWhenTaskCompleted", list.get(0).getName());
 	}
@@ -152,15 +153,15 @@ public abstract class AbstractTasklifecycleTests extends AbstractConstructionTes
 		givenThatTheTestCaseIsStarted();
 		triggerStartOfTask();
 		assertNodeTriggered(caseInstance.getId(), "TheEventGeneratingTaskPlanItem");
-		List<TaskSummary> list = getRuntimeEngine().getTaskService().getTasksAssignedAsPotentialOwner(getEventGeneratingTaskRole(), "en-UK");
+		List<TaskSummary> list = getTaskService().getTasksOwned(getEventGeneratingTaskUser(), "en-UK");
 		assertEquals(1, list.size());
 		// *****WHEN
 		long id = list.get(0).getId();
-		getRuntimeEngine().getTaskService().start(id, getEventGeneratingTaskRole());
+		getTaskService().start(id, getEventGeneratingTaskUser());
 		failTask(id);
 		// *****THEN
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenTaskFaultOccurred");
-		list = getRuntimeEngine().getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
+		list = getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
 		assertEquals(1, list.size());
 		assertEquals("PlanItemEnteredWhenTaskFaultOccurred", list.get(0).getName());
 	}
@@ -170,14 +171,14 @@ public abstract class AbstractTasklifecycleTests extends AbstractConstructionTes
 		// *****GIVEN
 		givenThatTheTestCaseIsStarted();
 		triggerStartOfTask();
-		List<TaskSummary> list = getRuntimeEngine().getTaskService().getTasksAssignedAsPotentialOwner(getEventGeneratingTaskRole(), "en-UK");
+		List<TaskSummary> list = getTaskService().getTasksOwned(getEventGeneratingTaskUser(), "en-UK");
 		assertEquals(1, list.size());
 		// *****WHEN
 		// *****WHEN
-		getRuntimeEngine().getTaskService().start(list.get(0).getId(), getEventGeneratingTaskRole());
-		getRuntimeEngine().getTaskService().suspend(list.get(0).getId(), getEventGeneratingTaskRole());
+		getTaskService().start(list.get(0).getId(), getEventGeneratingTaskUser());
+		getTaskService().suspend(list.get(0).getId(), getEventGeneratingTaskUser());
 		// *****THEN
-		list = getRuntimeEngine().getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
+		list = getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
 		assertEquals(1, list.size());
 
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenTaskSuspended");
@@ -189,21 +190,21 @@ public abstract class AbstractTasklifecycleTests extends AbstractConstructionTes
 		// *****GIVEN
 		givenThatTheTestCaseIsStarted();
 		triggerStartOfTask();
-		List<TaskSummary> list = getRuntimeEngine().getTaskService().getTasksAssignedAsPotentialOwner(getEventGeneratingTaskRole(), "en-UK");
+		List<TaskSummary> list = getTaskService().getTasksOwned(getEventGeneratingTaskUser(), "en-UK");
 		assertEquals(1, list.size());
 		// *****WHEN
 		// *****WHEN
-		getRuntimeEngine().getTaskService().start(list.get(0).getId(), getEventGeneratingTaskRole());
-		getRuntimeEngine().getTaskService().exit(list.get(0).getId(), getBusinessAdministratorRole());
+		getTaskService().start(list.get(0).getId(), getEventGeneratingTaskUser());
+		getTaskService().exit(list.get(0).getId(), getBusinessAdministratorUser());
 		// *****THEN
-		list = getRuntimeEngine().getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
+		list = getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
 		assertEquals(1, list.size());
 
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenTaskTerminated");
 		assertEquals("PlanItemEnteredWhenTaskTerminated", list.get(0).getName());
 	}
 
-	protected String getBusinessAdministratorRole() {
+	protected String getBusinessAdministratorUser() {
 		return "Administrator";
 	}
 
@@ -212,15 +213,15 @@ public abstract class AbstractTasklifecycleTests extends AbstractConstructionTes
 		// *****GIVEN
 		givenThatTheTestCaseIsStarted();
 		triggerStartOfTask();
-		List<TaskSummary> list = getRuntimeEngine().getTaskService().getTasksAssignedAsPotentialOwner(getEventGeneratingTaskRole(), "en-UK");
+		List<TaskSummary> list = getTaskService().getTasksOwned(getEventGeneratingTaskUser(), "en-UK");
 		assertEquals(1, list.size());
 		// *****WHEN
 		// *****WHEN
-		getRuntimeEngine().getTaskService().start(list.get(0).getId(), getEventGeneratingTaskRole());
-		getRuntimeEngine().getTaskService().suspend(list.get(0).getId(), getEventGeneratingTaskRole());
-		getRuntimeEngine().getTaskService().resume(list.get(0).getId(), getEventGeneratingTaskRole());
+		getTaskService().start(list.get(0).getId(), getEventGeneratingTaskUser());
+		getTaskService().suspend(list.get(0).getId(), getEventGeneratingTaskUser());
+		getTaskService().resume(list.get(0).getId(), getEventGeneratingTaskUser());
 		// *****THEN
-		list = getRuntimeEngine().getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
+		list = getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
 		assertEquals(2, list.size());
 
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenTaskResumed");
@@ -232,19 +233,19 @@ public abstract class AbstractTasklifecycleTests extends AbstractConstructionTes
 		// *****GIVEN
 		givenThatTheTestCaseIsStarted();
 		triggerStartOfTask();
-		List<TaskSummary> list = getRuntimeEngine().getTaskService().getTasksAssignedAsPotentialOwner(getEventGeneratingTaskRole(), "en-UK");
+		List<TaskSummary> list = getTaskService().getTasksOwned(getEventGeneratingTaskUser(), "en-UK");
 		assertEquals(1, list.size());
 		// *****WHEN
 		triggerExitOfTask(list);
 		// *****THEN
-		list = getRuntimeEngine().getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
+		list = getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
 		assertEquals(1, list.size());
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenTaskExited");
 		assertTaskTypeCreated(list, "PlanItemEnteredWhenTaskExited");
 	}
 
 	private void triggerExitOfTask(List<TaskSummary> list) {
-		getRuntimeEngine().getTaskService().start(list.get(0).getId(), getEventGeneratingTaskRole());
+		getTaskService().start(list.get(0).getId(), getEventGeneratingTaskUser());
 		getPersistence().start();
 		getRuntimeEngine().getKieSession().signalEvent("TheUserEvent", new Object(), caseInstance.getId());
 		getPersistence().commit();
@@ -256,11 +257,11 @@ public abstract class AbstractTasklifecycleTests extends AbstractConstructionTes
 		// *****GIVEN
 		givenThatTheTestCaseIsStarted();
 		triggerStartOfTask();
-		List<TaskSummary> list = getRuntimeEngine().getTaskService().getTasksAssignedAsPotentialOwner(getEventGeneratingTaskRole(), "en-UK");
+		List<TaskSummary> list = getTaskService().getTasksOwned(getEventGeneratingTaskUser(), "en-UK");
 		assertEquals(1, list.size());
-		getRuntimeEngine().getTaskService().skip(list.get(0).getId(), getEventGeneratingTaskRole());
+		getTaskService().skip(list.get(0).getId(), getEventGeneratingTaskUser());
 		// *****THEN
-		list = getRuntimeEngine().getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
+		list = getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
 		assertEquals(1, list.size());
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenTaskDisabled");
 		assertTaskTypeCreated(list, "PlanItemEnteredWhenTaskDisabled");
@@ -276,7 +277,7 @@ public abstract class AbstractTasklifecycleTests extends AbstractConstructionTes
 		getPersistence().commit();
 		assertNodeTriggered(caseInstance.getId(), "TheManuallyActivatedTaskPlanItem");
 		// *****THEN
-		List<TaskSummary> list = getRuntimeEngine().getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
+		List<TaskSummary> list = getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
 		assertEquals(1, list.size());
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenTaskEnabled");
 		assertTaskTypeCreated(list, "PlanItemEnteredWhenTaskEnabled");
@@ -289,18 +290,28 @@ public abstract class AbstractTasklifecycleTests extends AbstractConstructionTes
 		getPersistence().start();
 		getRuntimeEngine().getKieSession().signalEvent("UserEventToStartManuallyActivatedTask", new Object(), caseInstance.getId());
 		getPersistence().commit();
-		List<TaskSummary> list = getRuntimeEngine().getTaskService().getTasksAssignedAsPotentialOwner(getEventGeneratingTaskRole(), "en-UK");
-		assertEquals(1, list.size());
+		List<TaskSummary> list = getTaskService().getTasksAssignedAsPotentialOwner(getEventGeneratingTaskUser(), "en-UK");
+		assertTrue(list.size() > 0);// there could be 2
 		assertNodeTriggered(caseInstance.getId(), "TheManuallyActivatedTaskPlanItem");
-		// ******WHEN
-		getRuntimeEngine().getTaskService().start(list.get(0).getId(), getEventGeneratingTaskRole());
+		getTaskService().start(findTask(list, "TheManuallyActivatedTaskPlanItem"), getEventGeneratingTaskUser());
 		// *****THEN
-		list = getRuntimeEngine().getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
+		list = getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
 		assertEquals(2, list.size());
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenTaskManuallyStarted");
 		assertTaskTypeCreated(list, "PlanItemEnteredWhenTaskManuallyStarted");
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenTaskEnabled");
 		assertTaskTypeCreated(list, "PlanItemEnteredWhenTaskEnabled");
+	}
+
+	private long findTask(List<TaskSummary> list, String taskName) {
+		long eventGeneratingTaskId = -1;
+		// ******WHEN
+		for (TaskSummary ts : list) {
+			if (ts.getName().equals(taskName)) {
+				eventGeneratingTaskId = ts.getId();
+			}
+		}
+		return eventGeneratingTaskId;
 	}
 
 	@Test
@@ -312,11 +323,11 @@ public abstract class AbstractTasklifecycleTests extends AbstractConstructionTes
 		getRuntimeEngine().getKieSession().signalEvent("UserEventToStartAutoActivatedTask", new Object(), caseInstance.getId());
 		getPersistence().commit();
 		// *****THEN
-		List<TaskSummary> list = getRuntimeEngine().getTaskService().getTasksAssignedAsPotentialOwner(getEventGeneratingTaskRole(), "en-UK");
+		List<TaskSummary> list = getTaskService().getTasksAssignedAsPotentialOwner(getEventGeneratingTaskUser(), "en-UK");
 		assertNodeTriggered(caseInstance.getId(), "TheAutoActivatedTaskPlanItem");
 		assertTaskTypeCreated(list, "TheAutoActivatedTaskPlanItem");
-		assertEquals(1, list.size());
-		list = getRuntimeEngine().getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
+		assertTrue(list.size()>0);//could be two
+		list = getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
 		assertEquals(1, list.size());
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenTaskAutomaticallyStarted");
 		assertTaskTypeCreated(list, "PlanItemEnteredWhenTaskAutomaticallyStarted");
@@ -344,6 +355,7 @@ public abstract class AbstractTasklifecycleTests extends AbstractConstructionTes
 		getPersistence().commit();
 		params.put("housePlan", housePlan);
 		params.put("house", house);
+		params.put(Case.CASE_OWNER, getCaseOwner());
 		getPersistence().start();
 		caseInstance = (CaseInstance) getRuntimeEngine().getKieSession().startProcess(getNameOfProcessToStart(), params);
 		getPersistence().commit();
@@ -355,6 +367,8 @@ public abstract class AbstractTasklifecycleTests extends AbstractConstructionTes
 		getPersistence().commit();
 	}
 
+	protected abstract String getCaseOwner();
+
 	public abstract String getNameOfProcessToStart();
 
 	public abstract String[] getProcessFileNames();
@@ -364,6 +378,8 @@ public abstract class AbstractTasklifecycleTests extends AbstractConstructionTes
 		new WallPlan(housePlan);
 		getPersistence().update(housePlan);
 		getPersistence().commit();
+		List<TaskSummary> list = getTaskService().getTasksAssignedAsPotentialOwner(getEventGeneratingTaskUser(), "en-UK");
+		getTaskService().claim(findTask(list, "TheEventGeneratingTaskPlanItem"), getEventGeneratingTaskUser());
 	}
 
 }

@@ -4,8 +4,8 @@ import org.drools.core.process.instance.WorkItemManager;
 import org.jbpm.process.instance.impl.ConstraintEvaluator;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemControl;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemInfo;
-import org.pavanecce.cmmn.jbpm.instance.CaseElementLifecycleWithTask;
 import org.pavanecce.cmmn.jbpm.instance.ControllablePlanItemInstanceLifecycle;
+import org.pavanecce.cmmn.jbpm.instance.PlanElementLifecycleWithTask;
 
 public class PlanItemInstanceUtil {
 
@@ -23,9 +23,9 @@ public class PlanItemInstanceUtil {
 	}
 
 	public static void exitPlanItem(ControllablePlanItemInstanceLifecycle<?> pi) {
-		if (pi instanceof CaseElementLifecycleWithTask) {
+		if (pi instanceof PlanElementLifecycleWithTask) {
 			WorkItemManager workItemManager = (WorkItemManager) pi.getCaseInstance().getKnowledgeRuntime().getWorkItemManager();
-			workItemManager.internalAbortWorkItem(((CaseElementLifecycleWithTask) pi).getWorkItemId());
+			workItemManager.internalAbortWorkItem(((PlanElementLifecycleWithTask) pi).getWorkItemId());
 		}
 	}
 }

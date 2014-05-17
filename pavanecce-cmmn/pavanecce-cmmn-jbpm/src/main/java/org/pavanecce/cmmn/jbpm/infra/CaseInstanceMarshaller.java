@@ -25,6 +25,7 @@ import org.pavanecce.cmmn.jbpm.instance.ControllablePlanItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.instance.OccurrablePlanItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.instance.OnPartInstance;
 import org.pavanecce.cmmn.jbpm.instance.PlanElementState;
+import org.pavanecce.cmmn.jbpm.instance.PlanItemInstanceLifecycleWithHistory;
 import org.pavanecce.cmmn.jbpm.instance.impl.CaseInstance;
 import org.pavanecce.cmmn.jbpm.instance.impl.CaseTaskPlanItemInstance;
 import org.pavanecce.cmmn.jbpm.instance.impl.DefaultJoinInstance;
@@ -76,16 +77,20 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 		return read;
 	}
 
-	private void writePlanItemStates(ControllablePlanItemInstanceLifecycle<?> pi, ObjectOutputStream stream) throws IOException {
+	private void writePlanItemStates(PlanItemInstanceLifecycleWithHistory<?> pi, ObjectOutputStream stream) throws IOException {
 		stream.writeInt(pi.getPlanElementState().ordinal());
 		stream.writeInt(pi.getLastBusyState().ordinal());
-		stream.writeBoolean(pi.isCompletionRequired());
+		if (pi instanceof ControllablePlanItemInstanceLifecycle) {
+			stream.writeBoolean(((ControllablePlanItemInstanceLifecycle<?>) pi).isCompletionRequired());
+		}
 	}
 
-	private void readPlanItemStates(ControllablePlanItemInstanceLifecycle<?> pi, ObjectInputStream stream) throws IOException {
+	private void readPlanItemStates(PlanItemInstanceLifecycleWithHistory<?> pi, ObjectInputStream stream) throws IOException {
 		pi.setPlanElementState(PlanElementState.values()[stream.readInt()]);
 		pi.setLastBusyState(PlanElementState.values()[stream.readInt()]);
-		pi.internalSetCompletionRequired(stream.readBoolean());
+		if (pi instanceof ControllablePlanItemInstanceLifecycle) {
+			((ControllablePlanItemInstanceLifecycle<?>) pi).internalSetCompletionRequired(stream.readBoolean());
+		}
 	}
 
 	@Override
@@ -93,7 +98,9 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 		NodeInstanceImpl nodeInstance = null;
 		switch (nodeType) {
 		case PLAN_ITEM_INSTANCE_FACTORY_NODE_INSTANCE:
+			@SuppressWarnings("rawtypes")
 			PlanItemInstanceFactoryNodeInstance piifni = new PlanItemInstanceFactoryNodeInstance();
+			readPlanItemStates(piifni, stream);
 			piifni.internalSetPlanItemInstanceRequired(context.stream.readBoolean());
 			piifni.internalSetPlanItemInstanceStillRequired(context.stream.readBoolean());
 			nodeInstance = piifni;
@@ -218,8 +225,9 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 
 		} else if (nodeInstance instanceof PlanItemInstanceFactoryNodeInstance) {
 			stream.writeShort(PLAN_ITEM_INSTANCE_FACTORY_NODE_INSTANCE);
-			stream.writeBoolean(((PlanItemInstanceFactoryNodeInstance) nodeInstance).isPlanItemInstanceRequired());
-			stream.writeBoolean(((PlanItemInstanceFactoryNodeInstance) nodeInstance).isPlanItemInstanceStillRequired());
+			writePlanItemStates((PlanItemInstanceFactoryNodeInstance<?>) nodeInstance, stream);
+			stream.writeBoolean(((PlanItemInstanceFactoryNodeInstance<?>) nodeInstance).isPlanItemInstanceRequired());
+			stream.writeBoolean(((PlanItemInstanceFactoryNodeInstance<?>) nodeInstance).isPlanItemInstanceStillRequired());
 		} else if (nodeInstance instanceof OnPartInstance) {
 			stream.writeShort(ON_PART_INSTANCE);
 		} else if (nodeInstance instanceof MilestonePlanItemInstance) {

@@ -3,6 +3,7 @@ package org.pavanecce.cmmn.jbpm.infra;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import org.drools.core.process.instance.impl.WorkItemImpl;
@@ -21,17 +22,21 @@ import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.manager.RuntimeEngine;
 import org.kie.api.runtime.process.WorkItem;
 import org.kie.api.runtime.process.WorkItemManager;
+import org.kie.api.task.model.Group;
 import org.kie.api.task.model.I18NText;
 import org.kie.api.task.model.OrganizationalEntity;
 import org.kie.api.task.model.PeopleAssignments;
 import org.kie.api.task.model.Task;
+import org.kie.api.task.model.User;
 import org.kie.internal.runtime.manager.context.ProcessInstanceIdContext;
 import org.kie.internal.task.api.InternalTaskService;
 import org.kie.internal.task.api.model.ContentData;
+import org.kie.internal.task.api.model.InternalPeopleAssignments;
 import org.kie.internal.task.api.model.InternalTask;
 import org.kie.internal.task.api.model.InternalTaskData;
-import org.pavanecce.cmmn.jbpm.instance.CaseElementLifecycleWithTask;
+import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.instance.ControllablePlanItemInstanceLifecycle;
+import org.pavanecce.cmmn.jbpm.instance.PlanElementLifecycleWithTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +60,7 @@ public class CaseTaskWorkItemHandler extends LocalHTWorkItemHandler {
 			task.setFormName(formName);
 		}
 
-		String comment = (String) workItem.getParameter(CaseElementLifecycleWithTask.COMMENT);
+		String comment = (String) workItem.getParameter(PlanElementLifecycleWithTask.COMMENT);
 		if (comment == null) {
 			comment = "";
 		}
@@ -87,7 +92,7 @@ public class CaseTaskWorkItemHandler extends LocalHTWorkItemHandler {
 			taskData.setProcessSessionId(((KieSession) session).getId());
 		}
 		taskData.setSkipable(!"false".equals(workItem.getParameter("Skippable")));
-		Long parentId = (Long) workItem.getParameter(CaseElementLifecycleWithTask.PARENT_WORK_ITEM_ID);
+		Long parentId = (Long) workItem.getParameter(PlanElementLifecycleWithTask.PARENT_WORK_ITEM_ID);
 		if (parentId != null) {
 			RuntimeEngine runtime = getRuntimeManager().getRuntimeEngine(ProcessInstanceIdContext.get(workItem.getProcessInstanceId()));
 			taskData.setParentId(runtime.getTaskService().getTaskByWorkItemId(parentId).getId());
@@ -113,7 +118,10 @@ public class CaseTaskWorkItemHandler extends LocalHTWorkItemHandler {
 		};
 		peopleAssignmentHelper.handlePeopleAssignments(workItem, task, taskData);
 
-		PeopleAssignments peopleAssignments = task.getPeopleAssignments();
+		InternalPeopleAssignments peopleAssignments = (InternalPeopleAssignments) task.getPeopleAssignments();
+		if (workItem.getParameter(Case.INITIATOR) != null) {
+			peopleAssignments.setTaskInitiator(new UserImpl((String) workItem.getParameter(Case.INITIATOR)));
+		}
 		List<OrganizationalEntity> businessAdministrators = peopleAssignments.getBusinessAdministrators();
 
 		taskData.initialize();
@@ -132,7 +140,16 @@ public class CaseTaskWorkItemHandler extends LocalHTWorkItemHandler {
 		ContentData content = createTaskContentBasedOnWorkItemParams(ksessionById, workItem);
 		try {
 			long taskId = ((InternalTaskService) runtime.getTaskService()).addTask(task, content);
-			if (isAutoClaim(workItem, task)) {
+			task.getPeopleAssignments().getPotentialOwners();
+			if (workItem.getParameter(Case.CASE_OWNER) != null) {
+				// This task represents a standalone CaseInstanc;
+				String caseOwner = (String) workItem.getParameter(Case.CASE_OWNER);
+				User user = findExactCaseOwner(runtime, caseOwner);
+				if (user != null) {
+					runtime.getTaskService().claim(taskId, user.getId());
+					runtime.getTaskService().start(taskId, user.getId());
+				}
+			} else if (isAutoClaim(workItem, task)) {
 				runtime.getTaskService().claim(taskId, (String) workItem.getParameter("SwimlaneActorId"));
 			}
 			// workItem.getParameters().put(CaseElementLifecycleWithTask.TASK, task);
@@ -154,6 +171,35 @@ public class CaseTaskWorkItemHandler extends LocalHTWorkItemHandler {
 				logger.error(logMsg.toString(), e);
 			}
 		}
+	}
+
+	private User findExactCaseOwner(RuntimeEngine runtime, String caseOwner) {
+		InternalTaskService its = (InternalTaskService) runtime.getTaskService();
+		User user = its.getUserById(caseOwner);
+		if (user == null) {
+			// Not ideal, but let's see if there is a only one user implied
+			String[] split = caseOwner.split(System.getProperty("org.jbpm.ht.user.separator", ","));
+			for (String groupName : split) {
+				Group group = its.getGroupById(groupName);
+				if (group != null) {
+					Iterator<OrganizationalEntity> m = its.getUserInfo().getMembersForGroup(group);
+					if (m.hasNext()) {
+						while (m.hasNext()) {
+							OrganizationalEntity oe = m.next();
+							if (oe instanceof User) {
+								if (user != null) {
+									// More than one user
+									return null;
+								} else {
+									user = (User) oe;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return user;
 	}
 
 	@Override

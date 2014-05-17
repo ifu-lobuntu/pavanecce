@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.drools.core.process.core.datatype.impl.type.ObjectDataType;
+import org.drools.core.process.core.datatype.impl.type.StringDataType;
 import org.drools.core.xml.ExtensibleXmlParser;
 import org.drools.core.xml.Handler;
 import org.jbpm.compiler.xml.ProcessBuildData;
@@ -32,6 +33,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 public class CaseHandler extends PlanItemContainerHandler implements Handler {
+	public static final String CURRENT_EVENT = "currentEvent";
 	public static final String CONNECTIONS = "BPMN.Connections";
 	public static final String LINKS = "BPMN.ThrowLinks";
 	public static final String ASSOCIATIONS = "BPMN.Associations";
@@ -92,9 +94,17 @@ public class CaseHandler extends PlanItemContainerHandler implements Handler {
 		VariableScope variableScope = (VariableScope) process.getDefaultContext(VariableScope.VARIABLE_SCOPE);
 		List<Variable> variables = variableScope.getVariables();
 		Variable var = new Variable();
-		var.setName("currentEvent");
+		var.setName(CURRENT_EVENT);
 		var.setType(new ObjectDataType(CaseEvent.class.getName()));
 		variables.add(var);
+		Variable initiator = new Variable();
+		initiator.setName(Case.INITIATOR);
+		initiator.setType(new StringDataType());
+		variables.add(initiator);
+		Variable caseOwner = new Variable();
+		caseOwner.setName(Case.CASE_OWNER);
+		caseOwner.setType(new StringDataType());
+		variables.add(initiator);
 		return process;
 	}
 

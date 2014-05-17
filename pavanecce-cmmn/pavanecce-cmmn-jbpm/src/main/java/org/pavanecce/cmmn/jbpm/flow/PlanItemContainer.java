@@ -27,12 +27,12 @@ public interface PlanItemContainer extends NodeContainer {
 	void setDefaultJoin(DefaultJoin n);
 
 	DefaultJoin getDefaultJoin();
-	
+
 	Case getCase();
-	
+
 	boolean isAutoComplete();
 
-	public abstract void setPlanningTable(PlanningTable planningTable);
+	void setPlanningTable(PlanningTable planningTable);
 
-	public abstract PlanningTable getPlanningTable();
+	PlanningTable getPlanningTable();
 }

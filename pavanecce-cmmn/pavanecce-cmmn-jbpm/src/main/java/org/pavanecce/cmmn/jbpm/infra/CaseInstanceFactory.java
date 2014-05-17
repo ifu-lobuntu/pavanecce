@@ -98,6 +98,14 @@ public class CaseInstanceFactory extends AbstractProcessInstanceFactory implemen
 		if(workItem!=null){
 			processInstance.setWorkItem(workItem);
 		}
+		String initiator = (String) parameters.get(Case.INITIATOR);
+		if(initiator!=null){
+			variableScopeInstance.setVariable(Case.INITIATOR, initiator);
+		}
+		String caseOwner = (String) parameters.get(Case.CASE_OWNER);
+		if(caseOwner!=null){
+			variableScopeInstance.setVariable(Case.CASE_OWNER, caseOwner);
+		}
 
 		return processInstance;
 	}

@@ -8,60 +8,32 @@ import org.jbpm.process.core.context.variable.VariableScope;
 import org.jbpm.process.instance.ContextInstance;
 import org.jbpm.process.instance.ProcessInstance;
 import org.jbpm.process.instance.context.exception.ExceptionScopeInstance;
-import org.jbpm.process.instance.impl.ConstraintEvaluator;
 import org.jbpm.workflow.instance.WorkflowRuntimeException;
 import org.jbpm.workflow.instance.node.EventBasedNodeInstanceInterface;
-import org.jbpm.workflow.instance.node.StateBasedNodeInstance;
 import org.kie.api.runtime.process.NodeInstance;
 import org.kie.api.task.model.Task;
-import org.pavanecce.cmmn.jbpm.flow.PlanItem;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemTransition;
-import org.pavanecce.cmmn.jbpm.instance.CaseElementLifecycleWithTask;
 import org.pavanecce.cmmn.jbpm.instance.ControllablePlanItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.instance.CustomVariableScopeInstance;
+import org.pavanecce.cmmn.jbpm.instance.PlanElementLifecycleWithTask;
 import org.pavanecce.cmmn.jbpm.instance.PlanElementState;
 
-public abstract class AbstractControllablePlanInstance<T extends PlanItemDefinition> extends StateBasedNodeInstance implements ControllablePlanItemInstanceLifecycle<T>,
+public abstract class AbstractControllablePlanInstance<T extends PlanItemDefinition> extends AbstractPlanItemInstance<T> implements ControllablePlanItemInstanceLifecycle<T>,
 		EventBasedNodeInstanceInterface {
 
 	private static final long serialVersionUID = 3200294767777991641L;
 
 	protected abstract void createWorkItem();
 
-	private PlanElementState planElementState = PlanElementState.AVAILABLE;
 	private PlanElementState lastBusyState = PlanElementState.NONE;
 	protected WorkItem workItem;
 	private long workItemId;
-	private Boolean isCompletionRequired;
 
 	public AbstractControllablePlanInstance() {
 		super();
 	}
 
-	public boolean isCompletionStillRequired() {
-		return isCompletionRequired && !planElementState.isTerminalState() && !planElementState.isSemiTerminalState();
-	}
-
-	public boolean isCompletionRequired() {
-		return isCompletionRequired;
-	}
-
-	public void internalSetCompletionRequired(boolean b) {
-		this.isCompletionRequired = b;
-	}
-
-	public void calcIsRequired() {
-		if (isCompletionRequired == null) {
-			PlanItem<T> toEnter = getPlanItem();
-			if (toEnter.getPlanInfo().getItemControl() != null && toEnter.getPlanInfo().getItemControl().getRequiredRule() instanceof ConstraintEvaluator) {
-				ConstraintEvaluator constraintEvaluator = (ConstraintEvaluator) toEnter.getPlanInfo().getItemControl().getRequiredRule();
-				isCompletionRequired = constraintEvaluator.evaluate(this, null, constraintEvaluator);
-			} else {
-				isCompletionRequired = Boolean.FALSE;
-			}
-		}
-	}
 
 	protected abstract boolean isWaitForCompletion();
 
@@ -76,8 +48,8 @@ public abstract class AbstractControllablePlanInstance<T extends PlanItemDefinit
 		String deploymentId = (String) getProcessInstance().getKnowledgeRuntime().getEnvironment().get("deploymentId");
 		workItem.setDeploymentId(deploymentId);
 		workItem.setParameter(COMMENT, getPlanItem().getDescription());
-		if (getNodeInstanceContainer() instanceof CaseElementLifecycleWithTask) {
-			long parentWorkItemId = ((CaseElementLifecycleWithTask) getNodeInstanceContainer()).getWorkItemId();
+		if (getNodeInstanceContainer() instanceof PlanElementLifecycleWithTask) {
+			long parentWorkItemId = ((PlanElementLifecycleWithTask) getNodeInstanceContainer()).getWorkItemId();
 			if (parentWorkItemId >= 0) {
 				workItem.setParameter(PARENT_WORK_ITEM_ID, parentWorkItemId);
 			}
@@ -192,17 +164,6 @@ public abstract class AbstractControllablePlanInstance<T extends PlanItemDefinit
 		((CaseInstance) getProcessInstance()).markSubscriptionsForUpdate();
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public PlanItem<T> getPlanItem() {
-		return (PlanItem<T>) getNode();
-	}
-
-	@Override
-	public void setPlanElementState(PlanElementState s) {
-		this.planElementState = s;
-	}
-
 	@Override
 	public void setLastBusyState(PlanElementState s) {
 		this.lastBusyState = s;
@@ -231,24 +192,6 @@ public abstract class AbstractControllablePlanInstance<T extends PlanItemDefinit
 	@Override
 	public void reactivate() {
 		planElementState.reactivate(this);
-	}
-
-	@Override
-	public void suspend() {
-		planElementState.suspend(this);
-	}
-
-	@Override
-	public void resume() {
-		planElementState.resume(this);
-	}
-
-	@Override
-	public void terminate() {
-		if (planElementState != PlanElementState.TERMINATED) {
-			// Could have been fired by exiting event
-			planElementState.terminate(this);
-		}
 	}
 
 	@Override
@@ -287,16 +230,6 @@ public abstract class AbstractControllablePlanInstance<T extends PlanItemDefinit
 	}
 
 	@Override
-	public PlanElementState getPlanElementState() {
-		return planElementState;
-	}
-
-	@Override
-	public CaseInstance getCaseInstance() {
-		return (CaseInstance) getProcessInstance();
-	}
-
-	@Override
 	public void start() {
 		planElementState.start(this);
 	}
@@ -307,11 +240,6 @@ public abstract class AbstractControllablePlanInstance<T extends PlanItemDefinit
 			return (Task) getWorkItem().getResult(HumanTaskPlanItemInstance.TASK);
 		}
 		return null;
-	}
-
-	@Override
-	public String getPlanItemName() {
-		return getPlanItem().getName();
 	}
 
 	public void internalSetWorkItemId(long readLong) {

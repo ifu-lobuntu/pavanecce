@@ -35,7 +35,15 @@ public class TableItem implements CMMNElement {
 	}
 
 	public static String getPlannerRoles(PlanItem<?> pi) {
-		PlanningTable pt = pi.getPlanItemContainer().getPlanningTable();
+		return getPlannerRoles(pi.getPlanItemContainer().getPlanningTable());
+	}
+	public static String getPlannerRoles(HumanTaskPlanItem  pi) {
+		return getPlannerRoles(pi.getPlanInfo().getDefinition().getPlanningTable());
+	}
+	public static String getPlannerRoles(Case pi) {
+		return getPlannerRoles(pi.getPlanningTable());
+	}
+	private static String getPlannerRoles(PlanningTable pt) {
 		if (pt == null || pt.getAuthorizedRoles().isEmpty()) {
 			return "Administrators";
 		} else {

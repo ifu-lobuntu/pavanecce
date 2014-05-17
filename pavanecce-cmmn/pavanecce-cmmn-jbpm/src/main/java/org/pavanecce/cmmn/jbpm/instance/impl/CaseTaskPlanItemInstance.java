@@ -38,14 +38,12 @@ import org.pavanecce.cmmn.jbpm.flow.CaseTask;
 import org.pavanecce.cmmn.jbpm.flow.CaseTaskPlanItem;
 import org.pavanecce.cmmn.jbpm.flow.ParameterMapping;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemTransition;
-import org.pavanecce.cmmn.jbpm.instance.CaseElementLifecycleWithTask;
-import org.pavanecce.cmmn.jbpm.instance.ControllablePlanItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.instance.PlanElementState;
-import org.pavanecce.cmmn.jbpm.planitem.CompletionTest;
+import org.pavanecce.cmmn.jbpm.instance.PlanItemInstanceLifecycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask> implements ControllablePlanItemInstanceLifecycle<CaseTask>, EventListener, ContextInstanceContainer {
+public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask> implements EventListener, ContextInstanceContainer {
 
 	private static final long serialVersionUID = -2144001908752174712L;
 	private static final Logger logger = LoggerFactory.getLogger(CaseTaskPlanItemInstance.class);
@@ -69,6 +67,12 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask> imp
 	public void manualStart() {
 		super.manualStart();
 		startProcess();
+	}
+
+	@Override
+	public void terminate() {
+		super.terminate();
+		killSubprocessGracefully();
 	}
 
 	@Override
@@ -167,6 +171,18 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask> imp
 	}
 
 	@Override
+	public void parentResume() {
+		super.parentResume();
+		setSubProcessState(ProcessInstance.STATE_ACTIVE);
+	}
+
+	@Override
+	public void parentSuspend() {
+		super.parentSuspend();
+		setSubProcessState(ProcessInstance.STATE_SUSPENDED);
+	}
+
+	@Override
 	public void suspend() {
 		super.suspend();
 		setSubProcessState(ProcessInstance.STATE_SUSPENDED);
@@ -181,7 +197,9 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask> imp
 	protected void killSubprocessGracefully() {
 		WorkflowProcessInstance subProcess = (WorkflowProcessInstance) getProcessInstance().getKnowledgeRuntime().getProcessInstance(getProcessInstanceId());
 		for (NodeInstance nodeInstance : subProcess.getNodeInstances()) {
-			if (nodeInstance instanceof org.jbpm.workflow.instance.NodeInstance) {
+			if (nodeInstance instanceof PlanItemInstanceLifecycle) {
+				((PlanItemInstanceLifecycle<?>)nodeInstance).terminate();
+			} else if (nodeInstance instanceof org.jbpm.workflow.instance.NodeInstance) {
 				((org.jbpm.workflow.instance.NodeInstance) nodeInstance).cancel();
 			}
 		}
@@ -194,7 +212,7 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask> imp
 	}
 
 	protected void setSubProcessState(int processState) {
-		if (getSubProcessNode() == null || !getSubProcessNode().isIndependent()) {
+		if (getSubProcessNode() != null && !getSubProcessNode().isIndependent()) {
 			ProcessInstance processInstance = (ProcessInstance) ((ProcessInstance) getProcessInstance()).getKnowledgeRuntime().getProcessInstance(processInstanceId);
 			if (processInstance != null) {
 				processInstance.setState(processState);
@@ -270,7 +288,8 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask> imp
 		} else {
 			ProcessInstance pi = (ProcessInstance) getProcessInstance().getKnowledgeRuntime().getProcessInstance(getProcessInstanceId());
 			if (pi instanceof CaseInstance) {
-				// This actually happens when the process is closed - we do nothing here
+				// This actually happens when the process is closed - we do nothing here, the taskService will call us
+				// with TERMINATE
 			} else {
 				complete();
 				WorkItemManager workItemManager = (WorkItemManager) getCaseInstance().getKnowledgeRuntime().getWorkItemManager();

@@ -14,6 +14,7 @@ import org.drools.core.process.instance.impl.WorkItemImpl;
 import org.drools.core.spi.ProcessContext;
 import org.jbpm.process.instance.ProcessInstance;
 import org.jbpm.ruleflow.instance.RuleFlowProcessInstance;
+import org.jbpm.services.task.wih.util.PeopleAssignmentHelper;
 import org.jbpm.workflow.instance.NodeInstanceContainer;
 import org.kie.api.runtime.process.NodeInstance;
 import org.kie.api.task.model.Task;
@@ -26,12 +27,13 @@ import org.pavanecce.cmmn.jbpm.flow.PlanItem;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemContainer;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemTransition;
+import org.pavanecce.cmmn.jbpm.flow.TableItem;
 import org.pavanecce.cmmn.jbpm.flow.TaskDefinition;
 import org.pavanecce.cmmn.jbpm.infra.OnPartInstanceSubscription;
-import org.pavanecce.cmmn.jbpm.instance.CaseElementLifecycleWithTask;
 import org.pavanecce.cmmn.jbpm.instance.CaseInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.instance.ControllablePlanItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.instance.OnPartInstance;
+import org.pavanecce.cmmn.jbpm.instance.PlanElementLifecycleWithTask;
 import org.pavanecce.cmmn.jbpm.instance.PlanElementState;
 import org.pavanecce.cmmn.jbpm.instance.PlanItemInstanceContainer;
 import org.pavanecce.cmmn.jbpm.instance.PlanItemInstanceLifecycle;
@@ -52,14 +54,23 @@ public class CaseInstance extends RuleFlowProcessInstance implements PlanItemIns
 	public void markSubscriptionsForUpdate() {
 		this.shouldUpdateSubscriptions = true;
 	}
-
 	@Override
 	public void signalEvent(String type, Object event) {
 		signalCount++;
 		if (type.equals("workItemUpdated") && isMyWorkItem((WorkItem) event)) {
 			this.workItem = (WorkItem) event;
-			PlanItemTransition transition = (PlanItemTransition) workItem.getResult(CaseElementLifecycleWithTask.TRANSITION);
-			transition.invokeOn(this);
+			PlanItemTransition transition = (PlanItemTransition) workItem.getResult(PlanElementLifecycleWithTask.TRANSITION);
+			if (getPlanElementState().isTerminalState() && transition == PlanItemTransition.TERMINATE) {
+				System.out.println("ignore - called from task service: " + TRANSITION);
+			} else if (transition == PlanItemTransition.COMPLETE) {
+				if (canComplete()) {
+					transition.invokeOn(this);
+				} else {
+					// TODO what now?
+				}
+			} else {
+				transition.invokeOn(this);
+			}
 		} else {
 			super.signalEvent(type, event);
 		}
@@ -80,7 +91,26 @@ public class CaseInstance extends RuleFlowProcessInstance implements PlanItemIns
 		((WorkItem) workItem).setParameters(new HashMap<String, Object>());
 		((WorkItem) workItem).setParameter("planningTable", "");// TODO
 		((WorkItem) workItem).setParameter("NodeName", getCase().getName());
+		if (getInitiator() != null) {
+			((WorkItem) workItem).setParameter(Case.INITIATOR, getInitiator());
+		}
+		if (getCaseOwner() != null) {
+			((WorkItem) workItem).setParameter(PeopleAssignmentHelper.ACTOR_ID, getCaseOwner());
+			((WorkItem) workItem).setParameter(Case.CASE_OWNER, getCaseOwner());
+		} else {
+			((WorkItem) workItem).setParameter(Case.CASE_OWNER, TableItem.getPlannerRoles(this.getCase()));
+		}
+		((WorkItem) workItem).setParameter(PeopleAssignmentHelper.GROUP_ID, TableItem.getPlannerRoles(this.getCase()));
+		((WorkItem) workItem).setParameter(PeopleAssignmentHelper.BUSINESSADMINISTRATOR_ID, TableItem.getPlannerRoles(this.getCase()));
 		return workItem;
+	}
+
+	public String getCaseOwner() {
+		return (String) getVariable(Case.CASE_OWNER);
+	}
+
+	public String getInitiator() {
+		return (String) getVariable(Case.INITIATOR);
 	}
 
 	@Override
@@ -305,7 +335,7 @@ public class CaseInstance extends RuleFlowProcessInstance implements PlanItemIns
 	@Override
 	public Task getTask() {
 		if (getWorkItem() != null) {
-			return (Task) getWorkItem().getResult(CaseElementLifecycleWithTask.TASK);
+			return (Task) getWorkItem().getResult(PlanElementLifecycleWithTask.TASK);
 		}
 		return null;
 	}
@@ -322,18 +352,7 @@ public class CaseInstance extends RuleFlowProcessInstance implements PlanItemIns
 
 	@Override
 	public boolean canComplete() {
-		Collection<NodeInstance> nodeInstances = getNodeInstances();
-		for (NodeInstance nodeInstance : nodeInstances) {
-			if (nodeInstance instanceof PlanItemInstanceFactoryNodeInstance && ((PlanItemInstanceFactoryNodeInstance) nodeInstance).isPlanItemInstanceStillRequired()) {
-				return false;
-			} else if (nodeInstance instanceof MilestonePlanItemInstance && ((MilestonePlanItemInstance) nodeInstance).isCompletionStillRequired()) {
-				return false;
-			} else if (nodeInstance instanceof ControllablePlanItemInstanceLifecycle && ((ControllablePlanItemInstanceLifecycle<?>) nodeInstance).isCompletionStillRequired()) {
-				return false;
-			}
-
-		}
-		return true;
+		return PlanItemInstanceContainerUtil.canComplete(this);
 	}
 
 	@Override
@@ -352,11 +371,20 @@ public class CaseInstance extends RuleFlowProcessInstance implements PlanItemIns
 
 	public NodeInstance findNodeForWorkItem(long id) {
 		for (NodeInstance ni : getNodeInstances()) {
-			if(ni instanceof ControllablePlanItemInstanceLifecycle && ((ControllablePlanItemInstanceLifecycle<?>)ni).getWorkItemId()==id){
+			if (ni instanceof ControllablePlanItemInstanceLifecycle && ((ControllablePlanItemInstanceLifecycle<?>) ni).getWorkItemId() == id) {
 				return ni;
 			}
 		}
 		return null;
+	}
+	@Override
+	public void setState(int state) {
+		super.setState(state);
+		if(state==STATE_SUSPENDED){
+			suspend();
+		}else if(state==STATE_ACTIVE && getPlanElementState().isSemiTerminalState(this) || getPlanElementState()==PlanElementState.SUSPENDED){
+			reactivate();
+		}
 	}
 
 }

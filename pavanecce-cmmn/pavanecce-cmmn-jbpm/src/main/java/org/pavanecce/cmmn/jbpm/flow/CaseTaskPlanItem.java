@@ -48,6 +48,10 @@ public class CaseTaskPlanItem extends SubProcessNode implements PlanItem<CaseTas
 	public PlanItemInfo<CaseTask> getPlanInfo() {
 		return info;
 	}
+	@Override
+	public boolean isIndependent() {
+		return !((CaseTask) getPlanInfo().getDefinition()).isBlocking();
+	}
 
 	@Override
 	public boolean isWaitForCompletion() {

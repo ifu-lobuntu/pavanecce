@@ -32,16 +32,17 @@ public class StageTest extends AbstractConstructionTestCase {
 		givenThatTheTestCaseIsStarted();
 		triggerStartOfTask();
 		assertNodeTriggered(caseInstance.getId(), "TopLevelTask");
-		List<TaskSummary> list = getRuntimeEngine().getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
+		List<TaskSummary> list = getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
 		assertEquals(1, list.size());
-		getRuntimeEngine().getTaskService().start(list.get(0).getId(), "Builder");
+		getTaskService().start(list.get(0).getId(), "Builder");
+		
 		// *****WHEN
-		getRuntimeEngine().getTaskService().complete(list.get(0).getId(), "Builder", new HashMap<String,Object>());
+		getTaskService().complete(list.get(0).getId(), "Builder", new HashMap<String,Object>());
 		// *****THEN
 		assertNodeTriggered(caseInstance.getId(), "TheStagePlanItem");
-		list = getRuntimeEngine().getTaskService().getTasksAssignedAsPotentialOwner("Administrator", "en-UK");
-		assertEquals(1, list.size());//Task representing Stage
-		assertEquals("TheStagePlanItem", list.get(0).getName());//Task representing Stage
+		list = getTaskService().getTasksAssignedAsPotentialOwner("Administrator", "en-UK");
+		assertEquals(2, list.size());//Tasks representing Stage and the Case
+		assertTaskTypeCreated(list, "TheStagePlanItem");
 	}
 
 	protected void givenThatTheTestCaseIsStarted() {
