@@ -5,10 +5,12 @@ import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 
 public interface PlanItemInstanceLifecycle<T extends PlanItemDefinition> extends PlanElementLifecycle {
 
+	void resume();
+
+	void parentTerminate();
 
 	String getPlanItemName();
 
 	PlanItem<T> getPlanItem();
-
 
 }

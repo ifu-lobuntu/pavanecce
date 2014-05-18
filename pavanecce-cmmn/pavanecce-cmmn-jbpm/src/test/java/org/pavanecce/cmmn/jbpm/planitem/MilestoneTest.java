@@ -1,66 +1,51 @@
 package org.pavanecce.cmmn.jbpm.planitem;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 import org.junit.Test;
-import org.pavanecce.cmmn.jbpm.AbstractConstructionTestCase;
+import org.kie.api.task.model.TaskSummary;
+import org.pavanecce.cmmn.jbpm.instance.PlanElementState;
 import org.pavanecce.cmmn.jbpm.instance.impl.CaseInstance;
 
-import test.ConstructionCase;
-import test.House;
-import test.HousePlan;
-
-public class MilestoneTest extends AbstractConstructionTestCase {
-	protected HousePlan housePlan;
-	protected House house;
-	private CaseInstance caseInstance;
-
+public class MilestoneTest extends AbstractOccurrableTestCase {
 	public MilestoneTest() {
 		super(true, true, "org.jbpm.persistence.jpa");
 	}
-
 	@Test
-	public void testOccurrence() throws Exception {
-		// *****GIVEN
+	public void testRepeat() throws Exception {
+		// *****GIVEN 
 		givenThatTheTestCaseIsStarted();
-		// *****WHEN
-
-		triggerStartOfMilestone();
+		//WHEN
+		triggerOccurrence();
 		// *****THEN
-		assertNodeTriggered(caseInstance.getId(), "TheMilestonePlanItem");
-		assertNodeTriggered(caseInstance.getId(), "TheTask");
-
+		assertPlanItemInState(caseInstance.getId(), "TheOccurrablePlanItem", PlanElementState.COMPLETED, 1);
+		assertPlanItemInState(caseInstance.getId(), "TheRepeatableMilestonePlanItem", PlanElementState.COMPLETED, 1);
+		assertPlanItemInState(caseInstance.getId(), "TheRepeatableMilestonePlanItem", PlanElementState.AVAILABLE);
+		triggerOccurrence();
+		assertPlanItemInState(caseInstance.getId(), "TheOccurrablePlanItem", PlanElementState.COMPLETED, 1);
+		assertPlanItemInState(caseInstance.getId(), "TheRepeatableMilestonePlanItem", PlanElementState.COMPLETED, 2);
+		assertPlanItemInState(caseInstance.getId(), "TheRepeatableMilestonePlanItem", PlanElementState.AVAILABLE);
+		List<TaskSummary> tasks = getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
+		assertTaskTypeCreated(tasks, "TaskEnteredOnOccurrenceOfOccurrablePlanItem", 1);
+		assertTaskTypeCreated(tasks, "TaskEnteredOnOccurrenceOfRepeatablePlanItem", 2);
+		assertNodeTriggered(caseInstance.getId(), "TaskEnteredOnOccurrenceOfOccurrablePlanItem");
+		assertPlanItemInState(caseInstance.getId(), "TaskEnteredOnOccurrenceOfOccurrablePlanItem", PlanElementState.ENABLED);
 	}
-
-	protected void givenThatTheTestCaseIsStarted() {
-		createRuntimeManager("test/MilestoneTests.cmmn");
-		Map<String, Object> params = new HashMap<String, Object>();
-		getPersistence().start();
-
-		ConstructionCase cc = new ConstructionCase("/cases/case1");
-		housePlan = new HousePlan(cc);
-		house = new House(cc);
-		getPersistence().persist(cc);
-		getPersistence().commit();
-		params.put("housePlan", housePlan);
-		params.put("house", house);
-		getPersistence().start();
-		caseInstance = (CaseInstance) getRuntimeEngine().getKieSession().startProcess("MilestoneTests", params);
-		getPersistence().commit();
-		assertProcessInstanceActive(caseInstance.getId(), getRuntimeEngine().getKieSession());
-		assertNodeTriggered(caseInstance.getId(), "defaultSplit");
+	@Override
+	protected void triggerOccurrence() throws Exception {
 		getPersistence().start();
 		assertNodeActive(caseInstance.getId(), getRuntimeEngine().getKieSession(), "onTheUserEventOccurPartId");
-		assertNodeActive(caseInstance.getId(), getRuntimeEngine().getKieSession(), "onTheMilestoneOccurPartId");
-		getPersistence().commit();
-	}
-
-	private void triggerStartOfMilestone() throws Exception {
-		getPersistence().start();
 		caseInstance = (CaseInstance) getRuntimeEngine().getKieSession().getProcessInstance(caseInstance.getId());
 		caseInstance.signalEvent("TheUserEvent", new Object());
 		getPersistence().commit();
 	}
+	@Override
+	public String getProcessFile() {
+		return "test/MilestoneTests.cmmn";
+	}
 
+	@Override
+	public String getCaseName() {
+		return "MilestoneTests";
+	}
 }

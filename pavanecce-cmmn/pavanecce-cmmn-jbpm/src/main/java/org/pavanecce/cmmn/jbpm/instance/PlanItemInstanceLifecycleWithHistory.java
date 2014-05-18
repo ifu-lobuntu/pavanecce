@@ -7,6 +7,8 @@ public interface PlanItemInstanceLifecycleWithHistory<T extends PlanItemDefiniti
 
 	void parentResume();
 
+	void exit();
+
 	void setLastBusyState(PlanElementState s);
 
 	PlanElementState getLastBusyState();

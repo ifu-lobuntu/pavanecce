@@ -2,6 +2,7 @@
 <!DOCTYPE doc [
 <!ENTITY structureDefs SYSTEM "src/test/resources/test/structureDefs.xmlFragment">
 <!ENTITY caseFileModel SYSTEM "src/test/resources/test/caseFileModel.xmlFragment">
+<!ENTITY occurrableLifcycleTestTasks SYSTEM "src/test/resources/test/occurrableLifecycleTestTasks.xmlFragment">
 <!--!ENTITY structureDefs SYSTEM "structureDefs.xmlFragment">
 <!ENTITY caseFileModel SYSTEM "caseFileModel.xmlFragment"-->
 ]>
@@ -10,22 +11,24 @@
 	&structureDefs;
 	<cmmn:case name="TimerEventListenerTests" id="TimerEventListenerTests">
 		&caseFileModel;
-		<cmmn:casePlanModel name="TimerEventListenerTests">
-			<cmmn:planItem definitionRef="theTimerEventId" name="TheTimerEventPlanItem" id="theTimerEventPlanItemId">
+		<cmmn:casePlanModel name="CompletionTests">
+			<!-- TimerEvent specific -->
+			<cmmn:planItem definitionRef="theOccurrablePlanItemDefinitionId" name="TheOccurrablePlanItem" id="theOccurrablePlanItemId">
+				<cmmn:itemControl>
+					<cmmn:requiredRule>
+						<cmmn:condition language="http://www.java.com/java">
+							<cmmn:body>return true;</cmmn:body>
+						</cmmn:condition>
+					</cmmn:requiredRule>
+				</cmmn:itemControl>
 			</cmmn:planItem>
-			<cmmn:planItem definitionRef="theTask" name="TheTask" id="theTaskId" entryCriteriaRefs="waitingForTheTimerEventSentryId">
-			</cmmn:planItem>
-			<cmmn:sentry id="waitingForTheTimerEventSentryId" name="WaitingForTheTimerEventSentry">
-				<cmmn:planItemOnPart id="onTheTimerEventOccurPartId" sourceRef="theTimerEventPlanItemId">
-					<cmmn:standardEvent>occur</cmmn:standardEvent>
-				</cmmn:planItemOnPart>
-			</cmmn:sentry>
-			<cmmn:humanTask id="theTask" name="The Task" performerRef="builderRoleId" isBlocking="true">
-				<cmmn:defaultControl />
-			</cmmn:humanTask>
-			<cmmn:timerEvent id="theTimerEventId" name="TheTimerEvent">
+			<!-- generic -->
+			&occurrableLifcycleTestTasks;
+			<!-- TimerEvent specific -->
+			<cmmn:timerEvent id="theOccurrablePlanItemDefinitionId" name="TheTimerEvent">
 				<cmmn:timerExpression language="http://www.mvel.org/mvel">
-					<cmmn:body>10m</cmmn:body>
+					<cmmn:body>R5/P1D</cmmn:body>
+					
 				</cmmn:timerExpression>
 			</cmmn:timerEvent>
 		</cmmn:casePlanModel>

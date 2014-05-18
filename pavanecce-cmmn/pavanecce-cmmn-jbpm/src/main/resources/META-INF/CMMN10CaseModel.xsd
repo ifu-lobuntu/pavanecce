@@ -821,6 +821,7 @@
       <xsd:enumeration value="start"/>
       <xsd:enumeration value="suspend"/>
       <xsd:enumeration value="terminate"/>
+      <xsd:enumeration value="parentTerminate"/>
     </xsd:restriction>
   </xsd:simpleType>
   

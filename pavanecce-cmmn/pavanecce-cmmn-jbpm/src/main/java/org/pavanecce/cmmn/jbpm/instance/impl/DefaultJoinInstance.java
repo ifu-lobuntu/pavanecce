@@ -11,7 +11,6 @@ public class DefaultJoinInstance extends JoinInstance implements EventNodeInstan
 	private static final long serialVersionUID = -8715207082336857538L;
 	private transient boolean isInitializing = false;
 	public DefaultJoinInstance() {
-		System.out.println();
 	}
 
 	@Override

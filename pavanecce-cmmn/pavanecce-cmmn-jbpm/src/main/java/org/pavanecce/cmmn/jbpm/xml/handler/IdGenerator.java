@@ -52,7 +52,7 @@ public class IdGenerator {
 		}
 		long abs = Math.abs(result);
 		if (ids.contains(abs)) {
-			System.out.println();
+			System.out.println("duplicate found:" +elementId);
 		}
 		ids.add(abs);
 		return abs;

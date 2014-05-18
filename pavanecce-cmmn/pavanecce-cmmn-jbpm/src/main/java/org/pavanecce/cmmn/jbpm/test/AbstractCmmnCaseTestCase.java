@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -22,11 +23,14 @@ import javax.transaction.UserTransaction;
 import org.apache.jackrabbit.commons.cnd.CndImporter;
 import org.apache.jackrabbit.core.TransientRepository;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.AnnotationMapperImpl;
+import org.drools.core.audit.event.LogEvent;
+import org.drools.core.audit.event.RuleFlowNodeLogEvent;
 import org.drools.core.marshalling.impl.ClassObjectMarshallingStrategyAcceptor;
 import org.drools.core.marshalling.impl.SerializablePlaceholderResolverStrategy;
 import org.drools.persistence.jpa.marshaller.JPAPlaceholderResolverStrategy;
 import org.jbpm.marshalling.impl.ProcessInstanceResolverStrategy;
 import org.jbpm.marshalling.impl.ProcessMarshallerRegistry;
+import org.jbpm.process.audit.NodeInstanceLog;
 import org.jbpm.process.builder.ProcessNodeBuilderRegistry;
 import org.jbpm.process.instance.ProcessInstanceFactoryRegistry;
 import org.jbpm.process.instance.event.DefaultSignalManagerFactory;
@@ -143,6 +147,19 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 		return (CaseInstance) getRuntimeEngine().getKieSession().getProcessInstance(caseInstance2.getId());
 	}
 
+	protected void assertNodeNotTriggered(long processInstanceId, String... nodeNames) {
+		getPersistence().start();
+		List<String> names = removeNodesTriggered(processInstanceId, nodeNames);
+		if (names.isEmpty()) {
+			String s = names.get(0);
+			for (int i = 1; i < names.size(); i++) {
+				s += ", " + names.get(i);
+			}
+			fail("Node(s) executed: " + s);
+		}
+		getPersistence().commit();
+	}
+
 	protected InternalTaskService getTaskService() {
 		return (InternalTaskService) getRuntimeEngine().getTaskService();
 	}
@@ -150,38 +167,84 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 	@Override
 	public void assertNodeTriggered(long processInstanceId, String... nodeNames) {
 		getPersistence().start();
-		super.assertNodeTriggered(processInstanceId, nodeNames);
+		List<String> names = removeNodesTriggered(processInstanceId, nodeNames);
+		if (!names.isEmpty()) {
+			String s = names.get(0);
+			for (int i = 1; i < names.size(); i++) {
+				s += ", " + names.get(i);
+			}
+			fail("Node(s) not executed: " + s);
+		}
 		getPersistence().commit();
 	}
 
-	public void assertPlanItemInState(long processInstanceId, String planItemName, PlanElementState s) {
+	public List<String> removeNodesTriggered(long processInstanceId, String... nodeNames) {
+		List<String> names = new ArrayList<String>();
+		for (String nodeName : nodeNames) {
+			names.add(nodeName);
+		}
+		if (sessionPersistence) {
+			List<NodeInstanceLog> logs = getLogService().findNodeInstances(processInstanceId);
+			if (logs != null) {
+				for (NodeInstanceLog l : logs) {
+					String nodeName = l.getNodeName();
+					if ((l.getType() == NodeInstanceLog.TYPE_ENTER || l.getType() == NodeInstanceLog.TYPE_EXIT) && names.contains(nodeName)) {
+						names.remove(nodeName);
+					}
+				}
+			}
+		} else {
+			for (LogEvent event : getInMemoryLogger().getLogEvents()) {
+				if (event instanceof RuleFlowNodeLogEvent) {
+					String nodeName = ((RuleFlowNodeLogEvent) event).getNodeName();
+					if (names.contains(nodeName)) {
+						names.remove(nodeName);
+					}
+				}
+			}
+		}
+		return names;
+	}
+
+	public void assertPlanItemInState(long processInstanceId, String planItemName, PlanElementState s, int... numberOfTimes) {
 		getPersistence().start();
 		CaseInstance ci = (CaseInstance) getRuntimeEngine().getKieSession().getProcessInstance(processInstanceId);
-		boolean found = false;
+		int count = 0;
 		String foundState = "";
 		for (NodeInstance ni : ci.getNodeInstances()) {
 			if (ni instanceof PlanItemInstanceFactoryNodeInstance) {
 				PlanItemInstanceFactoryNode node = (PlanItemInstanceFactoryNode) ni.getNode();
 				if (node.getPlanItem().getName().equals(planItemName)) {
-					if (((PlanItemInstanceFactoryNodeInstance<?>) ni).isPlanItemInstanceStillRequired() && s == PlanElementState.AVAILABLE) {
-						found = true;
+					PlanItemInstanceFactoryNodeInstance<?> piil = (PlanItemInstanceFactoryNodeInstance<?>) ni;
+					if (piil.isPlanItemInstanceStillRequired() && s == PlanElementState.AVAILABLE) {
+						count++;
+					} else if (piil.getPlanElementState() == s) {
+						count++;
+					} else {
+						foundState = piil.getPlanElementState().name();
 					}
 				}
 			}
 		}
-		if (!found) {
+		if (count == 0) {
 			for (NodeInstance ni : ci.getNodeInstances()) {
 				if (ni instanceof PlanItemInstanceLifecycle && ni.getNodeName().equals(planItemName)) {
 					if (((PlanItemInstanceLifecycle<?>) ni).getPlanElementState() == s) {
-						found = true;
+						count++;
 					} else {
 						foundState = ((PlanItemInstanceLifecycle<?>) ni).getPlanElementState().name();
 					}
 				}
 			}
 		}
-		assertTrue(planItemName + " should be in state " + s.name() + " but was in " + foundState, found);
 		getPersistence().commit();
+		if (numberOfTimes.length == 0) {
+			if (count == 0) {
+				assertTrue(planItemName + " should be in state " + s.name() + " but was in " + foundState, count > 0);
+			}
+		} else {
+			assertEquals(planItemName + " should be in state " + s.name() + "  " + numberOfTimes[0] + " times, but was foudn in state " + count + " times", numberOfTimes[0], count);
+		}
 	}
 
 	public UserTransaction getTransaction() throws NamingException {
@@ -216,13 +279,18 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 
 	}
 
-	protected void assertTaskTypeCreated(List<TaskSummary> list, String expected) {
+	protected void assertTaskTypeCreated(List<TaskSummary> list, String expected, int... numberOfTimes) {
+		int count = 0;
 		for (TaskSummary taskSummary : list) {
 			if (taskSummary.getName().equals(expected)) {
-				return;
+				count++;
 			}
 		}
-		fail("Task not created: " + expected);
+		if (numberOfTimes.length == 1) {
+			assertEquals("Task not created the correct number of times", numberOfTimes[0], count);
+		} else if (count == 0) {
+			fail("Task not created: " + expected);
+		}
 	}
 
 	public ObjectPersistence getPersistence() {

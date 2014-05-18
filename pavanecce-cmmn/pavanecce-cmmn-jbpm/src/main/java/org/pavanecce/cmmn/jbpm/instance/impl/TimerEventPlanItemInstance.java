@@ -21,7 +21,7 @@ import org.pavanecce.cmmn.jbpm.instance.PlanElementState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TimerEventPlanItemInstance extends AbstractOccurrablePlanItemInstance<TimerEventListener> {
+public class TimerEventPlanItemInstance extends AbstractOccurrablePlanItemInstance<TimerEventListener> implements Creatable {
 
 	private static final long serialVersionUID = 3034509023L;
 
@@ -32,6 +32,7 @@ public class TimerEventPlanItemInstance extends AbstractOccurrablePlanItemInstan
 
 	public TimerEventPlanItemInstance() {
 		super.internalSetCompletionRequired(false);
+		planElementState = PlanElementState.INITIAL;
 	}
 
 	public void signalEvent(String type, Object event) {
@@ -44,8 +45,20 @@ public class TimerEventPlanItemInstance extends AbstractOccurrablePlanItemInstan
 		}
 	}
 
+	@Override
+	public void ensureCreationIsTriggered() {
+		if (super.getPlanElementState() == PlanElementState.INITIAL) {
+			super.create();
+		}
+	}
+
 	public long getTimerInstanceId() {
 		return timerInstanceId;
+	}
+
+	public void triggerCompleted() {
+		((org.jbpm.workflow.instance.NodeInstanceContainer) getNodeInstanceContainer()).setCurrentLevel(getLevel());
+		triggerCompleted(org.jbpm.workflow.core.Node.CONNECTION_DEFAULT_TYPE, false);
 	}
 
 	public void internalSetTimerInstanceId(long timerId) {

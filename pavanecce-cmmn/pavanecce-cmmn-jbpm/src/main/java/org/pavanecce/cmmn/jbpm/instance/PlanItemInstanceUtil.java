@@ -20,7 +20,7 @@ public class PlanItemInstanceUtil {
 		return isActivatedAutomatically;
 	}
 
-	public static void exitPlanItem(ControllablePlanItemInstanceLifecycle<?> pi) {
+	public static void exitPlanItem(PlanItemInstanceLifecycle<?> pi) {
 		if (pi instanceof PlanElementLifecycleWithTask) {
 			WorkItemManager workItemManager = (WorkItemManager) pi.getCaseInstance().getKnowledgeRuntime().getWorkItemManager();
 			workItemManager.internalAbortWorkItem(((PlanElementLifecycleWithTask) pi).getWorkItemId());

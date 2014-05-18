@@ -16,12 +16,13 @@ JPA/Hibernate demarcated subscriptions
  - throwing CREATE,DELETE,ADD_CHILD,REMOVE_CHILD,ADD_REFERENCE,REMOVE_REFERENCE and UPDATE events
 
 Timer Event
- - OCCUR
+ - OCCUR,CREATE,SUSPEND,RESUME,TERMINATE,PARENT_TERMINATE
 
 Milestone
  - entry criteria achieved
  - requiredRule
- - OCCUR
+ - repetitionRule
+ - OCCUR,CREATE,SUSPEND,RESUME,TERMINATE,PARENT_TERMINATE
 
 CaseTask
  - basic call
@@ -33,12 +34,14 @@ CaseTask
 
 Human Task
  - automaticActivationRule
+ - repetitionRule
  - entry criteria achieved
  - exit criteria achieved
  - EXIT,DISABLE,ENABLE,MANUAL_START,START,COMPLETE,TERMINATE,FAULT,SUSPEND,RESUME
 
 UserEvent
- - OCCUR 
+ - OCCUR, CREATE,SUSPEND,RESUME,TERMINATE,PARENT_TERMINATE
+ 
  
 CaseModel
  - auto completion
@@ -87,14 +90,6 @@ Stage:
 Human Task
  - CREATE,REENABLE,REACTIVATE,PARENT_SUSPEND*, PARENT_RESUME*
 
-Milestone
- - CREATE,SUSPEND*,RESUME*,TERMINATE*,PARENT_TERMINATE*
-
-UserEvent
- - CREATE,SUSPEND*,RESUME*,TERMINATE*,PARENT_TERMINATE*
-
-TimerEvent
- - CREATE,SUSPEND*,RESUME*,TERMINATE*,PARENT_TERMINATE*
 
 Planning Tables:
  - Planning Table object (string/xml representing the current state of tasks and assignments of roles/parameters)
@@ -145,8 +140,8 @@ Does table 52 pertain to the Stage instance representing the casePLanModel as we
 
 Discrepancies in XSD:
   In the XSD, TimerEventListener.timerExpression is a fully fledged expression, but in the spec it is just string. Does the result still have to be ISO-8601 compliant?
-  AuthoizedRoleRefs for user events?
-
+  AuthorizedRoleRefs for user events?
+  parentTerminate StandardEvent absent
 8. Mismatches with jBPM/WS-Human Task:
 8.1. For a Task representing a Case, Completed is semi-terminal state, but for WS-human Task it is terminal - no "re-activate" transition
 8.2. For a Task representing a Human/Case/Process Task, Failed is a semi-terminal state, bit for WS-human Task it is terminal

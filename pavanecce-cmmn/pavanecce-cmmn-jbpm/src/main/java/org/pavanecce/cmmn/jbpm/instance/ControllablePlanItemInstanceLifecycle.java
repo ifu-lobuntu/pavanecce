@@ -4,7 +4,6 @@ import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 
 public interface ControllablePlanItemInstanceLifecycle<T extends PlanItemDefinition> extends PlanItemInstanceLifecycleWithHistory<T>, PlanElementLifecycleWithTask {
 
-
 	void enable();
 
 	void disable();
@@ -14,10 +13,6 @@ public interface ControllablePlanItemInstanceLifecycle<T extends PlanItemDefinit
 	void start();
 
 	void manualStart();
-
-	void resume();
-
-	void exit();
 
 	boolean isCompletionRequired();
 

@@ -5,12 +5,13 @@ import org.pavanecce.cmmn.jbpm.event.PlanItemEvent;
 import org.pavanecce.cmmn.jbpm.flow.UserEventListener;
 import org.pavanecce.cmmn.jbpm.instance.PlanElementState;
 
-public class UserEventPlanItemInstance extends AbstractOccurrablePlanItemInstance<UserEventListener> implements EventNodeInstanceInterface {
+public class UserEventPlanItemInstance extends AbstractOccurrablePlanItemInstance<UserEventListener> implements EventNodeInstanceInterface,Creatable {
 
 	private static final long serialVersionUID = 3069593690659509023L;
 
 	public UserEventPlanItemInstance() {
 		super.internalSetCompletionRequired(false);
+		planElementState = PlanElementState.INITIAL;
 	}
 
 	public void signalEvent(String type, Object event) {
@@ -25,7 +26,13 @@ public class UserEventPlanItemInstance extends AbstractOccurrablePlanItemInstanc
 	public void triggerCompleted() {
 		((org.jbpm.workflow.instance.NodeInstanceContainer) getNodeInstanceContainer()).setCurrentLevel(getLevel());
 		triggerCompleted(org.jbpm.workflow.core.Node.CONNECTION_DEFAULT_TYPE, false);
+	}
 
+	@Override
+	public void ensureCreationIsTriggered() {
+		if(super.getPlanElementState()==PlanElementState.INITIAL){
+			super.create();
+		}
 	}
 
 }

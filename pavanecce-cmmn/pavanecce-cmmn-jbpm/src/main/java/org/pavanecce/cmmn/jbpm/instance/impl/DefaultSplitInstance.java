@@ -36,6 +36,9 @@ public class DefaultSplitInstance extends SplitInstance {
 		triggerNodeInstance(defaultJoinInstance, NodeImpl.CONNECTION_DEFAULT_TYPE);
 		for (NodeInstance nodeInstance : toNodeInstances) {
 			if (!isSentry(nodeInstance) && nodeInstance != defaultJoinInstance) {
+				if(nodeInstance instanceof Creatable){
+					((Creatable) nodeInstance).ensureCreationIsTriggered();
+				}
 				triggerNodeInstance((org.jbpm.workflow.instance.NodeInstance) nodeInstance, NodeImpl.CONNECTION_DEFAULT_TYPE);
 			}
 		}

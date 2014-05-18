@@ -102,7 +102,7 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 			PlanItemInstanceFactoryNodeInstance piifni = new PlanItemInstanceFactoryNodeInstance();
 			readPlanItemStates(piifni, stream);
 			piifni.internalSetPlanItemInstanceRequired(context.stream.readBoolean());
-			piifni.internalSetPlanItemInstanceStillRequired(context.stream.readBoolean());
+			piifni.internalSetHasPlanItemInstanceBeenInstantiated(context.stream.readBoolean());
 			piifni.internalSetRepeating(context.stream.readBoolean());
 			nodeInstance = piifni;
 			break;
@@ -228,7 +228,7 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 			stream.writeShort(PLAN_ITEM_INSTANCE_FACTORY_NODE_INSTANCE);
 			writePlanItemStates((PlanItemInstanceFactoryNodeInstance<?>) nodeInstance, stream);
 			stream.writeBoolean(((PlanItemInstanceFactoryNodeInstance<?>) nodeInstance).isPlanItemInstanceRequired());
-			stream.writeBoolean(((PlanItemInstanceFactoryNodeInstance<?>) nodeInstance).isPlanItemInstanceStillRequired());
+			stream.writeBoolean(((PlanItemInstanceFactoryNodeInstance<?>) nodeInstance).isHasPlanItemBeenInstantiated());
 			stream.writeBoolean(((PlanItemInstanceFactoryNodeInstance<?>) nodeInstance).isRepeating());
 		} else if (nodeInstance instanceof OnPartInstance) {
 			stream.writeShort(ON_PART_INSTANCE);

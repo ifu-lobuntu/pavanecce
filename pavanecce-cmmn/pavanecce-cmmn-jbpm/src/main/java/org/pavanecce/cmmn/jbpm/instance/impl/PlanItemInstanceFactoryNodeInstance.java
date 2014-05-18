@@ -18,11 +18,11 @@ import org.pavanecce.cmmn.jbpm.instance.PlanItemInstanceLifecycleWithHistory;
  * @author ampie
  * 
  */
-public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> extends StateNodeInstance implements PlanItemInstanceLifecycleWithHistory<T> {
+public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> extends StateNodeInstance implements PlanItemInstanceLifecycleWithHistory<T>, Creatable  {
 
 	private static final long serialVersionUID = -5291618101988431033L;
 	private Boolean isPlanItemInstanceRequired;
-	private Boolean isPlanItemInstanceStillRequired;
+	private boolean hasPlanItemBeenInstantiated=false;
 	private Boolean isRepeating;
 	private PlanElementState planElementState = PlanElementState.INITIAL;
 	private PlanElementState lastBusyState = PlanElementState.NONE;
@@ -38,6 +38,7 @@ public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> e
 		this.planElementState = planElementState;
 	}
 
+	@Override
 	public void ensureCreationIsTriggered() {
 		if (planElementState == PlanElementState.INITIAL) {
 			create();
@@ -60,9 +61,9 @@ public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> e
 	public void internalTrigger(NodeInstance from, String type) {
 		if (planElementState == PlanElementState.SUSPENDED || planElementState == PlanElementState.TERMINATED) {
 			// do nothing
-		} else if (planElementState == PlanElementState.AVAILABLE || isRepeating()) {
+		} else if (!isHasPlanItemBeenInstantiated() || isRepeating()) {
 			super.internalTrigger(from, type);
-			isPlanItemInstanceStillRequired = false;
+			hasPlanItemBeenInstantiated = true;
 			triggerCompleted(NodeImpl.CONNECTION_DEFAULT_TYPE, false);
 			setLastBusyState(getPlanElementState());
 		}
@@ -83,15 +84,21 @@ public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> e
 	}
 
 	public boolean isPlanItemInstanceStillRequired() {
-		if (isPlanItemInstanceStillRequired == null) {
+		if(hasPlanItemBeenInstantiated){
+			return false;
+		}else if(isPlanItemInstanceRequired == null) {
 			// still initializing
 			return true;
+		}else{
+			return isPlanItemInstanceRequired;
+			
 		}
-		return isPlanItemInstanceStillRequired;
 	}
-
-	public void internalSetPlanItemInstanceStillRequired(boolean val) {
-		this.isPlanItemInstanceStillRequired = val;
+	public boolean isHasPlanItemBeenInstantiated() {
+		return hasPlanItemBeenInstantiated;
+	}
+	public void internalSetHasPlanItemInstanceBeenInstantiated(boolean val) {
+		this.hasPlanItemBeenInstantiated = val;
 	}
 
 	public CaseInstance getCaseInstance() {
@@ -116,12 +123,18 @@ public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> e
 		} else {
 			isRepeating = false;
 		}
-		isPlanItemInstanceStillRequired = isPlanItemInstanceRequired;
+		hasPlanItemBeenInstantiated=false;
 		planElementState.create(this);
 	}
 
 	public boolean isRepeating() {
 		return isRepeating;
+	}
+
+	@Override
+	public void resume() {
+		planElementState.resume(this);
+
 	}
 
 	@Override
@@ -162,5 +175,23 @@ public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> e
 
 	public void internalSetRepeating(boolean readBoolean) {
 		this.isRepeating = readBoolean;
+	}
+
+	@Override
+	public void parentTerminate() {
+		if(isComplexLifecycle()){
+			throw new IllegalStateException("Complex planItemInstances do not suppoer to parentTerminate");
+		}else{
+			planElementState.parentTerminate(this);
+		}
+	}
+
+	@Override
+	public void exit() {
+		if(isComplexLifecycle()){
+			planElementState.exit(this);
+		}else{
+			throw new IllegalStateException("Occurrable planItemInstances do not suppoer to exit");
+		}
 	}
 }

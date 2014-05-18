@@ -57,9 +57,6 @@ public class CaseInstance extends RuleFlowProcessInstance implements  CaseInstan
 
 	@Override
 	public org.jbpm.workflow.instance.NodeInstance getNodeInstance(Node node) {
-		if (node instanceof DefaultJoin) {
-			System.out.println();
-		}
 		return super.getNodeInstance(node);
 	}
 

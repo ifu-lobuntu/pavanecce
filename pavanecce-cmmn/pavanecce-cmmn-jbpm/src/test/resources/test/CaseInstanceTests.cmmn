@@ -2,7 +2,7 @@
 <!DOCTYPE doc [
 <!ENTITY structureDefs SYSTEM "src/test/resources/test/structureDefs.xmlFragment">
 <!ENTITY caseFileModel SYSTEM "src/test/resources/test/caseFileModel.xmlFragment">
-<!ENTITY lifecycleTestTasks SYSTEM "src/test/resources/test/lifecycleTestTasks.xmlFragment">
+<!ENTITY lifecycleTestTasks SYSTEM "src/test/resources/test/complexLifecycleTestTasks.xmlFragment">
 ]>
 <cmmn:definitions xmlns:cmmn="http://www.omg.org/spec/CMMN/20121031/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:test="http://ifu-lobuntu.org/test"
 	targetNamespace="http://ifu-lobuntu.org/test">
