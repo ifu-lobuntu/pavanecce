@@ -10,6 +10,8 @@ import org.pavanecce.cmmn.jbpm.AbstractConstructionTestCase;
 import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.instance.PlanElementState;
 import org.pavanecce.cmmn.jbpm.instance.impl.CaseInstance;
+import org.pavanecce.cmmn.jbpm.task.ReactivateTaskCommand;
+import org.pavanecce.cmmn.jbpm.task.ReenableTaskCommand;
 
 import test.ConstructionCase;
 import test.House;
@@ -332,11 +334,41 @@ public abstract class AbstractTasklifecycleTests extends AbstractConstructionTes
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenTaskAutomaticallyStarted");
 		assertTaskTypeCreated(list, "PlanItemEnteredWhenTaskAutomaticallyStarted");
 	}
-
+	@Test
 	public void testEventGeneratedOnReactivateOfTask() throws Exception {
+		// *****GIVEN
+		givenThatTheTestCaseIsStarted();
+		triggerStartOfTask();
+		List<TaskSummary> list = getTaskService().getTasksOwned(getEventGeneratingTaskUser(), "en-UK");
+		assertEquals(1, list.size());
+		getTaskService().start(list.get(0).getId(), getEventGeneratingTaskUser());
+		getTaskService().fail(list.get(0).getId(), getEventGeneratingTaskUser(),new HashMap<String,Object>());
+		// *****WHEN
+		getTaskService().execute(new ReactivateTaskCommand(list.get(0).getId(), getEventGeneratingTaskUser()));
+		// *****THEN
+		list = getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
+		assertTrue(list.size()>0);
+		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenTaskReactivated");
+		assertTaskTypeCreated(list, "PlanItemEnteredWhenTaskReactivated");
+		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.ACTIVE);
 	}
-
+	@Test
 	public void testEventGeneratedOnReenableOfTask() throws Exception {
+		// *****GIVEN
+		givenThatTheTestCaseIsStarted();
+		triggerStartOfTask();
+		List<TaskSummary> list = getTaskService().getTasksOwned(getEventGeneratingTaskUser(), "en-UK");
+		assertEquals(1, list.size());
+		getTaskService().skip(list.get(0).getId(), getEventGeneratingTaskUser());
+		// *****WHEN
+		getTaskService().execute(new ReenableTaskCommand(list.get(0).getId(), getEventGeneratingTaskUser()));
+		// *****THEN
+		list = getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
+		assertTrue(list.size()>0);
+		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenTaskReenabled");
+		assertTaskTypeCreated(list, "PlanItemEnteredWhenTaskReenabled");
+		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.ENABLED);
+
 	}
 
 	public void testEventGeneratedOnCreateOfTask() throws Exception {

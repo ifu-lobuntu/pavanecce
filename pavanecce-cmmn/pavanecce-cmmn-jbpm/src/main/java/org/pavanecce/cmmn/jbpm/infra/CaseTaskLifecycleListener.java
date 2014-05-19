@@ -39,6 +39,8 @@ import org.pavanecce.cmmn.jbpm.flow.PlanItemTransition;
 import org.pavanecce.cmmn.jbpm.instance.PlanElementLifecycleWithTask;
 import org.pavanecce.cmmn.jbpm.instance.impl.CaseInstance;
 import org.pavanecce.cmmn.jbpm.instance.impl.StagePlanItemInstance;
+import org.pavanecce.cmmn.jbpm.task.AfterTaskReactivatedEvent;
+import org.pavanecce.cmmn.jbpm.task.AfterTaskReenabledEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +50,12 @@ public class CaseTaskLifecycleListener extends ExternalTaskEventListener {
 
 	public CaseTaskLifecycleListener() {
 		super();
+	}
+	public void afterTaskReactivatedEvent(@Observes(notifyObserver = Reception.IF_EXISTS) @AfterTaskReactivatedEvent Task task) {
+		signalEvent(task, PlanItemTransition.REACTIVATE);
+	}
+	public void afterTaskReenabledEvent(@Observes(notifyObserver = Reception.IF_EXISTS) @AfterTaskReenabledEvent Task task) {
+		signalEvent(task, PlanItemTransition.REENABLE);
 	}
 
 	@Override

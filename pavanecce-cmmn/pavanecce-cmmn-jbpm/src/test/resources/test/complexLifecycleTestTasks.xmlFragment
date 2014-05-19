@@ -29,6 +29,10 @@
 			</cmmn:planItem>
 			<cmmn:planItem definitionRef="theTask" name="PlanItemEnteredWhenTaskDisabled" id="planItemEnteredWhenTaskDisabledId" entryCriteriaRefs="waitingForTaskDisabledSentryId">
 			</cmmn:planItem>
+			<cmmn:planItem definitionRef="theTask" name="PlanItemEnteredWhenTaskReenabled" id="planItemEnteredWhenTaskReenabledId" entryCriteriaRefs="waitingForTaskReenabledSentryId">
+			</cmmn:planItem>
+			<cmmn:planItem definitionRef="theTask" name="PlanItemEnteredWhenTaskReactivated" id="planItemEnteredWhenTaskReactivatedId" entryCriteriaRefs="waitingForTaskReactivatedSentryId">
+			</cmmn:planItem>
 			<cmmn:planItem definitionRef="theTask" name="PlanItemEnteredWhenTaskEnabled" id="planItemEnteredWhenTaskEnabledId" entryCriteriaRefs="waitingForTaskEnabledSentryId"/>
 			<cmmn:planItem definitionRef="theTask" name="PlanItemEnteredWhenTaskManuallyStarted" id="planItemEnteredWhenTaskManuallyStartedId" entryCriteriaRefs="waitingForTaskManuallyStartedSentryId"/>
 			<cmmn:planItem definitionRef="theTask" name="PlanItemEnteredWhenTaskAutomaticallyStarted" id="planItemEnteredWhenTaskAutomaticallyStartedId" entryCriteriaRefs="waitingForTaskAutomaticallyStartedSentryId"/>
@@ -73,6 +77,16 @@
 			<cmmn:sentry id="waitingForTaskDisabledSentryId" name="WaitingForTaskDisabledSentry">
 				<cmmn:planItemOnPart id="onTaskDisabled" sourceRef="theEventGeneratingTaskPlanItemId">
 					<cmmn:standardEvent>disable</cmmn:standardEvent>
+				</cmmn:planItemOnPart>
+			</cmmn:sentry>
+			<cmmn:sentry id="waitingForTaskReactivatedSentryId" name="WaitingForTaskReactivatedSentry">
+				<cmmn:planItemOnPart id="onTaskReactivated" sourceRef="theEventGeneratingTaskPlanItemId">
+					<cmmn:standardEvent>reactivate</cmmn:standardEvent>
+				</cmmn:planItemOnPart>
+			</cmmn:sentry>
+			<cmmn:sentry id="waitingForTaskReenabledSentryId" name="WaitingForTaskReenabledSentry">
+				<cmmn:planItemOnPart id="onTaskReenabled" sourceRef="theEventGeneratingTaskPlanItemId">
+					<cmmn:standardEvent>reenable</cmmn:standardEvent>
 				</cmmn:planItemOnPart>
 			</cmmn:sentry>
 			<cmmn:sentry id="waitingForTaskEnabledSentryId" name="WaitingForTaskEnabledSentry">

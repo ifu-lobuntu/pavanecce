@@ -30,14 +30,14 @@ CaseTask
  - automaticActivationRule
  - exit criteria achieved
  - parameterMapping
- - EXIT,DISABLE,ENABLE,MANUAL_START,START,COMPLETE,TERMINATE,FAULT,SUSPEND,RESUME
+ - EXIT,DISABLE,ENABLE,MANUAL_START,START,COMPLETE,TERMINATE,FAULT,SUSPEND,RESUME,REENABLE,REACTIVATE,
 
 Human Task
  - automaticActivationRule
  - repetitionRule
  - entry criteria achieved
  - exit criteria achieved
- - EXIT,DISABLE,ENABLE,MANUAL_START,START,COMPLETE,TERMINATE,FAULT,SUSPEND,RESUME
+ - EXIT,DISABLE,ENABLE,MANUAL_START,START,COMPLETE,TERMINATE,FAULT,SUSPEND,RESUME,REENABLE,REACTIVATE
 
 UserEvent
  - OCCUR, CREATE,SUSPEND,RESUME,TERMINATE,PARENT_TERMINATE
@@ -58,8 +58,9 @@ Recursive subscriptions, parameterizable
 2. To test
 Sentry.Conditions
 Sentries with multiple onParts
-CaseTask.no sentry
+*.no sentry
 CaseTask.requiredRule
+CaseTask.reactivated - check that process is restarted - it failed previously
 HumanTask.no sentry
 HumanTask.requiredRule
 *.repetitionRule
@@ -71,14 +72,13 @@ Sentry.condition without onParts
 
 Process/Case Task
  - parameter transformation
- - REENABLE,REACTIVATE,PARENT_SUSPEND*, PARENT_RESUME*, CREATE
+ - PARENT_SUSPEND*, PARENT_RESUME*, CREATE
 
 CaseModel:
  - direct exit Criteria *
  - REACTIVATE (from Failed,Terminated, Completed?)*
  
 Stage:
- - no sentry *
  - requiredRule *
  - automaticActivationRule *
  - stagePlanItem's exit and its event *
@@ -88,27 +88,19 @@ Stage:
  - auto completion, use ItemControl.requiredRule *
 
 Human Task
- - CREATE,REENABLE,REACTIVATE,PARENT_SUSPEND*, PARENT_RESUME*
+ - CREATE,PARENT_SUSPEND*, PARENT_RESUME*
 
 
 Planning Tables:
- - Planning Table object (string/xml representing the current state of tasks and assignments of roles/parameters)
- - Marshal this from/to the workItem
+ - Planning Table object (string/xml representing the potential task types) issue the create through processInstance.signalEvent so that the process can assign params/roles
  - DiscretionaryItem
  - DiscretionaryItem.itemControl.requiredRule
  - ApplicabilityRule
- - Assigning tasks at runtime
- - Assigning caseParameters at runtime
+ - Assigning tasks at runtime (use forward/delegate)
+ - Assigning caseParameters at runtime (use command)
 
 plan fragment
 contextRefs for rules
-
-
-
-
-
-
-
 
 4. Difficult
 With JCR Property.CHANGE events, try to get the original value and only fire events for ADD_/REMOVE_REFERENCE when they applicable - JCR limitation
@@ -142,7 +134,8 @@ Discrepancies in XSD:
   In the XSD, TimerEventListener.timerExpression is a fully fledged expression, but in the spec it is just string. Does the result still have to be ISO-8601 compliant?
   AuthorizedRoleRefs for user events?
   parentTerminate StandardEvent absent
-8. Mismatches with jBPM/WS-Human Task:
+  
+8. jBPM/WS-Human Task modification: - had to use commands 
 8.1. For a Task representing a Case, Completed is semi-terminal state, but for WS-human Task it is terminal - no "re-activate" transition
 8.2. For a Task representing a Human/Case/Process Task, Failed is a semi-terminal state, bit for WS-human Task it is terminal
 8.3. For a Task representing a Case, there is no "close" transition.

@@ -6,6 +6,8 @@ Bundle-Version: 0.0.1.qualifier
 Bundle-ManifestVersion: 2
 Fragment-Host: org.eclipse.osgi;extension:=framework
 Bundle-ClassPath: libs/javaee-api.jar
-Export-Package: javax.persistence.criteria,
+Export-Package: javax.enterprise.util,
+ javax.inject,
+ javax.persistence.criteria,
  javax.transaction;version="1.1.0",
  javax.transaction.xa;version="1.1.0"
