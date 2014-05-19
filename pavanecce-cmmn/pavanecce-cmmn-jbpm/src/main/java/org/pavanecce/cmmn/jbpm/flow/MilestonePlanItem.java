@@ -10,7 +10,8 @@ public class MilestonePlanItem extends StateNode implements PlanItem<Milestone>,
 	private PlanItemContainer planItemContainer;
 	private String description;
 	private PlanItemInstanceFactoryNode factoryNode;
-
+	public MilestonePlanItem() {
+	}
 	public MilestonePlanItem(PlanItemInfo<Milestone> planInfo, PlanItemInstanceFactoryNode planItemInstanceFactoryNode) {
 		super();
 		this.planInfo = planInfo;

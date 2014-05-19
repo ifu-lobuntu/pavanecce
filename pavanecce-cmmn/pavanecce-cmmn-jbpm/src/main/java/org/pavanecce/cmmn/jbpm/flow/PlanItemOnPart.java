@@ -31,6 +31,9 @@ public class PlanItemOnPart extends OnPart implements Serializable {
 	}
 	@Override
 	public String getType() {
+		if(planSourceItem==null){
+			System.out.println();
+		}
 		return getType(this.planSourceItem.getName(),standardEvent);
 	}
 	@Override

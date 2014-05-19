@@ -15,6 +15,7 @@ import org.jbpm.compiler.xml.ProcessBuildData;
 import org.jbpm.process.core.context.variable.Variable;
 import org.jbpm.process.core.context.variable.VariableScope;
 import org.jbpm.ruleflow.core.RuleFlowProcess;
+import org.kie.api.definition.process.Node;
 import org.pavanecce.cmmn.jbpm.event.CaseEvent;
 import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItem;
@@ -26,6 +27,7 @@ import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 import org.pavanecce.cmmn.jbpm.flow.PlanningTable;
 import org.pavanecce.cmmn.jbpm.flow.Role;
 import org.pavanecce.cmmn.jbpm.flow.Stage;
+import org.pavanecce.cmmn.jbpm.flow.StagePlanItem;
 import org.pavanecce.cmmn.jbpm.flow.TableItem;
 import org.pavanecce.cmmn.jbpm.flow.TaskDefinition;
 import org.w3c.dom.Element;
@@ -155,7 +157,18 @@ public class CaseHandler extends PlanItemContainerHandler implements Handler {
 				super.linkPlanItems((Stage) planItemDefinition, parser);
 			}
 		}
+		copyStages(process.getNodes());
 		return process;
+	}
+
+	public void copyStages(Node[] nodes) {
+		for (Node node : nodes) {
+			if(node instanceof StagePlanItem){
+				StagePlanItem spi = (StagePlanItem) node;
+				spi.copyFromStage();
+				copyStages(spi.getNodes());
+			}
+		}
 	}
 
 	protected void doRoleMapping(Collection<Role> roles, TableItem pt) {

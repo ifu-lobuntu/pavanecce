@@ -8,7 +8,10 @@ public class UserEventPlanItem extends StateNode implements PlanItem<UserEventLi
 	private PlanItemInfo<UserEventListener> planInfo;
 	private PlanItemContainer planItemContainer;
 	private String description;
-
+	public UserEventPlanItem (){
+		
+	}
+	
 	public UserEventPlanItem(PlanItemInfo<UserEventListener> info) {
 		this.planInfo = info;
 	}

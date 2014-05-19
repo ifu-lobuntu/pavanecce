@@ -82,7 +82,6 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask> imp
 	}
 
 	public void startProcess() {
-		super.buildParameters(getWork());
 		String processId = getSubProcessNode().getProcessId();
 		if (processId == null) {
 			// if process id is not given try with process name
@@ -249,17 +248,7 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask> imp
 			this.workItem = (WorkItem) event;
 			PlanItemTransition transition = (PlanItemTransition) workItem.getResult(HumanTaskPlanItemInstance.TRANSITION);
 			if (transition == PlanItemTransition.TERMINATE) {
-				boolean isCompletionTransition = false;
-				if (getPlanElementState() == PlanElementState.ACTIVE) {
-					ProcessInstance pi = (ProcessInstance) getProcessInstance().getKnowledgeRuntime().getProcessInstance(getProcessInstanceId());
-					if (pi instanceof CaseInstance && ((CaseInstance) pi).getPlanElementState() == PlanElementState.COMPLETED) {
-						// triggered by TaskService in reaction to case closed from the process
-						isCompletionTransition = true;
-					}
-				}
-				if (isCompletionTransition) {
-					complete();
-				} else if (!getPlanElementState().isTerminalState()) {
+				if (!getPlanElementState().isTerminalState()) {
 					transition.invokeOn(this);
 				}
 			} else {
@@ -286,17 +275,10 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask> imp
 			if (exceptionScopeInstance != null) {
 				exceptionScopeInstance.handleException(faultName, null);
 			}
-			fault();
+			internalFault();
 		} else {
 			ProcessInstance pi = (ProcessInstance) getProcessInstance().getKnowledgeRuntime().getProcessInstance(getProcessInstanceId());
-			if (pi instanceof CaseInstance) {
-				// This actually happens when the process is closed - we do nothing here, the taskService will call us
-				// with TERMINATE
-			} else {
-				complete();
-				WorkItemManager workItemManager = (WorkItemManager) getCaseInstance().getKnowledgeRuntime().getWorkItemManager();
-				workItemManager.internalAbortWorkItem(getWorkItemId());
-			}
+			internalComplete();
 		}
 	}
 

@@ -3,14 +3,17 @@ package org.pavanecce.cmmn.jbpm.instance.impl;
 import org.drools.core.WorkItemHandlerNotFoundException;
 import org.drools.core.process.instance.WorkItem;
 import org.drools.core.process.instance.WorkItemManager;
+import org.drools.core.process.instance.impl.WorkItemImpl;
 import org.jbpm.process.core.context.exception.ExceptionScope;
 import org.jbpm.process.core.context.variable.VariableScope;
 import org.jbpm.process.instance.ContextInstance;
 import org.jbpm.process.instance.ProcessInstance;
 import org.jbpm.process.instance.context.exception.ExceptionScopeInstance;
+import org.jbpm.services.task.wih.util.PeopleAssignmentHelper;
 import org.jbpm.workflow.instance.WorkflowRuntimeException;
 import org.jbpm.workflow.instance.node.EventBasedNodeInstanceInterface;
 import org.kie.api.runtime.process.NodeInstance;
+import org.kie.api.task.model.Status;
 import org.kie.api.task.model.Task;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemTransition;
@@ -64,11 +67,25 @@ public abstract class AbstractControllablePlanInstance<T extends PlanItemDefinit
 			}
 		}
 
+		executeWorkItem(workItem);
+		this.workItemId = workItem.getId();
+
+		if (PlanItemInstanceUtil.isActivatedAutomatically(this)) {
+			this.start();
+		} else {
+			this.enable();
+		}
+		if (!isWaitForCompletion()) {
+			triggerCompleted();
+		}
+	}
+
+	public void executeWorkItem(WorkItem workItem2) {
 		if (isInversionOfControl()) {
 			((ProcessInstance) getProcessInstance()).getKnowledgeRuntime().update(((ProcessInstance) getProcessInstance()).getKnowledgeRuntime().getFactHandle(this), this);
 		} else {
 			try {
-				((WorkItemManager) ((ProcessInstance) getProcessInstance()).getKnowledgeRuntime().getWorkItemManager()).internalExecuteWorkItem(workItem);
+				((WorkItemManager) ((ProcessInstance) getProcessInstance()).getKnowledgeRuntime().getWorkItemManager()).internalExecuteWorkItem(workItem2);
 			} catch (WorkItemHandlerNotFoundException wihnfe) {
 				getProcessInstance().setState(org.kie.api.runtime.process.ProcessInstance.STATE_ABORTED);
 				throw wihnfe;
@@ -79,19 +96,9 @@ public abstract class AbstractControllablePlanInstance<T extends PlanItemDefinit
 					throw new WorkflowRuntimeException(this, getProcessInstance(), "Unable to execute Action: " + e.getMessage(), e);
 				}
 				// workItemId must be set otherwise cancel activity will not find the right work item
-				this.workItemId = workItem.getId();
+				this.workItemId = workItem2.getId();
 				exceptionScopeInstance.handleException(exceptionName, e);
 			}
-		}
-		this.workItemId = workItem.getId();
-
-		if (PlanItemInstanceUtil.isActivatedAutomatically(this)) {
-			this.start();
-		} else {
-			this.enable();
-		}
-		if (!isWaitForCompletion()) {
-			triggerCompleted();
 		}
 	}
 
@@ -206,11 +213,38 @@ public abstract class AbstractControllablePlanInstance<T extends PlanItemDefinit
 	@Override
 	public void exit() {
 		planElementState.exit(this);
+		internalCompleteTask();
 	}
 
 	@Override
 	public void complete() {
 		planElementState.complete(this);
+	}
+	@Override
+	public void internalComplete() {
+		internalCompleteTask();
+		complete();
+	}
+	public void internalFault() {
+		internalFailTask();
+		fault();
+	}
+
+	protected void internalFailTask() {
+		WorkItemImpl wi = new WorkItemImpl();
+		wi.setName(UPDATE_TASK_STATUS);
+		wi.setParameter(TASK_STATUS, PlanElementState.FAILED);
+		wi.setParameter(WORK_ITEM_ID, getWorkItemId());
+		executeWorkItem(wi);
+	}
+
+
+	protected void internalCompleteTask() {
+		WorkItemImpl wi = new WorkItemImpl();
+		wi.setName(UPDATE_TASK_STATUS);
+		wi.setParameter(TASK_STATUS, PlanElementState.COMPLETED);
+		wi.setParameter(WORK_ITEM_ID, getWorkItemId());
+		executeWorkItem(wi);
 	}
 
 	@Override
@@ -241,12 +275,23 @@ public abstract class AbstractControllablePlanInstance<T extends PlanItemDefinit
 	@Override
 	public void start() {
 		planElementState.start(this);
+		String owner = getCaseInstance().getCaseOwner();
+		if(owner!=null){
+			WorkItemImpl wi = new WorkItemImpl();
+			wi.setName(UPDATE_TASK_STATUS);
+			wi.setParameter(TASK_STATUS, PlanElementState.ACTIVE);
+			wi.setParameter(PeopleAssignmentHelper.ACTOR_ID, owner);
+			wi.setParameter(WORK_ITEM_ID, getWorkItemId());
+			executeWorkItem(wi);
+		}else{
+			//TODO think this through, possibly polymorphic
+		}
 	}
 
 	@Override
-	public Task getTask() {
+	public Object getTask() {
 		if (getWorkItem() != null) {
-			return (Task) getWorkItem().getResult(HumanTaskPlanItemInstance.TASK);
+			return (Object) getWorkItem().getResult(TASK);
 		}
 		return null;
 	}

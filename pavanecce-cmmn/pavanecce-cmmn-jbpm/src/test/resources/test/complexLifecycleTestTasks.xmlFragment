@@ -33,6 +33,8 @@
 			</cmmn:planItem>
 			<cmmn:planItem definitionRef="theTask" name="PlanItemEnteredWhenTaskReactivated" id="planItemEnteredWhenTaskReactivatedId" entryCriteriaRefs="waitingForTaskReactivatedSentryId">
 			</cmmn:planItem>
+			<cmmn:planItem definitionRef="theTask" name="PlanItemEnteredWhenTaskCreated" id="planItemEnteredWhenTaskCreatedId" entryCriteriaRefs="waitingForTaskCreatedSentryId">
+			</cmmn:planItem>
 			<cmmn:planItem definitionRef="theTask" name="PlanItemEnteredWhenTaskEnabled" id="planItemEnteredWhenTaskEnabledId" entryCriteriaRefs="waitingForTaskEnabledSentryId"/>
 			<cmmn:planItem definitionRef="theTask" name="PlanItemEnteredWhenTaskManuallyStarted" id="planItemEnteredWhenTaskManuallyStartedId" entryCriteriaRefs="waitingForTaskManuallyStartedSentryId"/>
 			<cmmn:planItem definitionRef="theTask" name="PlanItemEnteredWhenTaskAutomaticallyStarted" id="planItemEnteredWhenTaskAutomaticallyStartedId" entryCriteriaRefs="waitingForTaskAutomaticallyStartedSentryId"/>
@@ -82,6 +84,11 @@
 			<cmmn:sentry id="waitingForTaskReactivatedSentryId" name="WaitingForTaskReactivatedSentry">
 				<cmmn:planItemOnPart id="onTaskReactivated" sourceRef="theEventGeneratingTaskPlanItemId">
 					<cmmn:standardEvent>reactivate</cmmn:standardEvent>
+				</cmmn:planItemOnPart>
+			</cmmn:sentry>
+			<cmmn:sentry id="waitingForTaskCreatedSentryId" name="WaitingForTaskCreatedSentry">
+				<cmmn:planItemOnPart id="onTaskCreated" sourceRef="theEventGeneratingTaskPlanItemId">
+					<cmmn:standardEvent>create</cmmn:standardEvent>
 				</cmmn:planItemOnPart>
 			</cmmn:sentry>
 			<cmmn:sentry id="waitingForTaskReenabledSentryId" name="WaitingForTaskReenabledSentry">

@@ -10,11 +10,22 @@
 	targetNamespace="http://ifu-lobuntu.org/test">
 	
 	&structureDefs;
-	<cmmn:case name="CaseInstanceTests" id="CaseInstanceTests">
+	<cmmn:case name="StagePlanItemInstanceTests" id="StagePlanItemInstanceTests">
 		&caseFileModel;
 		<cmmn:casePlanModel name="CaseInstanceTests" exitCriteriaRefs="waitingForEndUserEventSentryId" autoComplete="false">
 			&planItemDefinitions;
+			<cmmn:stage id="theTopLevelStageId" name="TheTopLevelStage" autoComplete="false">
 			&planItemInstanceContainer;
+			</cmmn:stage>
+			<cmmn:planItem definitionRef="theTopLevelStageId" id="theTopLevelStagePlanItemId" name="TheTopLevelStagePlanItem">
+				<cmmn:itemControl>
+					<cmmn:automaticActivationRule>
+						<cmmn:condition language="http://www.java.com/java">
+							<cmmn:body>return true;</cmmn:body>
+						</cmmn:condition>
+					</cmmn:automaticActivationRule>
+				</cmmn:itemControl>
+			</cmmn:planItem>
 		</cmmn:casePlanModel>
 		<cmmn:caseRoles name="Builders" id="builderRoleId" />
 		<cmmn:caseRoles name="ConstructionProjectManagers" id="constructionProjectManagerRoleId" />

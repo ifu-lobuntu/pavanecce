@@ -30,18 +30,23 @@ CaseTask
  - automaticActivationRule
  - exit criteria achieved
  - parameterMapping
- - EXIT,DISABLE,ENABLE,MANUAL_START,START,COMPLETE,TERMINATE,FAULT,SUSPEND,RESUME,REENABLE,REACTIVATE,
+ - EXIT,DISABLE,ENABLE,MANUAL_START,START,COMPLETE,TERMINATE,FAULT,SUSPEND,RESUME,REENABLE,REACTIVATE,CREATE
 
 Human Task
  - automaticActivationRule
  - repetitionRule
  - entry criteria achieved
  - exit criteria achieved
- - EXIT,DISABLE,ENABLE,MANUAL_START,START,COMPLETE,TERMINATE,FAULT,SUSPEND,RESUME,REENABLE,REACTIVATE
+ - EXIT,DISABLE,ENABLE,MANUAL_START,START,COMPLETE,TERMINATE,FAULT,SUSPEND,RESUME,REENABLE,REACTIVATE,CREATE
 
 UserEvent
  - OCCUR, CREATE,SUSPEND,RESUME,TERMINATE,PARENT_TERMINATE
- 
+
+Stage:
+ - automaticActivationRule
+ - exit criteria achieved
+ - EXIT,DISABLE,ENABLE,MANUAL_START,START,COMPLETE,TERMINATE,FAULT,SUSPEND,RESUME,CREATE,REENABLE,REACTIVATE
+ - auto completion
  
 CaseModel
  - auto completion
@@ -59,38 +64,26 @@ Recursive subscriptions, parameterizable
 Sentry.Conditions
 Sentries with multiple onParts
 *.no sentry
-CaseTask.requiredRule
-CaseTask.reactivated - check that process is restarted - it failed previously
-HumanTask.no sentry
-HumanTask.requiredRule
+*.requiredRule
 *.repetitionRule
+*.parentSuspend
+*.parentResume
+CaseTask.reactivated - check that process is restarted - it failed previously
 Test that suspension works for PlanItemInstanceFactories and Event
 
 3. To implement
+Write Output Parameters from Processes to Tasks (CaseTask, ProcessTask, Standalone Case) 
+Resolve cleverly which user should own system-initiated tasks
 
 Sentry.condition without onParts
 
 Process/Case Task
  - parameter transformation
- - PARENT_SUSPEND*, PARENT_RESUME*, CREATE
 
 CaseModel:
  - direct exit Criteria *
  - REACTIVATE (from Failed,Terminated, Completed?)*
  
-Stage:
- - requiredRule *
- - automaticActivationRule *
- - stagePlanItem's exit and its event *
- - manual completion *
- - exit criteria achieved *
- - EXIT*,DISABLE*,ENABLE*,MANUAL_START*,START*,COMPLETE?,TERMINATE*,FAULT*,SUSPEND*,RESUME*,CREATE,REENABLE,REACTIVATE,PARENT_SUSPEND*, PARENT_RESUME*
- - auto completion, use ItemControl.requiredRule *
-
-Human Task
- - CREATE,PARENT_SUSPEND*, PARENT_RESUME*
-
-
 Planning Tables:
  - Planning Table object (string/xml representing the potential task types) issue the create through processInstance.signalEvent so that the process can assign params/roles
  - DiscretionaryItem

@@ -72,6 +72,9 @@ public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> e
 	@Override
 	protected void triggerNodeInstance(org.jbpm.workflow.instance.NodeInstance nodeInstance, String type) {
 		((AbstractPlanItemInstance<?>) nodeInstance).internalSetCompletionRequired(isPlanItemInstanceRequired);
+		if(getNode()==null){
+			System.out.println();
+		}
 		super.triggerNodeInstance(nodeInstance, type);
 	}
 

@@ -14,11 +14,15 @@ import org.drools.core.marshalling.impl.MarshallerReaderContext;
 import org.drools.core.marshalling.impl.MarshallerWriteContext;
 import org.drools.core.marshalling.impl.PersisterEnums;
 import org.jbpm.marshalling.impl.AbstractProcessInstanceMarshaller;
+import org.jbpm.process.core.Context;
+import org.jbpm.process.core.context.variable.VariableScope;
+import org.jbpm.process.instance.context.variable.VariableScopeInstance;
 import org.jbpm.workflow.instance.impl.NodeInstanceImpl;
 import org.jbpm.workflow.instance.impl.WorkflowProcessInstanceImpl;
 import org.jbpm.workflow.instance.node.CompositeContextNodeInstance;
 import org.jbpm.workflow.instance.node.JoinInstance;
 import org.kie.api.runtime.process.NodeInstance;
+import org.kie.api.runtime.process.NodeInstanceContainer;
 import org.kie.api.runtime.process.ProcessInstance;
 import org.kie.api.runtime.process.WorkflowProcessInstance;
 import org.pavanecce.cmmn.jbpm.instance.ControllablePlanItemInstanceLifecycle;
@@ -91,6 +95,33 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 		if (pi instanceof ControllablePlanItemInstanceLifecycle) {
 			((ControllablePlanItemInstanceLifecycle<?>) pi).internalSetCompletionRequired(stream.readBoolean());
 		}
+	}
+
+	@Override
+	public NodeInstance readNodeInstance(MarshallerReaderContext context, NodeInstanceContainer nodeInstanceContainer, WorkflowProcessInstance processInstance) throws IOException {
+		NodeInstance ni = super.readNodeInstance(context, nodeInstanceContainer, processInstance);
+		MarshallerReaderContext stream = context.stream;
+		if (ni instanceof StagePlanItemInstance) {
+			int nbVariables = stream.readInt();
+			if (nbVariables > 0) {
+				Context variableScope = ((org.jbpm.process.core.Process) ((org.jbpm.process.instance.ProcessInstance) processInstance).getProcess()).getDefaultContext(VariableScope.VARIABLE_SCOPE);
+				VariableScopeInstance variableScopeInstance = (VariableScopeInstance) ((CompositeContextNodeInstance) ni).getContextInstance(variableScope);
+				for (int i = 0; i < nbVariables; i++) {
+					String name = stream.readUTF();
+					try {
+						Object value = stream.readObject();
+						variableScopeInstance.internalSetVariable(name, value);
+					} catch (ClassNotFoundException e) {
+						throw new IllegalArgumentException("Could not reload variable " + name);
+					}
+				}
+			}
+			while (stream.readShort() == PersisterEnums.NODE_INSTANCE) {
+				readNodeInstance(context, (StagePlanItemInstance) ni, processInstance);
+			}
+
+		}
+		return ni;
 	}
 
 	@Override
@@ -283,6 +314,23 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 				}
 			} else {
 				stream.writeInt(0);
+			}
+			VariableScopeInstance variableScopeInstance = (VariableScopeInstance) compositeNodeInstance.getContextInstance(VariableScope.VARIABLE_SCOPE);
+			if (variableScopeInstance == null) {
+				stream.writeInt(0);
+			} else {
+				Map<String, Object> variables = variableScopeInstance.getVariables();
+				List<String> keys = new ArrayList<String>(variables.keySet());
+				Collections.sort(keys, new Comparator<String>() {
+					public int compare(String o1, String o2) {
+						return o1.compareTo(o2);
+					}
+				});
+				stream.writeInt(keys.size());
+				for (String key : keys) {
+					stream.writeUTF(key);
+					stream.writeObject(variables.get(key));
+				}
 			}
 			List<NodeInstance> nodeInstances = new ArrayList<NodeInstance>(compositeNodeInstance.getNodeInstances());
 			Collections.sort(nodeInstances, new Comparator<NodeInstance>() {

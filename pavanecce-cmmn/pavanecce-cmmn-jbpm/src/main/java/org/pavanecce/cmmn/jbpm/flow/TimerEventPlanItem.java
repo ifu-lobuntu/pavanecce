@@ -9,20 +9,25 @@ public class TimerEventPlanItem extends StateNode implements PlanItem<TimerEvent
 	private PlanItemContainer planItemContainer;
 	private String description;
 
+	public TimerEventPlanItem() {
+	}
+
 	public TimerEventPlanItem(PlanItemInfo<TimerEventListener> info) {
 		this.planInfo = info;
 	}
+
 	public String getDescription() {
 		return this.description;
 	}
-	public void setDescription(String s){
-		this.description=s;
+
+	public void setDescription(String s) {
+		this.description = s;
 	}
 
 	public String getElementId() {
 		return elementId;
 	}
-	
+
 	public void setElementId(String elementId) {
 		this.elementId = elementId;
 	}
@@ -31,7 +36,8 @@ public class TimerEventPlanItem extends StateNode implements PlanItem<TimerEvent
 	public PlanItemInfo<TimerEventListener> getPlanInfo() {
 		return planInfo;
 	}
-	public TimerEventListener getTimerEventListener(){
+
+	public TimerEventListener getTimerEventListener() {
 		return (TimerEventListener) getPlanInfo().getDefinition();
 	}
 

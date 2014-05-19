@@ -33,6 +33,7 @@ public class PlanningTableHandler extends AbstractTableItemHandler implements Ha
 		this.validParents.add(Case.class);
 		this.validParents.add(HumanTask.class);
 		this.validParents.add(PlanningTable.class);
+		this.validParents.add(Stage.class);
 		this.validPeers.add(null);
 		this.validPeers.add(PlanningTable.class);
 		this.validPeers.add(DiscretionaryItem.class);

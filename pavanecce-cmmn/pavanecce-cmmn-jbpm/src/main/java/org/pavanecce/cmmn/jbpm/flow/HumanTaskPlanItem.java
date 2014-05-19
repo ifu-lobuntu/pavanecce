@@ -24,6 +24,8 @@ public class HumanTaskPlanItem extends WorkItemNode implements PlanItem<HumanTas
 	private PlanItemContainer planItemContainer;
 	private String description;
 	private PlanItemInstanceFactoryNode factoryNode;
+	public HumanTaskPlanItem() {
+	}
 	public HumanTaskPlanItem(PlanItemInfo<HumanTask> info, PlanItemInstanceFactoryNode factorNode){
 		this.info=info;
 		this.factoryNode=factorNode;

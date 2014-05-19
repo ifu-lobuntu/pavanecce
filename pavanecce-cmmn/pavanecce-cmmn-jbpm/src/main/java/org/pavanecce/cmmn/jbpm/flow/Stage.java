@@ -10,12 +10,12 @@ import org.drools.core.process.core.Work;
 import org.drools.core.process.core.datatype.impl.type.StringDataType;
 import org.drools.core.process.core.impl.ParameterDefinitionImpl;
 import org.drools.core.process.core.impl.WorkImpl;
-import org.jbpm.services.task.wih.util.PeopleAssignmentHelper;
 import org.jbpm.workflow.core.node.CompositeContextNode;
 import org.jbpm.workflow.core.node.EndNode;
 import org.jbpm.workflow.core.node.StartNode;
+import org.jbpm.workflow.core.node.StateNode;
 
-public class Stage extends CompositeContextNode implements PlanItemDefinition, PlanItemContainer {
+public class Stage extends StateNode implements PlanItemDefinition, PlanItemContainer {
 
 	private static final long serialVersionUID = 3123425777169912160L;
 	private String elementId;
@@ -27,6 +27,7 @@ public class Stage extends CompositeContextNode implements PlanItemDefinition, P
 	private DefaultJoin defaultJoin;
 	private Case theCase;
 	private PlanItemControl defaultControl;
+	private PlanningTable planningTable;
 
 
 	public Work getWork() {
@@ -39,9 +40,6 @@ public class Stage extends CompositeContextNode implements PlanItemDefinition, P
 		parameterDefinitions.add(new ParameterDefinitionImpl("Comment", new StringDataType()));
 		parameterDefinitions.add(new ParameterDefinitionImpl("Skippable", new StringDataType()));
 		parameterDefinitions.add(new ParameterDefinitionImpl("Content", new StringDataType()));
-		work.setParameter(PeopleAssignmentHelper.GROUP_ID, "Administrators");//TODO
-		work.setParameter(PeopleAssignmentHelper.ACTOR_ID, "Administrator");//TODO
-		
 		return work;
 	}
 
@@ -130,10 +128,11 @@ public class Stage extends CompositeContextNode implements PlanItemDefinition, P
 	}
 
 	public void setPlanningTable(PlanningTable planningTable) {
+		this.planningTable=planningTable;
 	}
 
 	public PlanningTable getPlanningTable() {
-		return null;
+		return planningTable;
 	}
 
 }

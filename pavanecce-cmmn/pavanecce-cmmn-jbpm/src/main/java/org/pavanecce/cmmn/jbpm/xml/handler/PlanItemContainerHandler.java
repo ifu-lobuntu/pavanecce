@@ -3,6 +3,7 @@ package org.pavanecce.cmmn.jbpm.xml.handler;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.drools.core.process.core.datatype.impl.type.ObjectDataType;
 import org.drools.core.xml.BaseAbstractHandler;
 import org.drools.core.xml.ExtensibleXmlParser;
 import org.jbpm.process.core.context.variable.Variable;
@@ -19,6 +20,7 @@ import org.pavanecce.cmmn.jbpm.flow.CaseFileItem;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemOnPart;
 import org.pavanecce.cmmn.jbpm.flow.DefaultJoin;
 import org.pavanecce.cmmn.jbpm.flow.DefaultSplit;
+import org.pavanecce.cmmn.jbpm.flow.MultiInstancePlanItem;
 import org.pavanecce.cmmn.jbpm.flow.OnPart;
 import org.pavanecce.cmmn.jbpm.flow.PlanItem;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemContainer;
@@ -26,6 +28,7 @@ import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemInfo;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemOnPart;
 import org.pavanecce.cmmn.jbpm.flow.Sentry;
+import org.pavanecce.cmmn.jbpm.flow.StagePlanItem;
 
 public abstract class PlanItemContainerHandler extends BaseAbstractHandler {
 
@@ -76,8 +79,12 @@ public abstract class PlanItemContainerHandler extends BaseAbstractHandler {
 			node.getPlanInfo().putExitCriterion(string, exit);
 		}
 		node.getPlanInfo().linkPlanItem();
-		if (node.getIncomingConnections(NodeImpl.CONNECTION_DEFAULT_TYPE).isEmpty()) {
-			new ConnectionImpl(process.getDefaultSplit(), DEFAULT, node, DEFAULT);
+		if (node.getPlanInfo().getEntryCriteria().isEmpty()) {
+			if (node instanceof MultiInstancePlanItem) {
+				new ConnectionImpl(process.getDefaultSplit(), DEFAULT, ((MultiInstancePlanItem) node).getFactoryNode(), DEFAULT);
+			} else {
+				new ConnectionImpl(process.getDefaultSplit(), DEFAULT, node, DEFAULT);//necessary at all?
+			}
 		}
 	}
 
@@ -92,6 +99,10 @@ public abstract class PlanItemContainerHandler extends BaseAbstractHandler {
 				ocfip.setSourceCaseFileItem(findCaseFileItemById(variableScope, ocfip.getSourceRef()));
 				ocfip.setRelatedCaseFileItem(findCaseFileItemById(variableScope, ocfip.getRelationRef()));
 			}
+			Variable var = new Variable();
+			var.setName(onPart.getVariableName());
+			var.setType(new ObjectDataType());
+			variableScope.getVariables().add(var);
 		}
 	}
 

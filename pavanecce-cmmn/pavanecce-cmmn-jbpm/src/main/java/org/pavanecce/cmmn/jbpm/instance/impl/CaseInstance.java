@@ -24,7 +24,6 @@ import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItem;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemOnPart;
 import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
-import org.pavanecce.cmmn.jbpm.flow.DefaultJoin;
 import org.pavanecce.cmmn.jbpm.flow.PlanItem;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemContainer;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
@@ -39,7 +38,7 @@ import org.pavanecce.cmmn.jbpm.instance.PlanElementState;
 import org.pavanecce.cmmn.jbpm.instance.PlanItemInstanceLifecycle;
 import org.pavanecce.common.ObjectPersistence;
 
-public class CaseInstance extends RuleFlowProcessInstance implements  CaseInstanceLifecycle {
+public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanceLifecycle {
 	private static final long serialVersionUID = 8715128915363796623L;
 	private boolean shouldUpdateSubscriptions;
 	private transient int signalCount = 0;
@@ -87,9 +86,9 @@ public class CaseInstance extends RuleFlowProcessInstance implements  CaseInstan
 	}
 
 	public org.jbpm.workflow.instance.NodeInstance getFirstNodeInstance(final long nodeId) {
-		//level logic not relevant.
+		// level logic not relevant.
 		for (NodeInstance ni : this.getNodeInstances()) {
-			if(ni.getNodeId()==nodeId){
+			if (ni.getNodeId() == nodeId) {
 				return (org.jbpm.workflow.instance.NodeInstance) ni;
 			}
 		}
@@ -135,17 +134,21 @@ public class CaseInstance extends RuleFlowProcessInstance implements  CaseInstan
 		updateSubscriptions();
 		if (workItemId < 0) {
 			createWorkItem();
-			String deploymentId = (String) getKnowledgeRuntime().getEnvironment().get("deploymentId");
-			((WorkItem) workItem).setDeploymentId(deploymentId);
-			try {
-				((WorkItemManager) getKnowledgeRuntime().getWorkItemManager()).internalExecuteWorkItem((org.drools.core.process.instance.WorkItem) workItem);
-			} catch (WorkItemHandlerNotFoundException wihnfe) {
-				setState(ProcessInstance.STATE_ABORTED);
-				throw wihnfe;
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
+			executeWorkItem((WorkItem) workItem);
 			this.workItemId = workItem.getId();
+		}
+	}
+
+	private void executeWorkItem(WorkItem wi) {
+		String deploymentId = (String) getKnowledgeRuntime().getEnvironment().get("deploymentId");
+		wi.setDeploymentId(deploymentId);
+		try {
+			((WorkItemManager) getKnowledgeRuntime().getWorkItemManager()).internalExecuteWorkItem((org.drools.core.process.instance.WorkItem) wi);
+		} catch (WorkItemHandlerNotFoundException wihnfe) {
+			setState(ProcessInstance.STATE_ABORTED);
+			throw wihnfe;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -302,7 +305,21 @@ public class CaseInstance extends RuleFlowProcessInstance implements  CaseInstan
 	@Override
 	public void complete() {
 		planElementState.complete(this);
-		((WorkItemManager) getKnowledgeRuntime().getWorkItemManager()).internalAbortWorkItem(getWorkItemId());
+	}
+
+	@Override
+	public void internalComplete() {
+		long taskProcessInstanceId = getWorkItem().getProcessInstanceId();
+		WorkItemImpl wi = new WorkItemImpl();
+		wi.setParameter(TASK_STATUS, PlanElementState.COMPLETED);
+		wi.setName(UPDATE_TASK_STATUS);
+		wi.setParameter(WORK_ITEM_ID, getWorkItemId());
+		// TODO build output parameters
+		executeWorkItem(wi);
+		complete();
+		if(taskProcessInstanceId!=getId()){
+			getKnowledgeRuntime().signalEvent("processInstanceCompleted:" + getId(), this, taskProcessInstanceId);
+		}
 	}
 
 	@Override
@@ -386,7 +403,7 @@ public class CaseInstance extends RuleFlowProcessInstance implements  CaseInstan
 	}
 
 	public NodeInstance findNodeForWorkItem(long id) {
-		for (NodeInstance ni : getNodeInstances()) {
+		for (NodeInstance ni : getNodeInstances(true)) {
 			if (ni instanceof ControllablePlanItemInstanceLifecycle && ((ControllablePlanItemInstanceLifecycle<?>) ni).getWorkItemId() == id) {
 				return ni;
 			}

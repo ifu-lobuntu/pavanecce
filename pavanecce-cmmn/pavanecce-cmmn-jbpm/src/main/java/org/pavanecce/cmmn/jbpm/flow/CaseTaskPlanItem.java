@@ -20,7 +20,8 @@ public class CaseTaskPlanItem extends SubProcessNode implements PlanItem<CaseTas
 	private PlanItemContainer planItemContainer;
 	private String description;
 	private PlanItemInstanceFactoryNode factoryNode;
-
+	public CaseTaskPlanItem(){
+	}
 	public CaseTaskPlanItem(PlanItemInfo<CaseTask> planItemInfo, PlanItemInstanceFactoryNode createFactoryNode) {
 		this.factoryNode = createFactoryNode;
 		this.info = planItemInfo;

@@ -19,7 +19,7 @@ public class DefaultJoinInstance extends JoinInstance implements EventNodeInstan
 		if (!isInitializing && getNodeInstanceContainer() instanceof PlanItemInstanceContainerLifecycle) {
 			PlanItemInstanceContainerLifecycle piic = (PlanItemInstanceContainerLifecycle) getNodeInstanceContainer();
 			if (piic.canComplete() && piic.getPlanItemContainer().isAutoComplete()) {
-				piic.complete();
+				piic.internalComplete();
 			}
 		}
 	}

@@ -42,6 +42,7 @@ import org.jbpm.services.task.impl.model.GroupImpl;
 import org.jbpm.services.task.impl.model.UserImpl;
 import org.jbpm.shared.services.impl.JbpmServicesPersistenceManagerImpl;
 import org.jbpm.test.JbpmJUnitBaseTestCase;
+import org.jbpm.workflow.instance.NodeInstanceContainer;
 import org.jbpm.workflow.instance.impl.NodeInstanceFactoryRegistry;
 import org.jbpm.workflow.instance.impl.factory.CreateNewNodeFactory;
 import org.jbpm.workflow.instance.impl.factory.ReuseNodeFactory;
@@ -206,44 +207,58 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 		return names;
 	}
 
-	public void assertPlanItemInState(long processInstanceId, String planItemName, PlanElementState s, int... numberOfTimes) {
-		getPersistence().start();
-		CaseInstance ci = (CaseInstance) getRuntimeEngine().getKieSession().getProcessInstance(processInstanceId);
+	class StateResult {
 		int count = 0;
 		String foundState = "";
+	}
+
+	public void assertPlanItemInState(long processInstanceId, String planItemName, PlanElementState s, int... numberOfTimes) {
+		getPersistence().start();
+		NodeInstanceContainer ci = (NodeInstanceContainer) getRuntimeEngine().getKieSession().getProcessInstance(processInstanceId);
+
+		StateResult sr = new StateResult();
+		countItemInState(planItemName, s, ci, sr);
+		getPersistence().commit();
+		if (numberOfTimes.length == 0) {
+			if (sr.count == 0) {
+				assertTrue(planItemName + " should be in state " + s.name() + " but was in " + sr.foundState, sr.count > 0);
+			}
+		} else {
+			assertEquals(planItemName + " should be in state " + s.name() + "  " + numberOfTimes[0] + " times, but was foudn in state " + sr.count + " times", numberOfTimes[0], sr.count);
+		}
+	}
+
+	public void countItemInState(String planItemName, PlanElementState s, NodeInstanceContainer ci, StateResult sr) {
 		for (NodeInstance ni : ci.getNodeInstances()) {
 			if (ni instanceof PlanItemInstanceFactoryNodeInstance) {
 				PlanItemInstanceFactoryNode node = (PlanItemInstanceFactoryNode) ni.getNode();
 				if (node.getPlanItem().getName().equals(planItemName)) {
 					PlanItemInstanceFactoryNodeInstance<?> piil = (PlanItemInstanceFactoryNodeInstance<?>) ni;
 					if (piil.isPlanItemInstanceStillRequired() && s == PlanElementState.AVAILABLE) {
-						count++;
+						sr.count++;
 					} else if (piil.getPlanElementState() == s) {
-						count++;
+						sr.count++;
 					} else {
-						foundState = piil.getPlanElementState().name();
+						sr.foundState = piil.getPlanElementState().name();
 					}
 				}
+			} else if (ni instanceof StagePlanItemInstance) {
+				countItemInState(planItemName, s, (StagePlanItemInstance) ni, sr);
 			}
 		}
-		if (count == 0) {
+		if (sr.count == 0) {
 			for (NodeInstance ni : ci.getNodeInstances()) {
 				if (ni instanceof PlanItemInstanceLifecycle && ni.getNodeName().equals(planItemName)) {
 					if (((PlanItemInstanceLifecycle<?>) ni).getPlanElementState() == s) {
-						count++;
+						sr.count++;
 					} else {
-						foundState = ((PlanItemInstanceLifecycle<?>) ni).getPlanElementState().name();
+						sr.foundState = ((PlanItemInstanceLifecycle<?>) ni).getPlanElementState().name();
 					}
+				} else if (ni instanceof StagePlanItemInstance) {
+					countItemInState(planItemName, s, (StagePlanItemInstance) ni, sr);
 				}
+
 			}
-		}
-		getPersistence().commit();
-		if (numberOfTimes.length == 0) {
-			if (count == 0) {
-				assertTrue(planItemName + " should be in state " + s.name() + " but was in " + foundState, count > 0);
-			}
-		} else {
-			assertEquals(planItemName + " should be in state " + s.name() + "  " + numberOfTimes[0] + " times, but was foudn in state " + count + " times", numberOfTimes[0], count);
 		}
 	}
 

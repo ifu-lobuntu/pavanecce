@@ -1,4 +1,4 @@
-package org.pavanecce.cmmn.jbpm.infra;
+package org.pavanecce.cmmn.jbpm.task;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -219,4 +219,8 @@ public class CaseTaskWorkItemHandler extends LocalHTWorkItemHandler {
 		return content;
 	}
 
+	@Override
+	public void abortWorkItem(WorkItem workItem, WorkItemManager manager) {
+		//Nothing
+	}
 }

@@ -31,19 +31,37 @@ public class CollectionPlaceHolderResolveStrategy extends JPAPlaceholderResolver
 
 	public CollectionPlaceHolderResolveStrategy(Environment env) {
 		super(env);
-		this.env=env;
+		this.env = env;
 	}
 
 	@Override
 	public boolean accept(Object object) {
-		return (object instanceof Collection);
+		if (object instanceof Collection) {
+			Collection<?> coll = (Collection<?>) object;
+			if (coll.size() == 0) {
+				return true;
+			} else {
+				Class<?> sc = findCommonSuperclass(coll);
+				if (sc == null) {
+					return false;
+				} else {
+					try {
+						JpaIdUtil.INSTANCE.findIdMember(sc);
+						return true;
+					} catch (Exception e) {
+						return false;
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	@Override
 	public void write(ObjectOutputStream os, Object collection) throws IOException {
-		if(collection instanceof Stack){
+		if (collection instanceof Stack) {
 			os.writeUTF(Stack.class.getName());
-		}else if (collection instanceof List) {
+		} else if (collection instanceof List) {
 			os.writeUTF(ArrayList.class.getName());
 		} else if (collection instanceof Set) {
 			os.writeUTF(HashSet.class.getName());
@@ -58,14 +76,14 @@ public class CollectionPlaceHolderResolveStrategy extends JPAPlaceholderResolver
 			Member idMember = JpaIdUtil.INSTANCE.findIdMember(commonSuperclass);
 			((AccessibleObject) idMember).setAccessible(true);
 			String idName = idMember.getName();
-			if(idMember instanceof Method){
-				idName=Introspector.decapitalize(idName.substring(3));
+			if (idMember instanceof Method) {
+				idName = Introspector.decapitalize(idName.substring(3));
 			}
 			os.writeUTF(idName);
 			for (Object object2 : coll) {
 				Object id = JpaIdUtil.INSTANCE.getId(idMember, object2);
-				if(id==null){
-					throw new IllegalStateException("Id must be set before being stored in a process: " + commonSuperclass.getName() +"."+ idMember.getName());
+				if (id == null) {
+					throw new IllegalStateException("Id must be set before being stored in a process: " + commonSuperclass.getName() + "." + idMember.getName());
 				}
 				os.writeObject(id);
 			}
@@ -99,14 +117,14 @@ public class CollectionPlaceHolderResolveStrategy extends JPAPlaceholderResolver
 		int size = is.readInt();
 		if (size > 0) {
 			Class<?> superClass = Class.forName(is.readUTF());
-			String idName=is.readUTF();
+			String idName = is.readUTF();
 			Collection<Object> ids = new ArrayList<Object>();
 			for (int i = 0; i < size; i++) {
 				ids.add(is.readObject());
 			}
 			EntityManagerFactory emf = (EntityManagerFactory) env.get(EnvironmentName.ENTITY_MANAGER_FACTORY);
 			EntityManager em = emf.createEntityManager();
-			Query q = em.createQuery("select o from " + superClass.getName() + " o where o." + idName +" in (:ids)");
+			Query q = em.createQuery("select o from " + superClass.getName() + " o where o." + idName + " in (:ids)");
 			q.setParameter("ids", ids);
 			coll.addAll(q.getResultList());
 		}
@@ -127,6 +145,7 @@ public class CollectionPlaceHolderResolveStrategy extends JPAPlaceholderResolver
 		DroolsObjectInputStream is = new DroolsObjectInputStream(new ByteArrayInputStream(object), classloader);
 		return read(is);
 	}
+
 	@Override
 	public Context createContext() {
 		// no need for context

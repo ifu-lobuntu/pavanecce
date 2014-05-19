@@ -46,8 +46,8 @@ public abstract class AbstractTasklifecycleTests extends AbstractConstructionTes
 		givenThatTheTestCaseIsStarted();
 		// *****WHEN
 		triggerStartOfTask();
-		List<TaskSummary> list = getTaskService().getTasksOwned(getEventGeneratingTaskUser(), "en-UK");
 		// *******THEN
+		List<TaskSummary> list = getTaskService().getTasksOwned(getEventGeneratingTaskUser(), "en-UK");
 		assertEquals(1, list.size());
 		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.ENABLED);
 		long taskId = list.get(0).getId();
@@ -145,7 +145,8 @@ public abstract class AbstractTasklifecycleTests extends AbstractConstructionTes
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenTaskCompleted");
 		assertPlanItemInState(caseInstance.getId(), "PlanItemEnteredWhenTaskCompleted", PlanElementState.ENABLED);
 		list = getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
-		assertEquals(1, list.size());
+		assertEquals(2, list.size());
+		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.COMPLETED);
 		assertEquals("PlanItemEnteredWhenTaskCompleted", list.get(0).getName());
 	}
 
@@ -164,8 +165,10 @@ public abstract class AbstractTasklifecycleTests extends AbstractConstructionTes
 		// *****THEN
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenTaskFaultOccurred");
 		list = getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
-		assertEquals(1, list.size());
+		assertEquals(2, list.size());
 		assertEquals("PlanItemEnteredWhenTaskFaultOccurred", list.get(0).getName());
+		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.FAILED);
+
 	}
 
 	@Test
@@ -181,10 +184,12 @@ public abstract class AbstractTasklifecycleTests extends AbstractConstructionTes
 		getTaskService().suspend(list.get(0).getId(), getEventGeneratingTaskUser());
 		// *****THEN
 		list = getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
-		assertEquals(1, list.size());
+		assertEquals(2, list.size());
 
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenTaskSuspended");
 		assertTaskTypeCreated(list, "PlanItemEnteredWhenTaskSuspended");
+		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.SUSPENDED);
+
 	}
 
 	@Test
@@ -200,10 +205,11 @@ public abstract class AbstractTasklifecycleTests extends AbstractConstructionTes
 		getTaskService().exit(list.get(0).getId(), getBusinessAdministratorUser());
 		// *****THEN
 		list = getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
-		assertEquals(1, list.size());
+		assertEquals(2, list.size());
 
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenTaskTerminated");
 		assertEquals("PlanItemEnteredWhenTaskTerminated", list.get(0).getName());
+		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.TERMINATED);
 	}
 
 	protected String getBusinessAdministratorUser() {
@@ -217,14 +223,14 @@ public abstract class AbstractTasklifecycleTests extends AbstractConstructionTes
 		triggerStartOfTask();
 		List<TaskSummary> list = getTaskService().getTasksOwned(getEventGeneratingTaskUser(), "en-UK");
 		assertEquals(1, list.size());
-		// *****WHEN
-		// *****WHEN
 		getTaskService().start(list.get(0).getId(), getEventGeneratingTaskUser());
 		getTaskService().suspend(list.get(0).getId(), getEventGeneratingTaskUser());
+		// *****WHEN
 		getTaskService().resume(list.get(0).getId(), getEventGeneratingTaskUser());
 		// *****THEN
 		list = getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
-		assertEquals(2, list.size());
+		assertEquals(3, list.size());
+		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.ACTIVE);
 
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenTaskResumed");
 		assertTaskTypeCreated(list, "PlanItemEnteredWhenTaskResumed");
@@ -241,9 +247,10 @@ public abstract class AbstractTasklifecycleTests extends AbstractConstructionTes
 		triggerExitOfTask(list);
 		// *****THEN
 		list = getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
-		assertEquals(1, list.size());
+		assertEquals(2, list.size());
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenTaskExited");
 		assertTaskTypeCreated(list, "PlanItemEnteredWhenTaskExited");
+		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.TERMINATED);
 	}
 
 	private void triggerExitOfTask(List<TaskSummary> list) {
@@ -264,9 +271,10 @@ public abstract class AbstractTasklifecycleTests extends AbstractConstructionTes
 		getTaskService().skip(list.get(0).getId(), getEventGeneratingTaskUser());
 		// *****THEN
 		list = getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
-		assertEquals(1, list.size());
+		assertEquals(2, list.size());
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenTaskDisabled");
 		assertTaskTypeCreated(list, "PlanItemEnteredWhenTaskDisabled");
+		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.DISABLED);
 	}
 
 	@Test
@@ -280,9 +288,11 @@ public abstract class AbstractTasklifecycleTests extends AbstractConstructionTes
 		assertNodeTriggered(caseInstance.getId(), "TheManuallyActivatedTaskPlanItem");
 		// *****THEN
 		List<TaskSummary> list = getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
-		assertEquals(1, list.size());
+		assertEquals(2, list.size());
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenTaskEnabled");
 		assertTaskTypeCreated(list, "PlanItemEnteredWhenTaskEnabled");
+		assertPlanItemInState(caseInstance.getId(), "TheManuallyActivatedTaskPlanItem", PlanElementState.ENABLED);
+
 	}
 
 	@Test
@@ -298,11 +308,13 @@ public abstract class AbstractTasklifecycleTests extends AbstractConstructionTes
 		getTaskService().start(findTask(list, "TheManuallyActivatedTaskPlanItem"), getEventGeneratingTaskUser());
 		// *****THEN
 		list = getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
-		assertEquals(2, list.size());
+		assertEquals(3, list.size());
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenTaskManuallyStarted");
 		assertTaskTypeCreated(list, "PlanItemEnteredWhenTaskManuallyStarted");
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenTaskEnabled");
 		assertTaskTypeCreated(list, "PlanItemEnteredWhenTaskEnabled");
+		assertPlanItemInState(caseInstance.getId(), "TheManuallyActivatedTaskPlanItem", PlanElementState.ACTIVE);
+
 	}
 
 	private long findTask(List<TaskSummary> list, String taskName) {
@@ -328,12 +340,14 @@ public abstract class AbstractTasklifecycleTests extends AbstractConstructionTes
 		List<TaskSummary> list = getTaskService().getTasksAssignedAsPotentialOwner(getEventGeneratingTaskUser(), "en-UK");
 		assertNodeTriggered(caseInstance.getId(), "TheAutoActivatedTaskPlanItem");
 		assertTaskTypeCreated(list, "TheAutoActivatedTaskPlanItem");
-		assertTrue(list.size()>0);//could be two
+		assertTrue(list.size() > 0);// could be two
 		list = getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
-		assertEquals(1, list.size());
+		assertEquals(2, list.size());
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenTaskAutomaticallyStarted");
 		assertTaskTypeCreated(list, "PlanItemEnteredWhenTaskAutomaticallyStarted");
+		assertPlanItemInState(caseInstance.getId(), "TheAutoActivatedTaskPlanItem", PlanElementState.ACTIVE);
 	}
+
 	@Test
 	public void testEventGeneratedOnReactivateOfTask() throws Exception {
 		// *****GIVEN
@@ -342,16 +356,17 @@ public abstract class AbstractTasklifecycleTests extends AbstractConstructionTes
 		List<TaskSummary> list = getTaskService().getTasksOwned(getEventGeneratingTaskUser(), "en-UK");
 		assertEquals(1, list.size());
 		getTaskService().start(list.get(0).getId(), getEventGeneratingTaskUser());
-		getTaskService().fail(list.get(0).getId(), getEventGeneratingTaskUser(),new HashMap<String,Object>());
+		getTaskService().fail(list.get(0).getId(), getEventGeneratingTaskUser(), new HashMap<String, Object>());
 		// *****WHEN
 		getTaskService().execute(new ReactivateTaskCommand(list.get(0).getId(), getEventGeneratingTaskUser()));
 		// *****THEN
 		list = getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
-		assertTrue(list.size()>0);
+		assertTrue(list.size() > 0);
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenTaskReactivated");
 		assertTaskTypeCreated(list, "PlanItemEnteredWhenTaskReactivated");
 		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.ACTIVE);
 	}
+
 	@Test
 	public void testEventGeneratedOnReenableOfTask() throws Exception {
 		// *****GIVEN
@@ -364,15 +379,26 @@ public abstract class AbstractTasklifecycleTests extends AbstractConstructionTes
 		getTaskService().execute(new ReenableTaskCommand(list.get(0).getId(), getEventGeneratingTaskUser()));
 		// *****THEN
 		list = getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
-		assertTrue(list.size()>0);
+		assertTrue(list.size() > 0);
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenTaskReenabled");
 		assertTaskTypeCreated(list, "PlanItemEnteredWhenTaskReenabled");
 		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.ENABLED);
 
 	}
-
+	@Test
 	public void testEventGeneratedOnCreateOfTask() throws Exception {
-		// FIRE FROM SENTRY
+		// *****GIVEN
+		givenThatTheTestCaseIsStarted();
+		// *****WHEN
+		triggerStartOfTask();
+		List<TaskSummary> list = getTaskService().getTasksOwned(getEventGeneratingTaskUser(), "en-UK");
+		assertEquals(1, list.size());
+		// *****THEN
+		list = getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
+		assertTrue(list.size() > 0);
+		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenTaskCreated");
+		assertTaskTypeCreated(list, "PlanItemEnteredWhenTaskCreated");
+		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.ENABLED);
 	}
 
 	protected void givenThatTheTestCaseIsStarted() {
