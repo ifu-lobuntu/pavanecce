@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.drools.core.RuntimeDroolsException;
-import org.drools.core.process.core.Work;
 import org.drools.core.process.instance.WorkItem;
 import org.drools.core.spi.ProcessContext;
 import org.jbpm.process.core.Context;
@@ -58,6 +57,10 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask, Tas
 		super.start();
 		startProcess();
 	}
+	@Override
+	public void internalTrigger(NodeInstance from, String type) {
+		super.internalTrigger(from, type);
+	}
 
 	@Override
 	public void manualStart() {
@@ -77,7 +80,7 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask, Tas
 		startProcess();
 	}
 
-	public void startProcess() {
+	private void startProcess() {
 		String processId = getPlanItemDefinition().getProcessId();
 		KieBase kbase = ((ProcessInstance) getProcessInstance()).getKnowledgeRuntime().getKieBase();
 		// start process instance
@@ -137,7 +140,7 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask, Tas
 		}
 	}
 
-	public List<ParameterMapping> prepareParameterMappings(Process process) {
+	private List<ParameterMapping> prepareParameterMappings(Process process) {
 		List<ParameterMapping> parameterMappings = getPlanItemDefinition().getParameterMappings();
 		if (process instanceof Case) {
 			List<CaseParameter> inputParameters = ((Case) process).getInputParameters();
@@ -337,13 +340,6 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask, Tas
 	public ContextContainer getContextContainer() {
 		return (ContextContainer) getItem();
 	}
-
-	@Override
-	protected Work getWork() {
-		return getItem().getWork();
-	}
-
-
 	@Override
 	protected boolean isWaitForCompletion() {
 		return getPlanItemDefinition().isBlocking();

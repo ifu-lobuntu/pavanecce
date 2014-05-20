@@ -68,6 +68,7 @@ import org.pavanecce.cmmn.jbpm.flow.CaseFileItemOnPart;
 import org.pavanecce.cmmn.jbpm.flow.CaseTaskPlanItem;
 import org.pavanecce.cmmn.jbpm.flow.DefaultJoin;
 import org.pavanecce.cmmn.jbpm.flow.DefaultSplit;
+import org.pavanecce.cmmn.jbpm.flow.DiscretionaryItem;
 import org.pavanecce.cmmn.jbpm.flow.HumanTaskPlanItem;
 import org.pavanecce.cmmn.jbpm.flow.MilestonePlanItem;
 import org.pavanecce.cmmn.jbpm.flow.OnPart;
@@ -80,12 +81,14 @@ import org.pavanecce.cmmn.jbpm.flow.UserEventPlanItem;
 import org.pavanecce.cmmn.jbpm.infra.CaseInstanceFactory;
 import org.pavanecce.cmmn.jbpm.infra.CaseInstanceMarshaller;
 import org.pavanecce.cmmn.jbpm.infra.CaseRegisterableItemsFactory;
+import org.pavanecce.cmmn.jbpm.infra.DelegatingNodeFactory;
 import org.pavanecce.cmmn.jbpm.infra.PlanItemBuilder;
 import org.pavanecce.cmmn.jbpm.infra.SentryBuilder;
 import org.pavanecce.cmmn.jbpm.jpa.CollectionPlaceHolderResolveStrategy;
 import org.pavanecce.cmmn.jbpm.jpa.HibernateSubscriptionManager;
 import org.pavanecce.cmmn.jbpm.lifecycle.ItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.AbstractItemInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseTaskPlanItemInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.DefaultJoinInstance;
@@ -110,6 +113,12 @@ import org.pavanecce.common.jpa.JpaObjectPersistence;
 import org.pavanecce.common.ocm.OcmFactory;
 import org.pavanecce.common.ocm.OcmObjectPersistence;
 import org.pavanecce.common.util.FileUtil;
+
+
+
+
+
+
 
 //import test.ConstructionCase;
 //import test.House;
@@ -416,15 +425,16 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 		nodeInstanceFactoryRegistry.register(Sentry.class, new ReuseNodeFactory(SentryInstance.class));
 		nodeInstanceFactoryRegistry.register(PlanItemInstanceFactoryNode.class, new ReuseNodeFactory(PlanItemInstanceFactoryNodeInstance.class));
 		nodeInstanceFactoryRegistry.register(OnPart.class, new ReuseNodeFactory(OnPartInstance.class));
-		nodeInstanceFactoryRegistry.register(UserEventPlanItem.class, new ReuseNodeFactory(UserEventPlanItemInstance.class));
-		nodeInstanceFactoryRegistry.register(TimerEventPlanItem.class, new ReuseNodeFactory(TimerEventPlanItemInstance.class));
-		nodeInstanceFactoryRegistry.register(MilestonePlanItem.class, new CreateNewNodeFactory(MilestonePlanItemInstance.class));
 		nodeInstanceFactoryRegistry.register(CaseFileItemOnPart.class, new ReuseNodeFactory(OnPartInstance.class));
 		nodeInstanceFactoryRegistry.register(PlanItemOnPart.class, new ReuseNodeFactory(OnPartInstance.class));
-		nodeInstanceFactoryRegistry.register(StagePlanItem.class, new CreateNewNodeFactory(StagePlanItemInstance.class));
+		nodeInstanceFactoryRegistry.register(StagePlanItem.class, new DelegatingNodeFactory());
 		nodeInstanceFactoryRegistry.register(DefaultSplit.class, new CreateNewNodeFactory(DefaultSplitInstance.class));
-		nodeInstanceFactoryRegistry.register(HumanTaskPlanItem.class, new CreateNewNodeFactory(HumanTaskPlanItemInstance.class));
-		nodeInstanceFactoryRegistry.register(CaseTaskPlanItem.class, new CreateNewNodeFactory(CaseTaskPlanItemInstance.class));
+		nodeInstanceFactoryRegistry.register(HumanTaskPlanItem.class,new DelegatingNodeFactory());
+		nodeInstanceFactoryRegistry.register(CaseTaskPlanItem.class, new DelegatingNodeFactory());
+		nodeInstanceFactoryRegistry.register(DiscretionaryItem.class, new DelegatingNodeFactory());
+		nodeInstanceFactoryRegistry.register(UserEventPlanItem.class, new DelegatingNodeFactory());
+		nodeInstanceFactoryRegistry.register(TimerEventPlanItem.class, new DelegatingNodeFactory());
+		nodeInstanceFactoryRegistry.register(MilestonePlanItem.class, new DelegatingNodeFactory());
 		TaskService ts = runtimeEngine.getTaskService();
 		if (ts instanceof InternalTaskService) {
 			InternalTaskService its = (InternalTaskService) ts;

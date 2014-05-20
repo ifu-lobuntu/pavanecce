@@ -1,6 +1,5 @@
 package org.pavanecce.cmmn.jbpm.lifecycle.impl;
 
-import org.drools.core.process.core.Work;
 import org.pavanecce.cmmn.jbpm.flow.HumanTask;
 import org.pavanecce.cmmn.jbpm.flow.PlanningTable;
 import org.pavanecce.cmmn.jbpm.flow.TaskItemWithDefinition;
@@ -13,10 +12,7 @@ public class HumanTaskPlanItemInstance extends TaskPlanItemInstance<HumanTask,Ta
 	protected boolean isWaitForCompletion() {
 		return super.getItem().getDefinition().isBlocking();
 	}
-	@Override
-	protected Work getWork() {
-		return super.getItem().getWork();
-	}
+
 	@Override
 	public PlanningTable getPlanningTable() {
 		return super.getItem().getDefinition().getPlanningTable();

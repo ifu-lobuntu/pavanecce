@@ -1,6 +1,7 @@
 package org.pavanecce.cmmn.jbpm.lifecycle.impl;
 
 import org.drools.core.WorkItemHandlerNotFoundException;
+import org.drools.core.process.core.Work;
 import org.drools.core.process.instance.WorkItem;
 import org.drools.core.process.instance.WorkItemManager;
 import org.drools.core.process.instance.impl.WorkItemImpl;
@@ -9,24 +10,22 @@ import org.jbpm.process.core.context.variable.VariableScope;
 import org.jbpm.process.instance.ContextInstance;
 import org.jbpm.process.instance.ProcessInstance;
 import org.jbpm.process.instance.context.exception.ExceptionScopeInstance;
+import org.jbpm.process.instance.impl.ConstraintEvaluator;
 import org.jbpm.services.task.wih.util.PeopleAssignmentHelper;
 import org.jbpm.workflow.instance.WorkflowRuntimeException;
 import org.jbpm.workflow.instance.node.EventBasedNodeInstanceInterface;
 import org.kie.api.runtime.process.NodeInstance;
-import org.pavanecce.cmmn.jbpm.flow.ItemWithDefinition;
+import org.pavanecce.cmmn.jbpm.flow.PlanItemControl;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemTransition;
+import org.pavanecce.cmmn.jbpm.flow.TaskItemWithDefinition;
 import org.pavanecce.cmmn.jbpm.lifecycle.ControllableItemInstanceLifecycle;
-import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementLifecycleWithTask;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
-import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceUtil;
 
-public abstract class AbstractControllableItemInstance<T extends PlanItemDefinition, X extends ItemWithDefinition<T>> extends AbstractItemInstance<T,X> implements ControllableItemInstanceLifecycle<T>,
-		EventBasedNodeInstanceInterface {
+public abstract class AbstractControllableItemInstance<T extends PlanItemDefinition, X extends TaskItemWithDefinition<T>> extends AbstractItemInstance<T, X> implements
+		ControllableItemInstanceLifecycle<T>, EventBasedNodeInstanceInterface {
 
 	private static final long serialVersionUID = 3200294767777991641L;
-
-	protected abstract void createWorkItem();
 
 	private PlanElementState lastBusyState = PlanElementState.NONE;
 	protected WorkItem workItem;
@@ -35,45 +34,67 @@ public abstract class AbstractControllableItemInstance<T extends PlanItemDefinit
 	public AbstractControllableItemInstance() {
 		super();
 	}
+
+	public final WorkItemImpl createWorkItem(Work work) {
+		return org.pavanecce.cmmn.jbpm.lifecycle.impl.PlanItemInstanceUtil.createWorkItem(work, this, this.getItem().getDefinition());
+	}
+
 	@Override
 	public boolean isComplexLifecycle() {
 		return true;
 	}
+
 	@Override
 	public void parentTerminate() {
-		throw new IllegalStateException("Complex planItemInstances do not suppoer to parentTerminate");
+		throw new IllegalStateException("Complex planItemInstances do not support to parentTerminate");
 	}
+
 
 	protected abstract boolean isWaitForCompletion();
 
+	private boolean isActivatedAutomatically() {
+		boolean isActivatedAutomatically = false;
+		PlanItemControl itemControl = getItemControl();
+		if (itemControl != null && itemControl.getAutomaticActivationRule() instanceof ConstraintEvaluator) {
+			ConstraintEvaluator ev = (ConstraintEvaluator) itemControl.getAutomaticActivationRule();
+			if (ev.evaluate((org.jbpm.workflow.instance.NodeInstance) this, null, ev)) {
+				isActivatedAutomatically = true;
+			}
+		}
+		return isActivatedAutomatically;
+	}
+	public void internalTriggerWithoutInstantiation(NodeInstance from, String type, WorkItem wi){
+		super.internalTrigger(from, type);
+		this.workItem = wi;
+		this.workItemId = wi.getId();
+		this.planElementState=PlanElementState.INITIAL;
+	}
 	@Override
 	public void internalTrigger(NodeInstance from, String type) {
 		super.internalTrigger(from, type);
 		((CaseInstance) getProcessInstance()).markSubscriptionsForUpdate();
-		createWorkItem();
+		workItem = createWorkItem(getItem().getWork());
 		if (isWaitForCompletion()) {
 			addWorkItemUpdatedListener();
-		}
-		String deploymentId = (String) getProcessInstance().getKnowledgeRuntime().getEnvironment().get("deploymentId");
-		workItem.setDeploymentId(deploymentId);
-		workItem.setParameter(COMMENT, getPlanItemDefinition().getDescription());
-		if (getNodeInstanceContainer() instanceof PlanElementLifecycleWithTask) {
-			long parentWorkItemId = ((PlanElementLifecycleWithTask) getNodeInstanceContainer()).getWorkItemId();
-			if (parentWorkItemId >= 0) {
-				workItem.setParameter(PARENT_WORK_ITEM_ID, parentWorkItemId);
-			}
 		}
 
 		executeWorkItem(workItem);
 		this.workItemId = workItem.getId();
 
-		if (PlanItemInstanceUtil.isActivatedAutomatically(this)) {
+		noteInstantiation();
+		if (!isWaitForCompletion()) {
+			triggerCompleted();
+		}
+	}
+
+	public void noteInstantiation() {
+		if(isCompletionRequired==null){
+			isCompletionRequired=PlanItemInstanceUtil.isRequired(getItem(), this);
+		}
+		if (isActivatedAutomatically()) {
 			this.start();
 		} else {
 			this.enable();
-		}
-		if (!isWaitForCompletion()) {
-			triggerCompleted();
 		}
 	}
 
@@ -217,11 +238,13 @@ public abstract class AbstractControllableItemInstance<T extends PlanItemDefinit
 	public void complete() {
 		planElementState.complete(this);
 	}
+
 	@Override
 	public void internalComplete() {
 		internalCompleteTask();
 		complete();
 	}
+
 	public void internalFault() {
 		internalFailTask();
 		fault();
@@ -234,7 +257,6 @@ public abstract class AbstractControllableItemInstance<T extends PlanItemDefinit
 		wi.setParameter(WORK_ITEM_ID, getWorkItemId());
 		executeWorkItem(wi);
 	}
-
 
 	protected void internalCompleteTask() {
 		WorkItemImpl wi = new WorkItemImpl();
@@ -273,16 +295,16 @@ public abstract class AbstractControllableItemInstance<T extends PlanItemDefinit
 	public void start() {
 		planElementState.start(this);
 		String owner = getCaseInstance().getCaseOwner();
-		if(owner!=null){
+		if (owner != null) {
 			WorkItemImpl wi = new WorkItemImpl();
 			wi.setName(UPDATE_TASK_STATUS);
-			//TODO should it be InProgress or Reserved?
+			// TODO should it be InProgress or Reserved?
 			wi.setParameter(TASK_STATUS, PlanElementState.ACTIVE);
 			wi.setParameter(PeopleAssignmentHelper.ACTOR_ID, owner);
 			wi.setParameter(WORK_ITEM_ID, getWorkItemId());
 			executeWorkItem(wi);
-		}else{
-			//TODO think this through, possibly polymorphic
+		} else {
+			// TODO think this through, possibly polymorphic
 		}
 	}
 

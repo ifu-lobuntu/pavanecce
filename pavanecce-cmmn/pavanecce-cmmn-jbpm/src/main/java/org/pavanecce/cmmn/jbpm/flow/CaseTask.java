@@ -32,6 +32,7 @@ public class CaseTask extends AbstractPlanItemDefinition implements TaskDefiniti
 		parameterDefinitions.add(new ParameterDefinitionImpl("Comment", new StringDataType()));
 		parameterDefinitions.add(new ParameterDefinitionImpl("Skippable", new StringDataType()));
 		parameterDefinitions.add(new ParameterDefinitionImpl("Content", new StringDataType()));
+
 		// TODO: initiator
 		// TODO: attachments
 		// TODO: deadlines
@@ -48,7 +49,7 @@ public class CaseTask extends AbstractPlanItemDefinition implements TaskDefiniti
 	@Override
 	public Work getWork() {
 		Work result = work;
-		// Think about this - case owner??
+		work.setParameter("NodeName", getName());
 		result.setParameter(PeopleAssignmentHelper.GROUP_ID, "Administrators");
 		result.setParameter(PeopleAssignmentHelper.BUSINESSADMINISTRATOR_ID, "Administrator");
 

@@ -1,5 +1,6 @@
 package org.pavanecce.cmmn.jbpm.flow;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -41,8 +42,12 @@ public class TableItem extends AbstractItem implements CMMNElement {
 		return getPlannerRoles(pi.getPlanItemContainer().getPlanningTable());
 	}
 
+	public static String getPlannerRoles(DiscretionaryItem<?> pi) {
+		return getPlannerRoles(pi.getAuthorizedRoles().values(), pi.getParentTable().getAuthorizedRoles().values());
+	}
+
 	public static String getPlannerRoles(HumanTaskPlanItem htpi) {
-		return getPlannerRoles(htpi.getPlanInfo().getDefinition().getPlanningTable(),htpi.getPlanItemContainer().getPlanningTable());
+		return getPlannerRoles(htpi.getPlanInfo().getDefinition().getPlanningTable(), htpi.getPlanItemContainer().getPlanningTable());
 	}
 
 	public static String getPlannerRoles(Case theCase) {
@@ -50,15 +55,16 @@ public class TableItem extends AbstractItem implements CMMNElement {
 	}
 
 	public static String getPlannerRoles(StagePlanItem spi) {
-		return getPlannerRoles(spi.getDefinition().getPlanningTable(),spi.getPlanItemContainer().getPlanningTable());
+		return getPlannerRoles(spi.getDefinition().getPlanningTable(), spi.getPlanItemContainer().getPlanningTable());
 	}
 
-	private static String getPlannerRoles(PlanningTable... planningTables) {
-		for (PlanningTable pt : planningTables) {
-			if (pt != null && !pt.getAuthorizedRoles().isEmpty()) {
+	@SafeVarargs
+	private static String getPlannerRoles(Collection<Role>... authorizedRoles) {
+		for (Collection<Role> collection : authorizedRoles) {
+			if (collection != null && !collection.isEmpty()) {
 				String seperator = System.getProperty("org.jbpm.ht.user.separator", ",");
 				StringBuilder result = new StringBuilder();
-				Iterator<Role> values = pt.getAuthorizedRoles().values().iterator();
+				Iterator<Role> values = collection.iterator();
 				while (values.hasNext()) {
 					Role role = (Role) values.next();
 					result.append(role.getName());
@@ -68,9 +74,21 @@ public class TableItem extends AbstractItem implements CMMNElement {
 				}
 				return result.toString();
 			}
-
 		}
 		return "Administrators";
+	}
+
+	private static String getPlannerRoles(PlanningTable... planningTables) {
+		@SuppressWarnings("unchecked")
+		Collection<Role>[] roles = new Collection[planningTables.length];
+		for (int i = 0; i < planningTables.length; i++) {
+			PlanningTable pt = planningTables[i];
+			if (pt != null) {
+				roles[i] = pt.getAuthorizedRoles().values();
+			}
+
+		}
+		return getPlannerRoles(roles);
 	}
 
 	public PlanningTable getPlanningTable() {

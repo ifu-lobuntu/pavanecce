@@ -1,5 +1,7 @@
 package org.pavanecce.cmmn.jbpm.lifecycle;
 
+import org.drools.core.process.instance.WorkItem;
+import org.kie.api.runtime.process.NodeInstance;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 
 public interface ControllableItemInstanceLifecycle<T extends PlanItemDefinition> extends ItemInstanceLifecycleWithHistory<T>, PlanElementLifecycleWithTask {
@@ -19,5 +21,9 @@ public interface ControllableItemInstanceLifecycle<T extends PlanItemDefinition>
 	void internalSetCompletionRequired(boolean b);
 
 	boolean isCompletionStillRequired();
+
+	void noteInstantiation();
+
+	void internalTriggerWithoutInstantiation(NodeInstance from, String type, WorkItem wi);
 
 }

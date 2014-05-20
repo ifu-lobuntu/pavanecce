@@ -1,4 +1,13 @@
 To implement
+ - confirmPlannedTask
+ - commitPlan
+ - getPlannedTaskAsPotentialProposer(by owner, by initiator)
+ - addProposalToPlannedTask
+ - selectProposalForTask
+ - getPlannedTaskAwaitingConfirmation(by owner, by initiator)
+ - getPlannedTaskAwaitingCommitment(by owner, by initiator)
+
+
 Generate JCR node types (CND) for tasks - REFERENCE to casefileitem. Make sure Jahia will create it in the correct way
 Planning with quotes/costing for subsequent activities
  - add a "want parameter"

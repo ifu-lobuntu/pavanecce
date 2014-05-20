@@ -51,6 +51,7 @@
         <!-- CMMN Event managment -->
         <class>org.pavanecce.cmmn.jbpm.jpa.JpaCaseFileItemSubscriptionInfo</class>
         <class>org.pavanecce.cmmn.jbpm.jpa.JpaCaseSubscriptionInfo</class>
+        <class>org.pavanecce.cmmn.jbpm.planning.PlannedTaskImpl</class>
         <!-- Customer entities -->
         <class>test.HousePlan</class>
         <class>test.RoomPlan</class>

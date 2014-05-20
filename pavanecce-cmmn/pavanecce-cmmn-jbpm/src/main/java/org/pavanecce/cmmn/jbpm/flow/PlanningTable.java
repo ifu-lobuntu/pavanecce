@@ -3,7 +3,6 @@ package org.pavanecce.cmmn.jbpm.flow;
 import java.util.Collection;
 import java.util.HashSet;
 
-@SuppressWarnings("rawtypes")
 public class PlanningTable extends TableItem {
 
 	private static final long serialVersionUID = 11515151511L;

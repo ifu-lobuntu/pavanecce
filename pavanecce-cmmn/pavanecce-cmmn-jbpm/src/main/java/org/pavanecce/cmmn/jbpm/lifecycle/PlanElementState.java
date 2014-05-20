@@ -2,6 +2,8 @@ package org.pavanecce.cmmn.jbpm.lifecycle;
 
 import static org.pavanecce.cmmn.jbpm.flow.PlanItemTransition.*;
 
+import java.util.Collection;
+
 import org.pavanecce.cmmn.jbpm.event.PlanItemEvent;
 import org.pavanecce.cmmn.jbpm.flow.OnPart;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemTransition;
@@ -157,13 +159,13 @@ public enum PlanElementState {
 	public void start(ControllableItemInstanceLifecycle<?> pi) {
 		validateTransition(pi, START);
 		signalEvent(pi, PlanItemTransition.START);
-		pi.setPlanElementState(ACTIVE);
+		setActive(pi);
 	}
 
 	public void manualStart(ControllableItemInstanceLifecycle<?> pi) {
 		validateTransition(pi, MANUAL_START);
 		signalEvent(pi, PlanItemTransition.MANUAL_START);
-		pi.setPlanElementState(ACTIVE);
+		setActive(pi);
 	}
 
 	public void reactivate(PlanElementLifecycle pi) {
@@ -178,7 +180,7 @@ public enum PlanElementState {
 				// TODO find out
 			}
 		}
-		pi.setPlanElementState(ACTIVE);
+		setActive(pi);
 	}
 
 	public void suspend(PlanElementLifecycle pi) {
@@ -205,12 +207,24 @@ public enum PlanElementState {
 		validateTransition(pi, RESUME);
 		signalEvent(pi, PlanItemTransition.RESUME);
 		if (pi instanceof ControllableItemInstanceLifecycle) {
-			pi.setPlanElementState(ACTIVE);
+			setActive(pi);
 		} else {
 			pi.setPlanElementState(AVAILABLE);
 		}
 		if (pi instanceof PlanItemInstanceContainerLifecycle) {
 			resumeChildren((PlanItemInstanceContainerLifecycle) pi);
+		}
+	}
+
+	private void setActive(PlanElementLifecycle pi) {
+		pi.setPlanElementState(ACTIVE);
+		if(pi instanceof PlanItemInstanceContainerLifecycle){
+			for (ItemInstanceLifecycle<?> child : ((PlanItemInstanceContainerLifecycle) pi).getChildren()) {
+				if(child instanceof ControllableItemInstanceLifecycle &&  child.getPlanElementState()==INITIAL){
+					child.setPlanElementState(AVAILABLE);
+					((ControllableItemInstanceLifecycle<?>) child).noteInstantiation();
+				}
+			}
 		}
 	}
 
@@ -253,7 +267,7 @@ public enum PlanElementState {
 		validateTransition(pi, EXIT);
 		signalEvent(pi, PlanItemTransition.EXIT);
 		pi.setPlanElementState(TERMINATED);
-		PlanItemInstanceUtil.exitPlanItem(pi);
+		PlanItemLifecyleUtil.exitPlanItem(pi);
 	}
 
 	public void complete(PlanElementLifecycle pi) {

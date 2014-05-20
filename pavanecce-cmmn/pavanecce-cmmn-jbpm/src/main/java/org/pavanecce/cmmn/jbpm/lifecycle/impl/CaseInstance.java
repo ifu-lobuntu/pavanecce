@@ -1,7 +1,6 @@
 package org.pavanecce.cmmn.jbpm.lifecycle.impl;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -9,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.drools.core.WorkItemHandlerNotFoundException;
-import org.drools.core.process.core.Work;
 import org.drools.core.process.instance.WorkItem;
 import org.drools.core.process.instance.WorkItemManager;
 import org.drools.core.process.instance.impl.WorkItemImpl;
@@ -17,6 +15,8 @@ import org.drools.core.spi.ProcessContext;
 import org.jbpm.process.instance.ProcessInstance;
 import org.jbpm.ruleflow.instance.RuleFlowProcessInstance;
 import org.jbpm.services.task.wih.util.PeopleAssignmentHelper;
+import org.jbpm.workflow.core.NodeContainer;
+import org.jbpm.workflow.core.impl.NodeImpl;
 import org.jbpm.workflow.instance.NodeInstanceContainer;
 import org.kie.api.definition.process.Node;
 import org.kie.api.runtime.process.NodeInstance;
@@ -27,13 +27,12 @@ import org.pavanecce.cmmn.jbpm.flow.CaseFileItem;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemOnPart;
 import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
 import org.pavanecce.cmmn.jbpm.flow.DiscretionaryItem;
-import org.pavanecce.cmmn.jbpm.flow.HumanTask;
+import org.pavanecce.cmmn.jbpm.flow.ItemWithDefinition;
 import org.pavanecce.cmmn.jbpm.flow.PlanItem;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemContainer;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemTransition;
 import org.pavanecce.cmmn.jbpm.flow.PlanningTable;
-import org.pavanecce.cmmn.jbpm.flow.Role;
 import org.pavanecce.cmmn.jbpm.flow.TableItem;
 import org.pavanecce.cmmn.jbpm.flow.TaskDefinition;
 import org.pavanecce.cmmn.jbpm.infra.OnPartInstanceSubscription;
@@ -43,6 +42,7 @@ import org.pavanecce.cmmn.jbpm.lifecycle.ItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementLifecycleWithTask;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementWithPlanningTable;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceContainerLifecycle;
 import org.pavanecce.common.ObjectPersistence;
 
 public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanceLifecycle {
@@ -57,32 +57,38 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 		return (Case) getProcess();
 	}
 
-	public PlannedWork createPlannedItem(long containerWorkflowItemId, String tableItemId) {
-		for (NodeInstance ni : getNodeInstances(true)) {
-			if (ni instanceof PlanElementWithPlanningTable) {
-				PlanElementWithPlanningTable pewpt = (PlanElementWithPlanningTable) ni;
-				if (pewpt.getWorkItemId() == containerWorkflowItemId) {
-					if (pewpt.getPlanningTable() != null) {
-						DiscretionaryItem<? extends PlanItemDefinition> di = pewpt.getPlanningTable().getDiscretionaryItemById(tableItemId);
-						PlannedWork result = new PlannedWork();
-						result.setPlannerRoles(new HashSet<Role>(pewpt.getPlanningTable().getAuthorizedRoles().values()));
-						if (di.getDefinition() instanceof HumanTask) {
-							result.setRoles(Collections.singleton(((HumanTask) di.getDefinition()).getPerformer()));
-						} else {
-							result.setRoles(new HashSet<Role>(result.getPlannerRoles()));
-						}
-						result.getPlannerRoles().addAll(di.getAuthorizedRoles().values());
-						result.setPlanElementId(tableItemId);
-						if(di.getDefinition() instanceof TaskDefinition){
-							Work work = ((TaskDefinition) di.getDefinition()).getWork();
-							result.setParameters(PlanningTableUtil.buildInputParameters(work,pewpt));
-						}
-					}
-				}
-
+	public WorkItem createPlannedItem(long containerWorkItemId, String tableItemId) {
+		org.jbpm.workflow.instance.NodeInstance contextNodeInstance = null;
+		PlanElementWithPlanningTable pewpt = findPlanElementWithPlanningTable(containerWorkItemId);
+		if (pewpt.getPlanningTable() != null) {
+			if (pewpt == this) {
+				contextNodeInstance = getNodeInstance(getCase().getDefaultJoin());
+			} else {
+				contextNodeInstance = (org.jbpm.workflow.instance.NodeInstance) pewpt;
 			}
+			DiscretionaryItem<? extends PlanItemDefinition> di = pewpt.getPlanningTable().getDiscretionaryItemById(tableItemId);
+			WorkItemImpl wi = PlanItemInstanceUtil.createWorkItem(di.getWork(), contextNodeInstance, di.getDefinition());
+			wi.setParameter(DiscretionaryItem.PLANNED, Boolean.TRUE);
+			return executeWorkItem(wi);
 		}
 		return null;
+	}
+
+	protected PlanElementWithPlanningTable findPlanElementWithPlanningTable(long containerWorkItemId) {
+		PlanElementWithPlanningTable pewpt = null;
+		if (containerWorkItemId == getWorkItemId()) {
+			pewpt = this;
+		} else {
+			for (NodeInstance ni : getNodeInstances(true)) {
+				if (ni instanceof PlanElementWithPlanningTable) {
+					pewpt = (PlanElementWithPlanningTable) ni;
+					if (pewpt.getWorkItemId() == containerWorkItemId) {
+						break;
+					}
+				}
+			}
+		}
+		return pewpt;
 	}
 
 	@Override
@@ -180,11 +186,12 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 		}
 	}
 
-	private void executeWorkItem(WorkItem wi) {
+	private WorkItem executeWorkItem(WorkItem wi) {
 		String deploymentId = (String) getKnowledgeRuntime().getEnvironment().get("deploymentId");
 		wi.setDeploymentId(deploymentId);
 		try {
 			((WorkItemManager) getKnowledgeRuntime().getWorkItemManager()).internalExecuteWorkItem((org.drools.core.process.instance.WorkItem) wi);
+			return wi;
 		} catch (WorkItemHandlerNotFoundException wihnfe) {
 			setState(ProcessInstance.STATE_ABORTED);
 			throw wihnfe;
@@ -426,7 +433,7 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 
 	@Override
 	public boolean canComplete() {
-		return PlanItemInstanceContainerUtil.canComplete(this);
+		return PlanItemInstanceUtil.canComplete(this);
 	}
 
 	@Override
@@ -443,10 +450,10 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 		this.workItemId = w.getId();
 	}
 
-	public NodeInstance findNodeForWorkItem(long id) {
+	public ControllableItemInstanceLifecycle<?> findNodeForWorkItem(long id) {
 		for (NodeInstance ni : getNodeInstances(true)) {
 			if (ni instanceof ControllableItemInstanceLifecycle && ((ControllableItemInstanceLifecycle<?>) ni).getWorkItemId() == id) {
-				return ni;
+				return (ControllableItemInstanceLifecycle<?>) ni;
 			}
 		}
 		return null;
@@ -462,4 +469,23 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 		}
 	}
 
+	public ControllableItemInstanceLifecycle<?> ensurePlanItemCreated(long parentWorkItemId, String discretionaryItemId, WorkItem wi) {
+		ControllableItemInstanceLifecycle<?> found = findNodeForWorkItem(wi.getId());
+		if (found != null) {
+			return found;
+		} else {
+			PlanElementWithPlanningTable e = findPlanElementWithPlanningTable(parentWorkItemId);
+			DiscretionaryItem<?> item = e.getPlanningTable().getDiscretionaryItemById(discretionaryItemId);
+			PlanItemInstanceContainerLifecycle piic = null;
+			if (e instanceof PlanItemInstanceContainerLifecycle) {
+				piic = (PlanItemInstanceContainerLifecycle) e;
+			} else {
+				piic = (PlanItemInstanceContainerLifecycle) ((NodeInstance) e).getNodeInstanceContainer();
+			}
+			found=(ControllableItemInstanceLifecycle<?>) piic.getNodeInstance(item);
+			found.internalTriggerWithoutInstantiation(piic.getNodeInstance(piic.getPlanItemContainer().getDefaultSplit()), NodeImpl.CONNECTION_DEFAULT_TYPE, wi);
+			found.setPlanElementState(PlanElementState.INITIAL);
+			return found;
+		}
+	}
 }

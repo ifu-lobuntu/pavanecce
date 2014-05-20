@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.drools.core.process.instance.impl.WorkItemImpl;
+import org.jbpm.services.task.commands.TaskCommand;
+import org.jbpm.services.task.commands.TaskContext;
 import org.jbpm.services.task.impl.model.GroupImpl;
 import org.jbpm.services.task.impl.model.I18NTextImpl;
 import org.jbpm.services.task.impl.model.TaskDataImpl;
@@ -26,8 +28,10 @@ import org.kie.api.task.model.Group;
 import org.kie.api.task.model.I18NText;
 import org.kie.api.task.model.OrganizationalEntity;
 import org.kie.api.task.model.PeopleAssignments;
+import org.kie.api.task.model.Status;
 import org.kie.api.task.model.Task;
 import org.kie.api.task.model.User;
+import org.kie.internal.command.Context;
 import org.kie.internal.runtime.manager.context.ProcessInstanceIdContext;
 import org.kie.internal.task.api.InternalTaskService;
 import org.kie.internal.task.api.model.ContentData;
@@ -35,8 +39,11 @@ import org.kie.internal.task.api.model.InternalPeopleAssignments;
 import org.kie.internal.task.api.model.InternalTask;
 import org.kie.internal.task.api.model.InternalTaskData;
 import org.pavanecce.cmmn.jbpm.flow.Case;
+import org.pavanecce.cmmn.jbpm.flow.DiscretionaryItem;
 import org.pavanecce.cmmn.jbpm.lifecycle.ControllableItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementLifecycleWithTask;
+import org.pavanecce.cmmn.jbpm.planning.PlannedTaskImpl;
+import org.pavanecce.cmmn.jbpm.planning.PlanningStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +52,8 @@ public class CaseTaskWorkItemHandler extends LocalHTWorkItemHandler {
 
 	@Override
 	protected Task createTaskBasedOnWorkItemParams(KieSession session, WorkItem workItem) {
-		InternalTask task = new TaskImpl();
+		InternalTask task = null;
+		task = new TaskImpl();
 		String taskName = (String) workItem.getParameter(ControllableItemInstanceLifecycle.TASK_NODE_NAME);
 
 		if (taskName != null) {
@@ -130,31 +138,46 @@ public class CaseTaskWorkItemHandler extends LocalHTWorkItemHandler {
 		return task;
 	}
 
+	@SuppressWarnings("serial")
 	@Override
-	public void executeWorkItem(WorkItem workItem, WorkItemManager manager) {
+	public void executeWorkItem(final WorkItem workItem, WorkItemManager manager) {
 
 		RuntimeEngine runtime = getRuntimeManager().getRuntimeEngine(ProcessInstanceIdContext.get(workItem.getProcessInstanceId()));
 		KieSession ksessionById = runtime.getKieSession();
 
-		Task task = createTaskBasedOnWorkItemParams(ksessionById, workItem);
-		ContentData content = createTaskContentBasedOnWorkItemParams(ksessionById, workItem);
+		final Task task = createTaskBasedOnWorkItemParams(ksessionById, workItem);
+		final ContentData content = createTaskContentBasedOnWorkItemParams(ksessionById, workItem);
 		try {
-			long taskId = ((InternalTaskService) runtime.getTaskService()).addTask(task, content);
-			task.getPeopleAssignments().getPotentialOwners();
-			if (workItem.getParameter(Case.CASE_OWNER) != null) {
-				// This task represents a standalone CaseInstanc;
-				String caseOwner = (String) workItem.getParameter(Case.CASE_OWNER);
-				User user = findExactCaseOwner(runtime, caseOwner);
-				if (user != null) {
-					runtime.getTaskService().claim(taskId, user.getId());
-					runtime.getTaskService().start(taskId, user.getId());
+			InternalTaskService internalTaskService = (InternalTaskService) runtime.getTaskService();
+			if (Boolean.TRUE.equals(workItem.getParameter(DiscretionaryItem.PLANNED))) {
+				// Bypass assignment/claim. Keep in created state
+				internalTaskService.execute(new TaskCommand<Void>() {
+					@Override
+					public Void execute(Context context) {
+						TaskContext tc = (TaskContext) context;
+						((InternalTaskData) task.getTaskData()).setStatus(Status.Created);
+						tc.getTaskService().getTaskInstanceService().addTask(task, content);
+						PlannedTaskImpl pt = new PlannedTaskImpl((TaskImpl) task);
+						pt.setDiscretionaryItemId((String) workItem.getParameter(DiscretionaryItem.DISCRETIONARY_ITEM_ID));
+						pt.setPlanningStatus(PlanningStatus.PLANNING_IN_PROGRESS);
+						tc.getPm().persist(pt);//This will fail - look for the pm elsewhere
+						return null;
+					}
+				});
+			} else {
+				long taskId = internalTaskService.addTask(task, content);
+				if (workItem.getParameter(Case.CASE_OWNER) != null) {
+					// This task represents a standalone CaseInstanc;
+					String caseOwner = (String) workItem.getParameter(Case.CASE_OWNER);
+					User user = findExactCaseOwner(runtime, caseOwner);
+					if (user != null) {
+						runtime.getTaskService().claim(taskId, user.getId());
+						runtime.getTaskService().start(taskId, user.getId());
+					}
+				} else if (isAutoClaim(workItem, task)) {
+					runtime.getTaskService().claim(taskId, (String) workItem.getParameter("SwimlaneActorId"));
 				}
-			} else if (isAutoClaim(workItem, task)) {
-				runtime.getTaskService().claim(taskId, (String) workItem.getParameter("SwimlaneActorId"));
 			}
-			// workItem.getParameters().put(CaseElementLifecycleWithTask.TASK, task);
-			// PersistenceContext context = ((PersistenceContextManager) runtime.getKieSession().getEnvironment().get(
-			// EnvironmentName.PERSISTENCE_CONTEXT_MANAGER )).getCommandScopedPersistenceContext();
 		} catch (Exception e) {
 			if (action.equals(OnErrorAction.ABORT)) {
 				manager.abortWorkItem(workItem.getId());
@@ -221,6 +244,6 @@ public class CaseTaskWorkItemHandler extends LocalHTWorkItemHandler {
 
 	@Override
 	public void abortWorkItem(WorkItem workItem, WorkItemManager manager) {
-		//Nothing
+		// Nothing
 	}
 }

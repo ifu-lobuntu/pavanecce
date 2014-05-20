@@ -68,6 +68,7 @@ Sentries with multiple onParts
 *.repetitionRule
 *.parentSuspend
 *.parentResume
+Storage of event variables inside StageInstances
 CaseTask.reactivated - check that process is restarted - it failed previously
 
 3. To implement
@@ -76,26 +77,13 @@ Write Output parameters from Tasks to the containing case's caseFileItem (kind o
 Resolve cleverly which user should own system-initiated tasks
 Clear up the distinction between WS-Ready, WS-Reserved and WS-InProgress and how they relate to Active and Enabled
 
-Planning process:
- User gets planning table from planning element IF allowed to
- 
- A Instantiate discretionary item
-  It contains the applicable discretionaryItems, their allowed roles and parameter definitions
-  User selects a discretionaryItem to instantiate, perhaps with parameter values and role assignment
-  Case Instance populates empty parameters and assigns role if no role, and returns the result to the user.
-  It is now ENABLED/(Reserved/Ready) and persisted NOPE!! read spec
-  User continues to plan 
- 
- B Do planning
-  User selects existing planItemInstance, (either discretionary or planned)
-  User provides actorId
-  User provides input parameter values
- 
- C Submit plan
-  User submits the plan
-  All roles and parameter values are applied
-  Should tasks go to Reserved or inProgress? Reserved I think
+Planning Service:
 
+ - Prepare planning perspective on PlanItemInstanceContainer
+   - wrap existing tasks in planned tasks
+   - include a list of discretionaryItemIds AND their planITemDefinition's name
+ - Prepare new discretionary item
+ - Submit plan
 Planning Tables:
  - Planning Table object (string/xml representing the potential task types) issue the create through processInstance.signalEvent so that the process can assign params/roles
  - DiscretionaryItem

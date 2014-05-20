@@ -10,9 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.drools.core.process.core.Work;
-import org.drools.core.process.instance.WorkItem;
-import org.drools.core.process.instance.impl.WorkItemImpl;
 import org.jbpm.process.core.Context;
 import org.jbpm.process.core.ContextContainer;
 import org.jbpm.process.instance.ContextInstance;
@@ -34,6 +31,7 @@ import org.jbpm.workflow.instance.node.EventNodeInstanceInterface;
 import org.kie.api.definition.process.Node;
 import org.kie.api.definition.process.NodeContainer;
 import org.kie.api.runtime.process.NodeInstance;
+import org.pavanecce.cmmn.jbpm.flow.ItemWithDefinition;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemContainer;
 import org.pavanecce.cmmn.jbpm.flow.PlanningTable;
 import org.pavanecce.cmmn.jbpm.flow.Stage;
@@ -52,45 +50,6 @@ public class StagePlanItemInstance extends AbstractControllableItemInstance<Stag
 	private Map<String, ContextInstance> contextInstances = new HashMap<String, ContextInstance>();
 	private Map<String, List<ContextInstance>> subContextInstances = new HashMap<String, List<ContextInstance>>();
 	private int currentLevel;
-
-	protected void createWorkItem() {
-		workItem = new WorkItemImpl();
-		Work work = getItem().getWork();
-		((WorkItem) workItem).setName(work.getName());
-		((WorkItem) workItem).setProcessInstanceId(getProcessInstance().getId());
-		((WorkItem) workItem).setParameters(new HashMap<String, Object>(work.getParameters()));
-		((WorkItem) workItem).setParameter("planningTable", "");// TODO
-	}
-
-	@Override
-	public Collection<ItemInstanceLifecycle<?>> getChildren() {
-		Set<ItemInstanceLifecycle<?>> result = new HashSet<ItemInstanceLifecycle<?>>();
-		for (NodeInstance nodeInstance : getNodeInstances()) {
-			if (nodeInstance instanceof ItemInstanceLifecycle) {
-				result.add((ItemInstanceLifecycle<?>) nodeInstance);
-			}
-		}
-		return result;
-	}
-
-	@Override
-	public boolean canComplete() {
-		return PlanItemInstanceContainerUtil.canComplete(this);
-	}
-
-	@Override
-	public PlanItemContainer getPlanItemContainer() {
-		return getPlanItemDefinition();
-	}
-
-	@Override
-	public int getLevelForNode(String uniqueID) {
-		return 1;
-	}
-
-	public NodeContainer getNodeContainer() {
-		return (NodeContainer) getItem();
-	}
 
 	@Override
 	public void start() {
@@ -118,6 +77,38 @@ public class StagePlanItemInstance extends AbstractControllableItemInstance<Stag
 		}
 		super.cancel();
 	}
+
+
+	@Override
+	public Collection<ItemInstanceLifecycle<?>> getChildren() {
+		Set<ItemInstanceLifecycle<?>> result = new HashSet<ItemInstanceLifecycle<?>>();
+		for (NodeInstance nodeInstance : getNodeInstances()) {
+			if (nodeInstance instanceof ItemInstanceLifecycle) {
+				result.add((ItemInstanceLifecycle<?>) nodeInstance);
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public boolean canComplete() {
+		return PlanItemInstanceUtil.canComplete(this);
+	}
+
+	@Override
+	public PlanItemContainer getPlanItemContainer() {
+		return getPlanItemDefinition();
+	}
+
+	@Override
+	public int getLevelForNode(String uniqueID) {
+		return 1;
+	}
+
+	public NodeContainer getNodeContainer() {
+		return (NodeContainer) getItem();
+	}
+
 
 	public void addNodeInstance(final org.jbpm.workflow.instance.NodeInstance nodeInstance) {
 		((NodeInstanceImpl) nodeInstance).setId(nodeInstanceCounter++);

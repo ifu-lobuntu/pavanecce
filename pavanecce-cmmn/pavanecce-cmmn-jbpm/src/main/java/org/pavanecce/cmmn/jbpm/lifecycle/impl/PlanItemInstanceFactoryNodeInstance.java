@@ -4,6 +4,7 @@ import org.jbpm.process.instance.impl.ConstraintEvaluator;
 import org.jbpm.workflow.core.impl.NodeImpl;
 import org.jbpm.workflow.instance.node.StateNodeInstance;
 import org.kie.api.runtime.process.NodeInstance;
+import org.pavanecce.cmmn.jbpm.flow.ItemWithDefinition;
 import org.pavanecce.cmmn.jbpm.flow.PlanItem;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemControl;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
@@ -112,20 +113,17 @@ public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> e
 
 	@Override
 	public void create() {
-		if (getPlanItem().getPlanInfo().getItemControl() != null && getPlanItem().getPlanInfo().getItemControl().getRequiredRule() instanceof ConstraintEvaluator) {
-			ConstraintEvaluator constraintEvaluator = (ConstraintEvaluator) getPlanItem().getPlanInfo().getItemControl().getRequiredRule();
-			isPlanItemInstanceRequired = constraintEvaluator.evaluate(this, null, constraintEvaluator);
-		} else {
-			isPlanItemInstanceRequired = Boolean.FALSE;
-		}
-		if (getPlanItem().getPlanInfo().getItemControl() != null && getPlanItem().getPlanInfo().getItemControl().getRepetitionRule() instanceof ConstraintEvaluator) {
-			ConstraintEvaluator constraintEvaluator = (ConstraintEvaluator) getPlanItem().getPlanInfo().getItemControl().getRepetitionRule();
-			isRepeating = constraintEvaluator.evaluate(this, null, constraintEvaluator);
+		ItemWithDefinition<T> planItem = getPlanItem();
+		PlanItemInstanceFactoryNodeInstance<T> contextNodeInstance = this;
+		this.isPlanItemInstanceRequired=PlanItemInstanceUtil.isRequired(planItem, contextNodeInstance);
+		if (planItem.getItemControl() != null && planItem.getItemControl().getRepetitionRule() instanceof ConstraintEvaluator) {
+			ConstraintEvaluator constraintEvaluator = (ConstraintEvaluator) planItem.getItemControl().getRepetitionRule();
+			isRepeating = constraintEvaluator.evaluate(contextNodeInstance, null, constraintEvaluator);
 		} else {
 			isRepeating = false;
 		}
 		hasPlanItemBeenInstantiated=false;
-		planElementState.create(this);
+		planElementState.create(contextNodeInstance);
 	}
 
 	public boolean isRepeating() {
