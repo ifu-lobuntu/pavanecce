@@ -4,7 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.pavanecce.cmmn.jbpm.instance.PlanElementLifecycle;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementLifecycle;
 import org.pavanecce.common.util.NameConverter;
 
 public enum PlanItemTransition {

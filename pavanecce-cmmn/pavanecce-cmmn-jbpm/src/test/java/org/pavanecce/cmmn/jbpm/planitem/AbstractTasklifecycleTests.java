@@ -8,8 +8,8 @@ import org.junit.Test;
 import org.kie.api.task.model.TaskSummary;
 import org.pavanecce.cmmn.jbpm.AbstractConstructionTestCase;
 import org.pavanecce.cmmn.jbpm.flow.Case;
-import org.pavanecce.cmmn.jbpm.instance.PlanElementState;
-import org.pavanecce.cmmn.jbpm.instance.impl.CaseInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 import org.pavanecce.cmmn.jbpm.task.ReactivateTaskCommand;
 import org.pavanecce.cmmn.jbpm.task.ReenableTaskCommand;
 

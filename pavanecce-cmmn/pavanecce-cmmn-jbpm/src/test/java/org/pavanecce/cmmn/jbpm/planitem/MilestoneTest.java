@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.junit.Test;
 import org.kie.api.task.model.TaskSummary;
-import org.pavanecce.cmmn.jbpm.instance.PlanElementState;
-import org.pavanecce.cmmn.jbpm.instance.impl.CaseInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 
 public class MilestoneTest extends AbstractOccurrableTestCase {
 	public MilestoneTest() {

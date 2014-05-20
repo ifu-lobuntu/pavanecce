@@ -12,7 +12,7 @@ import org.kie.api.runtime.process.WorkItemHandler;
 import org.kie.internal.runtime.manager.Disposable;
 import org.kie.internal.runtime.manager.DisposeListener;
 import org.kie.internal.task.api.EventService;
-import org.pavanecce.cmmn.jbpm.instance.PlanElementLifecycleWithTask;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementLifecycleWithTask;
 import org.pavanecce.cmmn.jbpm.task.CaseTaskWorkItemHandler;
 import org.pavanecce.cmmn.jbpm.task.UpdateTaskStatusWorkItemHandler;
 

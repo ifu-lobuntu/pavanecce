@@ -1,0 +1,4 @@
+Clean up all the validPeers and validParents
+Make all PlanItems extend AbstractPlanItem 
+Make all PlanItemDefinitions extend AbstractPlanItemDefinition 
+Then get rid of the PlanItem subclasses and thus the PlanInfo class 

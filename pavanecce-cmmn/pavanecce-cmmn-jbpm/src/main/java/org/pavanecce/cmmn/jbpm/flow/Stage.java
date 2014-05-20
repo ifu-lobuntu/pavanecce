@@ -10,23 +10,19 @@ import org.drools.core.process.core.Work;
 import org.drools.core.process.core.datatype.impl.type.StringDataType;
 import org.drools.core.process.core.impl.ParameterDefinitionImpl;
 import org.drools.core.process.core.impl.WorkImpl;
-import org.jbpm.workflow.core.node.CompositeContextNode;
 import org.jbpm.workflow.core.node.EndNode;
 import org.jbpm.workflow.core.node.StartNode;
-import org.jbpm.workflow.core.node.StateNode;
 
-public class Stage extends StateNode implements PlanItemDefinition, PlanItemContainer {
+public class Stage extends AbstractPlanItemDefinition implements PlanItemContainer {
 
 	private static final long serialVersionUID = 3123425777169912160L;
-	private String elementId;
 	private boolean autoComplete;
 	private Collection<PlanItemInfo<?>> planItemInfo = new ArrayList<PlanItemInfo<?>>();
 	private StartNode defaultStart;
 	private DefaultSplit defaultSplit;
 	private EndNode defaultEnd;
 	private DefaultJoin defaultJoin;
-	private Case theCase;
-	private PlanItemControl defaultControl;
+
 	private PlanningTable planningTable;
 
 
@@ -41,15 +37,6 @@ public class Stage extends StateNode implements PlanItemDefinition, PlanItemCont
 		parameterDefinitions.add(new ParameterDefinitionImpl("Skippable", new StringDataType()));
 		parameterDefinitions.add(new ParameterDefinitionImpl("Content", new StringDataType()));
 		return work;
-	}
-
-	@Override
-	public Case getCase() {
-		return this.theCase;
-	}
-
-	public void setCase(Case theCase) {
-		this.theCase = theCase;
 	}
 
 	@Override
@@ -92,14 +79,6 @@ public class Stage extends StateNode implements PlanItemDefinition, PlanItemCont
 		this.defaultJoin = defaultJoin;
 	}
 
-	@Override
-	public String getElementId() {
-		return elementId;
-	}
-
-	public void setElementId(String elementId) {
-		this.elementId = elementId;
-	}
 
 	@Override
 	public void addPlanItemInfo(PlanItemInfo<?> d) {
@@ -117,14 +96,6 @@ public class Stage extends StateNode implements PlanItemDefinition, PlanItemCont
 
 	public void setAutoComplete(boolean autoComplete) {
 		this.autoComplete = autoComplete;
-	}
-
-	public PlanItemControl getDefaultControl() {
-		return defaultControl;
-	}
-
-	public void setDefaultControl(PlanItemControl defaultControl) {
-		this.defaultControl = defaultControl;
 	}
 
 	public void setPlanningTable(PlanningTable planningTable) {

@@ -1,9 +1,9 @@
 package org.pavanecce.cmmn.jbpm.planitem;
 
 import org.kie.api.runtime.process.NodeInstance;
-import org.pavanecce.cmmn.jbpm.instance.PlanElementState;
-import org.pavanecce.cmmn.jbpm.instance.PlanItemInstanceContainerLifecycle;
-import org.pavanecce.cmmn.jbpm.instance.impl.StagePlanItemInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceContainerLifecycle;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.StagePlanItemInstance;
 
 public class StagePlanItemInstanceTests extends AbstractPlanItemInstanceContainerTests {
 

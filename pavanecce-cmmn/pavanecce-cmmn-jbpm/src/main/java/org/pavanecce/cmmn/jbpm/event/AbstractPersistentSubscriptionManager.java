@@ -25,7 +25,7 @@ import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
 import org.pavanecce.cmmn.jbpm.flow.OnPart;
 import org.pavanecce.cmmn.jbpm.infra.CaseInstanceFactory;
 import org.pavanecce.cmmn.jbpm.infra.OnPartInstanceSubscription;
-import org.pavanecce.cmmn.jbpm.instance.impl.CaseInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 import org.pavanecce.common.ObjectPersistence;
 
 public abstract class AbstractPersistentSubscriptionManager<T extends CaseSubscriptionInfo<X>, X extends PersistedCaseFileItemSubscriptionInfo> implements SubscriptionManager {

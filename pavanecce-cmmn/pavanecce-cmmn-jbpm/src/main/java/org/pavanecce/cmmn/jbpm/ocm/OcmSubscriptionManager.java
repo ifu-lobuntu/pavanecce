@@ -38,7 +38,7 @@ import org.pavanecce.cmmn.jbpm.event.DemarcatedSubscriptionContext;
 import org.pavanecce.cmmn.jbpm.event.PersistedCaseFileItemSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.event.SubscriptionManager;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
-import org.pavanecce.cmmn.jbpm.instance.impl.CaseInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 import org.pavanecce.common.ObjectPersistence;
 import org.pavanecce.common.ocm.OcmFactory;
 import org.pavanecce.common.ocm.OcmObjectPersistence;

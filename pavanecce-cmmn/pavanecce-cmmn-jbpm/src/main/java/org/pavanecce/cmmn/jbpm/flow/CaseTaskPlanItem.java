@@ -11,7 +11,7 @@ import org.jbpm.services.task.wih.util.PeopleAssignmentHelper;
 import org.jbpm.workflow.core.node.SubProcessNode;
 import org.kie.api.definition.process.Connection;
 
-public class CaseTaskPlanItem extends SubProcessNode implements PlanItem<CaseTask>,MultiInstancePlanItem {
+public class CaseTaskPlanItem extends SubProcessNode implements PlanItem<CaseTask>,MultiInstancePlanItem ,TaskItemWithDefinition<CaseTask>{
 
 	private static final long serialVersionUID = 76131417693392877L;
 	private String elementId;
@@ -116,6 +116,14 @@ public class CaseTaskPlanItem extends SubProcessNode implements PlanItem<CaseTas
 
 	public void setPlanItemContainer(PlanItemContainer planItemContainer) {
 		this.planItemContainer = planItemContainer;
+	}
+	@Override
+	public CaseTask getDefinition() {
+		return getPlanInfo().getDefinition();
+	}
+	@Override
+	public PlanItemControl getItemControl() {
+		return getPlanInfo().getItemControl();
 	}
 
 }

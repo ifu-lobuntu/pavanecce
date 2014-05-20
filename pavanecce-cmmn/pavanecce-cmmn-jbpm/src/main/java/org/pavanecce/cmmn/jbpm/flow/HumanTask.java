@@ -11,22 +11,20 @@ import org.drools.core.process.core.datatype.impl.type.StringDataType;
 import org.drools.core.process.core.impl.ParameterDefinitionImpl;
 import org.drools.core.process.core.impl.WorkImpl;
 import org.jbpm.services.task.wih.util.PeopleAssignmentHelper;
-import org.jbpm.workflow.core.node.WorkItemNode;
 
-public class HumanTask extends WorkItemNode implements TaskDefinition {
+public class HumanTask extends AbstractPlanItemDefinition implements TaskDefinition {
 	private String performerRef;
 	private Role performer;
 	private boolean isBlocking;
 
 	private static final long serialVersionUID = 2502972573721493216L;
-	private String elementId;
 	private List<CaseParameter> inputParameters = new ArrayList<CaseParameter>();
 	private List<CaseParameter> outputParameters = new ArrayList<CaseParameter>();
-	private PlanItemControl defaultControl;
 	private PlanningTable planningTable;
+	private Work work;
 
 	public HumanTask() {
-		Work work = new WorkImpl();
+		work = new WorkImpl();
 		work.setName("Human Task");
 		Set<ParameterDefinition> parameterDefinitions = new HashSet<ParameterDefinition>();
 		parameterDefinitions.add(new ParameterDefinitionImpl("TaskName", new StringDataType()));
@@ -42,17 +40,7 @@ public class HumanTask extends WorkItemNode implements TaskDefinition {
 		// TODO: recipients
 		// TODO: ...
 		work.setParameterDefinitions(parameterDefinitions);
-		setWork(work);
 
-	}
-
-	@Override
-	public String getElementId() {
-		return elementId;
-	}
-
-	public void setElementId(String elementId) {
-		this.elementId = elementId;
 	}
 
 	public void addOutputParameter(CaseParameter cp) {
@@ -99,19 +87,11 @@ public class HumanTask extends WorkItemNode implements TaskDefinition {
 
 	@Override
 	public Work getWork() {
-		Work result = super.getWork();
+		Work result = work;
 		if (getPerformer() != null) {
 			result.setParameter(PeopleAssignmentHelper.GROUP_ID, getPerformer().getName());
 		}
 		return result;
-	}
-
-	public PlanItemControl getDefaultControl() {
-		return defaultControl;
-	}
-
-	public void setDefaultControl(PlanItemControl defaultControl) {
-		this.defaultControl = defaultControl;
 	}
 
 	public void setPlanningTable(PlanningTable item) {
@@ -121,5 +101,4 @@ public class HumanTask extends WorkItemNode implements TaskDefinition {
 	public PlanningTable getPlanningTable() {
 		return planningTable;
 	}
-
 }

@@ -82,22 +82,22 @@ import org.pavanecce.cmmn.jbpm.infra.CaseInstanceMarshaller;
 import org.pavanecce.cmmn.jbpm.infra.CaseRegisterableItemsFactory;
 import org.pavanecce.cmmn.jbpm.infra.PlanItemBuilder;
 import org.pavanecce.cmmn.jbpm.infra.SentryBuilder;
-import org.pavanecce.cmmn.jbpm.instance.PlanElementState;
-import org.pavanecce.cmmn.jbpm.instance.PlanItemInstanceLifecycle;
-import org.pavanecce.cmmn.jbpm.instance.impl.CaseInstance;
-import org.pavanecce.cmmn.jbpm.instance.impl.CaseTaskPlanItemInstance;
-import org.pavanecce.cmmn.jbpm.instance.impl.DefaultJoinInstance;
-import org.pavanecce.cmmn.jbpm.instance.impl.DefaultSplitInstance;
-import org.pavanecce.cmmn.jbpm.instance.impl.HumanTaskPlanItemInstance;
-import org.pavanecce.cmmn.jbpm.instance.impl.MilestonePlanItemInstance;
-import org.pavanecce.cmmn.jbpm.instance.impl.OnPartInstance;
-import org.pavanecce.cmmn.jbpm.instance.impl.PlanItemInstanceFactoryNodeInstance;
-import org.pavanecce.cmmn.jbpm.instance.impl.SentryInstance;
-import org.pavanecce.cmmn.jbpm.instance.impl.StagePlanItemInstance;
-import org.pavanecce.cmmn.jbpm.instance.impl.TimerEventPlanItemInstance;
-import org.pavanecce.cmmn.jbpm.instance.impl.UserEventPlanItemInstance;
 import org.pavanecce.cmmn.jbpm.jpa.CollectionPlaceHolderResolveStrategy;
 import org.pavanecce.cmmn.jbpm.jpa.HibernateSubscriptionManager;
+import org.pavanecce.cmmn.jbpm.lifecycle.ItemInstanceLifecycle;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseTaskPlanItemInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.DefaultJoinInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.DefaultSplitInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.HumanTaskPlanItemInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.MilestonePlanItemInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.OnPartInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.PlanItemInstanceFactoryNodeInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.SentryInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.StagePlanItemInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.TimerEventPlanItemInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.UserEventPlanItemInstance;
 import org.pavanecce.cmmn.jbpm.ocm.OcmCasePersistence;
 import org.pavanecce.cmmn.jbpm.ocm.OcmCollectionPlaceHolderResolveStrategy;
 import org.pavanecce.cmmn.jbpm.ocm.OcmPlaceHolderResolveStrategy;
@@ -248,11 +248,11 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 		}
 		if (sr.count == 0) {
 			for (NodeInstance ni : ci.getNodeInstances()) {
-				if (ni instanceof PlanItemInstanceLifecycle && ni.getNodeName().equals(planItemName)) {
-					if (((PlanItemInstanceLifecycle<?>) ni).getPlanElementState() == s) {
+				if (ni instanceof ItemInstanceLifecycle && ni.getNodeName().equals(planItemName)) {
+					if (((ItemInstanceLifecycle<?>) ni).getPlanElementState() == s) {
 						sr.count++;
 					} else {
-						sr.foundState = ((PlanItemInstanceLifecycle<?>) ni).getPlanElementState().name();
+						sr.foundState = ((ItemInstanceLifecycle<?>) ni).getPlanElementState().name();
 					}
 				} else if (ni instanceof StagePlanItemInstance) {
 					countItemInState(planItemName, s, (StagePlanItemInstance) ni, sr);

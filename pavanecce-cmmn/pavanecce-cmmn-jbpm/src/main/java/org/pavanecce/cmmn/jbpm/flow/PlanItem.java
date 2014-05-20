@@ -2,7 +2,7 @@ package org.pavanecce.cmmn.jbpm.flow;
 
 import org.jbpm.workflow.core.Node;
 
-public interface PlanItem<T extends PlanItemDefinition> extends CMMNElement, Node {
+public interface PlanItem<T extends PlanItemDefinition> extends  Node,ItemWithDefinition<T> {
 	PlanItemContainer getPlanItemContainer();
 	void setPlanItemContainer(PlanItemContainer pic);
 
@@ -12,6 +12,7 @@ public interface PlanItem<T extends PlanItemDefinition> extends CMMNElement, Nod
 	public abstract String getElementId();
 
 	PlanItemInfo<T> getPlanInfo();
+	
 	String getDescription();
 
 }

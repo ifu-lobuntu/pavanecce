@@ -6,9 +6,9 @@ import java.util.List;
 import org.junit.Test;
 import org.kie.api.runtime.process.NodeInstance;
 import org.kie.api.task.model.TaskSummary;
-import org.pavanecce.cmmn.jbpm.instance.PlanElementState;
-import org.pavanecce.cmmn.jbpm.instance.impl.CaseInstance;
-import org.pavanecce.cmmn.jbpm.instance.impl.CaseTaskPlanItemInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseTaskPlanItemInstance;
 
 import test.HousePlan;
 import test.WallPlan;

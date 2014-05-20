@@ -25,7 +25,6 @@ public class HumanTaskHandler extends AbstractCaseElementHandler implements Hand
 		node.setBlocking(!"false".equals(attrs.getValue("isBlocking")));
 		node.setPerformerRef(attrs.getValue("performerRef"));
 		node.setName(attrs.getValue("name"));
-		node.setWaitForCompletion(node.isBlocking());
 		((Case) parser.getParent(Case.class)).addPlanItemDefinition(node);
 		node.setId(IdGenerator.getIdAsUniqueAsUuid(parser, node));
 		return node;

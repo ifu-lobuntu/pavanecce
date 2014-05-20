@@ -1,0 +1,139 @@
+1. Done and Tested
+JCR/OCM persistent subscriptions
+ - scope of subscriptions
+ - bindingRefined
+ - throwing CREATE,DELETE,ADD_CHILD,REMOVE_CHILD,ADD_REFERENCE,REMOVE_REFERENCE and UPDATE events
+
+JCR/OCM demarcated subscriptions
+ - throwing CREATE,DELETE,ADD_CHILD,REMOVE_CHILD,ADD_REFERENCE,REMOVE_REFERENCE and UPDATE events
+
+JPA/Hibernate persistent subscriptions
+ - scope of subscriptions 
+ - bindingRefined
+ - throwing CREATE,DELETE,ADD_CHILD,REMOVE_CHILD,ADD_REFERENCE,REMOVE_REFERENCE and UPDATE events
+
+JPA/Hibernate demarcated subscriptions
+ - throwing CREATE,DELETE,ADD_CHILD,REMOVE_CHILD,ADD_REFERENCE,REMOVE_REFERENCE and UPDATE events
+
+Timer Event
+ - OCCUR,CREATE,SUSPEND,RESUME,TERMINATE,PARENT_TERMINATE
+
+Milestone
+ - entry criteria achieved
+ - requiredRule
+ - repetitionRule
+ - OCCUR,CREATE,SUSPEND,RESUME,TERMINATE,PARENT_TERMINATE
+
+CaseTask
+ - basic call
+ - entry criteria achieved
+ - automaticActivationRule
+ - exit criteria achieved
+ - parameterMapping
+ - EXIT,DISABLE,ENABLE,MANUAL_START,START,COMPLETE,TERMINATE,FAULT,SUSPEND,RESUME,REENABLE,REACTIVATE,CREATE
+
+Human Task
+ - automaticActivationRule
+ - repetitionRule
+ - entry criteria achieved
+ - exit criteria achieved
+ - EXIT,DISABLE,ENABLE,MANUAL_START,START,COMPLETE,TERMINATE,FAULT,SUSPEND,RESUME,REENABLE,REACTIVATE,CREATE
+
+UserEvent
+ - OCCUR, CREATE,SUSPEND,RESUME,TERMINATE,PARENT_TERMINATE
+
+Stage:
+ - automaticActivationRule
+ - exit criteria achieved
+ - EXIT,DISABLE,ENABLE,MANUAL_START,START,COMPLETE,TERMINATE,FAULT,SUSPEND,RESUME,CREATE,REENABLE,REACTIVATE
+ - auto completion
+ 
+CaseModel
+ - auto completion
+ - manual completion
+ - direct exit Criteria
+ - CLOSE, COMPLETE,CREATE, SUSPEND, REACTIVATE (from suspended),TERMINATE,FAULT
+
+
+Generate OCM and JPA test Java classes from UML along with CaseFileItemDefinition includes
+Implement OCLProcessDialect that extends JavaProcessDialect
+Output ParameterMapping, bindingRefinement and scoped subscriptions
+Recursive subscriptions, parameterizable
+
+
+2. To test
+Sentry.Conditions
+Sentries with multiple onParts
+*.no sentry
+*.repetitionRule
+*.parentSuspend
+*.parentResume
+CaseTask.reactivated - check that process is restarted - it failed previously
+
+3. To implement
+Write Output Parameters from Processes to Tasks (CaseTask, ProcessTask, Standalone Case) 
+Write Output parameters from Tasks to the containing case's caseFileItem (kind of superfluous in a pass by reference world).
+Resolve cleverly which user should own system-initiated tasks
+Clear up the distinction between WS-Ready, WS-Reserved and WS-InProgress and how they relate to Active and Enabled
+
+Planning process:
+ User gets planning table from planning element IF allowed to
+ 
+ A Instantiate discretionary item
+  It contains the applicable discretionaryItems, their allowed roles and parameter definitions
+  User selects a discretionaryItem to instantiate, perhaps with parameter values and role assignment
+  Case Instance populates empty parameters and assigns role if no role, and returns the result to the user.
+  It is now ENABLED/(Reserved/Ready) and persisted NOPE!! read spec
+  User continues to plan 
+ 
+ B Do planning
+  User selects existing planItemInstance, (either discretionary or planned)
+  User provides actorId
+  User provides input parameter values
+ 
+ C Submit plan
+  User submits the plan
+  All roles and parameter values are applied
+  Should tasks go to Reserved or inProgress? Reserved I think
+
+Planning Tables:
+ - Planning Table object (string/xml representing the potential task types) issue the create through processInstance.signalEvent so that the process can assign params/roles
+ - DiscretionaryItem
+ - DiscretionaryItem.itemControl.requiredRule
+ - ApplicabilityRule
+ 
+Planning Command:
+ - Assigning tasks at runtime (use forward/delegate)
+ - Assigning caseParameters at runtime (use command)
+ - think of costing and acceptance thereof here
+
+Process/Case Task
+ - parameter transformation
+
+CaseModel:
+ - REACTIVATE (from Failed,Terminated, Completed? need input from OMG)*
+ 
+
+plan fragment
+contextRefs for rules
+
+4. Difficult
+Sentry.condition without onParts - when to trigger the evaluation of the condition.
+With JCR Property.CHANGE events, try to get the original value and only fire events for ADD_/REMOVE_REFERENCE when they applicable - JCR limitation
+Optimize caching of SubscriptionInfo and perhaps even other OCM objects IN OCMSubscriptioinManager
+
+
+5. Questions for OMG:
+Which transition is called when a CasePlanModel stage reaches its exitCriteria - it does not seem to be in the statemachine.
+When a Stage needs to be completed manually, which users should be allowed to do that? Same goes for suspend/resume/terminate/close etc.
+In the notation examples, it seems there are Discretionary items that also have entryCriteratia. How so?
+For stages and tasks, when they are enabled and repetitionRule=true, it should create a new instance, but what happens to the instance that was already in the available state?
+Cab a UserEvent occur more than once?
+7.5.3. does not include Timer/UserEvents in the discussion of RequiredRules, however 5.4.11.2 does, but again it is excluded in table 42. 
+Table 49 does not list the exit transition for CaseInstances - which transition will occur when the Case's casePlanModel Stage reaches its exitCriteria? 
+Does table 52 pertain to the Stage instance representing the casePlanModel as well? If so, what do we do with the re-active transition propagation to subelements?
+Discrepancies in XSD:
+  In the XSD, TimerEventListener.timerExpression is a fully fledged expression, but in the spec it is just string. Does the result still have to be ISO-8601 compliant?
+  AuthorizedRoleRefs for user events?
+  parentTerminate StandardEvent absent
+ 

@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class TableItem implements CMMNElement {
+public class TableItem extends AbstractItem implements CMMNElement {
 	private static final long serialVersionUID = 6743815602437868413L;
 	private Map<String, Role> authorizedRoles = new HashMap<String, Role>();
 	private String elementId;
@@ -50,7 +50,7 @@ public class TableItem implements CMMNElement {
 	}
 
 	public static String getPlannerRoles(StagePlanItem spi) {
-		return getPlannerRoles(spi.getStage().getPlanningTable(),spi.getPlanItemContainer().getPlanningTable());
+		return getPlannerRoles(spi.getDefinition().getPlanningTable(),spi.getPlanItemContainer().getPlanningTable());
 	}
 
 	private static String getPlannerRoles(PlanningTable... planningTables) {

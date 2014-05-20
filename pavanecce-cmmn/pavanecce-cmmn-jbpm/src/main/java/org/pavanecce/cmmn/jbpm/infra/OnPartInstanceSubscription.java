@@ -12,7 +12,7 @@ import org.pavanecce.cmmn.jbpm.flow.CaseFileItem;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemOnPart;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
 import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
-import org.pavanecce.cmmn.jbpm.instance.impl.CaseInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 import org.pavanecce.cmmn.jbpm.ocm.AbstractCaseFileItemSubscriptionInfo;
 
 public class OnPartInstanceSubscription extends AbstractCaseFileItemSubscriptionInfo implements CaseFileItemSubscriptionInfo {

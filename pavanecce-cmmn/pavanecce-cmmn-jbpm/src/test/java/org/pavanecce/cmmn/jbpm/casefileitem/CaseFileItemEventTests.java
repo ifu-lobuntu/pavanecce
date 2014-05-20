@@ -7,7 +7,7 @@ import javax.naming.NamingException;
 
 import org.junit.Test;
 import org.pavanecce.cmmn.jbpm.AbstractConstructionTestCase;
-import org.pavanecce.cmmn.jbpm.instance.impl.CaseInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 
 import test.ConstructionCase;
 import test.House;

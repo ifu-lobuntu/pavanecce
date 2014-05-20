@@ -8,7 +8,7 @@ import javax.persistence.ManyToOne;
 import org.pavanecce.cmmn.jbpm.event.CaseSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.event.PersistedCaseFileItemSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
-import org.pavanecce.cmmn.jbpm.instance.impl.CaseInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 import org.pavanecce.cmmn.jbpm.ocm.AbstractCaseFileItemSubscriptionInfo;
 
 @Entity

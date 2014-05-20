@@ -11,11 +11,11 @@ import org.kie.api.task.model.TaskSummary;
 import org.pavanecce.cmmn.jbpm.AbstractConstructionTestCase;
 import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.flow.DefaultJoin;
-import org.pavanecce.cmmn.jbpm.instance.PlanElementState;
-import org.pavanecce.cmmn.jbpm.instance.PlanItemInstanceContainerLifecycle;
-import org.pavanecce.cmmn.jbpm.instance.PlanItemInstanceLifecycle;
-import org.pavanecce.cmmn.jbpm.instance.impl.CaseInstance;
-import org.pavanecce.cmmn.jbpm.instance.impl.CaseTaskPlanItemInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.ItemInstanceLifecycle;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceContainerLifecycle;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseTaskPlanItemInstance;
 
 import test.ConstructionCase;
 import test.House;
@@ -224,7 +224,7 @@ public abstract class AbstractPlanItemInstanceContainerTests extends AbstractCon
 		// assertPlanItemInState(caseInstance.getId(), "TheCaseTaskPlanItem", PlanElementState.ACTIVE);
 	}
 
-	private CaseInstance triggerInitialActivity() {
+	protected CaseInstance triggerInitialActivity() {
 		getPersistence().start();
 		CaseInstance ci1 = reloadCaseInstance();
 		ci1.signalEvent("StartUserEvent", new Object());
@@ -310,11 +310,11 @@ public abstract class AbstractPlanItemInstanceContainerTests extends AbstractCon
 		if (true)
 			return;
 		System.out.println(pi);
-		for (PlanItemInstanceLifecycle<?> ni : pi.getChildren()) {
-			if (ni instanceof PlanItemInstanceLifecycle) {
-				System.out.println(s + ni.getPlanItemName() + ":" + ni.getPlanElementState());
+		for (ItemInstanceLifecycle<?> ni : pi.getChildren()) {
+			if (ni instanceof ItemInstanceLifecycle) {
+				System.out.println(s + ni.getItemName() + ":" + ni.getPlanElementState());
 			} else {
-				System.out.println(s + ni.getPlanItemName());
+				System.out.println(s + ni.getItemName());
 			}
 			if (ni instanceof PlanItemInstanceContainerLifecycle) {
 				printState(s + " ", (PlanItemInstanceContainerLifecycle) ni);

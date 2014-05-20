@@ -26,6 +26,7 @@ import org.pavanecce.cmmn.jbpm.flow.HumanTask;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 import org.pavanecce.cmmn.jbpm.flow.PlanningTable;
 import org.pavanecce.cmmn.jbpm.flow.Role;
+import org.pavanecce.cmmn.jbpm.flow.Sentry;
 import org.pavanecce.cmmn.jbpm.flow.Stage;
 import org.pavanecce.cmmn.jbpm.flow.StagePlanItem;
 import org.pavanecce.cmmn.jbpm.flow.TableItem;
@@ -158,12 +159,23 @@ public class CaseHandler extends PlanItemContainerHandler implements Handler {
 			}
 		}
 		copyStages(process.getNodes());
+		String exitsString = cpm.getAttribute("exitCriteriaRefs");
+		if (exitsString != null) {
+			String[] exitCriteriaRefs = exitsString.split("\\ ");
+			for (String string : exitCriteriaRefs) {
+				for (Node node : process.getNodes()) {
+					if (node instanceof Sentry && ((Sentry) node).getElementId().equals(string)) {
+						((Sentry) node).setExitsCase(true);
+					}
+				}
+			}
+		}
 		return process;
 	}
 
 	public void copyStages(Node[] nodes) {
 		for (Node node : nodes) {
-			if(node instanceof StagePlanItem){
+			if (node instanceof StagePlanItem) {
 				StagePlanItem spi = (StagePlanItem) node;
 				spi.copyFromStage();
 				copyStages(spi.getNodes());

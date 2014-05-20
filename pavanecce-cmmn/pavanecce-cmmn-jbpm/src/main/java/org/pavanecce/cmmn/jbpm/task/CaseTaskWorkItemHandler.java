@@ -35,8 +35,8 @@ import org.kie.internal.task.api.model.InternalPeopleAssignments;
 import org.kie.internal.task.api.model.InternalTask;
 import org.kie.internal.task.api.model.InternalTaskData;
 import org.pavanecce.cmmn.jbpm.flow.Case;
-import org.pavanecce.cmmn.jbpm.instance.ControllablePlanItemInstanceLifecycle;
-import org.pavanecce.cmmn.jbpm.instance.PlanElementLifecycleWithTask;
+import org.pavanecce.cmmn.jbpm.lifecycle.ControllableItemInstanceLifecycle;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementLifecycleWithTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +46,7 @@ public class CaseTaskWorkItemHandler extends LocalHTWorkItemHandler {
 	@Override
 	protected Task createTaskBasedOnWorkItemParams(KieSession session, WorkItem workItem) {
 		InternalTask task = new TaskImpl();
-		String taskName = (String) workItem.getParameter(ControllablePlanItemInstanceLifecycle.TASK_NODE_NAME);
+		String taskName = (String) workItem.getParameter(ControllableItemInstanceLifecycle.TASK_NODE_NAME);
 
 		if (taskName != null) {
 			List<I18NText> names = new ArrayList<I18NText>();

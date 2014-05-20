@@ -25,22 +25,22 @@ import org.kie.api.runtime.process.NodeInstance;
 import org.kie.api.runtime.process.NodeInstanceContainer;
 import org.kie.api.runtime.process.ProcessInstance;
 import org.kie.api.runtime.process.WorkflowProcessInstance;
-import org.pavanecce.cmmn.jbpm.instance.ControllablePlanItemInstanceLifecycle;
-import org.pavanecce.cmmn.jbpm.instance.OccurrablePlanItemInstanceLifecycle;
-import org.pavanecce.cmmn.jbpm.instance.PlanElementState;
-import org.pavanecce.cmmn.jbpm.instance.PlanItemInstanceLifecycleWithHistory;
-import org.pavanecce.cmmn.jbpm.instance.impl.CaseInstance;
-import org.pavanecce.cmmn.jbpm.instance.impl.CaseTaskPlanItemInstance;
-import org.pavanecce.cmmn.jbpm.instance.impl.DefaultJoinInstance;
-import org.pavanecce.cmmn.jbpm.instance.impl.DefaultSplitInstance;
-import org.pavanecce.cmmn.jbpm.instance.impl.HumanTaskPlanItemInstance;
-import org.pavanecce.cmmn.jbpm.instance.impl.MilestonePlanItemInstance;
-import org.pavanecce.cmmn.jbpm.instance.impl.OnPartInstance;
-import org.pavanecce.cmmn.jbpm.instance.impl.PlanItemInstanceFactoryNodeInstance;
-import org.pavanecce.cmmn.jbpm.instance.impl.SentryInstance;
-import org.pavanecce.cmmn.jbpm.instance.impl.StagePlanItemInstance;
-import org.pavanecce.cmmn.jbpm.instance.impl.TimerEventPlanItemInstance;
-import org.pavanecce.cmmn.jbpm.instance.impl.UserEventPlanItemInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.ControllableItemInstanceLifecycle;
+import org.pavanecce.cmmn.jbpm.lifecycle.ItemInstanceLifecycleWithHistory;
+import org.pavanecce.cmmn.jbpm.lifecycle.OccurrablePlanItemInstanceLifecycle;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseTaskPlanItemInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.DefaultJoinInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.DefaultSplitInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.HumanTaskPlanItemInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.MilestonePlanItemInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.OnPartInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.PlanItemInstanceFactoryNodeInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.SentryInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.StagePlanItemInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.TimerEventPlanItemInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.UserEventPlanItemInstance;
 
 public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 	private static final int SENTRY_INSTANCE = 176;
@@ -81,19 +81,19 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 		return read;
 	}
 
-	private void writePlanItemStates(PlanItemInstanceLifecycleWithHistory<?> pi, ObjectOutputStream stream) throws IOException {
+	private void writePlanItemStates(ItemInstanceLifecycleWithHistory<?> pi, ObjectOutputStream stream) throws IOException {
 		stream.writeInt(pi.getPlanElementState().ordinal());
 		stream.writeInt(pi.getLastBusyState().ordinal());
-		if (pi instanceof ControllablePlanItemInstanceLifecycle) {
-			stream.writeBoolean(((ControllablePlanItemInstanceLifecycle<?>) pi).isCompletionRequired());
+		if (pi instanceof ControllableItemInstanceLifecycle) {
+			stream.writeBoolean(((ControllableItemInstanceLifecycle<?>) pi).isCompletionRequired());
 		}
 	}
 
-	private void readPlanItemStates(PlanItemInstanceLifecycleWithHistory<?> pi, ObjectInputStream stream) throws IOException {
+	private void readPlanItemStates(ItemInstanceLifecycleWithHistory<?> pi, ObjectInputStream stream) throws IOException {
 		pi.setPlanElementState(PlanElementState.values()[stream.readInt()]);
 		pi.setLastBusyState(PlanElementState.values()[stream.readInt()]);
-		if (pi instanceof ControllablePlanItemInstanceLifecycle) {
-			((ControllablePlanItemInstanceLifecycle<?>) pi).internalSetCompletionRequired(stream.readBoolean());
+		if (pi instanceof ControllableItemInstanceLifecycle) {
+			((ControllableItemInstanceLifecycle<?>) pi).internalSetCompletionRequired(stream.readBoolean());
 		}
 	}
 

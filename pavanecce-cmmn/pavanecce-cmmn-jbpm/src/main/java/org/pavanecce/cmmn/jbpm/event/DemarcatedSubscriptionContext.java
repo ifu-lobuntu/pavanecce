@@ -9,7 +9,7 @@ import java.util.Set;
 
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
 import org.pavanecce.cmmn.jbpm.infra.OnPartInstanceSubscription;
-import org.pavanecce.cmmn.jbpm.instance.impl.CaseInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 
 public class DemarcatedSubscriptionContext {
 	private static ThreadLocal<Map<Long, Set<OnPartInstanceSubscription>>> demarcatedSubscriptions = new ThreadLocal<Map<Long, Set<OnPartInstanceSubscription>>>();

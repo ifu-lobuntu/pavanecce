@@ -24,7 +24,6 @@ public class CaseTaskHandler extends AbstractCaseElementHandler implements Handl
 		node.setElementId(attrs.getValue("id"));
 		node.setBlocking(!"false".equals(attrs.getValue("isBlocking")));
 		node.setName(attrs.getValue("name"));
-		node.setWaitForCompletion(node.isBlocking());
 		String caseRef = attrs.getValue("caseRef");
 		if (caseRef != null) {
 			String[] split = caseRef.split("\\#");

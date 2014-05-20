@@ -5,7 +5,6 @@ import java.util.HashSet;
 import org.drools.core.xml.ExtensibleXmlParser;
 import org.drools.core.xml.Handler;
 import org.jbpm.process.core.context.variable.Variable;
-import org.jbpm.ruleflow.core.RuleFlowProcess;
 import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
 import org.pavanecce.cmmn.jbpm.flow.CaseTask;

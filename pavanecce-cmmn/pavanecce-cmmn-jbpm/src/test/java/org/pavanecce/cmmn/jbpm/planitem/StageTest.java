@@ -1,14 +1,7 @@
 package org.pavanecce.cmmn.jbpm.planitem;
 
-import java.util.List;
-
-import org.kie.api.task.model.TaskSummary;
-import org.pavanecce.cmmn.jbpm.flow.StagePlanItem;
-import org.pavanecce.cmmn.jbpm.instance.PlanElementState;
-import org.pavanecce.cmmn.jbpm.instance.impl.StagePlanItemInstance;
-
-import test.House;
-import test.Wall;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.StagePlanItemInstance;
 
 public class StageTest extends AbstractTasklifecycleTests {
 	{

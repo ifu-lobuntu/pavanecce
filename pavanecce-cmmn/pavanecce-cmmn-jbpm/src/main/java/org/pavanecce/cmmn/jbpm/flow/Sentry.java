@@ -14,7 +14,7 @@ public class Sentry extends Join implements CMMNElement {
 	private Constraint condition;
 	private PlanItem<?> planItemExiting;
 	private PlanItem<?> planItemEntering;
-
+	private boolean exitsCase;
 	public Sentry() {
 		setType(TYPE_AND);
 	}
@@ -73,6 +73,14 @@ public class Sentry extends Join implements CMMNElement {
 			return planItemExiting.getPlanItemContainer();
 		}
 		return null;
+	}
+
+	public boolean isExitsCase() {
+		return exitsCase;
+	}
+
+	public void setExitsCase(boolean exitsCase) {
+		this.exitsCase = exitsCase;
 	}
 
 }

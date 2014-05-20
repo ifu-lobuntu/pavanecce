@@ -11,20 +11,19 @@ import org.drools.core.process.core.datatype.impl.type.StringDataType;
 import org.drools.core.process.core.impl.ParameterDefinitionImpl;
 import org.drools.core.process.core.impl.WorkImpl;
 import org.jbpm.services.task.wih.util.PeopleAssignmentHelper;
-import org.jbpm.workflow.core.node.SubProcessNode;
 
-public class CaseTask extends SubProcessNode implements TaskDefinition {
+public class CaseTask extends AbstractPlanItemDefinition implements TaskDefinition {
 	private static final long serialVersionUID = 7495168121066617656L;
 	List<CaseParameter> inputs = new ArrayList<CaseParameter>();
 	List<CaseParameter> outputs = new ArrayList<CaseParameter>();
 	List<ParameterMapping> mappings = new ArrayList<ParameterMapping>();
 	String elementId;
 	private boolean blocking;
-	private PlanItemControl defaultControl;
 	private Work work;
+	private String processId;
 
 	public CaseTask() {
-		Work work = new WorkImpl();
+		work = new WorkImpl();
 		work.setName("Human Task");
 		Set<ParameterDefinition> parameterDefinitions = new HashSet<ParameterDefinition>();
 		parameterDefinitions.add(new ParameterDefinitionImpl("TaskName", new StringDataType()));
@@ -40,7 +39,6 @@ public class CaseTask extends SubProcessNode implements TaskDefinition {
 		// TODO: recipients
 		// TODO: ...
 		work.setParameterDefinitions(parameterDefinitions);
-		setWork(work);
 	}
 
 	public void setWork(Work work) {
@@ -65,15 +63,6 @@ public class CaseTask extends SubProcessNode implements TaskDefinition {
 	@Override
 	public List<CaseParameter> getOutputs() {
 		return outputs;
-	}
-
-	@Override
-	public String getElementId() {
-		return elementId;
-	}
-
-	public void setElementId(String elementId) {
-		this.elementId = elementId;
 	}
 
 	@Override
@@ -122,11 +111,11 @@ public class CaseTask extends SubProcessNode implements TaskDefinition {
 		return false;
 	}
 
-	public PlanItemControl getDefaultControl() {
-		return defaultControl;
+	public void setProcessId(String string) {
+		this.processId=string;
+	}
+	public String getProcessId() {
+		return processId;
 	}
 
-	public void setDefaultControl(PlanItemControl defaultControl) {
-		this.defaultControl = defaultControl;
-	}
 }

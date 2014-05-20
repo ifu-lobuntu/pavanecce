@@ -39,7 +39,7 @@ import org.kie.api.definition.process.Process;
 import org.kie.internal.process.CorrelationKey;
 import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
-import org.pavanecce.cmmn.jbpm.instance.impl.CaseInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 
 public class CaseInstanceFactory extends AbstractProcessInstanceFactory implements Externalizable {
 	// Temporary HACK - find the right place to map caseKeys with

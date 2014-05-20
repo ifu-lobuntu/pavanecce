@@ -14,8 +14,8 @@ import org.kie.internal.runtime.manager.context.ProcessInstanceIdContext;
 import org.kie.internal.task.api.InternalTaskService;
 import org.kie.internal.task.api.model.InternalTask;
 import org.kie.internal.task.api.model.InternalTaskData;
-import org.pavanecce.cmmn.jbpm.instance.PlanElementLifecycleWithTask;
-import org.pavanecce.cmmn.jbpm.instance.PlanElementState;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementLifecycleWithTask;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
