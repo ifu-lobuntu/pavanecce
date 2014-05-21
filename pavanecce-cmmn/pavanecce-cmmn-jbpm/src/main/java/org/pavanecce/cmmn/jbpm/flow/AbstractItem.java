@@ -16,6 +16,7 @@ public class AbstractItem extends StateNode {
 	public AbstractItem() {
 		super();
 	}
+
 	protected void copy(Map<Object, Object> copiedState, Object from, Object to) {
 		Class<?> class1 = from.getClass();
 		while (class1 != Object.class) {
@@ -30,14 +31,21 @@ public class AbstractItem extends StateNode {
 		for (Field field : class1.getDeclaredFields()) {
 			if (!Modifier.isFinal(field.getModifiers()) && !Modifier.isStatic(field.getModifiers())) {
 				field.setAccessible(true);
+				Object toValue =null;
 				try {
 					if (!isIgnored(to, field)) {
 						Object fromFieldValue = field.get(from);
 						if (fromFieldValue != null) {
-							Object toValue = copy(copiedState, fromFieldValue);
+							toValue = copy(copiedState, fromFieldValue);
 							field.set(to, toValue);
 						}
 					}
+				} catch (IllegalArgumentException e) {
+					if(field.getType().isInstance(toValue)){
+						throw e;
+					}
+				} catch (RuntimeException e) {
+					throw e;
 				} catch (Exception e) {
 					throw new RuntimeException(e);
 				}
@@ -89,7 +97,5 @@ public class AbstractItem extends StateNode {
 			throw new RuntimeException(e);
 		}
 	}
-
-
 
 }

@@ -1,0 +1,62 @@
+			<cmmn:userEvent id="endUserEventId" name="EndUserEvent" />
+			<cmmn:caseTask id="theCaseTaskId" name="TheCaseTask" caseRef="SubCase.cmmn#SubCase" isBlocking="true">
+				<cmmn:defaultControl>
+					<cmmn:requiredRule>
+						<cmmn:condition language="http://www.java.com/java">
+							<cmmn:body>return true;</cmmn:body>
+						</cmmn:condition>
+					</cmmn:requiredRule>
+				</cmmn:defaultControl>
+				<cmmn:inputs bindingRef="housePlanFileItemId" id="housePlanTaskParameter" name="housePlanTaskParameter">
+				</cmmn:inputs>
+				<cmmn:inputs bindingRef="wallPlanFileItemId" id="wallPlanTaskParameter" name="wallPlanTaskParameter">
+				</cmmn:inputs>
+				<cmmn:parameterMapping sourceRef="housePlanTaskParameter" targetRef="SubCase.cmmn#housePlanSubCaseParameterId" />
+				<cmmn:parameterMapping sourceRef="wallPlanTaskParameter" targetRef="SubCase.cmmn#wallPlanSubCaseParameterId">
+				</cmmn:parameterMapping>
+			</cmmn:caseTask>
+			<cmmn:stage id="theStageId" name="TheStage" autoComplete="true">
+				<cmmn:planningTable id="theStagePlanningTable" authorizedRoleRefs="constructionProjectManagerRoleId">
+				</cmmn:planningTable>
+				<cmmn:planItem id="stageCompletingEventPlanItemId" name="StageCompletingEventPlanItem" definitionRef="stageCompletingEventId" />
+				<cmmn:planItem definitionRef="theMilestoneId" name="TheMilestonePlanItemInTheStage" id="theMilestonePlanItemInTheStageId" entryCriteriaRefs="waitingForStageCompletingEventId">
+					<cmmn:itemControl>
+						<cmmn:requiredRule>
+							<cmmn:condition language="http://www.java.com/java">
+								<cmmn:body>return true;</cmmn:body>
+							</cmmn:condition>
+						</cmmn:requiredRule>
+					</cmmn:itemControl>
+				</cmmn:planItem>
+				<cmmn:sentry id="waitingForStageCompletingEventId" name="WaitingForStageCompletingEventSentry">
+					<cmmn:planItemOnPart id="onStageCompletingEventOccurred" sourceRef="stageCompletingEventPlanItemId">
+						<cmmn:standardEvent>occur</cmmn:standardEvent>
+					</cmmn:planItemOnPart>
+				</cmmn:sentry>
+			</cmmn:stage>
+			<cmmn:userEvent id="stageCompletingEventId" name="StageCompletingEvent"></cmmn:userEvent>
+			<cmmn:humanTask id="theHumanTaskId" name="TheHumanTask" performerRef="builderRoleId">
+				<cmmn:defaultControl>
+					<cmmn:requiredRule>
+						<cmmn:condition language="http://www.java.com/java">
+							<cmmn:body>return true;</cmmn:body>
+						</cmmn:condition>
+					</cmmn:requiredRule>
+				</cmmn:defaultControl>
+			</cmmn:humanTask>
+			<cmmn:milestone id="theMilestoneId" name="TheMilestone">
+				<cmmn:defaultControl>
+					<cmmn:requiredRule>
+						<cmmn:condition language="http://www.java.com/java">
+							<cmmn:body>return true;</cmmn:body>
+						</cmmn:condition>
+					</cmmn:requiredRule>
+				</cmmn:defaultControl>
+			</cmmn:milestone>
+			<cmmn:timerEvent id="theTimerEventId" name="TheTimerEvent">
+				<cmmn:timerExpression language="ISO 8601">
+					<cmmn:body>R5/2028-03-01T13:00:00Z/P2D</cmmn:body>
+				</cmmn:timerExpression>
+			</cmmn:timerEvent>
+			<cmmn:userEvent id="theUserEventId" name="TheUserEvent" />
+			<cmmn:userEvent id="startUserEventId" name="StartUserEvent" />

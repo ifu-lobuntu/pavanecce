@@ -7,10 +7,8 @@ Generate the mod-xxxworkflow.xml spring descriptor
 Generate permissions for tasks based on Role
 
 jBPM on JCR
-(The following ideas could allow deeper integration between Jahia/jBPM, but the current Jahia workflow subsystem is a bit of an obstacle for
-this type of integration. However, these ideas would allow content in Tasks to be represented more directly in Jahia, and we may want to bypass a substantial 
-part of the  existing Jahia workflow subsystem in the process.) 
-Implement TaskService on OCM/JCR
+(this is a lot of work and OCM performance is always a concern, and conflicts with the existing Jahia Workflow subsystem)
+Implement TaskService on OCM/JCR 
 Store planning model in OCM as well
 Create tasks directly under the user and make sure Jahia will interpret it in the correct way
 Provide standard templates for tasklists, planning tables, etc. 

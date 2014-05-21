@@ -3,13 +3,17 @@ package org.pavanecce.cmmn.jbpm.planning;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 
 import org.jbpm.services.task.impl.model.TaskImpl;
 import org.kie.api.task.model.I18NText;
@@ -21,7 +25,7 @@ import org.kie.internal.task.api.model.SubTasksStrategy;
 
 @Entity
 public class PlannedTaskImpl implements InternalPlannedTask {
-	
+
 	private static final long serialVersionUID = 11123315412L;
 	@Id()
 	Long id;
@@ -31,13 +35,27 @@ public class PlannedTaskImpl implements InternalPlannedTask {
 	private String discretionaryItemId;
 	@Enumerated
 	PlanningStatus planningStatus;
-	public PlannedTaskImpl(){
-		
+	@Basic
+	private String planItemName;
+	@Transient
+	Map<String, Object> parameterOverrides;
+
+	public PlannedTaskImpl() {
+
 	}
-	public PlannedTaskImpl(TaskImpl task){
-		this.task=task;
-		this.id=task.getId();
+
+	public PlannedTaskImpl(TaskImpl task) {
+		this.task = task;
+		this.id = task.getId();
+		planItemName = task.getNames().get(0).getText();
+		planningStatus = PlanningStatus.PLANNING_IN_PROGRESS;
+
 	}
+
+	public TaskImpl getTask() {
+		return task;
+	}
+
 	public String getDiscretionaryItemId() {
 		return discretionaryItemId;
 	}
@@ -187,6 +205,22 @@ public class PlannedTaskImpl implements InternalPlannedTask {
 	public void setSubTaskStrategy(SubTasksStrategy subTaskStrategy) {
 		task.setSubTaskStrategy(subTaskStrategy);
 	}
-	
 
+	@Override
+	public String getPlanItemName() {
+		return planItemName;
+	}
+
+	@Override
+	public void setPlanItemName(String planItemName) {
+		this.planItemName = planItemName;
+	}
+
+	@Override
+	public Map<String, Object> getParameterOverrides() {
+		if(parameterOverrides==null){
+			parameterOverrides=new HashMap<String, Object>();
+		}
+		return parameterOverrides;
+	}
 }

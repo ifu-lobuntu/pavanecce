@@ -28,7 +28,6 @@ import org.jbpm.services.task.wih.ExternalTaskEventListener;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.manager.RuntimeEngine;
 import org.kie.api.runtime.manager.RuntimeManager;
-import org.kie.api.runtime.process.NodeInstance;
 import org.kie.api.runtime.process.ProcessInstance;
 import org.kie.api.task.model.Content;
 import org.kie.api.task.model.Task;
@@ -169,7 +168,7 @@ public class CaseTaskLifecycleListener extends ExternalTaskEventListener {
 		Map<String, Object> results = new HashMap<String, Object>();
 		if (task.getTaskData().getActualOwner() != null) {
 			String userId = task.getTaskData().getActualOwner().getId();
-			results.put("ActorId", userId);
+			results.put(PlanElementLifecycleWithTask.ACTUAL_OWNER, userId);
 		}
 		long contentId = task.getTaskData().getOutputContentId();
 		if (contentId != -1) {

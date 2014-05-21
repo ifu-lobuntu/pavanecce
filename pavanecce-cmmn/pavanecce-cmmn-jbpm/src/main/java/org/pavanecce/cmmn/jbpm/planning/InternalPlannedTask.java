@@ -8,4 +8,6 @@ public interface InternalPlannedTask extends PlannedTask,InternalTask {
 
 	void setDiscretionaryItemId(String tableItemId);
 
+	public abstract void setPlanItemName(String planItemName);
+
 }

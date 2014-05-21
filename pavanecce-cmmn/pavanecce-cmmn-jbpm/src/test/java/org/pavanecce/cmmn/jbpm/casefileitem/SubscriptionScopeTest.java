@@ -17,10 +17,6 @@ import test.House;
 import test.HousePlan;
 
 public abstract class SubscriptionScopeTest extends AbstractConstructionTestCase {
-	protected HousePlan housePlan;
-	protected House house;
-	private CaseInstance caseInstance;
-
 	public SubscriptionScopeTest() {
 		super(true, true, "org.jbpm.persistence.jpa");
 	}
@@ -34,7 +30,7 @@ public abstract class SubscriptionScopeTest extends AbstractConstructionTestCase
 		getPersistence().start();
 		assertEquals(0, subManager.getCaseSubscriptionInfoFor(housePlan, getPersistence()).getCaseFileItemSubscriptions().size());
 		getPersistence().commit();
-		
+
 		triggerStartOfTask();
 		getPersistence().start();
 		assertEquals(2, subManager.getCaseSubscriptionInfoFor(housePlan, getPersistence()).getCaseFileItemSubscriptions().size());
@@ -44,22 +40,24 @@ public abstract class SubscriptionScopeTest extends AbstractConstructionTestCase
 		List<TaskSummary> list = getRuntimeEngine().getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
 		assertEquals(1, list.size());
 		getRuntimeEngine().getTaskService().start(list.get(0).getId(), "Builder");
-		getRuntimeEngine().getTaskService().complete(list.get(0).getId(), "Builder",new HashMap<String,Object>());
+		getRuntimeEngine().getTaskService().complete(list.get(0).getId(), "Builder", new HashMap<String, Object>());
 		getPersistence().start();
 		CaseSubscriptionInfo<?> caseSubscriptionInfoFor = subManager.getCaseSubscriptionInfoFor(housePlan, getPersistence());
 		assertEquals(0, caseSubscriptionInfoFor.getCaseFileItemSubscriptions().size());
 		getPersistence().commit();
 		// *****THEN
-//		@SuppressWarnings("unchecked")
-//		Map<String, Object> contentData = (Map<String, Object>) ContentMarshallerHelper.unmarshall(input.getContent(), getRuntimeEngine().getKieSession(). getEnvironment());
-//		assertEquals(housePlan.getWallPlans().iterator().next().getId(), ((WallPlan) contentData.get("wallPlan")).getId());
+		// @SuppressWarnings("unchecked")
+		// Map<String, Object> contentData = (Map<String, Object>)
+		// ContentMarshallerHelper.unmarshall(input.getContent(), getRuntimeEngine().getKieSession(). getEnvironment());
+		// assertEquals(housePlan.getWallPlans().iterator().next().getId(), ((WallPlan)
+		// contentData.get("wallPlan")).getId());
 	}
 
 	protected void givenThatTheTestCaseIsStarted() {
-		createRuntimeManager("test/SubscriptionScopeTests.cmmn");
+		createRuntimeManager("test/casefileitem/SubscriptionScopeTests.cmmn");
 		Map<String, Object> params = new HashMap<String, Object>();
 		getPersistence().start();
-		
+
 		ConstructionCase cc = new ConstructionCase("/cases/case1");
 		housePlan = new HousePlan(cc);
 		house = new House(cc);
@@ -85,6 +83,5 @@ public abstract class SubscriptionScopeTest extends AbstractConstructionTestCase
 		getPersistence().commit();
 		assertNodeTriggered(caseInstance.getId(), "TheTask");
 	}
-
 
 }

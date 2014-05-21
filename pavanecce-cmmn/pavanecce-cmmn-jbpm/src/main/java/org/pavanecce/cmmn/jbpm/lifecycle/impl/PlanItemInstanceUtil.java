@@ -11,20 +11,25 @@ import org.jbpm.process.instance.context.variable.VariableScopeInstance;
 import org.jbpm.process.instance.impl.ConstraintEvaluator;
 import org.jbpm.process.instance.impl.ReturnValueEvaluator;
 import org.jbpm.workflow.instance.NodeInstance;
+import org.pavanecce.cmmn.jbpm.flow.ApplicabilityRule;
 import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItem;
 import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
-import org.pavanecce.cmmn.jbpm.flow.DiscretionaryItem;
 import org.pavanecce.cmmn.jbpm.flow.ItemWithDefinition;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
+import org.pavanecce.cmmn.jbpm.flow.TableItem;
 import org.pavanecce.cmmn.jbpm.flow.TaskDefinition;
 import org.pavanecce.cmmn.jbpm.lifecycle.ControllableItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.lifecycle.ItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementLifecycleWithTask;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceContainerLifecycle;
 
 class PlanItemInstanceUtil {
 	public static boolean canComplete(PlanItemInstanceContainerLifecycle container) {
+		if(container.getPlanElementState()!=PlanElementState.ACTIVE){
+			return false;
+		}
 		Collection<? extends ItemInstanceLifecycle<?>> nodeInstances = container.getChildren();
 		for (ItemInstanceLifecycle<?> nodeInstance : nodeInstances) {
 			if (nodeInstance instanceof PlanItemInstanceFactoryNodeInstance && ((PlanItemInstanceFactoryNodeInstance<?>) nodeInstance).isPlanItemInstanceStillRequired()) {
@@ -99,6 +104,23 @@ class PlanItemInstanceUtil {
 			isPlanItemInstanceRequired = Boolean.FALSE;
 		}
 		return isPlanItemInstanceRequired;
+	}
+
+	public static boolean isApplicable(TableItem ti, org.kie.api.runtime.process.NodeInstance ni) {
+		if (ti.getApplicabilityRules().isEmpty()) {
+			return true;
+		} else {
+			Collection<ApplicabilityRule> values = ti.getApplicabilityRules().values();
+			for (ApplicabilityRule ar : values) {
+				if (ar.getCondition() instanceof ConstraintEvaluator) {
+					ConstraintEvaluator ce = (ConstraintEvaluator) ar.getCondition();
+					if(ce.evaluate((org.jbpm.workflow.instance.NodeInstance) ni, null, ce)){
+						return true;
+					}
+				}
+			}
+			return false;
+		}
 	}
 
 }

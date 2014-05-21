@@ -12,6 +12,7 @@ public interface PlanElementLifecycleWithTask extends PlanElementLifecycle {
 	String COMMENT = "Comment";
 	String PARENT_WORK_ITEM_ID = "ParentId";
 	String UPDATE_TASK_STATUS = "UpdateTaskStatusHandler";
+	String ACTUAL_OWNER = "ActualOwner";
 
 	WorkItem getWorkItem();
 

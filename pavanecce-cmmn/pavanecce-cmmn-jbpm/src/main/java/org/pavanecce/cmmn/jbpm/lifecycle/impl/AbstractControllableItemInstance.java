@@ -13,6 +13,7 @@ import org.jbpm.process.instance.context.exception.ExceptionScopeInstance;
 import org.jbpm.process.instance.impl.ConstraintEvaluator;
 import org.jbpm.services.task.wih.util.PeopleAssignmentHelper;
 import org.jbpm.workflow.instance.WorkflowRuntimeException;
+import org.jbpm.workflow.instance.node.CompositeContextNodeInstance;
 import org.jbpm.workflow.instance.node.EventBasedNodeInstanceInterface;
 import org.kie.api.runtime.process.NodeInstance;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemControl;
@@ -22,7 +23,7 @@ import org.pavanecce.cmmn.jbpm.flow.TaskItemWithDefinition;
 import org.pavanecce.cmmn.jbpm.lifecycle.ControllableItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
 
-public abstract class AbstractControllableItemInstance<T extends PlanItemDefinition, X extends TaskItemWithDefinition<T>> extends AbstractItemInstance<T, X> implements
+public abstract class AbstractControllableItemInstance<T extends PlanItemDefinition, X extends TaskItemWithDefinition<T>> extends CompositeContextNodeInstance implements
 		ControllableItemInstanceLifecycle<T>, EventBasedNodeInstanceInterface {
 
 	private static final long serialVersionUID = 3200294767777991641L;
@@ -30,6 +31,10 @@ public abstract class AbstractControllableItemInstance<T extends PlanItemDefinit
 	private PlanElementState lastBusyState = PlanElementState.NONE;
 	protected WorkItem workItem;
 	private long workItemId;
+
+	protected PlanElementState planElementState = PlanElementState.AVAILABLE;
+
+	protected Boolean isCompletionRequired;
 
 	public AbstractControllableItemInstance() {
 		super();
@@ -323,6 +328,77 @@ public abstract class AbstractControllableItemInstance<T extends PlanItemDefinit
 	@Override
 	public String getHumanTaskName() {
 		return getItemName();
+	}
+
+	@SuppressWarnings("unchecked")
+	public X getItem() {
+		return (X) getNode();
+	}
+
+	@Override
+	public void setPlanElementState(PlanElementState s) {
+		this.planElementState = s;
+	}
+
+	public boolean isCompletionRequired() {
+		if(isCompletionRequired==null){
+			System.out.println();
+		}
+		return isCompletionRequired;
+	}
+
+	public boolean isCompletionStillRequired() {
+		return isCompletionRequired && !planElementState.isTerminalState() && !planElementState.isSemiTerminalState(this);
+	}
+
+	public void internalSetCompletionRequired(boolean b) {
+		this.isCompletionRequired = b;
+	}
+
+	@Override
+	public void suspend() {
+		planElementState.suspend(this);
+	}
+
+	public void resume() {
+		planElementState.resume(this);
+	}
+
+	@Override
+	public void terminate() {
+		if (planElementState != PlanElementState.TERMINATED) {
+			// Could have been fired by exiting event
+			planElementState.terminate(this);
+		}
+	}
+
+	@Override
+	public PlanElementState getPlanElementState() {
+		return planElementState;
+	}
+
+	@Override
+	public T getPlanItemDefinition() {
+		return getItem().getDefinition();
+	}
+
+	@Override
+	public String getItemName() {
+		return getItem().getName();
+	}
+
+	@Override
+	public PlanItemControl getItemControl() {
+		if(getItem().getItemControl()==null){
+			return getItem().getDefinition().getDefaultControl();
+		}else{
+			return getItem().getItemControl();
+		}
+	}
+
+	@Override
+	public CaseInstance getCaseInstance() {
+		return (CaseInstance) getProcessInstance();
 	}
 
 }

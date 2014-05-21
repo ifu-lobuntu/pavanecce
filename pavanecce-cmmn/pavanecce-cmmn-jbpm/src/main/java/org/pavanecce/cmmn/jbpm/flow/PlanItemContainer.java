@@ -6,7 +6,7 @@ import org.jbpm.workflow.core.NodeContainer;
 import org.jbpm.workflow.core.node.EndNode;
 import org.jbpm.workflow.core.node.StartNode;
 
-public interface PlanItemContainer extends NodeContainer {
+public interface PlanItemContainer extends NodeContainer, PlanningTableContainer {
 
 	public void addPlanItemInfo(PlanItemInfo<?> d);
 

@@ -11,8 +11,9 @@ import org.drools.core.process.core.impl.WorkImpl;
 import org.jbpm.services.task.wih.util.PeopleAssignmentHelper;
 import org.jbpm.workflow.core.node.EndNode;
 import org.jbpm.workflow.core.node.StartNode;
+import org.kie.api.definition.process.Node;
 
-public class StagePlanItem extends AbstractPlanItem<Stage> implements MultiInstancePlanItem, PlanItemContainer,TaskItemWithDefinition<Stage> {
+public class StagePlanItem extends AbstractPlanItem<Stage> implements MultiInstancePlanItem, PlanItemContainer, TaskItemWithDefinition<Stage> {
 	private static final long serialVersionUID = -4998194330899363230L;
 	private PlanItemInstanceFactoryNode factoryNode;
 
@@ -37,6 +38,19 @@ public class StagePlanItem extends AbstractPlanItem<Stage> implements MultiInsta
 
 	public void setDefaultStart(StartNode defaultStart) {
 		this.defaultStart = defaultStart;
+	}
+
+	@Override
+	public Node getNode(long id) {
+		try {
+			return super.getNode(id);
+		} catch (IllegalArgumentException e) {
+			if (getPlanningTable() != null) {
+				return getPlanningTable().getNode(id);
+			}
+		}
+		return null;
+
 	}
 
 	public DefaultSplit getDefaultSplit() {

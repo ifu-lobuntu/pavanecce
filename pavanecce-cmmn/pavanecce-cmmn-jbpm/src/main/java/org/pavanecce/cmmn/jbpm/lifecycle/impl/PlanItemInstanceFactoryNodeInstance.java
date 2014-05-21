@@ -11,7 +11,9 @@ import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemInstanceFactoryNode;
 import org.pavanecce.cmmn.jbpm.flow.Stage;
 import org.pavanecce.cmmn.jbpm.flow.TaskDefinition;
+import org.pavanecce.cmmn.jbpm.lifecycle.ControllableItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.lifecycle.ItemInstanceLifecycleWithHistory;
+import org.pavanecce.cmmn.jbpm.lifecycle.OccurrablePlanItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
 
 /**
@@ -20,11 +22,11 @@ import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
  * @author ampie
  * 
  */
-public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> extends StateNodeInstance implements ItemInstanceLifecycleWithHistory<T>, Creatable  {
+public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> extends StateNodeInstance implements ItemInstanceLifecycleWithHistory<T>, Creatable {
 
 	private static final long serialVersionUID = -5291618101988431033L;
 	private Boolean isPlanItemInstanceRequired;
-	private boolean hasPlanItemBeenInstantiated=false;
+	private boolean hasPlanItemBeenInstantiated = false;
 	private Boolean isRepeating;
 	private PlanElementState planElementState = PlanElementState.INITIAL;
 	private PlanElementState lastBusyState = PlanElementState.NONE;
@@ -73,7 +75,11 @@ public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> e
 
 	@Override
 	protected void triggerNodeInstance(org.jbpm.workflow.instance.NodeInstance nodeInstance, String type) {
-		((AbstractItemInstance<?,?>) nodeInstance).internalSetCompletionRequired(isPlanItemInstanceRequired);
+		if (nodeInstance instanceof OccurrablePlanItemInstanceLifecycle) {
+			((OccurrablePlanItemInstanceLifecycle<?>) nodeInstance).internalSetRequired(isPlanItemInstanceRequired);
+		} else {
+			((ControllableItemInstanceLifecycle<?>) nodeInstance).internalSetCompletionRequired(isPlanItemInstanceRequired);
+		}
 		super.triggerNodeInstance(nodeInstance, type);
 	}
 
@@ -86,19 +92,21 @@ public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> e
 	}
 
 	public boolean isPlanItemInstanceStillRequired() {
-		if(hasPlanItemBeenInstantiated){
+		if (hasPlanItemBeenInstantiated) {
 			return false;
-		}else if(isPlanItemInstanceRequired == null) {
+		} else if (isPlanItemInstanceRequired == null) {
 			// still initializing
 			return true;
-		}else{
+		} else {
 			return isPlanItemInstanceRequired;
-			
+
 		}
 	}
+
 	public boolean isHasPlanItemBeenInstantiated() {
 		return hasPlanItemBeenInstantiated;
 	}
+
 	public void internalSetHasPlanItemInstanceBeenInstantiated(boolean val) {
 		this.hasPlanItemBeenInstantiated = val;
 	}
@@ -115,14 +123,14 @@ public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> e
 	public void create() {
 		ItemWithDefinition<T> planItem = getPlanItem();
 		PlanItemInstanceFactoryNodeInstance<T> contextNodeInstance = this;
-		this.isPlanItemInstanceRequired=PlanItemInstanceUtil.isRequired(planItem, contextNodeInstance);
+		this.isPlanItemInstanceRequired = PlanItemInstanceUtil.isRequired(planItem, contextNodeInstance);
 		if (planItem.getItemControl() != null && planItem.getItemControl().getRepetitionRule() instanceof ConstraintEvaluator) {
 			ConstraintEvaluator constraintEvaluator = (ConstraintEvaluator) planItem.getItemControl().getRepetitionRule();
 			isRepeating = constraintEvaluator.evaluate(contextNodeInstance, null, constraintEvaluator);
 		} else {
 			isRepeating = false;
 		}
-		hasPlanItemBeenInstantiated=false;
+		hasPlanItemBeenInstantiated = false;
 		planElementState.create(contextNodeInstance);
 	}
 
@@ -177,18 +185,18 @@ public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> e
 
 	@Override
 	public void parentTerminate() {
-		if(isComplexLifecycle()){
+		if (isComplexLifecycle()) {
 			throw new IllegalStateException("Complex planItemInstances do not suppoer to parentTerminate");
-		}else{
+		} else {
 			planElementState.parentTerminate(this);
 		}
 	}
 
 	@Override
 	public void exit() {
-		if(isComplexLifecycle()){
+		if (isComplexLifecycle()) {
 			planElementState.exit(this);
-		}else{
+		} else {
 			throw new IllegalStateException("Occurrable planItemInstances do not suppoer to exit");
 		}
 	}
@@ -200,9 +208,9 @@ public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> e
 
 	@Override
 	public PlanItemControl getItemControl() {
-		if(getPlanItem().getPlanInfo().getItemControl()==null){
+		if (getPlanItem().getPlanInfo().getItemControl() == null) {
 			return getPlanItemDefinition().getDefaultControl();
-		}else{
+		} else {
 			return getPlanItem().getPlanInfo().getItemControl();
 		}
 	}

@@ -84,7 +84,7 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 	private void writePlanItemStates(ItemInstanceLifecycleWithHistory<?> pi, ObjectOutputStream stream) throws IOException {
 		stream.writeInt(pi.getPlanElementState().ordinal());
 		stream.writeInt(pi.getLastBusyState().ordinal());
-		if (pi instanceof ControllableItemInstanceLifecycle) {
+		if (pi instanceof ControllableItemInstanceLifecycle && pi.getPlanElementState()!=PlanElementState.INITIAL) {
 			stream.writeBoolean(((ControllableItemInstanceLifecycle<?>) pi).isCompletionRequired());
 		}
 	}
@@ -92,7 +92,7 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 	private void readPlanItemStates(ItemInstanceLifecycleWithHistory<?> pi, ObjectInputStream stream) throws IOException {
 		pi.setPlanElementState(PlanElementState.values()[stream.readInt()]);
 		pi.setLastBusyState(PlanElementState.values()[stream.readInt()]);
-		if (pi instanceof ControllableItemInstanceLifecycle) {
+		if (pi instanceof ControllableItemInstanceLifecycle && pi.getPlanElementState()!=PlanElementState.INITIAL) {
 			((ControllableItemInstanceLifecycle<?>) pi).internalSetCompletionRequired(stream.readBoolean());
 		}
 	}

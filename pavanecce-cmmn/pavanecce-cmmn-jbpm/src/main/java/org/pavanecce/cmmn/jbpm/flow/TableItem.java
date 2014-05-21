@@ -91,11 +91,11 @@ public class TableItem extends AbstractItem implements CMMNElement {
 		return getPlannerRoles(roles);
 	}
 
-	public PlanningTable getPlanningTable() {
+	public PlanningTable getParentTable() {
 		return planningTable;
 	}
 
-	public void setPlanningTable(PlanningTable planningTable) {
+	public void setParentTable(PlanningTable planningTable) {
 		this.planningTable = planningTable;
 	}
 
@@ -106,4 +106,5 @@ public class TableItem extends AbstractItem implements CMMNElement {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
 }

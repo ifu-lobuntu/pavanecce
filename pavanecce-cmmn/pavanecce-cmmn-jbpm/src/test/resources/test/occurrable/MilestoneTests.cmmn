@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE doc [
+<!ENTITY structureDefs SYSTEM "src/test/resources/test/structureDefs.xmlFragment">
+<!ENTITY caseFileModel SYSTEM "src/test/resources/test/caseFileModel.xmlFragment">
+<!ENTITY occurrableLifcycleTestTasks SYSTEM "src/test/resources/test/occurrable/occurrableLifecycleTestTasks.xmlFragment">
+<!--!ENTITY structureDefs SYSTEM "structureDefs.xmlFragment">
+<!ENTITY caseFileModel SYSTEM "caseFileModel.xmlFragment"-->
+]>
+<cmmn:definitions xmlns:cmmn="http://www.omg.org/spec/CMMN/20121031/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:test="http://ifu-lobuntu.org/test"
+	targetNamespace="http://ifu-lobuntu.org/test">
+	&structureDefs;
+	<cmmn:case name="MilestoneTests" id="MilestoneTests">
+		&caseFileModel;
+		<cmmn:casePlanModel name="CompletionTests">
+			<!-- Milestone specific -->
+			<cmmn:planItem definitionRef="theUserEventId" name="TheUserEventPlanItem" id="theUserEventPlanItemId">
+			</cmmn:planItem>
+			<cmmn:planItem definitionRef="theOccurrablePlanItemDefinitionId" name="TheOccurrablePlanItem" id="theOccurrablePlanItemId" entryCriteriaRefs="waitingForTheUserEventSentryId">
+				<cmmn:itemControl>
+					<cmmn:requiredRule>
+						<cmmn:condition language="http://www.java.com/java">
+							<cmmn:body>return true;</cmmn:body>
+						</cmmn:condition>
+					</cmmn:requiredRule>
+				</cmmn:itemControl>
+			</cmmn:planItem>
+			<cmmn:planItem definitionRef="theOccurrablePlanItemDefinitionId" name="TheRepeatableMilestonePlanItem" id="theRepeatableMilestonePlanItemId"
+				entryCriteriaRefs="waitingForTheUserEventSentryId2">
+				<cmmn:itemControl>
+					<cmmn:repetitionRule>
+						<cmmn:condition language="http://www.java.com/java">
+							<cmmn:body>return true;</cmmn:body>
+						</cmmn:condition>
+					</cmmn:repetitionRule>
+					<cmmn:requiredRule>
+						<cmmn:condition language="http://www.java.com/java">
+							<cmmn:body>return true;</cmmn:body>
+						</cmmn:condition>
+					</cmmn:requiredRule>
+				</cmmn:itemControl>
+			</cmmn:planItem>
+			<cmmn:planItem definitionRef="theTask" name="TaskEnteredOnOccurrenceOfRepeatablePlanItem" id="taskEnteredOnOccurrenceOfRepeatablePlanItemId"
+				entryCriteriaRefs="waitingForTheRepeatablePlanItemSentryId">
+				<cmmn:itemControl>
+					<cmmn:requiredRule>
+						<cmmn:condition language="http://www.java.com/java">
+							<cmmn:body>return true;</cmmn:body>
+						</cmmn:condition>
+					</cmmn:requiredRule>
+					<cmmn:repetitionRule>
+						<cmmn:condition language="http://www.java.com/java">
+							<cmmn:body>return true;</cmmn:body>
+						</cmmn:condition>
+					</cmmn:repetitionRule>
+
+				</cmmn:itemControl>
+			</cmmn:planItem>
+			<!-- generic -->
+			&occurrableLifcycleTestTasks;
+			<!-- Milestone specific -->
+			<cmmn:milestone id="theOccurrablePlanItemDefinitionId" name="TheOccurrablePlanItemDefinition">
+			</cmmn:milestone>
+			<cmmn:sentry id="waitingForTheUserEventSentryId" name="WaitingForTheUserEventSentry">
+				<cmmn:planItemOnPart id="onTheUserEventOccurPartId" sourceRef="theUserEventPlanItemId">
+					<cmmn:standardEvent>occur</cmmn:standardEvent>
+				</cmmn:planItemOnPart>
+			</cmmn:sentry>
+			<cmmn:sentry id="waitingForTheUserEventSentryId2" name="WaitingForTheUserEventSentry2">
+				<cmmn:planItemOnPart id="onTheUserEventOccurPartId2" sourceRef="theUserEventPlanItemId">
+					<cmmn:standardEvent>occur</cmmn:standardEvent>
+				</cmmn:planItemOnPart>
+			</cmmn:sentry>
+			<cmmn:userEvent id="theUserEventId" name="TheUserEvent"></cmmn:userEvent>
+			<cmmn:sentry id="waitingForTheRepeatablePlanItemSentryId" name="WaitingForTheRepeatablePlanItemSentry">
+				<cmmn:planItemOnPart id="onTheRepeatablePlanItemOccurPartId" sourceRef="theRepeatableMilestonePlanItemId">
+					<cmmn:standardEvent>occur</cmmn:standardEvent>
+				</cmmn:planItemOnPart>
+			</cmmn:sentry>
+		</cmmn:casePlanModel>
+		<cmmn:caseRoles name="Builders" id="builderRoleId" />
+		<cmmn:input bindingRef="housePlanFileItemId" id="housePlanInputId" name="housePlan">
+		</cmmn:input>
+		<cmmn:input bindingRef="houseFileItemId" id="houseInputId" name="house">
+		</cmmn:input>
+	</cmmn:case>
+</cmmn:definitions>
+
+	   

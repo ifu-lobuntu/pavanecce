@@ -1,5 +1,6 @@
 package org.pavanecce.cmmn.jbpm;
 
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 import org.pavanecce.cmmn.jbpm.ocm.OcmCaseFileItemSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.ocm.OcmCaseSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.test.AbstractCmmnCaseTestCase;
@@ -13,9 +14,12 @@ import test.Wall;
 import test.WallPlan;
 
 public class AbstractConstructionTestCase extends AbstractCmmnCaseTestCase {
-	
+	protected HousePlan housePlan;
+	protected House house;
+	protected CaseInstance caseInstance;
+
 	public AbstractConstructionTestCase() {
-		super();
+		super(true, true, "org.jbpm.persistence.jpa");
 	}
 
 	public AbstractConstructionTestCase(boolean setupDataSource, boolean sessionPersistence, String persistenceUnitName) {

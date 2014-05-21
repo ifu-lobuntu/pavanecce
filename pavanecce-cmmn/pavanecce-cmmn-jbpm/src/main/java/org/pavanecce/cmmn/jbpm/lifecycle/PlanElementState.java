@@ -2,8 +2,6 @@ package org.pavanecce.cmmn.jbpm.lifecycle;
 
 import static org.pavanecce.cmmn.jbpm.flow.PlanItemTransition.*;
 
-import java.util.Collection;
-
 import org.pavanecce.cmmn.jbpm.event.PlanItemEvent;
 import org.pavanecce.cmmn.jbpm.flow.OnPart;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemTransition;

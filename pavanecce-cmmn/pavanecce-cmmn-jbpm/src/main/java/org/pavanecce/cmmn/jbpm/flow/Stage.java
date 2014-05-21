@@ -12,6 +12,7 @@ import org.drools.core.process.core.impl.ParameterDefinitionImpl;
 import org.drools.core.process.core.impl.WorkImpl;
 import org.jbpm.workflow.core.node.EndNode;
 import org.jbpm.workflow.core.node.StartNode;
+import org.kie.api.definition.process.Node;
 
 public class Stage extends AbstractPlanItemDefinition implements PlanItemContainer {
 
@@ -43,7 +44,14 @@ public class Stage extends AbstractPlanItemDefinition implements PlanItemContain
 	public StartNode getDefaultStart() {
 		return defaultStart;
 	}
-
+	@Override
+	public Node getNode(long id) {
+		Node node = super.getNode(id);
+		if(node==null && getPlanningTable()!=null){
+			return getPlanningTable().getNode(id);
+		}
+		return node;
+	}
 	@Override
 	public void setDefaultStart(StartNode defaultStart) {
 		this.defaultStart = defaultStart;
@@ -100,6 +108,7 @@ public class Stage extends AbstractPlanItemDefinition implements PlanItemContain
 
 	public void setPlanningTable(PlanningTable planningTable) {
 		this.planningTable=planningTable;
+		planningTable.setPlanItemContainer(this);
 	}
 
 	public PlanningTable getPlanningTable() {

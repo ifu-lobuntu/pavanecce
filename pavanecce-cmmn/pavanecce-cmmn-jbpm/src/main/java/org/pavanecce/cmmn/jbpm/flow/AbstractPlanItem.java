@@ -1,5 +1,8 @@
 package org.pavanecce.cmmn.jbpm.flow;
 
+import java.util.List;
+
+import org.kie.api.definition.process.Connection;
 
 public class AbstractPlanItem<T extends PlanItemDefinition> extends AbstractItem implements PlanItem<T> {
 
@@ -16,6 +19,29 @@ public class AbstractPlanItem<T extends PlanItemDefinition> extends AbstractItem
 	public AbstractPlanItem(PlanItemInfo<T> planInfo) {
 		super();
 		this.planInfo = planInfo;
+	}
+
+	@Override
+	public final Connection getFrom() {
+		final List<Connection> list = getIncomingConnections(org.jbpm.workflow.core.Node.CONNECTION_DEFAULT_TYPE);
+		if (list.size() == 1) {
+			return list.get(0);
+		}
+		return null;
+	}
+
+	@Override
+	public final void validateAddIncomingConnection(final String type, final Connection connection) {
+		if (type == null) {
+			throw new IllegalArgumentException("Connection type cannot be null");
+		}
+		if (connection == null) {
+			throw new IllegalArgumentException("Connection cannot be null");
+		}
+		if (!org.jbpm.workflow.core.Node.CONNECTION_DEFAULT_TYPE.equals(type)) {
+			throw new IllegalArgumentException("This type of node only accepts default incoming connection type!");
+		}
+
 	}
 
 	@Override

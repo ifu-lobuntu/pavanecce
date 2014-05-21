@@ -17,10 +17,6 @@ import test.WallPlan;
 
 public abstract class CaseFileItemEventTests extends AbstractConstructionTestCase {
 
-	protected HousePlan housePlan;
-	protected House house;
-	protected CaseInstance caseInstance;
-
 	public CaseFileItemEventTests() {
 		super(true, true, "org.jbpm.persistence.jpa");
 	}
@@ -303,7 +299,7 @@ public abstract class CaseFileItemEventTests extends AbstractConstructionTestCas
 	}
 
 	protected void givenThatTheTestCaseIsStarted() {
-		createRuntimeManager("test/CaseFileItemEventTests.cmmn");
+		createRuntimeManager("test/casefileitem/CaseFileItemEventTests.cmmn");
 		Map<String, Object> params = new HashMap<String, Object>();
 		getPersistence().start();
 

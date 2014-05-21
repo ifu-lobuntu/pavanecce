@@ -91,13 +91,13 @@ public class Case extends RuleFlowProcess implements PlanItemContainer {
 
 	public Collection<CaseFileItemOnPart> findCaseFileItemOnPartsFor(CaseFileItem item) {
 		Node[] nodes = getNodes();
-		Map<String,CaseFileItemOnPart> onCaseFileItemParts = new HashMap<String, CaseFileItemOnPart>();
+		Map<String, CaseFileItemOnPart> onCaseFileItemParts = new HashMap<String, CaseFileItemOnPart>();
 		findCaseFileItemOnPartsFor(item, nodes, onCaseFileItemParts);
 		return onCaseFileItemParts.values();
 
 	}
 
-	private void findCaseFileItemOnPartsFor(CaseFileItem item, Node[] nodes, Map<String,CaseFileItemOnPart> onCaseFileItemParts) {
+	private void findCaseFileItemOnPartsFor(CaseFileItem item, Node[] nodes, Map<String, CaseFileItemOnPart> onCaseFileItemParts) {
 		for (Node node : nodes) {
 			if (node instanceof Sentry) {
 				Sentry sentry = (Sentry) node;
@@ -115,13 +115,25 @@ public class Case extends RuleFlowProcess implements PlanItemContainer {
 		}
 	}
 
+	@Override
+	public Node getNode(long id) {
+		try {
+			return super.getNode(id);
+		} catch (IllegalArgumentException e) {
+			if (getPlanningTable() != null) {
+				return getPlanningTable().getNode(id);
+			}
+		}
+		return null;
+	}
+
 	public String getCaseKey() {
 		return super.getPackageName() + super.getId() + super.getVersion();
 	}
 
 	public void addPlanItemDefinition(PlanItemDefinition d) {
 		planItemDefinitions.add(d);
-		if(d instanceof Stage){
+		if (d instanceof Stage) {
 			((Stage) d).setCase(this);
 		}
 	}
@@ -142,6 +154,7 @@ public class Case extends RuleFlowProcess implements PlanItemContainer {
 	public void addRole(Role r) {
 		roles.add(r);
 	}
+
 	@Override
 	public Collection<PlanItemInfo<?>> getPlanItemInfo() {
 		return this.planItemInfo;
@@ -155,5 +168,6 @@ public class Case extends RuleFlowProcess implements PlanItemContainer {
 	@Override
 	public void setPlanningTable(PlanningTable planningTable) {
 		this.planningTable = planningTable;
+		planningTable.setPlanItemContainer(this);
 	}
 }

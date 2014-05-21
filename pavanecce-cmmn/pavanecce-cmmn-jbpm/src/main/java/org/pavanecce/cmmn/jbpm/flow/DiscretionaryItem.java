@@ -1,5 +1,6 @@
 package org.pavanecce.cmmn.jbpm.flow;
 
+import java.util.HashMap;
 import java.util.Map.Entry;
 
 import org.drools.core.process.core.ParameterDefinition;
@@ -17,7 +18,6 @@ public class DiscretionaryItem<T extends PlanItemDefinition> extends TableItem i
 	private PlanItemControl itemControl;
 	private long id;
 	private Work work;
-	private PlanningTable parentTable;
 
 	@Override
 	public T getDefinition() {
@@ -61,10 +61,10 @@ public class DiscretionaryItem<T extends PlanItemDefinition> extends TableItem i
 	public Work getWork() {
 		if (work == null) {
 			work = new WorkImpl();
-			Work sourceWork=null;
+			Work sourceWork = null;
 			if (getDefinition() instanceof TaskDefinition) {
 				sourceWork = ((TaskDefinition) getDefinition()).getWork();
-			} else if(getDefinition() instanceof Stage){
+			} else if (getDefinition() instanceof Stage) {
 				sourceWork = ((Stage) getDefinition()).getWork();
 			}
 			work.setName(sourceWork.getName());
@@ -81,13 +81,12 @@ public class DiscretionaryItem<T extends PlanItemDefinition> extends TableItem i
 		return work;
 
 	}
-
-	public PlanningTable getParentTable() {
-		return parentTable;
-	}
-
-	public void setParentTable(PlanningTable parentTable) {
-		this.parentTable = parentTable;
+	public void copyFromPlanItem() {
+		HashMap<Object, Object> copiedState = new HashMap<Object, Object>();
+		T from = getDefinition();
+		this.setNodeContainer(getParentTable().getFirstPlanItemContainer());
+		copiedState.put(from, this);
+		copy(copiedState, from, this);
 	}
 
 }

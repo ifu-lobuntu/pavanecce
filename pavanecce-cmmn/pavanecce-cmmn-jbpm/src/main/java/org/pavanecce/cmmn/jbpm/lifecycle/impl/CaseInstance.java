@@ -15,24 +15,22 @@ import org.drools.core.spi.ProcessContext;
 import org.jbpm.process.instance.ProcessInstance;
 import org.jbpm.ruleflow.instance.RuleFlowProcessInstance;
 import org.jbpm.services.task.wih.util.PeopleAssignmentHelper;
-import org.jbpm.workflow.core.NodeContainer;
 import org.jbpm.workflow.core.impl.NodeImpl;
 import org.jbpm.workflow.instance.NodeInstanceContainer;
 import org.kie.api.definition.process.Node;
 import org.kie.api.runtime.process.NodeInstance;
-import org.kie.api.task.model.Task;
 import org.pavanecce.cmmn.jbpm.event.SubscriptionManager;
 import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItem;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemOnPart;
 import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
 import org.pavanecce.cmmn.jbpm.flow.DiscretionaryItem;
-import org.pavanecce.cmmn.jbpm.flow.ItemWithDefinition;
 import org.pavanecce.cmmn.jbpm.flow.PlanItem;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemContainer;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemTransition;
 import org.pavanecce.cmmn.jbpm.flow.PlanningTable;
+import org.pavanecce.cmmn.jbpm.flow.Role;
 import org.pavanecce.cmmn.jbpm.flow.TableItem;
 import org.pavanecce.cmmn.jbpm.flow.TaskDefinition;
 import org.pavanecce.cmmn.jbpm.infra.OnPartInstanceSubscription;
@@ -69,6 +67,7 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 			DiscretionaryItem<? extends PlanItemDefinition> di = pewpt.getPlanningTable().getDiscretionaryItemById(tableItemId);
 			WorkItemImpl wi = PlanItemInstanceUtil.createWorkItem(di.getWork(), contextNodeInstance, di.getDefinition());
 			wi.setParameter(DiscretionaryItem.PLANNED, Boolean.TRUE);
+			wi.setParameter(DiscretionaryItem.DISCRETIONARY_ITEM_ID, tableItemId);
 			return executeWorkItem(wi);
 		}
 		return null;
@@ -179,6 +178,10 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 	public void start() {
 		super.start();
 		updateSubscriptions();
+		maybeExecuteWorkItem();
+	}
+
+	private void maybeExecuteWorkItem() {
 		if (workItemId < 0) {
 			createWorkItem();
 			executeWorkItem((WorkItem) workItem);
@@ -414,9 +417,9 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 	}
 
 	@Override
-	public Task getTask() {
+	public Object getTask() {
 		if (getWorkItem() != null) {
-			return (Task) getWorkItem().getResult(PlanElementLifecycleWithTask.TASK);
+			return getWorkItem().getResult(PlanElementLifecycleWithTask.TASK);
 		}
 		return null;
 	}
@@ -482,10 +485,57 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 			} else {
 				piic = (PlanItemInstanceContainerLifecycle) ((NodeInstance) e).getNodeInstanceContainer();
 			}
-			found=(ControllableItemInstanceLifecycle<?>) piic.getNodeInstance(item);
+			found = (ControllableItemInstanceLifecycle<?>) piic.getNodeInstance(item);
 			found.internalTriggerWithoutInstantiation(piic.getNodeInstance(piic.getPlanItemContainer().getDefaultSplit()), NodeImpl.CONNECTION_DEFAULT_TYPE, wi);
-			found.setPlanElementState(PlanElementState.INITIAL);
+			if (e.getPlanElementState() == PlanElementState.ACTIVE) {
+				found.create();
+				found.noteInstantiation();
+			} else {
+				found.setPlanElementState(PlanElementState.INITIAL);
+			}
 			return found;
+		}
+	}
+
+	public Map<String, String> getApplicableDiscretionaryItems(long wi, String user) {
+		Map<String, String> result = new HashMap<String, String>();
+		NodeInstance ni = null;
+		PlanningTable pt = null;
+		if (getWorkItemId() == wi) {
+			pt = getCase().getPlanningTable();
+			ni = getNodeInstance(getCase().getDefaultSplit());
+		} else {
+			ControllableItemInstanceLifecycle<?> ce = findNodeForWorkItem(wi);
+			if (ce instanceof PlanElementWithPlanningTable) {
+				pt = ((PlanElementWithPlanningTable) ce).getPlanningTable();
+				ni = (NodeInstance) ce;
+			}
+		}
+		if (pt != null) {
+			putApplicableItems(user, result, ni, pt);
+		}
+		return result;
+	}
+
+	private void putApplicableItems(String user, Map<String, String> result, NodeInstance ni, PlanningTable pt) {
+		boolean authorized = false || true;
+		// TODO we still need to associate the roles somewhere
+		for (Role role : pt.getAuthorizedRoles().values()) {
+			Collection<String> variable = (Collection<String>) getVariable(role.getName());
+			if (variable != null && variable.contains(user)) {
+				authorized = true;
+			}
+		}
+		if (authorized) {
+			for (TableItem ti : pt.getTableItems()) {
+				if (PlanItemInstanceUtil.isApplicable(ti, ni)) {
+					if (ti instanceof DiscretionaryItem<?>) {
+						result.put(ti.getElementId(), ((DiscretionaryItem<?>) ti).getDefinition().getName());
+					} else {
+						putApplicableItems(user, result, ni, (PlanningTable) ti);
+					}
+				}
+			}
 		}
 	}
 }

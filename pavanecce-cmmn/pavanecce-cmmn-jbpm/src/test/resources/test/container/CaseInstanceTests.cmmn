@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE doc [
+<!ENTITY structureDefs SYSTEM "src/test/resources/test/structureDefs.xmlFragment">
+<!ENTITY caseFileModel SYSTEM "src/test/resources/test/caseFileModel.xmlFragment">
+<!ENTITY lifecycleTestTasks SYSTEM "src/test/resources/test/complexLifecycleTestTasks.xmlFragment">
+<!ENTITY planItemsAndSentries SYSTEM "src/test/resources/test/container/planItemsAndSentries.xmlFragment">
+<!ENTITY planItemDefinitions SYSTEM "src/test/resources/test/container/planItemDefinitions.xmlFragment">
+]>
+<cmmn:definitions xmlns:cmmn="http://www.omg.org/spec/CMMN/20121031/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:test="http://ifu-lobuntu.org/test"
+	targetNamespace="http://ifu-lobuntu.org/test">
+	
+	&structureDefs;
+	<cmmn:case name="CaseInstanceTests" id="CaseInstanceTests">
+		&caseFileModel;
+		<cmmn:casePlanModel name="CaseInstanceTests" exitCriteriaRefs="waitingForEndUserEventSentryId" autoComplete="false">
+			<cmmn:planningTable id="theRootPlanningTableId" authorizedRoleRefs="constructionProjectManagerRoleId"/>
+			&planItemDefinitions;
+			&planItemsAndSentries;
+		</cmmn:casePlanModel>
+		<cmmn:caseRoles name="Builders" id="builderRoleId" />
+		<cmmn:caseRoles name="ConstructionProjectManagers" id="constructionProjectManagerRoleId" />
+		<cmmn:input bindingRef="housePlanFileItemId" id="housePlanInputId" name="housePlan" />
+		<cmmn:input bindingRef="houseFileItemId" id="houseInputId" name="house" />
+	</cmmn:case>
+</cmmn:definitions>
+
+	   

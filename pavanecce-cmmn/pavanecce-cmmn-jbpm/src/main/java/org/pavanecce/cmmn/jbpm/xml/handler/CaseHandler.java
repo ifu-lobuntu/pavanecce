@@ -15,6 +15,7 @@ import org.jbpm.compiler.xml.ProcessBuildData;
 import org.jbpm.process.core.context.variable.Variable;
 import org.jbpm.process.core.context.variable.VariableScope;
 import org.jbpm.ruleflow.core.RuleFlowProcess;
+import org.jbpm.workflow.core.NodeContainer;
 import org.kie.api.definition.process.Node;
 import org.pavanecce.cmmn.jbpm.event.CaseEvent;
 import org.pavanecce.cmmn.jbpm.flow.Case;
@@ -22,15 +23,18 @@ import org.pavanecce.cmmn.jbpm.flow.CaseFileItem;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemDefinition;
 import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
 import org.pavanecce.cmmn.jbpm.flow.Definitions;
+import org.pavanecce.cmmn.jbpm.flow.DiscretionaryItem;
 import org.pavanecce.cmmn.jbpm.flow.HumanTask;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 import org.pavanecce.cmmn.jbpm.flow.PlanningTable;
+import org.pavanecce.cmmn.jbpm.flow.PlanningTableContainer;
 import org.pavanecce.cmmn.jbpm.flow.Role;
 import org.pavanecce.cmmn.jbpm.flow.Sentry;
 import org.pavanecce.cmmn.jbpm.flow.Stage;
 import org.pavanecce.cmmn.jbpm.flow.StagePlanItem;
 import org.pavanecce.cmmn.jbpm.flow.TableItem;
 import org.pavanecce.cmmn.jbpm.flow.TaskDefinition;
+import org.pavanecce.cmmn.jbpm.infra.CollectionDataType;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -100,14 +104,30 @@ public class CaseHandler extends PlanItemContainerHandler implements Handler {
 		var.setName(CURRENT_EVENT);
 		var.setType(new ObjectDataType(CaseEvent.class.getName()));
 		variables.add(var);
-		Variable initiator = new Variable();
-		initiator.setName(Case.INITIATOR);
-		initiator.setType(new StringDataType());
-		variables.add(initiator);
-		Variable caseOwner = new Variable();
-		caseOwner.setName(Case.CASE_OWNER);
-		caseOwner.setType(new StringDataType());
-		variables.add(initiator);
+		Set<String> roleNames = new HashSet<String>();
+		Collection<Role> roles = process.getRoles();
+		for (Role role : roles) {
+			roleNames.add(role.getName());
+			Variable caseRole = new Variable();
+			caseRole.setName(role.getName());
+			CollectionDataType coll = new CollectionDataType();
+			coll.setElementClassName("java.lang.String");
+			caseRole.setType(coll);
+			variables.add(caseRole);
+		}
+
+		if (!roleNames.contains(Case.INITIATOR)) {
+			Variable initiator = new Variable();
+			initiator.setName(Case.INITIATOR);
+			initiator.setType(new StringDataType());
+			variables.add(initiator);
+		}
+		if (!roleNames.contains(Case.CASE_OWNER)) {
+			Variable caseOwner = new Variable();
+			caseOwner.setName(Case.CASE_OWNER);
+			caseOwner.setType(new StringDataType());
+			variables.add(caseOwner);
+		}
 		return process;
 	}
 
@@ -132,7 +152,7 @@ public class CaseHandler extends PlanItemContainerHandler implements Handler {
 		}
 		linkParametersToCaseFileItems(variableScope, process.getInputParameters());
 		linkParametersToCaseFileItems(variableScope, process.getOutputParameters());
-		doRoleMapping(process.getRoles(), process.getPlanningTable());
+		doRoleAndDefinitionMapping(process.getPlanItemDefinitions(), process.getRoles(), process.getPlanningTable());
 		Collection<PlanItemDefinition> planItemDefinitions = process.getPlanItemDefinitions();
 		for (PlanItemDefinition pi : planItemDefinitions) {
 			if (pi instanceof TaskDefinition) {
@@ -144,12 +164,12 @@ public class CaseHandler extends PlanItemContainerHandler implements Handler {
 							ht.setPerformer(role);
 						}
 					}
-					doRoleMapping(roles, ht.getPlanningTable());
+					doRoleAndDefinitionMapping(process.getPlanItemDefinitions(),roles, ht.getPlanningTable());
 				}
 				linkParametersToCaseFileItems(variableScope, ((TaskDefinition) pi).getInputs());
 				linkParametersToCaseFileItems(variableScope, ((TaskDefinition) pi).getOutputs());
 			} else if (pi instanceof Stage) {
-				doRoleMapping(process.getRoles(), ((Stage) pi).getPlanningTable());
+				doRoleAndDefinitionMapping(process.getPlanItemDefinitions(),process.getRoles(), ((Stage) pi).getPlanningTable());
 			}
 		}
 		linkPlanItems(process, parser);
@@ -158,7 +178,7 @@ public class CaseHandler extends PlanItemContainerHandler implements Handler {
 				super.linkPlanItems((Stage) planItemDefinition, parser);
 			}
 		}
-		copyStages(process.getNodes());
+		copyStages(process);
 		String exitsString = cpm.getAttribute("exitCriteriaRefs");
 		if (exitsString != null) {
 			String[] exitCriteriaRefs = exitsString.split("\\ ");
@@ -173,29 +193,50 @@ public class CaseHandler extends PlanItemContainerHandler implements Handler {
 		return process;
 	}
 
-	public void copyStages(Node[] nodes) {
+	public void copyStages(NodeContainer nic) {
+		if(nic instanceof PlanningTableContainer){
+			PlanningTable pt = ((PlanningTableContainer) nic).getPlanningTable();
+			if(pt!=null){
+				for (TableItem ti : pt.getTableItems()) {
+					if(ti instanceof DiscretionaryItem && ((DiscretionaryItem) ti).getDefinition() instanceof Stage){
+						((DiscretionaryItem) ti).copyFromPlanItem();
+					}
+				}
+			}
+		}
+		Node[] nodes=nic.getNodes();
 		for (Node node : nodes) {
 			if (node instanceof StagePlanItem) {
 				StagePlanItem spi = (StagePlanItem) node;
 				spi.copyFromStage();
-				copyStages(spi.getNodes());
+				copyStages(spi);
 			}
 		}
 	}
 
-	protected void doRoleMapping(Collection<Role> roles, TableItem pt) {
+	@SuppressWarnings("unchecked")
+	protected void doRoleAndDefinitionMapping(Collection<PlanItemDefinition> defs, Collection<Role> roles, TableItem pt) {
 		if (pt != null) {
-			doRoleMapping(roles, pt.getAuthorizedRoles());
+			doRoleMapping(defs,roles, pt.getAuthorizedRoles());
 			if (pt instanceof PlanningTable) {
 				Collection<TableItem> tableItems = ((PlanningTable) pt).getTableItems();
 				for (TableItem tableItem : tableItems) {
-					doRoleMapping(roles, tableItem.getAuthorizedRoles());
+					doRoleMapping(defs, roles, tableItem.getAuthorizedRoles());
+					doRoleAndDefinitionMapping(defs, roles, tableItem);
+				}
+			}else{
+				for (PlanItemDefinition pid : defs) {
+					@SuppressWarnings("rawtypes")
+					DiscretionaryItem di = (DiscretionaryItem<?>)pt;
+					if(pid.getElementId().equals(di.getDefinitionRef())){
+						di.setDefinition(pid);
+					}
 				}
 			}
 		}
 	}
 
-	protected void doRoleMapping(Collection<Role> roles, Map<String, Role> authorizedRoles) {
+	protected void doRoleMapping(Collection<PlanItemDefinition> defs, Collection<Role> roles, Map<String, Role> authorizedRoles) {
 		Set<Entry<String, Role>> entrySet = authorizedRoles.entrySet();
 		for (Entry<String, Role> entry : entrySet) {
 			for (Role role : roles) {

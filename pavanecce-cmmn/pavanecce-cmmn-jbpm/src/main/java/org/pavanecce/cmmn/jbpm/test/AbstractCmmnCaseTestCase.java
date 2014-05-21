@@ -88,19 +88,13 @@ import org.pavanecce.cmmn.jbpm.jpa.CollectionPlaceHolderResolveStrategy;
 import org.pavanecce.cmmn.jbpm.jpa.HibernateSubscriptionManager;
 import org.pavanecce.cmmn.jbpm.lifecycle.ItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
-import org.pavanecce.cmmn.jbpm.lifecycle.impl.AbstractItemInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
-import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseTaskPlanItemInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.DefaultJoinInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.DefaultSplitInstance;
-import org.pavanecce.cmmn.jbpm.lifecycle.impl.HumanTaskPlanItemInstance;
-import org.pavanecce.cmmn.jbpm.lifecycle.impl.MilestonePlanItemInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.OnPartInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.PlanItemInstanceFactoryNodeInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.SentryInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.StagePlanItemInstance;
-import org.pavanecce.cmmn.jbpm.lifecycle.impl.TimerEventPlanItemInstance;
-import org.pavanecce.cmmn.jbpm.lifecycle.impl.UserEventPlanItemInstance;
 import org.pavanecce.cmmn.jbpm.ocm.OcmCasePersistence;
 import org.pavanecce.cmmn.jbpm.ocm.OcmCollectionPlaceHolderResolveStrategy;
 import org.pavanecce.cmmn.jbpm.ocm.OcmPlaceHolderResolveStrategy;
@@ -113,12 +107,6 @@ import org.pavanecce.common.jpa.JpaObjectPersistence;
 import org.pavanecce.common.ocm.OcmFactory;
 import org.pavanecce.common.ocm.OcmObjectPersistence;
 import org.pavanecce.common.util.FileUtil;
-
-
-
-
-
-
 
 //import test.ConstructionCase;
 //import test.House;
@@ -188,7 +176,7 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 		getPersistence().commit();
 	}
 
-	public List<String> removeNodesTriggered(long processInstanceId, String... nodeNames) {
+	private List<String> removeNodesTriggered(long processInstanceId, String... nodeNames) {
 		List<String> names = new ArrayList<String>();
 		for (String nodeName : nodeNames) {
 			names.add(nodeName);
@@ -346,7 +334,7 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 		pds.getDriverProperties().put("user", "sa");
 		pds.setApplyTransactionTimeout(false);
 		pds.getDriverProperties().put("password", "");
-		pds.getDriverProperties().put("URL", "jdbc:h2:file:jbpm-db;MVCC=true");
+		pds.getDriverProperties().put("URL", "jdbc:h2:mem:jbpm-db;MVCC=true");
 		pds.init();
 		return pds;
 	}

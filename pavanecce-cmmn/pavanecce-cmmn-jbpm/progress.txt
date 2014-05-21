@@ -75,8 +75,17 @@ CaseTask.reactivated - check that process is restarted - it failed previously
 Write Output Parameters from Processes to Tasks (CaseTask, ProcessTask, Standalone Case) 
 Write Output parameters from Tasks to the containing case's caseFileItem (kind of superfluous in a pass by reference world).
 Resolve cleverly which user should own system-initiated tasks
-Clear up the distinction between WS-Ready, WS-Reserved and WS-InProgress and how they relate to Active and Enabled
-
+Store roleAssignment in process - do it as variables with set values - would be serialization friendly
+Validate authorization for planning
+Internationalization
+!!!Problems!!! 
+ - AbstractPersistentSubscriptionManager
+   - Find a way to resolve the correct InternalKnowledgeRuntime from  somewhere
+   - Find a way to get to the commandScopedEntity manager - the relection won't work in CDI 
+ - PlanningService (look at TaskServiceFactory interface)
+   - find a way to get to the persistence context - the reflection won't work in CDI
+   - find a way to get to the InternalTaskService
+ 
 Planning Service:
 
  - Prepare planning perspective on PlanItemInstanceContainer
@@ -120,6 +129,7 @@ Cab a UserEvent occur more than once?
 7.5.3. does not include Timer/UserEvents in the discussion of RequiredRules, however 5.4.11.2 does, but again it is excluded in table 42. 
 Table 49 does not list the exit transition for CaseInstances - which transition will occur when the Case's casePlanModel Stage reaches its exitCriteria? 
 Does table 52 pertain to the Stage instance representing the casePlanModel as well? If so, what do we do with the re-active transition propagation to subelements?
+ApplicabilityRUles: AND or OR?
 Discrepancies in XSD:
   In the XSD, TimerEventListener.timerExpression is a fully fledged expression, but in the spec it is just string. Does the result still have to be ISO-8601 compliant?
   AuthorizedRoleRefs for user events?

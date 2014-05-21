@@ -1,6 +1,5 @@
 package org.pavanecce.cmmn.jbpm.lifecycle.impl;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,16 +7,11 @@ import java.util.Map;
 import org.drools.core.RuntimeDroolsException;
 import org.drools.core.process.instance.WorkItem;
 import org.drools.core.spi.ProcessContext;
-import org.jbpm.process.core.Context;
-import org.jbpm.process.core.ContextContainer;
 import org.jbpm.process.core.context.exception.ExceptionScope;
-import org.jbpm.process.instance.ContextInstance;
 import org.jbpm.process.instance.ContextInstanceContainer;
 import org.jbpm.process.instance.ProcessInstance;
 import org.jbpm.process.instance.StartProcessHelper;
 import org.jbpm.process.instance.context.exception.ExceptionScopeInstance;
-import org.jbpm.process.instance.impl.ContextInstanceFactory;
-import org.jbpm.process.instance.impl.ContextInstanceFactoryRegistry;
 import org.jbpm.process.instance.impl.ProcessInstanceImpl;
 import org.jbpm.process.instance.impl.ReturnValueConstraintEvaluator;
 import org.jbpm.workflow.instance.WorkflowProcessInstance;
@@ -46,12 +40,11 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask, Tas
 	private static final long serialVersionUID = -2144001908752174712L;
 	private static final Logger logger = LoggerFactory.getLogger(CaseTaskPlanItemInstance.class);
 
-	// NOTE: ContetxInstances are not persisted as current functionality (exception scope) does not require it
-	private Map<String, List<ContextInstance>> subContextInstances = new HashMap<String, List<ContextInstance>>();
-
 	private long processInstanceId;
 
-
+    protected boolean isLinkedIncomingNodeRequired() {
+    	return false;
+    }
 	@Override
 	public void start() {
 		super.start();
@@ -287,59 +280,6 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask, Tas
 		return super.getNodeName();
 	}
 
-	@Override
-	public List<ContextInstance> getContextInstances(String contextId) {
-		return this.subContextInstances.get(contextId);
-	}
-
-	@Override
-	public void addContextInstance(String contextId, ContextInstance contextInstance) {
-		List<ContextInstance> list = this.subContextInstances.get(contextId);
-		if (list == null) {
-			list = new ArrayList<ContextInstance>();
-			this.subContextInstances.put(contextId, list);
-		}
-		list.add(contextInstance);
-	}
-
-	@Override
-	public void removeContextInstance(String contextId, ContextInstance contextInstance) {
-		List<ContextInstance> list = this.subContextInstances.get(contextId);
-		if (list != null) {
-			list.remove(contextInstance);
-		}
-	}
-
-	@Override
-	public ContextInstance getContextInstance(String contextId, long id) {
-		List<ContextInstance> contextInstances = subContextInstances.get(contextId);
-		if (contextInstances != null) {
-			for (ContextInstance contextInstance : contextInstances) {
-				if (contextInstance.getContextId() == id) {
-					return contextInstance;
-				}
-			}
-		}
-		return null;
-	}
-
-	@Override
-	public ContextInstance getContextInstance(Context context) {
-		ContextInstanceFactory conf = ContextInstanceFactoryRegistry.INSTANCE.getContextInstanceFactory(context);
-		if (conf == null) {
-			throw new IllegalArgumentException("Illegal context type (registry not found): " + context.getClass());
-		}
-		ContextInstance contextInstance = (ContextInstance) conf.getContextInstance(context, this, (ProcessInstance) getProcessInstance());
-		if (contextInstance == null) {
-			throw new IllegalArgumentException("Illegal context type (instance not found): " + context.getClass());
-		}
-		return contextInstance;
-	}
-
-	@Override
-	public ContextContainer getContextContainer() {
-		return (ContextContainer) getItem();
-	}
 	@Override
 	protected boolean isWaitForCompletion() {
 		return getPlanItemDefinition().isBlocking();

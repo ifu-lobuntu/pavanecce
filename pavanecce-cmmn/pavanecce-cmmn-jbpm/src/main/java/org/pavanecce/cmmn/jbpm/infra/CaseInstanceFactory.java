@@ -72,7 +72,6 @@ public class CaseInstanceFactory extends AbstractProcessInstanceFactory implemen
 
 		((InternalProcessRuntime) kruntime.getProcessRuntime()).getProcessInstanceManager().addProcessInstance(processInstance, correlationKey);
 		// set variable default values
-		// TODO: should be part of processInstanceImpl?
 		VariableScope variableScope = (VariableScope) ((ContextContainer) process).getDefaultContext(VariableScope.VARIABLE_SCOPE);
 		VariableScopeInstance variableScopeInstance = (VariableScopeInstance) processInstance.getContextInstance(VariableScope.VARIABLE_SCOPE);
 		// set input parameters

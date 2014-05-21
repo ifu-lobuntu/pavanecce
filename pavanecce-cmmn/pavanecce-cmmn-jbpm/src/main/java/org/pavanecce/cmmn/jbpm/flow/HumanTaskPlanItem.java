@@ -30,33 +30,6 @@ public class HumanTaskPlanItem extends AbstractPlanItem<HumanTask> implements Mu
 		return factoryNode;
 	}
 
-	@Override
-	public Connection getFrom() {
-		final List<Connection> list = getIncomingConnections(org.jbpm.workflow.core.Node.CONNECTION_DEFAULT_TYPE);
-		if (list.size() == 1) {
-			return list.get(0);
-		}
-		return null;
-	}
-
-	@Override
-	public void validateAddIncomingConnection(final String type, final Connection connection) {
-		if (type == null) {
-			throw new IllegalArgumentException("Connection type cannot be null");
-		}
-		if (connection == null) {
-			throw new IllegalArgumentException("Connection cannot be null");
-		}
-		if (!org.jbpm.workflow.core.Node.CONNECTION_DEFAULT_TYPE.equals(type)) {
-			throw new IllegalArgumentException("This type of node only accepts default incoming connection type!");
-		}
-		// if (getFrom() != null &&
-		// !"true".equals(System.getProperty("jbpm.enable.multi.con"))) {
-		// throw new IllegalArgumentException(
-		// "This type of node cannot have more than one incoming connection!");
-		// }
-	}
-
 	public Work getWork() {
 		if (work == null) {
 			work = new WorkImpl();

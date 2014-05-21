@@ -1,4 +1,8 @@
+Clear up the distinction between WS-Ready, WS-Reserved and WS-InProgress and how they relate to Active and Enabled
 Clean up all the validPeers and validParents
 Make all PlanItems extend AbstractPlanItem 
 Make all PlanItemDefinitions extend AbstractPlanItemDefinition 
 Then get rid of the PlanItem subclasses and thus the PlanInfo class 
+CaseINstance is getting way too big
+The SubscriptionManagers are also a bit chunky
+Use visitor pattern for stages and planningTables
