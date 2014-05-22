@@ -12,7 +12,7 @@
 		<profile>
 			<id>standalone</id>
 			<activation>
-				<activeByDefault>false</activeByDefault>
+				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
 				<artifactId>pavanecce-system-dependencies</artifactId>
@@ -22,7 +22,7 @@
 		<profile>
 			<id>eclipse</id>
 			<activation>
-				<activeByDefault>true</activeByDefault>
+				<activeByDefault>false</activeByDefault>
 			</activation>
 			<properties>
 				<artifactId>pavanecce-system-dependencies</artifactId>

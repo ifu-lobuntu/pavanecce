@@ -61,7 +61,7 @@ Output ParameterMapping, bindingRefinement and scoped subscriptions
 Recursive subscriptions, parameterizable
 
 
-2. To test
+2. To test more directly
 Sentry.Conditions
 Sentries with multiple onParts
 *.no sentry
@@ -72,66 +72,64 @@ Storage of event variables inside StageInstances
 CaseTask.reactivated - check that process is restarted - it failed previously
 
 3. To implement
-Write Output Parameters from Processes to Tasks (CaseTask, ProcessTask, Standalone Case) 
-Write Output parameters from Tasks to the containing case's caseFileItem (kind of superfluous in a pass by reference world).
-Resolve cleverly which user should own system-initiated tasks
-Store roleAssignment in process - do it as variables with set values - would be serialization friendly
-Validate authorization for planning
-Internationalization
-!!!Problems!!! 
- - AbstractPersistentSubscriptionManager
-   - Find a way to resolve the correct InternalKnowledgeRuntime from  somewhere
-   - Find a way to get to the commandScopedEntity manager - the relection won't work in CDI 
- - PlanningService (look at TaskServiceFactory interface)
-   - find a way to get to the persistence context - the reflection won't work in CDI
-   - find a way to get to the InternalTaskService
- 
-Planning Service:
+Planning Service
+ - startPlanning (include current parameters, applicabilityRule, authorizedRole)
+ - prepareDiscretionaryItem 
+   - recheck applicabilityRule
+   - recheck authorizedRole
+ - submitPlan 
+   - update parameters (taskContent AND workItem ),
+   - role (do role-assignment in process too) and 
+   - status/transition, 
+   - (due date?)
 
- - Prepare planning perspective on PlanItemInstanceContainer
-   - wrap existing tasks in planned tasks
-   - include a list of discretionaryItemIds AND their planITemDefinition's name
- - Prepare new discretionary item
- - Submit plan
+TimerEventListener.timerStart CaseFileItem
+TimerEventListener.timerStart PlanItem
+
+Write Output Parameters from Processes to Task.result (CaseTask, ProcessTask, Standalone Case) 
+
+Role management
+ - Resolve cleverly which user should own system-initiated tasks 
+ - Store roleAssignment in process 
+   - do it as variables with set values 
+   - would be serialization friendly
+   - use this for automatic assignment
+   - could be used to authorize but remember  people could have the required role elsewhere
+ - Validate authorization for planning - get it from the UserInfo service
+
 Planning Tables:
- - Planning Table object (string/xml representing the potential task types) issue the create through processInstance.signalEvent so that the process can assign params/roles
- - DiscretionaryItem
+ - DiscretionaryItem.entryCriteria
+ - DiscretionaryItem.exitCriteria
  - DiscretionaryItem.itemControl.requiredRule
  - ApplicabilityRule
- 
-Planning Command:
- - Assigning tasks at runtime (use forward/delegate)
- - Assigning caseParameters at runtime (use command)
- - think of costing and acceptance thereof here
 
 Process/Case Task
  - parameter transformation
 
 CaseModel:
  - REACTIVATE (from Failed,Terminated, Completed? need input from OMG)*
- 
 
-plan fragment
-contextRefs for rules
+4. Current potential problems 
+AbstractPersistentSubscriptionManager
+ - Find a way to resolve the correct InternalKnowledgeRuntime from  somewhere
+ - Find a way to get to the commandScopedEntity manager - the reflection won't work in CDI 
 
-4. Difficult
+PlanningService (look at TaskServiceFactory interface)
+ - find a way to get to the persistence context - the reflection won't work in CDI
+ - find a way to get to the InternalTaskService
+
+5. Difficult
 Sentry.condition without onParts - when to trigger the evaluation of the condition.
 With JCR Property.CHANGE events, try to get the original value and only fire events for ADD_/REMOVE_REFERENCE when they applicable - JCR limitation
 Optimize caching of SubscriptionInfo and perhaps even other OCM objects IN OCMSubscriptioinManager
 
+6 Low priority
+Plan fragments 
+ - For Plan Items
+ - For Discretionary Items
+ 
+ContextRefs for rules
+Internationalization
+Write Output parameters from Tasks to the containing case's caseFileItem (kind of superfluous in a pass by reference world).
 
-5. Questions for OMG:
-Which transition is called when a CasePlanModel stage reaches its exitCriteria - it does not seem to be in the statemachine.
-When a Stage needs to be completed manually, which users should be allowed to do that? Same goes for suspend/resume/terminate/close etc.
-In the notation examples, it seems there are Discretionary items that also have entryCriteratia. How so?
-For stages and tasks, when they are enabled and repetitionRule=true, it should create a new instance, but what happens to the instance that was already in the available state?
-Cab a UserEvent occur more than once?
-7.5.3. does not include Timer/UserEvents in the discussion of RequiredRules, however 5.4.11.2 does, but again it is excluded in table 42. 
-Table 49 does not list the exit transition for CaseInstances - which transition will occur when the Case's casePlanModel Stage reaches its exitCriteria? 
-Does table 52 pertain to the Stage instance representing the casePlanModel as well? If so, what do we do with the re-active transition propagation to subelements?
-ApplicabilityRUles: AND or OR?
-Discrepancies in XSD:
-  In the XSD, TimerEventListener.timerExpression is a fully fledged expression, but in the spec it is just string. Does the result still have to be ISO-8601 compliant?
-  AuthorizedRoleRefs for user events?
-  parentTerminate StandardEvent absent
  

@@ -3,7 +3,6 @@ package org.pavanecce.cmmn.jbpm.lifecycle.impl;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -17,7 +16,6 @@ import org.jbpm.ruleflow.instance.RuleFlowProcessInstance;
 import org.jbpm.services.task.wih.util.PeopleAssignmentHelper;
 import org.jbpm.workflow.core.impl.NodeImpl;
 import org.jbpm.workflow.instance.NodeInstanceContainer;
-import org.kie.api.definition.process.Node;
 import org.kie.api.runtime.process.NodeInstance;
 import org.pavanecce.cmmn.jbpm.event.SubscriptionManager;
 import org.pavanecce.cmmn.jbpm.flow.Case;
@@ -55,6 +53,20 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 		return (Case) getProcess();
 	}
 
+	public void addRoleAssignment(String role, String userId) {
+		getRoleAssignments(role).add(userId);
+	}
+
+	@SuppressWarnings("unchecked")
+	public Collection<String> getRoleAssignments(String role) {
+		Collection<String> var = (Collection<String>) getVariable(role);
+		if (var == null) {
+			var = new HashSet<String>();
+			setVariable(role, var);
+		}
+		return var;
+	}
+
 	public WorkItem createPlannedItem(long containerWorkItemId, String tableItemId) {
 		org.jbpm.workflow.instance.NodeInstance contextNodeInstance = null;
 		PlanElementWithPlanningTable pewpt = findPlanElementWithPlanningTable(containerWorkItemId);
@@ -73,7 +85,7 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 		return null;
 	}
 
-	protected PlanElementWithPlanningTable findPlanElementWithPlanningTable(long containerWorkItemId) {
+	public PlanElementWithPlanningTable findPlanElementWithPlanningTable(long containerWorkItemId) {
 		PlanElementWithPlanningTable pewpt = null;
 		if (containerWorkItemId == getWorkItemId()) {
 			pewpt = this;
@@ -100,10 +112,6 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 		this.shouldUpdateSubscriptions = true;
 	}
 
-	@Override
-	public org.jbpm.workflow.instance.NodeInstance getNodeInstance(Node node) {
-		return super.getNodeInstance(node);
-	}
 
 	@Override
 	public void signalEvent(String type, Object event) {
@@ -142,7 +150,7 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 	}
 
 	protected boolean isMyWorkItem(WorkItem event) {
-		return event.getId() == getWorkItemId() || (getWorkItemId() == -1 && getWorkItem().getId() == (event.getId()));
+		return event.getId() == getWorkItemId() || (getWorkItem() != null && getWorkItem().getId() == (event.getId()));
 	}
 
 	protected WorkItem createWorkItem() {
@@ -150,7 +158,6 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 		((WorkItem) workItem).setName("Human Task");
 		((WorkItem) workItem).setProcessInstanceId(getId());
 		((WorkItem) workItem).setParameters(new HashMap<String, Object>());
-		((WorkItem) workItem).setParameter("planningTable", "");// TODO
 		((WorkItem) workItem).setParameter("NodeName", getCase().getName());
 		if (getInitiator() != null) {
 			((WorkItem) workItem).setParameter(Case.INITIATOR, getInitiator());
@@ -203,10 +210,6 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 		}
 	}
 
-	@Override
-	public String[] getEventTypes() {
-		return super.getEventTypes();
-	}
 
 	protected void updateSubscriptions() {
 		SubscriptionManager subscriptionManager = (SubscriptionManager) getKnowledgeRuntime().getEnvironment().get(SubscriptionManager.ENV_NAME);
@@ -245,7 +248,8 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 	}
 
 	@SuppressWarnings("unchecked")
-	protected void populateSubscriptionsActivatedByParameters(Map<CaseFileItem, Collection<Object>> parentSubscriptions, Collection<Object> subscriptions, List<CaseParameter> subscribingParameters) {
+	protected void populateSubscriptionsActivatedByParameters(Map<CaseFileItem, Collection<Object>> parentSubscriptions, Collection<Object> subscriptions,
+			Collection<CaseParameter> subscribingParameters) {
 		for (CaseParameter caseParameter : subscribingParameters) {
 			if (caseParameter.getBindingRefinementEvaluator() == null) {
 				Object var = getVariable(caseParameter.getBoundVariable().getName());
@@ -359,18 +363,30 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 	}
 
 	@Override
-	public void internalComplete() {
-		long taskProcessInstanceId = getWorkItem().getProcessInstanceId();
+	public void triggerTransitionOnTask(PlanItemTransition transition) {
 		WorkItemImpl wi = new WorkItemImpl();
-		wi.setParameter(TASK_STATUS, PlanElementState.COMPLETED);
 		wi.setName(UPDATE_TASK_STATUS);
+		wi.setParameter(TASK_TRANSITION, transition);
 		wi.setParameter(WORK_ITEM_ID, getWorkItemId());
-		// TODO build output parameters
-		executeWorkItem(wi);
-		complete();
-		if (taskProcessInstanceId != getId()) {
-			getKnowledgeRuntime().signalEvent("processInstanceCompleted:" + getId(), this, taskProcessInstanceId);
+		if (transition == PlanItemTransition.COMPLETE) {
+			if (isCalledFromCaseTask()) {
+				executeWorkItem(wi);
+				// Let the caseTaskInstance know
+				getKnowledgeRuntime().signalEvent("processInstanceCompleted:" + getId(), this, getWorkItem().getProcessInstanceId());
+				// Because only the Task will be completed in the callback, not this caseInstance:
+				complete();
+			} else {
+				//Standalone, so write this caseInstance's result to the tasks result
+				wi.getParameters().putAll(getResult());
+				executeWorkItem(wi);
+			}
+		} else {
+			executeWorkItem(wi);
 		}
+	}
+
+	private boolean isCalledFromCaseTask() {
+		return getWorkItem().getProcessInstanceId() != getId();
 	}
 
 	@Override
@@ -517,9 +533,10 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
 	private void putApplicableItems(String user, Map<String, String> result, NodeInstance ni, PlanningTable pt) {
 		boolean authorized = false || true;
-		// TODO we still need to associate the roles somewhere
+		// TODO we still need to associate the roles somewhere - perhaps from planning
 		for (Role role : pt.getAuthorizedRoles().values()) {
 			Collection<String> variable = (Collection<String>) getVariable(role.getName());
 			if (variable != null && variable.contains(user)) {
@@ -537,5 +554,14 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 				}
 			}
 		}
+	}
+
+	public Map<String, Object> getResult() {
+		Map<String, Object> result = new HashMap<String, Object>();
+		for (CaseParameter cp : getCase().getOutputParameters()) {
+			Object variable = PlanItemInstanceUtil.getRefinedValue(cp, this,null);
+			result.put(cp.getName(), variable);
+		}
+		return result;
 	}
 }

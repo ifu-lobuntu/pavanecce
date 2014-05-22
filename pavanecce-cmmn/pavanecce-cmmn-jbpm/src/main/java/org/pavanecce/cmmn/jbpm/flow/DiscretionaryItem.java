@@ -89,4 +89,9 @@ public class DiscretionaryItem<T extends PlanItemDefinition> extends TableItem i
 		copy(copiedState, from, this);
 	}
 
+	@Override
+	public PlanItemContainer getPlanItemContainer() {
+		return getParentTable().getFirstPlanItemContainer();
+	}
+
 }

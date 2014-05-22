@@ -19,11 +19,11 @@
 			</cmmn:stage>
 			<cmmn:planItem definitionRef="theTopLevelStageId" id="theTopLevelStagePlanItemId" name="TheTopLevelStagePlanItem">
 				<cmmn:itemControl>
-					<cmmn:automaticActivationRule>
+					<cmmn:manualActivationRule>
 						<cmmn:condition language="http://www.java.com/java">
-							<cmmn:body>return true;</cmmn:body>
+							<cmmn:body>return false;</cmmn:body>
 						</cmmn:condition>
-					</cmmn:automaticActivationRule>
+					</cmmn:manualActivationRule>
 				</cmmn:itemControl>
 			</cmmn:planItem>
 		</cmmn:casePlanModel>

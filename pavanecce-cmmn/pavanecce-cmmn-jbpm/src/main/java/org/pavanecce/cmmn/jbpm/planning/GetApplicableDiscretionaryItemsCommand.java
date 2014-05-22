@@ -3,8 +3,8 @@ package org.pavanecce.cmmn.jbpm.planning;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.jbpm.services.task.commands.TaskCommand;
 import org.jbpm.services.task.commands.TaskContext;
@@ -20,12 +20,14 @@ public class GetApplicableDiscretionaryItemsCommand extends TaskCommand<Collecti
 	private final long parentTaskId;
 	private final String user;
 	private RuntimeManager runtimeManager;
+	private boolean suspend;
 	private static final long serialVersionUID = -8445370954335088878L;
 
-	public GetApplicableDiscretionaryItemsCommand(RuntimeManager rm, long parentTaskId, String user) {
+	public GetApplicableDiscretionaryItemsCommand(RuntimeManager rm, long parentTaskId, String user, boolean suspend) {
 		this.parentTaskId = parentTaskId;
 		this.user = user;
 		this.runtimeManager=rm;
+		this.suspend=suspend;
 	}
 
 	@Override
@@ -34,6 +36,9 @@ public class GetApplicableDiscretionaryItemsCommand extends TaskCommand<Collecti
 		TaskData td = ts.getTaskById(parentTaskId).getTaskData();
 		RuntimeEngine runtime = runtimeManager.getRuntimeEngine(ProcessInstanceIdContext.get(td.getProcessInstanceId()));
 		CaseInstance ci = (CaseInstance) runtime.getKieSession().getProcessInstance(td.getProcessInstanceId());
+		if(suspend){
+			ts.suspend(parentTaskId, user);
+		}
 		Map<String, String> a = ci.getApplicableDiscretionaryItems(td.getWorkItemId(), user);
 		Set<Entry<String, String>> entrySet = a.entrySet();
 		Collection<ApplicableDiscretionaryItem> result = new HashSet<ApplicableDiscretionaryItem>();

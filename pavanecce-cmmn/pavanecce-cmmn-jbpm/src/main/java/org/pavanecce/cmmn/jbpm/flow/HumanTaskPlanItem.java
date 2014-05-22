@@ -1,6 +1,5 @@
 package org.pavanecce.cmmn.jbpm.flow;
 
-import java.util.List;
 import java.util.Map.Entry;
 
 import org.drools.core.process.core.ParameterDefinition;
@@ -8,7 +7,6 @@ import org.drools.core.process.core.Work;
 import org.drools.core.process.core.impl.ParameterDefinitionImpl;
 import org.drools.core.process.core.impl.WorkImpl;
 import org.jbpm.services.task.wih.util.PeopleAssignmentHelper;
-import org.kie.api.definition.process.Connection;
 
 public class HumanTaskPlanItem extends AbstractPlanItem<HumanTask> implements MultiInstancePlanItem,TaskItemWithDefinition<HumanTask> {
 

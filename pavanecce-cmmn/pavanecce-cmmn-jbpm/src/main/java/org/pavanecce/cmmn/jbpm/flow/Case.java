@@ -3,7 +3,6 @@ package org.pavanecce.cmmn.jbpm.flow;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.jbpm.ruleflow.core.RuleFlowProcess;
@@ -15,8 +14,8 @@ import org.kie.api.definition.process.Node;
 public class Case extends RuleFlowProcess implements PlanItemContainer {
 	private static final long serialVersionUID = -2253866933695827108L;
 	public static final String WORK_ITEM = "WorkItem";
-	private List<CaseParameter> inputParameters = new ArrayList<CaseParameter>();
-	private List<CaseParameter> outputParameters = new ArrayList<CaseParameter>();
+	private Map<String, CaseParameter> inputParameters = new HashMap<String, CaseParameter>();
+	private Map<String, CaseParameter> outputParameters = new HashMap<String, CaseParameter>();
 	private Collection<PlanItemDefinition> planItemDefinitions = new ArrayList<PlanItemDefinition>();
 	private Collection<PlanItemInfo<?>> planItemInfo = new ArrayList<PlanItemInfo<?>>();
 	private Collection<Role> roles = new ArrayList<Role>();
@@ -74,19 +73,25 @@ public class Case extends RuleFlowProcess implements PlanItemContainer {
 	}
 
 	public void addInputParameter(CaseParameter cp) {
-		inputParameters.add(cp);
+		inputParameters.put(cp.getElementId(), cp);
 	}
 
-	public List<CaseParameter> getInputParameters() {
-		return inputParameters;
+	public Collection<CaseParameter> getInputParameters() {
+		return inputParameters.values();
 	}
 
 	public void addOutputParameter(CaseParameter cp) {
-		inputParameters.add(cp);
+		inputParameters.put(cp.getElementId(),cp);
 	}
 
-	public List<CaseParameter> getOutputParameters() {
-		return outputParameters;
+	public Collection<CaseParameter> getOutputParameters() {
+		return outputParameters.values();
+	}
+	public CaseParameter getInputParameter(String id){
+		return inputParameters.get(id);
+	}
+	public CaseParameter getOutputParameter(String id){
+		return outputParameters.get(id);
 	}
 
 	public Collection<CaseFileItemOnPart> findCaseFileItemOnPartsFor(CaseFileItem item) {

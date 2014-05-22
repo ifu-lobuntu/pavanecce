@@ -5,6 +5,7 @@ import org.jbpm.workflow.instance.node.EventNodeInstanceInterface;
 import org.jbpm.workflow.instance.node.JoinInstance;
 import org.kie.api.runtime.process.NodeInstance;
 import org.pavanecce.cmmn.jbpm.flow.DefaultJoin;
+import org.pavanecce.cmmn.jbpm.flow.PlanItemTransition;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceContainerLifecycle;
 
 public class DefaultJoinInstance extends JoinInstance implements EventNodeInstanceInterface {
@@ -19,7 +20,7 @@ public class DefaultJoinInstance extends JoinInstance implements EventNodeInstan
 		if (!isInitializing && getNodeInstanceContainer() instanceof PlanItemInstanceContainerLifecycle) {
 			PlanItemInstanceContainerLifecycle piic = (PlanItemInstanceContainerLifecycle) getNodeInstanceContainer();
 			if (piic.canComplete() && piic.getPlanItemContainer().isAutoComplete()) {
-				piic.internalComplete();
+				piic.triggerTransitionOnTask(PlanItemTransition.COMPLETE);
 			}
 		}
 	}

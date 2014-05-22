@@ -216,9 +216,9 @@ public enum PlanElementState {
 
 	private void setActive(PlanElementLifecycle pi) {
 		pi.setPlanElementState(ACTIVE);
-		if(pi instanceof PlanItemInstanceContainerLifecycle){
+		if (pi instanceof PlanItemInstanceContainerLifecycle) {
 			for (ItemInstanceLifecycle<?> child : ((PlanItemInstanceContainerLifecycle) pi).getChildren()) {
-				if(child instanceof ControllableItemInstanceLifecycle &&  child.getPlanElementState()==INITIAL){
+				if (child instanceof ControllableItemInstanceLifecycle && child.getPlanElementState() == INITIAL) {
 					child.setPlanElementState(AVAILABLE);
 					((ControllableItemInstanceLifecycle<?>) child).noteInstantiation();
 				}
@@ -253,7 +253,7 @@ public enum PlanElementState {
 		for (ItemInstanceLifecycle<?> child : pi2.getChildren()) {
 			if (!child.getPlanElementState().isTerminalState()) {
 				if (isComplexLifecycle(child)) {
-					((ItemInstanceLifecycleWithHistory<?>)child).exit();
+					((ItemInstanceLifecycleWithHistory<?>) child).exit();
 				} else if (child instanceof OccurrablePlanItemInstanceLifecycle) {
 					((OccurrablePlanItemInstanceLifecycle<?>) child).parentTerminate();
 				}
@@ -264,8 +264,11 @@ public enum PlanElementState {
 	public void exit(ItemInstanceLifecycleWithHistory<?> pi) {
 		validateTransition(pi, EXIT);
 		signalEvent(pi, PlanItemTransition.EXIT);
-		pi.setPlanElementState(TERMINATED);
-		PlanItemLifecyleUtil.exitPlanItem(pi);
+		if (pi instanceof PlanElementLifecycleWithTask) {
+			((PlanElementLifecycleWithTask) pi).triggerTransitionOnTask(EXIT);
+		} else {
+			pi.setPlanElementState(TERMINATED);
+		}
 	}
 
 	public void complete(PlanElementLifecycle pi) {
@@ -281,7 +284,11 @@ public enum PlanElementState {
 		validateTransition(pi, PARENT_SUSPEND);
 		signalEvent(pi, PlanItemTransition.PARENT_SUSPEND);
 		pi.setLastBusyState(pi.getPlanElementState());
-		pi.setPlanElementState(SUSPENDED);
+		if (pi instanceof PlanElementLifecycleWithTask) {
+			((PlanElementLifecycleWithTask) pi).triggerTransitionOnTask(SUSPEND);
+		} else {
+			pi.setPlanElementState(SUSPENDED);
+		}
 	}
 
 	public void parentResume(ItemInstanceLifecycleWithHistory<?> pi) {

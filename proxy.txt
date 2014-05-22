@@ -1,0 +1,1 @@
+-Dhttp.proxyHost=proxyo.fnb.co.za -Dhttp.proxyUser=F4673522 -Dhttp.proxyPassword=Ainnikki05 -Dhttp.proxyPort=8080 -Dhttps.proxyHost=proxyo.fnb.co.za -Dhttps.proxyUser=F4673522 -Dhttps.proxyPassword=Ainnikki05 -Dhttps.proxyPort=8080

@@ -1,5 +1,8 @@
 package org.pavanecce.cmmn.jbpm.lifecycle.impl;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.drools.core.WorkItemHandlerNotFoundException;
 import org.drools.core.process.core.Work;
 import org.drools.core.process.instance.WorkItem;
@@ -10,38 +13,54 @@ import org.jbpm.process.core.context.variable.VariableScope;
 import org.jbpm.process.instance.ContextInstance;
 import org.jbpm.process.instance.ProcessInstance;
 import org.jbpm.process.instance.context.exception.ExceptionScopeInstance;
-import org.jbpm.process.instance.impl.ConstraintEvaluator;
 import org.jbpm.services.task.wih.util.PeopleAssignmentHelper;
 import org.jbpm.workflow.instance.WorkflowRuntimeException;
 import org.jbpm.workflow.instance.node.CompositeContextNodeInstance;
-import org.jbpm.workflow.instance.node.EventBasedNodeInstanceInterface;
 import org.kie.api.runtime.process.NodeInstance;
+import org.pavanecce.cmmn.jbpm.flow.DiscretionaryItem;
+import org.pavanecce.cmmn.jbpm.flow.PlanItem;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemControl;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemTransition;
+import org.pavanecce.cmmn.jbpm.flow.TableItem;
 import org.pavanecce.cmmn.jbpm.flow.TaskItemWithDefinition;
 import org.pavanecce.cmmn.jbpm.lifecycle.ControllableItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
 
 public abstract class AbstractControllableItemInstance<T extends PlanItemDefinition, X extends TaskItemWithDefinition<T>> extends CompositeContextNodeInstance implements
-		ControllableItemInstanceLifecycle<T>, EventBasedNodeInstanceInterface {
+		ControllableItemInstanceLifecycle<T> {
 
 	private static final long serialVersionUID = 3200294767777991641L;
 
 	private PlanElementState lastBusyState = PlanElementState.NONE;
 	protected WorkItem workItem;
 	private long workItemId;
-
 	protected PlanElementState planElementState = PlanElementState.AVAILABLE;
-
 	protected Boolean isCompletionRequired;
 
 	public AbstractControllableItemInstance() {
 		super();
 	}
 
+	protected abstract String getIdealRole();
+
+	protected abstract String getIdealOwner();
+
 	public final WorkItemImpl createWorkItem(Work work) {
-		return org.pavanecce.cmmn.jbpm.lifecycle.impl.PlanItemInstanceUtil.createWorkItem(work, this, this.getItem().getDefinition());
+		return PlanItemInstanceUtil.createWorkItem(work, this, this.getItem().getDefinition());
+	}
+
+	protected String getBusinessAdministrators() {
+		TaskItemWithDefinition<T> item = getItem();
+		if (item instanceof PlanItem) {
+			return TableItem.getPlannerRoles((PlanItem<?>) item);
+		} else {
+			return TableItem.getPlannerRoles((DiscretionaryItem<?>) item);
+		}
+	}
+
+	protected boolean isBlocking() {
+		return true;
 	}
 
 	@Override
@@ -54,72 +73,77 @@ public abstract class AbstractControllableItemInstance<T extends PlanItemDefinit
 		throw new IllegalStateException("Complex planItemInstances do not support to parentTerminate");
 	}
 
-
-	protected abstract boolean isWaitForCompletion();
-
 	private boolean isActivatedAutomatically() {
-		boolean isActivatedAutomatically = false;
-		PlanItemControl itemControl = getItemControl();
-		if (itemControl != null && itemControl.getAutomaticActivationRule() instanceof ConstraintEvaluator) {
-			ConstraintEvaluator ev = (ConstraintEvaluator) itemControl.getAutomaticActivationRule();
-			if (ev.evaluate((org.jbpm.workflow.instance.NodeInstance) this, null, ev)) {
-				isActivatedAutomatically = true;
-			}
-		}
-		return isActivatedAutomatically;
+		return !PlanItemInstanceUtil.isActivatedManually(this);
 	}
-	public void internalTriggerWithoutInstantiation(NodeInstance from, String type, WorkItem wi){
+
+	@Override
+	public void triggerTransitionOnTask(PlanItemTransition transition) {
+		WorkItemImpl wi = new WorkItemImpl();
+		wi.setName(UPDATE_TASK_STATUS);
+		wi.setParameter(TASK_TRANSITION, transition);
+		wi.setParameter(WORK_ITEM_ID, getWorkItemId());
+		wi.setParameter(PeopleAssignmentHelper.ACTOR_ID, getIdealOwner());
+		wi.setParameter(PeopleAssignmentHelper.GROUP_ID, getIdealRole());
+		wi.setParameter(PeopleAssignmentHelper.BUSINESSADMINISTRATOR_ID, getBusinessAdministrators());
+		executeWorkItem(wi);
+	}
+
+	protected Map<String, Object> buildParametersFor(PlanItemTransition transition) {
+		return new HashMap<String, Object>();
+	}
+
+	public void internalTriggerWithoutInstantiation(NodeInstance from, String type, WorkItem wi) {
 		super.internalTrigger(from, type);
 		this.workItem = wi;
 		this.workItemId = wi.getId();
-		this.planElementState=PlanElementState.INITIAL;
+		this.planElementState = PlanElementState.INITIAL;
 	}
+
 	@Override
 	public void internalTrigger(NodeInstance from, String type) {
 		super.internalTrigger(from, type);
 		((CaseInstance) getProcessInstance()).markSubscriptionsForUpdate();
 		workItem = createWorkItem(getItem().getWork());
-		if (isWaitForCompletion()) {
+		if (isBlocking()) {
 			addWorkItemUpdatedListener();
 		}
-
 		executeWorkItem(workItem);
 		this.workItemId = workItem.getId();
-
 		noteInstantiation();
-		if (!isWaitForCompletion()) {
+		if (!isBlocking()) {
 			triggerCompleted();
 		}
 	}
 
 	public void noteInstantiation() {
-		if(isCompletionRequired==null){
-			isCompletionRequired=PlanItemInstanceUtil.isRequired(getItem(), this);
+		if (isCompletionRequired == null) {
+			isCompletionRequired = PlanItemInstanceUtil.isRequired(getItem(), this);
 		}
 		if (isActivatedAutomatically()) {
-			this.start();
+			triggerTransitionOnTask(PlanItemTransition.START);
 		} else {
-			this.enable();
+			triggerTransitionOnTask(PlanItemTransition.ENABLE);
 		}
 	}
 
-	public void executeWorkItem(WorkItem workItem2) {
+	public void executeWorkItem(WorkItem wi) {
 		if (isInversionOfControl()) {
 			((ProcessInstance) getProcessInstance()).getKnowledgeRuntime().update(((ProcessInstance) getProcessInstance()).getKnowledgeRuntime().getFactHandle(this), this);
 		} else {
 			try {
-				((WorkItemManager) ((ProcessInstance) getProcessInstance()).getKnowledgeRuntime().getWorkItemManager()).internalExecuteWorkItem(workItem2);
+				((WorkItemManager) ((ProcessInstance) getProcessInstance()).getKnowledgeRuntime().getWorkItemManager()).internalExecuteWorkItem(wi);
 			} catch (WorkItemHandlerNotFoundException wihnfe) {
 				getProcessInstance().setState(org.kie.api.runtime.process.ProcessInstance.STATE_ABORTED);
 				throw wihnfe;
 			} catch (Exception e) {
+				e.printStackTrace();
 				String exceptionName = e.getClass().getName();
 				ExceptionScopeInstance exceptionScopeInstance = (ExceptionScopeInstance) resolveContextInstance(ExceptionScope.EXCEPTION_SCOPE, exceptionName);
 				if (exceptionScopeInstance == null) {
 					throw new WorkflowRuntimeException(this, getProcessInstance(), "Unable to execute Action: " + e.getMessage(), e);
 				}
-				// workItemId must be set otherwise cancel activity will not find the right work item
-				this.workItemId = workItem2.getId();
+				this.workItemId = wi.getId();
 				exceptionScopeInstance.handleException(exceptionName, e);
 			}
 		}
@@ -132,7 +156,6 @@ public abstract class AbstractControllableItemInstance<T extends PlanItemDefinit
 
 	@Override
 	public ContextInstance resolveContextInstance(String contextId, Object param) {
-
 		final ContextInstance result = super.resolveContextInstance(contextId, param);
 		if (contextId.equals(VariableScope.VARIABLE_SCOPE)) {
 			// TODO make caseParameters available??
@@ -161,7 +184,6 @@ public abstract class AbstractControllableItemInstance<T extends PlanItemDefinit
 	public WorkItem getWorkItem() {
 		if (this.workItem == null) {
 			workItem = ((WorkItemManager) ((ProcessInstance) getProcessInstance()).getKnowledgeRuntime().getWorkItemManager()).getWorkItem(workItemId);
-
 		}
 		return this.workItem;
 	}
@@ -176,12 +198,7 @@ public abstract class AbstractControllableItemInstance<T extends PlanItemDefinit
 		if (type.equals(WORK_ITEM_UPDATED) && isMyWorkItem((WorkItem) event)) {
 			this.workItem = (WorkItem) event;
 			PlanItemTransition transition = (PlanItemTransition) workItem.getResult(HumanTaskPlanItemInstance.TRANSITION);
-			if (transition == PlanItemTransition.TERMINATE && getPlanElementState().isTerminalState()) {
-				// do nothing - triggered by TaskService in reaction to an event, e.g. exit or case closed from the
-				// process
-			} else {
-				transition.invokeOn(this);
-			}
+			transition.invokeOn(this);
 		} else {
 			super.signalEvent(type, event);
 		}
@@ -236,39 +253,11 @@ public abstract class AbstractControllableItemInstance<T extends PlanItemDefinit
 	@Override
 	public void exit() {
 		planElementState.exit(this);
-		internalCompleteTask();
 	}
 
 	@Override
 	public void complete() {
 		planElementState.complete(this);
-	}
-
-	@Override
-	public void internalComplete() {
-		internalCompleteTask();
-		complete();
-	}
-
-	public void internalFault() {
-		internalFailTask();
-		fault();
-	}
-
-	protected void internalFailTask() {
-		WorkItemImpl wi = new WorkItemImpl();
-		wi.setName(UPDATE_TASK_STATUS);
-		wi.setParameter(TASK_STATUS, PlanElementState.FAILED);
-		wi.setParameter(WORK_ITEM_ID, getWorkItemId());
-		executeWorkItem(wi);
-	}
-
-	protected void internalCompleteTask() {
-		WorkItemImpl wi = new WorkItemImpl();
-		wi.setName(UPDATE_TASK_STATUS);
-		wi.setParameter(TASK_STATUS, PlanElementState.COMPLETED);
-		wi.setParameter(WORK_ITEM_ID, getWorkItemId());
-		executeWorkItem(wi);
 	}
 
 	@Override
@@ -299,18 +288,6 @@ public abstract class AbstractControllableItemInstance<T extends PlanItemDefinit
 	@Override
 	public void start() {
 		planElementState.start(this);
-		String owner = getCaseInstance().getCaseOwner();
-		if (owner != null) {
-			WorkItemImpl wi = new WorkItemImpl();
-			wi.setName(UPDATE_TASK_STATUS);
-			// TODO should it be InProgress or Reserved?
-			wi.setParameter(TASK_STATUS, PlanElementState.ACTIVE);
-			wi.setParameter(PeopleAssignmentHelper.ACTOR_ID, owner);
-			wi.setParameter(WORK_ITEM_ID, getWorkItemId());
-			executeWorkItem(wi);
-		} else {
-			// TODO think this through, possibly polymorphic
-		}
 	}
 
 	@Override
@@ -341,9 +318,6 @@ public abstract class AbstractControllableItemInstance<T extends PlanItemDefinit
 	}
 
 	public boolean isCompletionRequired() {
-		if(isCompletionRequired==null){
-			System.out.println();
-		}
 		return isCompletionRequired;
 	}
 
@@ -389,9 +363,9 @@ public abstract class AbstractControllableItemInstance<T extends PlanItemDefinit
 
 	@Override
 	public PlanItemControl getItemControl() {
-		if(getItem().getItemControl()==null){
+		if (getItem().getItemControl() == null) {
 			return getItem().getDefinition().getDefaultControl();
-		}else{
+		} else {
 			return getItem().getItemControl();
 		}
 	}

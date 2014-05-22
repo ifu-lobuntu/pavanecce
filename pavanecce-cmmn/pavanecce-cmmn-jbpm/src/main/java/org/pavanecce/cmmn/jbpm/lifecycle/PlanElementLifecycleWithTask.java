@@ -1,11 +1,12 @@
 package org.pavanecce.cmmn.jbpm.lifecycle;
 
 import org.drools.core.process.instance.WorkItem;
+import org.pavanecce.cmmn.jbpm.flow.PlanItemTransition;
 
 public interface PlanElementLifecycleWithTask extends PlanElementLifecycle {
 	String TRANSITION = "Transition";
 	String TASK = "Task";
-	String TASK_STATUS = "TaskStatus";
+	String TASK_TRANSITION = "TaskStatus";
 	String WORK_ITEM_ID = "WorkItemId";
 	String WORK_ITEM_UPDATED = "workItemUpdated";
 	String TASK_NODE_NAME = "NodeName";
@@ -20,7 +21,7 @@ public interface PlanElementLifecycleWithTask extends PlanElementLifecycle {
 
 	void complete();
 
-	void internalComplete();
+	void triggerTransitionOnTask(PlanItemTransition transition);
 
 	void fault();
 

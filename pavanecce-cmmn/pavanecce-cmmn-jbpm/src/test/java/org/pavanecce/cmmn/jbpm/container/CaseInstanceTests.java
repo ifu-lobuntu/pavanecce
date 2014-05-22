@@ -5,7 +5,7 @@ import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceContainerLifecycle;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 
-public class CaseInstanceTests extends AbstractPlanItemInstanceContainerTests {
+public class CaseInstanceTests extends AbstractPlanItemInstanceContainerLifecycleTests {
 
 	{
 		super.isJpa = true;

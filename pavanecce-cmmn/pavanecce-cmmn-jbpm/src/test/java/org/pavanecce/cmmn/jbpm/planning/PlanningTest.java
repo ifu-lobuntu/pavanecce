@@ -1,7 +1,7 @@
 package org.pavanecce.cmmn.jbpm.planning;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 
 import org.jbpm.services.task.impl.model.UserImpl;
@@ -9,12 +9,12 @@ import org.junit.Test;
 import org.kie.api.runtime.manager.RuntimeManager;
 import org.kie.api.task.model.Status;
 import org.kie.api.task.model.TaskSummary;
-import org.kie.internal.task.api.model.InternalTask;
 import org.kie.internal.task.api.model.InternalTaskData;
-import org.pavanecce.cmmn.jbpm.container.AbstractPlanItemInstanceContainerTests;
+import org.pavanecce.cmmn.jbpm.container.AbstractPlanItemInstanceContainerTest;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 
-public class PlanningTest extends AbstractPlanItemInstanceContainerTests {
+public class PlanningTest extends AbstractPlanItemInstanceContainerTest {
 	PlanningService planningService = new PlanningService();
 	{
 		isJpa = true;
@@ -24,7 +24,7 @@ public class PlanningTest extends AbstractPlanItemInstanceContainerTests {
 	public void testGetPlanningTable() throws Exception {
 		givenThatTheTestCaseIsStarted();
 		triggerInitialActivity();
-		PlanningTableInstance pti = getPlanningService().getPlanningTable(getTaskService().getTaskByWorkItemId(caseInstance.getWorkItemId()).getId(), "ConstructionProjectManager");
+		PlanningTableInstance pti = getPlanningService().startPlanning(getTaskService().getTaskByWorkItemId(caseInstance.getWorkItemId()).getId(), "ConstructionProjectManager",false);
 		for (PlannedTaskSummary plannedTaskSummary : pti.getPlannedTasks()) {
 			assertNull(plannedTaskSummary.getDiscretionaryItemId());
 			assertEquals(PlanningStatus.PLANNING_IN_PROGRESS, plannedTaskSummary.getPlanningStatus());
@@ -59,15 +59,15 @@ public class PlanningTest extends AbstractPlanItemInstanceContainerTests {
 	}
 
 	@Test
-	public void testSubmitPlan() throws Exception {
+	public void testSubmitPlanWithContainerAlreadyActive() throws Exception {
 		givenThatTheTestCaseIsStarted();
 		triggerInitialActivity();
 		Long parentTaskId = getTaskService().getTaskByWorkItemId(caseInstance.getWorkItemId()).getId();
-		HashSet<PlannedTask> plannedTasks = new HashSet<PlannedTask>();
+		List<PlannedTask> plannedTasks = new ArrayList<PlannedTask>();
 		PlannedTask plannnedCaseTask = getPlanningService().preparePlannedTask(parentTaskId, "theCaseTaskDiscretionaryItemId");
 		PlannedTask plannnedHumanTask = getPlanningService().preparePlannedTask(parentTaskId, "theHumanTaskDiscretionaryItemId");
 		PlannedTask plannnedStage = getPlanningService().preparePlannedTask(parentTaskId, "theStageDiscretionaryItemId");
-		PlanningTableInstance pti = getPlanningService().getPlanningTable(getTaskService().getTaskByWorkItemId(caseInstance.getWorkItemId()).getId(), "ConstructionProjectManager");
+		PlanningTableInstance pti = getPlanningService().startPlanning(getTaskService().getTaskByWorkItemId(caseInstance.getWorkItemId()).getId(), "ConstructionProjectManager",false);
 		plannedTasks.add(plannnedCaseTask);
 		plannedTasks.add(plannnedStage);
 		plannedTasks.add(plannnedHumanTask);
@@ -77,13 +77,51 @@ public class PlanningTest extends AbstractPlanItemInstanceContainerTests {
 		for (PlannedTask plannedTask : plannedTasks) {
 			((InternalTaskData) plannedTask.getTaskData()).setActualOwner(new UserImpl("salaboy"));
 		}
-		getPlanningService().submitPlan(parentTaskId, plannedTasks);
+		getPlanningService().submitPlan(parentTaskId, plannedTasks,false);
 		List<TaskSummary> tasks = getTaskService().getTasksOwned("salaboy", "en-UK");
 		assertEquals(6,tasks.size());
 		for (TaskSummary taskSummary : tasks) {
 			if(taskSummary.getId()==plannnedCaseTask.getId() || taskSummary.getId()==plannnedHumanTask.getId()||taskSummary.getId()==plannnedStage.getId()){
-				System.out.println(taskSummary.getStatus());
-//				assertEquals(Status.Created, taskSummary.getStatus());
+				//They're all ENABLED
+				assertEquals(Status.Reserved, taskSummary.getStatus());
+			}
+		}
+		getPersistence().start();
+		CaseInstance ci = reloadCaseInstance(caseInstance);
+		assertNotNull(ci.findNodeForWorkItem(plannnedCaseTask.getTaskData().getWorkItemId()));
+		assertNotNull(ci.findNodeForWorkItem(plannnedHumanTask.getTaskData().getWorkItemId()));
+		assertNotNull(ci.findNodeForWorkItem(plannnedStage.getTaskData().getWorkItemId()));
+		getPersistence().commit();
+	}
+	@Test
+	public void testSubmitPlanWithContainerNotActive() throws Exception {
+		givenThatTheTestCaseIsStarted();
+		triggerInitialActivity();
+		Long parentTaskId = getTaskService().getTaskByWorkItemId(caseInstance.getWorkItemId()).getId();
+		List<PlannedTask> plannedTasks = new ArrayList<PlannedTask>();
+		PlannedTask plannnedCaseTask = getPlanningService().preparePlannedTask(parentTaskId, "theCaseTaskDiscretionaryItemId");
+		PlannedTask plannnedHumanTask = getPlanningService().preparePlannedTask(parentTaskId, "theHumanTaskDiscretionaryItemId");
+		PlannedTask plannnedStage = getPlanningService().preparePlannedTask(parentTaskId, "theStageDiscretionaryItemId");
+		PlanningTableInstance pti = getPlanningService().startPlanning(getTaskService().getTaskByWorkItemId(caseInstance.getWorkItemId()).getId(), "ConstructionProjectManager",true);
+		plannedTasks.add(plannnedCaseTask);
+		plannedTasks.add(plannnedStage);
+		plannedTasks.add(plannnedHumanTask);
+		assertEquals(PlanElementState.SUSPENDED, reloadCaseInstance().getPlanElementState());
+		for (PlannedTaskSummary s : pti.getPlannedTasks()) {
+			plannedTasks.add(getPlanningService().getPlannedTaskById(s.getId()));
+		}
+		for (PlannedTask plannedTask : plannedTasks) {
+			((InternalTaskData) plannedTask.getTaskData()).setActualOwner(new UserImpl("salaboy"));
+		}
+		getPlanningService().submitPlan(parentTaskId, plannedTasks,false);
+		List<TaskSummary> tasks = getTaskService().getTasksOwned("salaboy", "en-UK");
+		assertEquals(6,tasks.size());
+		for (TaskSummary taskSummary : tasks) {
+			if(taskSummary.getId()==plannnedCaseTask.getId() || taskSummary.getId()==plannnedHumanTask.getId()||taskSummary.getId()==plannnedStage.getId()){
+				//They're all ENABLED
+				assertEquals(Status.Created, taskSummary.getStatus());
+			}else{
+				assertEquals(Status.Suspended, taskSummary.getStatus());
 			}
 		}
 		getPersistence().start();
@@ -136,8 +174,6 @@ public class PlanningTest extends AbstractPlanItemInstanceContainerTests {
 
 	@Override
 	protected void ensurePlanItemContainerIsStarted() {
-		// TODO Auto-generated method stub
-
 	}
 
 }

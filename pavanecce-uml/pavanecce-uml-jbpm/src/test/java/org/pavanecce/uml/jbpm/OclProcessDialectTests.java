@@ -1,6 +1,5 @@
 package org.pavanecce.uml.jbpm;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -8,20 +7,15 @@ import java.util.Map;
 
 import org.jbpm.process.builder.dialect.ProcessDialectRegistry;
 import org.jbpm.services.task.utils.ContentMarshallerHelper;
-import org.jbpm.shared.services.impl.events.JbpmServicesEventListener;
 import org.junit.Test;
 import org.kie.api.io.ResourceType;
 import org.kie.api.runtime.manager.RuntimeManager;
 import org.kie.api.task.model.Content;
 import org.kie.api.task.model.Task;
 import org.kie.api.task.model.TaskSummary;
-import org.kie.internal.task.api.EventService;
-import org.kie.internal.task.api.model.NotificationEvent;
-import org.pavanecce.cmmn.jbpm.infra.CaseTaskLifecycleListener;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 import org.pavanecce.cmmn.jbpm.ocm.OcmCaseFileItemSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.ocm.OcmCaseSubscriptionInfo;
-import org.pavanecce.cmmn.jbpm.task.CaseTaskWorkItemHandler;
 import org.pavanecce.cmmn.jbpm.test.AbstractCmmnCaseTestCase;
 import org.pavanecce.cmmn.jbpm.xml.handler.CMMNBuilder;
 
@@ -69,20 +63,22 @@ public class OclProcessDialectTests extends AbstractCmmnCaseTestCase {
 	}
 
 	protected void givenThatTheTestCaseIsStarted() {
-		RuntimeManager runtimeManager = createRuntimeManager("test/test.uml", "test/OclProcessDialectTests.cmmn");
+		createRuntimeManager("test/test.uml", "test/OclProcessDialectTests.cmmn");
 		Map<String, Object> params = new HashMap<String, Object>();
 		getPersistence().start();
-
 		ConstructionCase cc = new ConstructionCase("/cases/case1");
 		housePlan = new HousePlan(cc);
 		house = new House(cc);
 		getPersistence().persist(cc);
 		getPersistence().commit();
+
 		params.put("housePlan", housePlan);
 		params.put("house", house);
+
 		getPersistence().start();
 		caseInstance = (CaseInstance) getRuntimeEngine().getKieSession().startProcess("OclProcessDialectTests", params);
 		getPersistence().commit();
+
 		assertProcessInstanceActive(caseInstance.getId(), getRuntimeEngine().getKieSession());
 		assertNodeTriggered(caseInstance.getId(), "defaultSplit");
 		getPersistence().start();

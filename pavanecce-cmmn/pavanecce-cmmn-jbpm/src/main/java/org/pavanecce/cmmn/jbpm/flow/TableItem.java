@@ -39,6 +39,10 @@ public class TableItem extends AbstractItem implements CMMNElement {
 	}
 
 	public static String getPlannerRoles(PlanItem<?> pi) {
+		if(pi.getDefinition() instanceof PlanningTableContainer){
+			PlanningTableContainer ptc = (PlanningTableContainer) pi.getDefinition();
+			return getPlannerRoles(ptc.getPlanningTable(), pi.getPlanItemContainer().getPlanningTable());
+		}
 		return getPlannerRoles(pi.getPlanItemContainer().getPlanningTable());
 	}
 
@@ -78,7 +82,7 @@ public class TableItem extends AbstractItem implements CMMNElement {
 		return "Administrators";
 	}
 
-	private static String getPlannerRoles(PlanningTable... planningTables) {
+	public static String getPlannerRoles(PlanningTable... planningTables) {
 		@SuppressWarnings("unchecked")
 		Collection<Role>[] roles = new Collection[planningTables.length];
 		for (int i = 0; i < planningTables.length; i++) {

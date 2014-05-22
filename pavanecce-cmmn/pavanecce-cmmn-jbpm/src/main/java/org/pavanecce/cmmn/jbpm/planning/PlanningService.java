@@ -28,16 +28,17 @@ public class PlanningService {
 		this.taskService = taskService;
 	}
 
-	public void submitPlan(final long parentTaskId, final Collection<PlannedTask> plannedTasks) {
-		taskService.execute(new SubmitPlanCommand(runtimeManager, plannedTasks, parentTaskId));
+	public void submitPlan(final long parentTaskId, final Collection<PlannedTask> plannedTasks, boolean resume) {
+		taskService.execute(new SubmitPlanCommand(runtimeManager,pm, plannedTasks, parentTaskId, resume));
 	}
 
-	public PlanningTableInstance getPlanningTable(final long parentTaskId, String user) {
-		return new PlanningTableInstance(getPlannedItemsForParentTask(parentTaskId, true), getApplicableDiscretionaryItems(parentTaskId, user));
+	public PlanningTableInstance startPlanning(final long parentTaskId, String user, boolean suspend) {
+		PlanningTableInstance result = new PlanningTableInstance(getPlannedItemsForParentTask(parentTaskId, true), getApplicableDiscretionaryItems(parentTaskId, user, suspend));
+		return result;
 	}
 
-	private Collection<ApplicableDiscretionaryItem> getApplicableDiscretionaryItems(final long parentTaskId, final String user) {
-		return taskService.execute(new GetApplicableDiscretionaryItemsCommand(runtimeManager, parentTaskId, user));
+	private Collection<ApplicableDiscretionaryItem> getApplicableDiscretionaryItems(final long parentTaskId, final String user, boolean suspend) {
+		return taskService.execute(new GetApplicableDiscretionaryItemsCommand(runtimeManager, parentTaskId, user, suspend));
 
 	}
 
@@ -54,7 +55,9 @@ public class PlanningService {
 	}
 
 	public PlannedTask getPlannedTaskById(final long id) {
-		return taskService.execute(new AbstractPlanningCommand<PlannedTask>() {
+		return taskService.execute(new AbstractPlanningCommand<PlannedTask>(pm) {
+
+			private static final long serialVersionUID = -6636279175990254543L;
 
 			@Override
 			public PlannedTask execute(Context context) {

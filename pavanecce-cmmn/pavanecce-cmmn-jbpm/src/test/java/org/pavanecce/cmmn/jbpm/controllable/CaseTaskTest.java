@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.kie.api.runtime.process.NodeInstance;
+import org.kie.api.task.model.Status;
 import org.kie.api.task.model.TaskSummary;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
@@ -97,6 +98,7 @@ public class CaseTaskTest extends AbstractControllableLifecycleTests {
 		getRuntimeEngine().getKieSession().signalEvent("TheUserEvent", new Object(), subProcessInstanceId);
 		CaseInstance sp = (CaseInstance) getRuntimeEngine().getKieSession().getProcessInstance(subProcessInstanceId);
 		assertEquals(PlanElementState.COMPLETED, sp.getPlanElementState());
+		assertEquals(Status.Completed, getTaskService().getTaskByWorkItemId(sp.getWorkItemId()).getTaskData().getStatus());
 		getPersistence().commit();
 	}
 

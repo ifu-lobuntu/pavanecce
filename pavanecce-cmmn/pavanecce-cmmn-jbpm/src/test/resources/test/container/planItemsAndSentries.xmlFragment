@@ -7,11 +7,11 @@
 			<cmmn:planItem definitionRef="theUserEventId" name="TheUserEventPlanItem" id="theUserEventPlanItemId" />
 			<cmmn:planItem definitionRef="theStageId" name="TheStagePlanItem" id="theStagePlanItemId" entryCriteriaRefs="waitingForStartUserEventSentryId4">
 				<cmmn:itemControl>
-					<cmmn:automaticActivationRule>
+					<cmmn:manualActivationRule>
 						<cmmn:condition language="http://www.java.com/java">
-							<cmmn:body>return true;</cmmn:body>
+							<cmmn:body>return false;</cmmn:body>
 						</cmmn:condition>
-					</cmmn:automaticActivationRule>
+					</cmmn:manualActivationRule>
 				</cmmn:itemControl>
 			</cmmn:planItem>
 			<cmmn:sentry id="waitingForStartUserEventSentryId1" name="WaitingForStartUserEventSentry1">

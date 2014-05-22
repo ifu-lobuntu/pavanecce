@@ -1,0 +1,20 @@
+Discrepancies in XSD:
+  - In the XSD, TimerEventListener.timerExpression is a fully fledged expression, but in the spec it is just string. Does the result of this expression still have to be a ISO-8601 compliant string, or could it be a date/duration/etc. ?
+  - The XSD does not have AuthorizedRoleRefs for user events.
+  - The parentTerminate StandardEvent is absent from the XSD
+
+For an instance of the Stage representing the casePlanModel of a Case:
+  - does table 7.9 pertain to the Stage instance representing the casePlanModel as well
+  - which transition is called when its exitCriteria become true - it does not seem to be in the statemachine. Table 7.5. does state that it will end up in the Terminated state, but table 7.6. does not say how.
+  - when this stage instance follows the re-activate transition, what is the effect on the child planItemInstances? This is not covered in table 7.9.
+
+There is a bit of ambiguity in my head around the lifecycle of a Stage/CaseTask/HumanTask/Process task
+  - it starts off in the available state
+  - when the entryCriteria become true, the repetitionRule is evaluated, and a new instance may be created.
+  - as I understand it, if the repitionRule is false, the current instance will progress normally through the lifecycle until completion
+  - however, given a repetitionRule=true, does this mean we create a new instance which progresses normally through the lifecycle, depending on manual activation, either from the Enabled or the Active state,
+      while the old instance remains in the Available state "under the covers" so to speak, to await the entryCriteria?
+
+When a Stage needs to be completed manually, which users should be allowed to do that? Same goes for suspend/resume/terminate/close etc.
+Can a UserEvent occur more than once?
+ApplicabilityRules: AND or OR?

@@ -5,7 +5,7 @@ import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceContainerLifecycle;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.StagePlanItemInstance;
 
-public class StageAsContainerTests extends AbstractPlanItemInstanceContainerTests {
+public class StageAsContainerTests extends AbstractPlanItemInstanceContainerLifecycleTests {
 
 	{
 		super.isJpa = true;

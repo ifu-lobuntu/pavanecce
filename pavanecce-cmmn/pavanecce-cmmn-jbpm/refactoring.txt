@@ -1,3 +1,4 @@
+Put all idElements in maps to ease with resolution
 Clear up the distinction between WS-Ready, WS-Reserved and WS-InProgress and how they relate to Active and Enabled
 Clean up all the validPeers and validParents
 Make all PlanItems extend AbstractPlanItem 

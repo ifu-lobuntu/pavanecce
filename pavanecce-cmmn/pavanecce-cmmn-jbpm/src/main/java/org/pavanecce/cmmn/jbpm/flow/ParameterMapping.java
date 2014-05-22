@@ -12,6 +12,8 @@ public class ParameterMapping implements Serializable, CMMNElement {
 	private String targetRef;
 	private Constraint transformation;
 	private String targetParameterName;
+	private CaseParameter targetParameter;
+	private String sourceParameterName;
 
 	public String getSourceRef() {
 		return sourceRef;
@@ -25,8 +27,8 @@ public class ParameterMapping implements Serializable, CMMNElement {
 		return sourceParameter;
 	}
 
-	public void setSourceParameter(CaseParameter sourceParameter) {
-		this.sourceParameter = sourceParameter;
+	public CaseParameter getTargetParameter() {
+		return targetParameter;
 	}
 
 	public String getTargetRef() {
@@ -54,20 +56,51 @@ public class ParameterMapping implements Serializable, CMMNElement {
 		this.transformation = transformation;
 	}
 
-	public void setTargetParameterName(String targetParameterName) {
-		this.targetParameterName = targetParameterName;
-	}
-
 	public String getTargetParameterName() {
-		if(targetParameterName==null){
+		if (targetParameter != null) {
+			return targetParameter.getName();
+		}
+		if (targetParameterName == null) {
 			return getTargetParameterId();
 		}
 		return targetParameterName;
 	}
 
+	public String getSourceParameterName() {
+		if (sourceParameter != null) {
+			return sourceParameter.getName();
+		}
+		if (sourceParameterName == null) {
+			return getSourceParameterId();
+		}
+		return sourceParameterName;
+	}
+
+	public void setTargetParameterName(String targetParameterName) {
+		this.targetParameterName = targetParameterName;
+	}
+
+	public void setSourceParameterName(String sourceParameterName) {
+		this.sourceParameterName = sourceParameterName;
+	}
+
+	public String getSourceParameterId() {
+		String[] split = sourceRef.split("\\#");
+		return split[split.length - 1];
+	}
+
 	public String getTargetParameterId() {
 		String[] split = targetRef.split("\\#");
-		return split[split.length-1];
+		return split[split.length - 1];
+	}
+
+	public void setTargetParameter(CaseParameter cp) {
+		this.targetParameter = cp;
+
+	}
+
+	public void setSourceParameter(CaseParameter sourceParameter) {
+		this.sourceParameter = sourceParameter;
 	}
 
 }

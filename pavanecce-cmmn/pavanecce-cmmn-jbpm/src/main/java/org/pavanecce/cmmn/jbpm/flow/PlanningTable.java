@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import org.kie.api.definition.process.Node;
-import org.kie.api.definition.process.NodeContainer;
 
 public class PlanningTable extends TableItem {
 

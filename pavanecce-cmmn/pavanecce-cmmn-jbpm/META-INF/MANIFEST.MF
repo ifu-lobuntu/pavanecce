@@ -5,8 +5,10 @@ Bundle-SymbolicName: org.pavanecce.cmmn.jbpm
 Bundle-Version: 0.0.1.qualifier
 Export-Package: org.pavanecce.cmmn.jbpm,
  org.pavanecce.cmmn.jbpm.flow,
+ org.pavanecce.cmmn.jbpm.infra,
  org.pavanecce.cmmn.jbpm.jpa,
  org.pavanecce.cmmn.jbpm.lifecycle,
+ org.pavanecce.cmmn.jbpm.lifecycle.impl,
  org.pavanecce.cmmn.jbpm.ocm,
  org.pavanecce.cmmn.jbpm.test,
  org.pavanecce.cmmn.jbpm.xml.handler,

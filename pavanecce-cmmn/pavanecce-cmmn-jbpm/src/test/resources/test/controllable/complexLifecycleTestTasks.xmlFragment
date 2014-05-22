@@ -1,11 +1,11 @@
 			<cmmn:planItem definitionRef="theEventGeneratingTask" name="TheAutoActivatedTaskPlanItem" id="theAutoActivatedTaskPlanItemId"
 				entryCriteriaRefs="waitingForUserEventToStartAutoActivatedTaskId">
 				<cmmn:itemControl id="itemControl1">
-					<cmmn:automaticActivationRule>
+					<cmmn:manualActivationRule>
 						<cmmn:condition language="http://www.java.com/java">
-							<cmmn:body>return housePlan!=null;</cmmn:body>
+							<cmmn:body>return housePlan==null;</cmmn:body>
 						</cmmn:condition>
-					</cmmn:automaticActivationRule>
+					</cmmn:manualActivationRule>
 				</cmmn:itemControl>
 			</cmmn:planItem>
 			<cmmn:planItem definitionRef="theEventGeneratingTask" name="TheManuallyActivatedTaskPlanItem" id="theManuallyActivatedTaskPlanItemId"

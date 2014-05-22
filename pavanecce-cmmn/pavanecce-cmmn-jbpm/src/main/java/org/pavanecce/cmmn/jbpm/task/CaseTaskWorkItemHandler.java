@@ -132,7 +132,6 @@ public class CaseTaskWorkItemHandler extends LocalHTWorkItemHandler {
 		return task;
 	}
 
-	@SuppressWarnings("serial")
 	@Override
 	public void executeWorkItem(final WorkItem workItem, WorkItemManager manager) {
 
@@ -145,9 +144,9 @@ public class CaseTaskWorkItemHandler extends LocalHTWorkItemHandler {
 			InternalTaskService internalTaskService = (InternalTaskService) runtime.getTaskService();
 			if (Boolean.TRUE.equals(workItem.getParameter(DiscretionaryItem.PLANNED))) {
 				// Bypass assignment/claim. Keep in created state
-				internalTaskService.execute(new AddPlannedTaskCommand(workItem, content, task));
+				internalTaskService.execute(new AddPlannedTaskCommand(null, workItem, content, task));
 			} else {
-				long taskId = internalTaskService.addTask(task, content);
+				Long taskId = internalTaskService.execute(new CreateTaskCommand(null,task,content));
 				if (workItem.getParameter(Case.CASE_OWNER) != null) {
 					// This task represents a standalone CaseInstanc;
 					String caseOwner = (String) workItem.getParameter(Case.CASE_OWNER);

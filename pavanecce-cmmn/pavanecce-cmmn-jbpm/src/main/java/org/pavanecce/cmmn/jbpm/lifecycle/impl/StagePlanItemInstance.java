@@ -74,13 +74,20 @@ public class StagePlanItemInstance extends AbstractControllableItemInstance<Stag
 	}
 
 	@Override
-	protected boolean isWaitForCompletion() {
-		return true;
-	}
-
-	@Override
 	public PlanningTable getPlanningTable() {
 		return getPlanItemDefinition().getPlanningTable();
 	}
 
+	@Override
+	protected String getIdealRole() {
+		return getBusinessAdministrators();
+	}
+
+	@Override
+	protected String getIdealOwner() {
+		if (getCaseInstance().getCaseOwner() != null) {
+			return getCaseInstance().getCaseOwner();
+		}
+		return null;
+	}
 }

@@ -1,5 +1,6 @@
 package org.pavanecce.cmmn.jbpm.controllable;
 
+import org.kie.api.task.model.Status;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.StagePlanItemInstance;
 
@@ -46,6 +47,7 @@ public class StageAsPlanItemTest extends AbstractControllableLifecycleTests {
 		getRuntimeEngine().getKieSession().signalEvent("StageCompletingEvent", new Object(), caseInstance.getId());
 		getPersistence().commit();
 		assertPlanItemInState(caseInstance.getId(), "TheMilestonePlanItem", PlanElementState.COMPLETED);
+		assertEquals(Status.Completed, getTaskService().getTaskById(taskId).getTaskData().getStatus());
 	}
 
 	@Override

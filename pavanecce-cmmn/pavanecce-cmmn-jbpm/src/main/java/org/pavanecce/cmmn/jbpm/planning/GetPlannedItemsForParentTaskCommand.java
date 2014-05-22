@@ -17,9 +17,9 @@ public class GetPlannedItemsForParentTaskCommand extends AbstractPlanningCommand
 	private static final long serialVersionUID = -8445370954335088878L;
 
 	public GetPlannedItemsForParentTaskCommand(JbpmServicesPersistenceManager pm, long parentTaskId, boolean createMissing) {
+		super(pm);
 		this.parentTaskId = parentTaskId;
 		this.createMissing = createMissing;
-		this.pm = pm;
 	}
 
 	@Override

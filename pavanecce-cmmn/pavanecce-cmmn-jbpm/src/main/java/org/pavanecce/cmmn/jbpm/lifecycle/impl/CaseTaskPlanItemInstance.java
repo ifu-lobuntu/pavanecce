@@ -25,7 +25,6 @@ import org.kie.api.runtime.process.NodeInstance;
 import org.kie.internal.runtime.KnowledgeRuntime;
 import org.kie.internal.runtime.manager.context.ProcessInstanceIdContext;
 import org.pavanecce.cmmn.jbpm.flow.Case;
-import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
 import org.pavanecce.cmmn.jbpm.flow.CaseTask;
 import org.pavanecce.cmmn.jbpm.flow.ParameterMapping;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemTransition;
@@ -39,20 +38,13 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask, Tas
 
 	private static final long serialVersionUID = -2144001908752174712L;
 	private static final Logger logger = LoggerFactory.getLogger(CaseTaskPlanItemInstance.class);
-
 	private long processInstanceId;
+	transient private ProcessInstance processInstance;
 
-    protected boolean isLinkedIncomingNodeRequired() {
-    	return false;
-    }
 	@Override
 	public void start() {
 		super.start();
 		startProcess();
-	}
-	@Override
-	public void internalTrigger(NodeInstance from, String type) {
-		super.internalTrigger(from, type);
 	}
 
 	@Override
@@ -93,24 +85,8 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask, Tas
 			((ProcessInstance) getProcessInstance()).setState(ProcessInstance.STATE_ABORTED);
 			throw new RuntimeDroolsException("Could not find process " + processId);
 		} else {
-			List<ParameterMapping> parameterMappings = prepareParameterMappings(process);
-			Map<String, Object> workItemParameters = getWorkItem().getParameters();
-			Map<String, Object> inputParameters = new HashMap<String, Object>();
-			ProcessContext ctx = new ProcessContext(getProcessInstance().getKnowledgeRuntime());
-			ctx.setNodeInstance(this);
-			ctx.setProcessInstance(getProcessInstance());
-			for (ParameterMapping pm : parameterMappings) {
-				Object sourceValue = workItemParameters.get(pm.getSourceParameter().getName());
-				if (pm.getTransformation() instanceof ReturnValueConstraintEvaluator) {
-					ReturnValueConstraintEvaluator rvce = (ReturnValueConstraintEvaluator) pm.getTransformation();
-					try {
-						sourceValue = rvce.getReturnValueEvaluator().evaluate(ctx);
-					} catch (Exception e) {
-						logger.error("Could not perform transformation", e);
-					}
-				}
-				inputParameters.put(pm.getTargetParameterName(), sourceValue);
-			}
+			List<ParameterMapping> parameterMappings = getPlanItemDefinition().prepareInputMappings(process);
+			Map<String, Object> inputParameters = transformParameters(parameterMappings, getWorkItem().getParameters());
 			inputParameters.put(Case.WORK_ITEM, getWorkItem());
 			KnowledgeRuntime kruntime = ((ProcessInstance) getProcessInstance()).getKnowledgeRuntime();
 			RuntimeManager manager = (RuntimeManager) kruntime.getEnvironment().get("RuntimeManager");
@@ -123,7 +99,7 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask, Tas
 			((ProcessInstanceImpl) processInstance).setMetaData("ParentProcessInstanceId", getProcessInstance().getId());
 			((ProcessInstanceImpl) processInstance).setParentProcessInstanceId(getProcessInstance().getId());
 			kruntime.startProcessInstance(processInstance.getId());
-			if (!isWaitForCompletion()) {
+			if (!isBlocking()) {
 				triggerCompleted();
 			} else if (processInstance.getState() == ProcessInstance.STATE_COMPLETED || processInstance.getState() == ProcessInstance.STATE_ABORTED) {
 				processInstanceCompleted(processInstance);
@@ -133,21 +109,24 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask, Tas
 		}
 	}
 
-	private List<ParameterMapping> prepareParameterMappings(Process process) {
-		List<ParameterMapping> parameterMappings = getPlanItemDefinition().getParameterMappings();
-		if (process instanceof Case) {
-			List<CaseParameter> inputParameters = ((Case) process).getInputParameters();
-			for (ParameterMapping pm : parameterMappings) {
-				for (CaseParameter caseParameter : inputParameters) {
-					if (pm.getTargetParameterId().equals(caseParameter.getElementId())) {
-						pm.setTargetParameterName(caseParameter.getName());
-						break;
-					}
+	private Map<String, Object> transformParameters(List<ParameterMapping> parameterMappings, Map<String, Object> parametersToTransform) {
+		Map<String, Object> inputParameters = new HashMap<String, Object>();
+		ProcessContext ctx = new ProcessContext(getProcessInstance().getKnowledgeRuntime());
+		ctx.setNodeInstance(this);
+		ctx.setProcessInstance(getProcessInstance());
+		for (ParameterMapping pm : parameterMappings) {
+			Object sourceValue = parametersToTransform.get(pm.getSourceParameter().getName());
+			if (pm.getTransformation() instanceof ReturnValueConstraintEvaluator) {
+				ReturnValueConstraintEvaluator rvce = (ReturnValueConstraintEvaluator) pm.getTransformation();
+				try {
+					sourceValue = rvce.getReturnValueEvaluator().evaluate(ctx);
+				} catch (Exception e) {
+					logger.error("Could not perform transformation", e);
 				}
-
 			}
+			inputParameters.put(pm.getTargetParameterName(), sourceValue);
 		}
-		return parameterMappings;
+		return inputParameters;
 	}
 
 	@Override
@@ -253,8 +232,8 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask, Tas
 	}
 
 	public void processInstanceCompleted(ProcessInstance processInstance) {
+		this.processInstance = processInstance;
 		removeEventListeners();
-		handleOutMappings(processInstance);
 		if (processInstance.getState() == ProcessInstance.STATE_ABORTED) {
 			String faultName = processInstance.getOutcome() == null ? "" : processInstance.getOutcome();
 			// handle exception as sub process failed with error code
@@ -262,14 +241,27 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask, Tas
 			if (exceptionScopeInstance != null) {
 				exceptionScopeInstance.handleException(faultName, null);
 			}
-			internalFault();
+			triggerTransitionOnTask(PlanItemTransition.FAULT);
 		} else {
-			internalComplete();
+			triggerTransitionOnTask(PlanItemTransition.COMPLETE);
 		}
 	}
 
-	private void handleOutMappings(ProcessInstance processInstance) {
-		// TODO
+	@Override
+	protected Map<String, Object> buildParametersFor(PlanItemTransition transition) {
+		Map<String, Object> result = super.buildParametersFor(transition);
+		if (transition == PlanItemTransition.FAULT) {
+		} else if (transition == PlanItemTransition.COMPLETE) {
+			List<ParameterMapping> parameterMappings = getPlanItemDefinition().prepareOutputMappings(processInstance.getProcess());
+			if (processInstance instanceof CaseInstance) {
+				result.putAll(transformParameters(parameterMappings, ((CaseInstance) processInstance).getResult()));
+			} else {
+				for (ParameterMapping pm : parameterMappings) {
+					result.put(pm.getTargetParameterName(), ((WorkflowProcessInstance) processInstance).getVariable(pm.getSourceParameterName()));
+				}
+			}
+		}
+		return result;
 	}
 
 	public String getNodeName() {
@@ -281,8 +273,16 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask, Tas
 	}
 
 	@Override
-	protected boolean isWaitForCompletion() {
-		return getPlanItemDefinition().isBlocking();
+	protected String getIdealRole() {
+		return getBusinessAdministrators();
+	}
+
+	@Override
+	protected String getIdealOwner() {
+		if (getCaseInstance().getCaseOwner() != null) {
+			return getCaseInstance().getCaseOwner();
+		}
+		return null;
 	}
 
 

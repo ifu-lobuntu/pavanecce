@@ -9,6 +9,7 @@ import org.drools.core.spi.ProcessContext;
 import org.jbpm.process.core.context.variable.VariableScope;
 import org.jbpm.process.instance.context.variable.VariableScopeInstance;
 import org.jbpm.process.instance.impl.ConstraintEvaluator;
+import org.jbpm.process.instance.impl.ReturnValueConstraintEvaluator;
 import org.jbpm.process.instance.impl.ReturnValueEvaluator;
 import org.jbpm.workflow.instance.NodeInstance;
 import org.pavanecce.cmmn.jbpm.flow.ApplicabilityRule;
@@ -16,6 +17,7 @@ import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItem;
 import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
 import org.pavanecce.cmmn.jbpm.flow.ItemWithDefinition;
+import org.pavanecce.cmmn.jbpm.flow.PlanItemControl;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 import org.pavanecce.cmmn.jbpm.flow.TableItem;
 import org.pavanecce.cmmn.jbpm.flow.TaskDefinition;
@@ -24,7 +26,7 @@ import org.pavanecce.cmmn.jbpm.lifecycle.ItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementLifecycleWithTask;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceContainerLifecycle;
-
+//TODO this is becoming more of a ExpressionUtiul
 class PlanItemInstanceUtil {
 	public static boolean canComplete(PlanItemInstanceContainerLifecycle container) {
 		if(container.getPlanElementState()!=PlanElementState.ACTIVE){
@@ -121,6 +123,34 @@ class PlanItemInstanceUtil {
 			}
 			return false;
 		}
+	}
+
+	public static boolean isActivatedManually(ControllableItemInstanceLifecycle<?> ni) {
+		boolean isActivatedManually = true;
+		PlanItemControl itemControl = ni.getItemControl();
+		if (itemControl != null && itemControl.getManualActivationRule() instanceof ConstraintEvaluator) {
+			ConstraintEvaluator ev = (ConstraintEvaluator) itemControl.getManualActivationRule();
+			isActivatedManually = ev.evaluate((org.jbpm.workflow.instance.NodeInstance) ni, null, ev);
+		}
+		return isActivatedManually;
+	}
+
+	public static Object getRefinedValue(CaseParameter cp, CaseInstance ci, NodeInstance ni) {
+		Object variable = ci.getVariable(cp.getBoundVariable().getName());
+		if (cp.getBindingRefinement() instanceof ReturnValueConstraintEvaluator) {
+			ReturnValueConstraintEvaluator rvce = (ReturnValueConstraintEvaluator) cp.getBindingRefinement();
+			ProcessContext processContext = new ProcessContext(ci.getKnowledgeRuntime());
+			processContext.setProcessInstance(ci);
+			processContext.setNodeInstance(ni);
+			try {
+				variable = rvce.getReturnValueEvaluator().evaluate(processContext);
+			} catch (RuntimeException e) {
+				throw e;
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
+		return variable;
 	}
 
 }

@@ -51,9 +51,11 @@ public class CaseTaskLifecycleListener extends ExternalTaskEventListener {
 	public CaseTaskLifecycleListener() {
 		super();
 	}
+
 	public void afterTaskReactivatedEvent(@Observes(notifyObserver = Reception.IF_EXISTS) @AfterTaskReactivatedEvent Task task) {
 		signalEvent(task, PlanItemTransition.REACTIVATE);
 	}
+
 	public void afterTaskReenabledEvent(@Observes(notifyObserver = Reception.IF_EXISTS) @AfterTaskReenabledEvent Task task) {
 		signalEvent(task, PlanItemTransition.REENABLE);
 	}
@@ -215,14 +217,15 @@ public class CaseTaskLifecycleListener extends ExternalTaskEventListener {
 	}
 
 	@Override
-	public void afterTaskActivatedEvent(@Observes(notifyObserver = Reception.IF_EXISTS) @AfterTaskActivatedEvent Task ti) {
+	public void afterTaskActivatedEvent(@Observes(notifyObserver = Reception.IF_EXISTS) @AfterTaskActivatedEvent Task task) {
+		signalEvent(task, PlanItemTransition.ENABLE);
 	}
 
 	@Override
 	public void afterTaskClaimedEvent(@Observes(notifyObserver = Reception.IF_EXISTS) @AfterTaskClaimedEvent Task task) {
 		updateCaseOwner(task);
 	}
-
+	
 	private void updateCaseOwner(Task task) {
 		long processInstanceId = task.getTaskData().getProcessInstanceId();
 		if (processInstanceId <= 0) {
@@ -231,7 +234,7 @@ public class CaseTaskLifecycleListener extends ExternalTaskEventListener {
 		RuntimeEngine runtime = getManager(task).getRuntimeEngine(ProcessInstanceIdContext.get(processInstanceId));
 		KieSession session = runtime.getKieSession();
 		ProcessInstance pi = session.getProcessInstance(processInstanceId);
-		if (pi instanceof CaseInstance) {
+		if (pi instanceof CaseInstance && task.getTaskData().getWorkItemId() == ((CaseInstance) pi).getWorkItemId()) {
 			CaseInstance ci = (CaseInstance) pi;
 			ci.setVariable(Case.CASE_OWNER, task.getTaskData().getActualOwner().getId());
 		}

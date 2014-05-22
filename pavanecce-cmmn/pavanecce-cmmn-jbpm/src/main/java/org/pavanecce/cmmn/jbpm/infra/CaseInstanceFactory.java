@@ -23,7 +23,6 @@ import java.io.ObjectOutput;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -77,7 +76,7 @@ public class CaseInstanceFactory extends AbstractProcessInstanceFactory implemen
 		// set input parameters
 		if (parameters != null) {
 			if (variableScope != null) {
-				List<CaseParameter> inputParameters = theCase.getInputParameters();
+				Collection<CaseParameter> inputParameters = theCase.getInputParameters();
 				for (CaseParameter caseParameter : inputParameters) {
 					Object var = parameters.get(caseParameter.getName());
 					if (caseParameter.getBoundVariable().isCollection() && !(var instanceof Collection)) {

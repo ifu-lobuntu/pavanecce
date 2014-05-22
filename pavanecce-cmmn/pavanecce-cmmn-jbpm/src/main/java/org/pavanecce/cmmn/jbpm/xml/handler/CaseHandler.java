@@ -198,8 +198,8 @@ public class CaseHandler extends PlanItemContainerHandler implements Handler {
 			PlanningTable pt = ((PlanningTableContainer) nic).getPlanningTable();
 			if(pt!=null){
 				for (TableItem ti : pt.getTableItems()) {
-					if(ti instanceof DiscretionaryItem && ((DiscretionaryItem) ti).getDefinition() instanceof Stage){
-						((DiscretionaryItem) ti).copyFromPlanItem();
+					if(ti instanceof DiscretionaryItem && ((DiscretionaryItem<?>) ti).getDefinition() instanceof Stage){
+						((DiscretionaryItem<?>) ti).copyFromPlanItem();
 					}
 				}
 			}
@@ -247,7 +247,7 @@ public class CaseHandler extends PlanItemContainerHandler implements Handler {
 		}
 	}
 
-	private void linkParametersToCaseFileItems(VariableScope variableScope, List<CaseParameter> inputParameters) {
+	private void linkParametersToCaseFileItems(VariableScope variableScope, Collection<CaseParameter> inputParameters) {
 		for (CaseParameter caseParameter : inputParameters) {
 			caseParameter.setBoundVariable(findCaseFileItemById(variableScope, caseParameter.getBindingRef()));
 		}

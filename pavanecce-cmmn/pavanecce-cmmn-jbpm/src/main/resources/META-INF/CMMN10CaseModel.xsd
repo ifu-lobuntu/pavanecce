@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema elementFormDefault="qualified" 
             attributeFormDefault="unqualified"
-	    xmlns="http://www.omg.org/spec/CMMN/20121031/MODEL" 
+	    xmlns="http://www.omg.org/spec/CMMN/20131201/MODEL" 
 	    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
-	    targetNamespace="http://www.omg.org/spec/CMMN/20121031/MODEL">
+	    targetNamespace="http://www.omg.org/spec/CMMN/20131201/MODEL">
 
   <!--
     CMMN Base declarations
@@ -90,7 +90,7 @@
     <xsd:annotation>
       <xsd:documentation>
         planItemControl is the root element for Case Plan Control elements
-        including the RepetitionRule, RequiredRule and AutomaticActivationRule.
+        including the RepetitionRule, RequiredRule and ManualActivationRule.
       </xsd:documentation>
     </xsd:annotation>
   </xsd:element>
@@ -105,7 +105,7 @@
         <xsd:sequence>
           <xsd:element ref="repetitionRule" minOccurs="0" maxOccurs="1"/>
           <xsd:element ref="requiredRule" minOccurs="0" maxOccurs="1"/>
-          <xsd:element ref="automaticActivationRule" minOccurs="0" maxOccurs="1"/>
+          <xsd:element ref="manualActivationRule" minOccurs="0" maxOccurs="1"/>
         </xsd:sequence>
       </xsd:extension>
     </xsd:complexContent>
@@ -173,18 +173,18 @@
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:element name="automaticActivationRule" type="tAutomaticActivationRule">
+  <xsd:element name="manualActivationRule" type="tManualActivationRule">
     <xsd:annotation>
       <xsd:documentation>
-        automaticActivationRule is the root element for specifying an 
-        automatic activation rule for a PlanItemDefinition element.
+        manualActivationRule is the root element for specifying an 
+        manual activation rule for a PlanItemDefinition element.
       </xsd:documentation>
     </xsd:annotation>
   </xsd:element>
-  <xsd:complexType name="tAutomaticActivationRule">
+  <xsd:complexType name="tManualActivationRule">
     <xsd:annotation>
       <xsd:documentation>
-        tAutomaticActivationRule defines the type of element "automaticActivationRule".
+        tManualActivationRule defines the type of element "manualActivationRule".
       </xsd:documentation>
     </xsd:annotation>
     <xsd:complexContent>
@@ -414,7 +414,7 @@
       </xsd:documentation>
     </xsd:annotation>
   </xsd:element>
-  <xsd:complexType name="tTask" abstract="true">
+  <xsd:complexType name="tTask">
     <xsd:complexContent>
       <xsd:extension base="tPlanItemDefinition">
         <xsd:sequence>
@@ -433,7 +433,7 @@
       </xsd:documentation>
     </xsd:annotation>
   </xsd:element>
-  <xsd:complexType name="tEvent" abstract="true">
+  <xsd:complexType name="tEvent">
     <xsd:complexContent>
       <xsd:extension base="tPlanItemDefinition">
       </xsd:extension>
@@ -676,7 +676,59 @@
               </xsd:documentation>
             </xsd:annotation>
           </xsd:element>
+          <xsd:element ref="timerStart" minOccurs="0" maxOccurs="1">
+            <xsd:annotation>
+              <xsd:documentation>
+                timerStart can be used to trigger the timer after a PlanItem or CaseFileItem 
+                lifecycle state transition has occurred.
+              </xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
         </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:element name="timerStart" type="tStartTrigger"/>
+  <xsd:complexType name="tStartTrigger" abstract="true">
+    <xsd:complexContent>
+      <xsd:extension base="tCmmnElement">
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  
+  <xsd:element name="caseFileItemStartTrigger" type="tCaseFileItemStartTrigger" substitutionGroup="timerStart"/>
+  <xsd:complexType name="tCaseFileItemStartTrigger">
+    <xsd:complexContent>
+      <xsd:extension base="tStartTrigger">
+        <xsd:sequence> 
+          <xsd:element name="standardEvent" type="CaseFileItemTransition" minOccurs="0" maxOccurs="1"/>
+        </xsd:sequence>
+        <xsd:attribute name="sourceRef" type="xsd:IDREF">
+          <xsd:annotation>
+            <xsd:documentation>
+              sourceRef refers a "caseFileItem" element
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  
+  <xsd:element name="planItemStartTrigger" type="tPlanItemStartTrigger" substitutionGroup="timerStart"/>
+  <xsd:complexType name="tPlanItemStartTrigger">
+    <xsd:complexContent>
+      <xsd:extension base="tStartTrigger">
+        <xsd:sequence> 
+          <xsd:element name="standardEvent" type="PlanItemTransition" minOccurs="0" maxOccurs="1"/>
+        </xsd:sequence>
+        <xsd:attribute name="sourceRef" type="xsd:IDREF">
+          <xsd:annotation>
+            <xsd:documentation>
+              sourceRef refers a "planItem" element
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
@@ -732,13 +784,6 @@
             </xsd:documentation>
           </xsd:annotation>
         </xsd:attribute>
-        <xsd:attribute name="relationRef" type="xsd:IDREF">
-          <xsd:annotation>
-            <xsd:documentation>
-              relationRef refers to a "caseFileItem" element which participates with the source "caseFileItem" in either a "targetRefs" or "children" relationship
-            </xsd:documentation>
-          </xsd:annotation>
-        </xsd:attribute>
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
@@ -754,6 +799,13 @@
           <xsd:annotation>
             <xsd:documentation>
               sourceRef refers a "planItem" element
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="sentryRef" type="xsd:IDREF">
+          <xsd:annotation>
+            <xsd:documentation>
+              sentryRef refers a "Sentry" element
             </xsd:documentation>
           </xsd:annotation>
         </xsd:attribute>
@@ -821,7 +873,6 @@
       <xsd:enumeration value="start"/>
       <xsd:enumeration value="suspend"/>
       <xsd:enumeration value="terminate"/>
-      <xsd:enumeration value="parentTerminate"/>
     </xsd:restriction>
   </xsd:simpleType>
   

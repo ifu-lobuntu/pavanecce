@@ -1,6 +1,6 @@
 package org.pavanecce.cmmn.jbpm.infra;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.drools.compiler.compiler.ReturnValueDescr;
 import org.drools.compiler.lang.descr.ProcessDescr;
@@ -46,7 +46,7 @@ public class PlanItemBuilder implements ProcessNodeBuilder {
 
 	protected void buildControl(ProcessBuildContext context, Node node, PlanItemControl itemControl) {
 		if (itemControl != null) {
-			itemControl.setAutomaticActivationRule(build(context, node, itemControl.getAutomaticActivationRule()));
+			itemControl.setManualActivationRule(build(context, node, itemControl.getManualActivationRule()));
 			itemControl.setRequiredRule(build(context, node, itemControl.getRequiredRule()));
 			itemControl.setRepetitionRule(build(context, node, itemControl.getRepetitionRule()));
 		}
@@ -58,7 +58,7 @@ public class PlanItemBuilder implements ProcessNodeBuilder {
 		processParameters(context, case1.getDefaultStart(), case1.getOutputParameters());
 	}
 
-	private void processParameters(ProcessBuildContext context, Node node, List<CaseParameter> inputs2) {
+	private void processParameters(ProcessBuildContext context, Node node, Collection<CaseParameter> inputs2) {
 		for (CaseParameter cp : inputs2) {
 			Constraint constraint = cp.getBindingRefinement();
 			if (constraint != null && !(constraint instanceof ReturnValueConstraintEvaluator) && cp.getBindingRefinementParent() == null) {

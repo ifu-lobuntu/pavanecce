@@ -8,7 +8,7 @@ public class PlanItemControl implements Serializable, CMMNElement {
 
 	private static final long serialVersionUID = 166L;
 	private String elementId;
-	private Constraint automaticActivationRule;
+	private Constraint manualActivationRule;
 	private Constraint requiredRule;
 	private Constraint repetionRule;
 	public String getElementId() {
@@ -17,11 +17,11 @@ public class PlanItemControl implements Serializable, CMMNElement {
 	public void setElementId(String elementId) {
 		this.elementId = elementId;
 	}
-	public Constraint getAutomaticActivationRule() {
-		return automaticActivationRule;
+	public Constraint getManualActivationRule() {
+		return manualActivationRule;
 	}
-	public void setAutomaticActivationRule(Constraint automaticActivationRule) {
-		this.automaticActivationRule = automaticActivationRule;
+	public void setManualActivationRule(Constraint automaticActivationRule) {
+		this.manualActivationRule = automaticActivationRule;
 	}
 	public Constraint getRequiredRule() {
 		return requiredRule;

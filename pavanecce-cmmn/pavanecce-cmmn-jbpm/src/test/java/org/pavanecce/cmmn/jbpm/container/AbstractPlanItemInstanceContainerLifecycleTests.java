@@ -2,47 +2,28 @@ package org.pavanecce.cmmn.jbpm.container;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.Test;
 import org.kie.api.task.model.Status;
 import org.kie.api.task.model.Task;
 import org.kie.api.task.model.TaskSummary;
-import org.pavanecce.cmmn.jbpm.AbstractConstructionTestCase;
-import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.flow.DefaultJoin;
-import org.pavanecce.cmmn.jbpm.lifecycle.ItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceContainerLifecycle;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
-import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseTaskPlanItemInstance;
 
-import test.ConstructionCase;
-import test.House;
-import test.HousePlan;
+public abstract class AbstractPlanItemInstanceContainerLifecycleTests extends AbstractPlanItemInstanceContainerTest {
 
-public abstract class AbstractPlanItemInstanceContainerTests extends AbstractConstructionTestCase {
-
-	public abstract String getProcessFile();
-
-	public abstract String getCaseName();
-
-	protected abstract void ensurePlanItemContainerIsStarted();
-
-	public AbstractPlanItemInstanceContainerTests() {
+	public AbstractPlanItemInstanceContainerLifecycleTests() {
 		super();
 	}
 
-	public AbstractPlanItemInstanceContainerTests(boolean setupDataSource, boolean sessionPersistence, String persistenceUnitName) {
+	public AbstractPlanItemInstanceContainerLifecycleTests(boolean setupDataSource, boolean sessionPersistence, String persistenceUnitName) {
 		super(setupDataSource, sessionPersistence, persistenceUnitName);
 	}
 
-	public AbstractPlanItemInstanceContainerTests(boolean setupDataSource, boolean sessionPersistence) {
+	public AbstractPlanItemInstanceContainerLifecycleTests(boolean setupDataSource, boolean sessionPersistence) {
 		super(setupDataSource, sessionPersistence);
-	}
-
-	protected PlanItemInstanceContainerLifecycle getPlanItemInstanceContainer() {
-		return reloadCaseInstance();
 	}
 
 	@Test
@@ -134,6 +115,10 @@ public abstract class AbstractPlanItemInstanceContainerTests extends AbstractCon
 		assertPlanItemInState(caseInstance.getId(), "StartUserEventPlanItem", PlanElementState.COMPLETED);
 		assertPlanItemInState(caseInstance.getId(), "TheStagePlanItem", PlanElementState.SUSPENDED);
 		assertPlanItemInState(caseInstance.getId(), "TheCaseTaskPlanItem", PlanElementState.SUSPENDED);
+		List<TaskSummary> subTasksByParent = getTaskService().getSubTasksByParent(taskByWorkItemId.getTaskData().getWorkItemId());
+		assertTaskInState(subTasksByParent, "TheHumanTaskPlanItem", Status.Suspended);
+		assertTaskInState(subTasksByParent, "TheStagePlanItem", Status.Suspended);
+		assertTaskInState(subTasksByParent, "TheCaseTaskPlanItem", Status.Suspended);
 		assertEquals(PlanElementState.SUSPENDED, reloadCaseInstance(subCase).getPlanElementState());
 		// reactivate
 		getTaskService().resume(taskByWorkItemId.getId(), "ConstructionProjectManager");
@@ -146,6 +131,10 @@ public abstract class AbstractPlanItemInstanceContainerTests extends AbstractCon
 		assertPlanItemInState(caseInstance.getId(), "StartUserEventPlanItem", PlanElementState.COMPLETED);
 		assertPlanItemInState(caseInstance.getId(), "TheStagePlanItem", PlanElementState.AVAILABLE);
 		assertPlanItemInState(caseInstance.getId(), "TheCaseTaskPlanItem", PlanElementState.ACTIVE);
+		subTasksByParent = getTaskService().getSubTasksByParent(taskByWorkItemId.getTaskData().getWorkItemId());
+		assertTaskInState(subTasksByParent, "TheHumanTaskPlanItem", Status.Reserved);
+		assertTaskInState(subTasksByParent, "TheStagePlanItem", Status.Reserved);
+		assertTaskInState(subTasksByParent, "TheCaseTaskPlanItem", Status.InProgress);
 	}
 
 	@Test
@@ -171,6 +160,11 @@ public abstract class AbstractPlanItemInstanceContainerTests extends AbstractCon
 		assertPlanItemInState(caseInstance.getId(), "TheStagePlanItem", PlanElementState.AVAILABLE);
 		assertPlanItemInState(caseInstance.getId(), "TheCaseTaskPlanItem", PlanElementState.ACTIVE);
 		assertEquals(PlanElementState.ACTIVE, reloadCaseInstance(subCase).getPlanElementState());
+		Task taskByWorkItemId = getTaskService().getTaskByWorkItemId(getWorkitemId());
+		List<TaskSummary> subTasksByParent = getTaskService().getSubTasksByParent(taskByWorkItemId.getTaskData().getWorkItemId());
+//		assertTaskInState(subTasksByParent, "TheHumanTaskPlanItem", Status.Reserved);
+//		assertTaskInState(subTasksByParent, "TheStagePlanItem", Status.Reserved);
+//		assertTaskInState(subTasksByParent, "TheCaseTaskPlanItem", Status.InProgress);
 		// // reactivate
 		// getTaskService().resume(taskByWorkItemId.getId(), "ConstructionProjectManager");
 		// assertEquals(PlanElementState.ACTIVE, reloadCaseInstance(subCase).getPlanElementState());
@@ -207,6 +201,10 @@ public abstract class AbstractPlanItemInstanceContainerTests extends AbstractCon
 		assertPlanItemInState(caseInstance.getId(), "TheStagePlanItem", PlanElementState.TERMINATED);
 		assertPlanItemInState(caseInstance.getId(), "TheCaseTaskPlanItem", PlanElementState.TERMINATED);
 		assertNull(reloadCaseInstance(subCase));
+		List<TaskSummary> subTasksByParent = getTaskService().getSubTasksByParent(taskByWorkItemId.getTaskData().getWorkItemId());
+		assertTaskInState(subTasksByParent, "TheHumanTaskPlanItem", Status.Exited);
+		assertTaskInState(subTasksByParent, "TheStagePlanItem", Status.Exited);
+		assertTaskInState(subTasksByParent, "TheCaseTaskPlanItem", Status.Exited);
 		// reactivate
 		// getTaskService().resume(taskByWorkItemId.getId(), "ConstructionProjectManager");
 		// assertEquals(PlanElementState.ACTIVE, reloadCaseInstance(subCase).getPlanElementState());
@@ -218,137 +216,6 @@ public abstract class AbstractPlanItemInstanceContainerTests extends AbstractCon
 		// assertPlanItemInState(caseInstance.getId(), "StartUserEventPlanItem", PlanElementState.COMPLETED);
 		// // assertPlanItemInState(caseInstance.getId(), "TheStagePlanItem", PlanElementState.AVAILABLE);
 		// assertPlanItemInState(caseInstance.getId(), "TheCaseTaskPlanItem", PlanElementState.ACTIVE);
-	}
-
-	protected CaseInstance triggerInitialActivity() {
-		getPersistence().start();
-		CaseInstance ci1 = reloadCaseInstance();
-		ci1.signalEvent("StartUserEvent", new Object());
-		printState(" ", ci1);
-		getPersistence().commit();
-
-		assertPlanItemInState(caseInstance.getId(), "TheMilestonePlanItem", PlanElementState.COMPLETED);
-		assertPlanItemInState(caseInstance.getId(), "TheTimerEventPlanItem", PlanElementState.AVAILABLE);
-		assertPlanItemInState(caseInstance.getId(), "TheUserEventPlanItem", PlanElementState.AVAILABLE);
-		assertPlanItemInState(caseInstance.getId(), "TheHumanTaskPlanItem", PlanElementState.ENABLED);
-		assertPlanItemInState(caseInstance.getId(), "EndUserEventPlanItem", PlanElementState.AVAILABLE);
-		assertPlanItemInState(caseInstance.getId(), "StartUserEventPlanItem", PlanElementState.COMPLETED);
-		assertPlanItemInState(caseInstance.getId(), "TheStagePlanItem", PlanElementState.AVAILABLE);
-		assertPlanItemInState(caseInstance.getId(), "TheCaseTaskPlanItem", PlanElementState.ENABLED);
-		assertEquals(PlanElementState.ACTIVE, ci1.getPlanElementState());// Because autoComplete defaults to false
-		List<TaskSummary> subTasksByParent = getTaskService().getSubTasksByParent(getTaskService().getTaskByWorkItemId(getWorkitemId()).getId());
-		assertEquals(3, subTasksByParent.size());
-		CaseInstance subCase = startSubCaseTask(subTasksByParent);
-		assertPlanItemInState(caseInstance.getId(), "TheCaseTaskPlanItem", PlanElementState.ACTIVE);
-		return subCase;
-	}
-
-	public long getWorkitemId() {
-		return caseInstance.getWorkItemId();
-	}
-
-	private CaseInstance startSubCaseTask(List<TaskSummary> subTasksByParent) {
-		for (TaskSummary taskSummary : subTasksByParent) {
-			if (taskSummary.getName().equals("TheCaseTaskPlanItem")) {
-				getTaskService().start(taskSummary.getId(), "ConstructionProjectManager");
-				getPersistence().start();
-				long workItemId = getTaskService().getTaskById(taskSummary.getId()).getTaskData().getWorkItemId();
-				CaseTaskPlanItemInstance ni = (CaseTaskPlanItemInstance) reloadCaseInstance().findNodeForWorkItem(workItemId);
-				CaseInstance subCase = (CaseInstance) getRuntimeEngine().getKieSession().getProcessInstance(((CaseTaskPlanItemInstance) ni).getProcessInstanceId());
-				getPersistence().commit();
-				return subCase;
-			}
-		}
-		return null;
-	}
-
-	private CaseInstance reloadCaseInstance() {
-		return reloadCaseInstance(caseInstance);
-	}
-
-	private void completeTasks(List<TaskSummary> subTasksByParent) {
-		for (TaskSummary taskSummary : subTasksByParent) {
-			if (taskSummary.getName().equals("TheHumanTaskPlanItem")) {
-				getTaskService().start(taskSummary.getId(), "Builder");
-				getTaskService().complete(taskSummary.getId(), "Builder", new HashMap<String, Object>());
-			} else if (taskSummary.getName().equals("TheCaseTaskPlanItem")) {
-				getPersistence().start();
-				CaseInstance ci3 = reloadCaseInstance();
-				long workItemId = getTaskService().getTaskById(taskSummary.getId()).getTaskData().getWorkItemId();
-				CaseTaskPlanItemInstance ctpi = (CaseTaskPlanItemInstance) ci3.findNodeForWorkItem(workItemId);
-				getRuntimeEngine().getKieSession().getProcessInstance(ctpi.getProcessInstanceId()).signalEvent("TheUserEvent", new Object());
-				printState(" ", ci3);
-				getPersistence().commit();
-				assertEquals(PlanElementState.COMPLETED, ((CaseInstance) getRuntimeEngine().getKieSession().getProcessInstance(ctpi.getProcessInstanceId())).getPlanElementState());
-				getPersistence().start();
-				getRuntimeEngine().getKieSession().getProcessInstance(ctpi.getProcessInstanceId()).signalEvent(DefaultJoin.CLOSE, new Object());
-				getPersistence().commit();
-				assertNull(getRuntimeEngine().getKieSession().getProcessInstance(ctpi.getProcessInstanceId()));
-			} else if (taskSummary.getName().equals("TheStagePlanItem")) {
-				getPersistence().start();
-				getRuntimeEngine().getKieSession().signalEvent("StageCompletingEvent", new Object(), caseInstance.getId());
-				getPersistence().commit();
-				assertPlanItemInState(caseInstance.getId(), "TheMilestonePlanItemInTheStage", PlanElementState.COMPLETED);
-			}
-		}
-		assertPlanItemInState(caseInstance.getId(), "TheMilestonePlanItem", PlanElementState.COMPLETED);
-		assertPlanItemInState(caseInstance.getId(), "TheTimerEventPlanItem", PlanElementState.AVAILABLE);
-		assertPlanItemInState(caseInstance.getId(), "TheUserEventPlanItem", PlanElementState.AVAILABLE);
-		assertPlanItemInState(caseInstance.getId(), "TheHumanTaskPlanItem", PlanElementState.COMPLETED);
-		assertPlanItemInState(caseInstance.getId(), "EndUserEventPlanItem", PlanElementState.AVAILABLE);
-		assertPlanItemInState(caseInstance.getId(), "StartUserEventPlanItem", PlanElementState.COMPLETED);
-		assertPlanItemInState(caseInstance.getId(), "TheStagePlanItem", PlanElementState.COMPLETED);
-		assertPlanItemInState(caseInstance.getId(), "TheCaseTaskPlanItem", PlanElementState.COMPLETED);
-
-	}
-
-	protected void printState(String s, PlanItemInstanceContainerLifecycle pi) {
-		if (true)
-			return;
-		System.out.println(pi);
-		for (ItemInstanceLifecycle<?> ni : pi.getChildren()) {
-			if (ni instanceof ItemInstanceLifecycle) {
-				System.out.println(s + ni.getItemName() + ":" + ni.getPlanElementState());
-			} else {
-				System.out.println(s + ni.getItemName());
-			}
-			if (ni instanceof PlanItemInstanceContainerLifecycle) {
-				printState(s + " ", (PlanItemInstanceContainerLifecycle) ni);
-			}
-		}
-	}
-
-	protected void givenThatTheTestCaseIsStarted() {
-		createRuntimeManager(getProcessFile(), "test/SubCase.cmmn");
-		Map<String, Object> params = new HashMap<String, Object>();
-		getPersistence().start();
-
-		ConstructionCase cc = new ConstructionCase("/cases/case1");
-		housePlan = new HousePlan(cc);
-		house = new House(cc);
-		getPersistence().persist(cc);
-		getPersistence().commit();
-		params.put("housePlan", housePlan);
-		params.put("house", house);
-		params.put(Case.CASE_OWNER, "Spielman");
-		getPersistence().start();
-		caseInstance = (CaseInstance) getRuntimeEngine().getKieSession().startProcess(getCaseName(), params);
-		getPersistence().commit();
-		assertProcessInstanceActive(caseInstance.getId(), getRuntimeEngine().getKieSession());
-		assertNodeTriggered(caseInstance.getId(), "defaultSplit");
-		getPersistence().start();
-		getPersistence().commit();
-		assertPlanItemInState(caseInstance.getId(), "TheMilestonePlanItem", PlanElementState.AVAILABLE);
-		assertPlanItemInState(caseInstance.getId(), "TheTimerEventPlanItem", PlanElementState.AVAILABLE);
-		assertPlanItemInState(caseInstance.getId(), "TheUserEventPlanItem", PlanElementState.AVAILABLE);
-		assertPlanItemInState(caseInstance.getId(), "TheHumanTaskPlanItem", PlanElementState.AVAILABLE);
-		assertPlanItemInState(caseInstance.getId(), "EndUserEventPlanItem", PlanElementState.AVAILABLE);
-		assertPlanItemInState(caseInstance.getId(), "StartUserEventPlanItem", PlanElementState.AVAILABLE);
-		assertPlanItemInState(caseInstance.getId(), "TheStagePlanItem", PlanElementState.AVAILABLE);
-		assertPlanItemInState(caseInstance.getId(), "TheCaseTaskPlanItem", PlanElementState.AVAILABLE);
-		assertEquals(PlanElementState.ACTIVE, caseInstance.getPlanElementState());
-		ensurePlanItemContainerIsStarted();
-
 	}
 
 }
