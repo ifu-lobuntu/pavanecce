@@ -1,12 +1,15 @@
 package org.pavanecce.cmmn.jbpm.lifecycle.impl;
 
+import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.drools.core.WorkItemHandlerNotFoundException;
+import org.drools.core.process.core.Work;
 import org.drools.core.process.instance.WorkItem;
 import org.drools.core.process.instance.WorkItemManager;
 import org.drools.core.process.instance.impl.WorkItemImpl;
@@ -16,7 +19,10 @@ import org.jbpm.ruleflow.instance.RuleFlowProcessInstance;
 import org.jbpm.services.task.wih.util.PeopleAssignmentHelper;
 import org.jbpm.workflow.core.impl.NodeImpl;
 import org.jbpm.workflow.instance.NodeInstanceContainer;
+import org.jbpm.workflow.instance.impl.WorkflowProcessInstanceImpl;
+import org.kie.api.runtime.process.EventListener;
 import org.kie.api.runtime.process.NodeInstance;
+import org.pavanecce.cmmn.jbpm.TaskParameters;
 import org.pavanecce.cmmn.jbpm.event.SubscriptionManager;
 import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItem;
@@ -67,6 +73,17 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 		return var;
 	}
 
+	@Override
+	public void reconnect() {
+		super.reconnect();
+
+	}
+
+	@Override
+	public void disconnect() {
+		super.disconnect();
+	}
+
 	public WorkItem createPlannedItem(long containerWorkItemId, String tableItemId) {
 		org.jbpm.workflow.instance.NodeInstance contextNodeInstance = null;
 		PlanElementWithPlanningTable pewpt = findPlanElementWithPlanningTable(containerWorkItemId);
@@ -77,10 +94,28 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 				contextNodeInstance = (org.jbpm.workflow.instance.NodeInstance) pewpt;
 			}
 			DiscretionaryItem<? extends PlanItemDefinition> di = pewpt.getPlanningTable().getDiscretionaryItemById(tableItemId);
-			WorkItemImpl wi = PlanItemInstanceUtil.createWorkItem(di.getWork(), contextNodeInstance, di.getDefinition());
-			wi.setParameter(DiscretionaryItem.PLANNED, Boolean.TRUE);
-			wi.setParameter(DiscretionaryItem.DISCRETIONARY_ITEM_ID, tableItemId);
-			return executeWorkItem(wi);
+			Work work = di.getWork();
+			PlanItemDefinition definition = di.getDefinition();
+			WorkItemImpl workItem = new WorkItemImpl();
+			workItem.setName(work.getName());
+			workItem.setProcessInstanceId(contextNodeInstance.getProcessInstance().getId());
+			workItem.setParameters(new HashMap<String, Object>(work.getParameters()));
+			if (definition instanceof TaskDefinition) {
+				workItem.getParameters().putAll(PlanItemInstanceUtil.buildInputParameters(work, contextNodeInstance, (TaskDefinition) definition));
+			}
+			CaseInstance caseInstance = (CaseInstance) contextNodeInstance.getProcessInstance();
+			String deploymentId = (String) caseInstance.getKnowledgeRuntime().getEnvironment().get("deploymentId");
+			workItem.setDeploymentId(deploymentId);
+			workItem.setParameter(TaskParameters.COMMENT, definition.getDescription());
+			if (contextNodeInstance.getNodeInstanceContainer() instanceof PlanElementLifecycleWithTask) {
+				long parentWorkItemId = ((PlanElementLifecycleWithTask) contextNodeInstance.getNodeInstanceContainer()).getWorkItemId();
+				if (parentWorkItemId >= 0) {
+					workItem.setParameter(TaskParameters.PARENT_WORK_ITEM_ID, parentWorkItemId);
+				}
+			}
+			workItem.setParameter(TaskParameters.PLANNED, Boolean.TRUE);
+			workItem.setParameter(TaskParameters.DISCRETIONARY_ITEM_ID, tableItemId);
+			return executeWorkItem(workItem);
 		}
 		return null;
 	}
@@ -112,15 +147,42 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 		this.shouldUpdateSubscriptions = true;
 	}
 
+	public void checkSubs() {
+		for (NodeInstance nodeInstance : getNodeInstances()) {
+			if (nodeInstance instanceof CaseTaskPlanItemInstance) {
+				try {
+					Field elf = WorkflowProcessInstanceImpl.class.getDeclaredField("eventListeners");
+					elf.setAccessible(true);
+					Map<String, List<EventListener>> eventListeners = (Map<String, List<EventListener>>) elf.get(this);
+					if (!eventListeners.get(TaskParameters.WORK_ITEM_UPDATED).contains(nodeInstance)) {
+						System.err.println();
+					}
+				} catch (NoSuchFieldException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SecurityException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 
 	@Override
 	public void signalEvent(String type, Object event) {
+		checkSubs();
 		signalCount++;
 		if (type.equals("workItemUpdated") && isMyWorkItem((WorkItem) event)) {
 			this.workItem = (WorkItem) event;
-			PlanItemTransition transition = (PlanItemTransition) workItem.getResult(PlanElementLifecycleWithTask.TRANSITION);
+			PlanItemTransition transition = (PlanItemTransition) workItem.getResult(TaskParameters.TRANSITION);
 			if (getPlanElementState().isTerminalState() && transition == PlanItemTransition.TERMINATE) {
-				System.out.println("ignore - called from task service: " + TRANSITION);
+				System.out.println("ignore - called from task service: " + TaskParameters.TRANSITION);
 			} else if (transition == PlanItemTransition.COMPLETE) {
 				if (canComplete()) {
 					transition.invokeOn(this);
@@ -154,31 +216,36 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 	}
 
 	protected WorkItem createWorkItem() {
-		workItem = new WorkItemImpl();
-		((WorkItem) workItem).setName("Human Task");
-		((WorkItem) workItem).setProcessInstanceId(getId());
-		((WorkItem) workItem).setParameters(new HashMap<String, Object>());
-		((WorkItem) workItem).setParameter("NodeName", getCase().getName());
-		if (getInitiator() != null) {
-			((WorkItem) workItem).setParameter(Case.INITIATOR, getInitiator());
+		// if we are in here, it means it is a standalone case, not called from a CaseTask
+		WorkItemImpl workItem = new WorkItemImpl();
+		workItem.setName("Human Task");
+		workItem.setProcessInstanceId(getId());
+		workItem.setParameters(new HashMap<String, Object>());
+		workItem.setParameter("NodeName", getCase().getName());
+		String initiator = getInitiator();
+		String caseOwner = getCaseOwner();
+		if (initiator != null) {
+			workItem.setParameter(TaskParameters.INITIATOR, initiator);
 		}
-		if (getCaseOwner() != null) {
-			((WorkItem) workItem).setParameter(PeopleAssignmentHelper.ACTOR_ID, getCaseOwner());
-			((WorkItem) workItem).setParameter(Case.CASE_OWNER, getCaseOwner());
+		if (caseOwner != null) {
+			workItem.setParameter(PeopleAssignmentHelper.ACTOR_ID, caseOwner);
+		} else if (initiator != null) {
+			workItem.setParameter(PeopleAssignmentHelper.ACTOR_ID, initiator);
 		} else {
-			((WorkItem) workItem).setParameter(Case.CASE_OWNER, TableItem.getPlannerRoles(this.getCase()));
+			throw new IllegalStateException("A Case Instance must have either an initiator, an owner or both");
 		}
-		((WorkItem) workItem).setParameter(PeopleAssignmentHelper.GROUP_ID, TableItem.getPlannerRoles(this.getCase()));
-		((WorkItem) workItem).setParameter(PeopleAssignmentHelper.BUSINESSADMINISTRATOR_ID, TableItem.getPlannerRoles(this.getCase()));
+		workItem.setParameter(TaskParameters.CLAIM_IMMEDIATELY, true);
+		workItem.setParameter(PeopleAssignmentHelper.GROUP_ID, TableItem.getPlannerRoles(this.getCase()));
+		workItem.setParameter(PeopleAssignmentHelper.BUSINESSADMINISTRATOR_ID, TableItem.getPlannerRoles(this.getCase()));
 		return workItem;
 	}
 
 	public String getCaseOwner() {
-		return (String) getVariable(Case.CASE_OWNER);
+		return (String) getVariable(TaskParameters.CASE_OWNER);
 	}
 
 	public String getInitiator() {
-		return (String) getVariable(Case.INITIATOR);
+		return (String) getVariable(TaskParameters.INITIATOR);
 	}
 
 	@Override
@@ -190,8 +257,8 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 
 	private void maybeExecuteWorkItem() {
 		if (workItemId < 0) {
-			createWorkItem();
-			executeWorkItem((WorkItem) workItem);
+			this.workItem = createWorkItem();
+			executeWorkItem(workItem);
 			this.workItemId = workItem.getId();
 		}
 	}
@@ -209,7 +276,6 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 			throw new RuntimeException(e);
 		}
 	}
-
 
 	protected void updateSubscriptions() {
 		SubscriptionManager subscriptionManager = (SubscriptionManager) getKnowledgeRuntime().getEnvironment().get(SubscriptionManager.ENV_NAME);
@@ -365,9 +431,9 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 	@Override
 	public void triggerTransitionOnTask(PlanItemTransition transition) {
 		WorkItemImpl wi = new WorkItemImpl();
-		wi.setName(UPDATE_TASK_STATUS);
-		wi.setParameter(TASK_TRANSITION, transition);
-		wi.setParameter(WORK_ITEM_ID, getWorkItemId());
+		wi.setName(TaskParameters.UPDATE_TASK_STATUS);
+		wi.setParameter(TaskParameters.TASK_TRANSITION, transition);
+		wi.setParameter(TaskParameters.WORK_ITEM_ID, getWorkItemId());
 		if (transition == PlanItemTransition.COMPLETE) {
 			if (isCalledFromCaseTask()) {
 				executeWorkItem(wi);
@@ -376,7 +442,7 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 				// Because only the Task will be completed in the callback, not this caseInstance:
 				complete();
 			} else {
-				//Standalone, so write this caseInstance's result to the tasks result
+				// Standalone, so write this caseInstance's result to the tasks result
 				wi.getParameters().putAll(getResult());
 				executeWorkItem(wi);
 			}
@@ -435,13 +501,16 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 	@Override
 	public Object getTask() {
 		if (getWorkItem() != null) {
-			return getWorkItem().getResult(PlanElementLifecycleWithTask.TASK);
+			return getWorkItem().getResult(TaskParameters.TASK);
 		}
 		return null;
 	}
 
 	@Override
 	public long getWorkItemId() {
+		if (workItem != null) {
+			return workItem.getId();
+		}
 		return workItemId;
 	}
 
@@ -460,7 +529,7 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 		return getCase();
 	}
 
-	public void setWorkItemId(long readLong) {
+	public void inernalSetWorkItemId(long readLong) {
 		this.workItemId = readLong;
 	}
 
@@ -559,7 +628,7 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 	public Map<String, Object> getResult() {
 		Map<String, Object> result = new HashMap<String, Object>();
 		for (CaseParameter cp : getCase().getOutputParameters()) {
-			Object variable = PlanItemInstanceUtil.getRefinedValue(cp, this,null);
+			Object variable = PlanItemInstanceUtil.getRefinedValue(cp, this, null);
 			result.put(cp.getName(), variable);
 		}
 		return result;

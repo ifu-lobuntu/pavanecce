@@ -76,7 +76,7 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 		ProcessInstance read = super.readProcessInstance(context);
 		if (read instanceof CaseInstance) {
 			((CaseInstance) read).setPlanElementState(PlanElementState.values()[stream.readInt()]);
-			((CaseInstance) read).setWorkItemId(stream.readLong());
+			((CaseInstance) read).inernalSetWorkItemId(stream.readLong());
 		}
 		return read;
 	}

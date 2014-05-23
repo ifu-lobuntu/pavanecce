@@ -7,7 +7,7 @@ import java.util.Map;
 import org.junit.Test;
 import org.kie.api.task.model.TaskSummary;
 import org.pavanecce.cmmn.jbpm.AbstractConstructionTestCase;
-import org.pavanecce.cmmn.jbpm.flow.Case;
+import org.pavanecce.cmmn.jbpm.TaskParameters;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 import org.pavanecce.cmmn.jbpm.task.ReactivateTaskCommand;
@@ -324,6 +324,15 @@ public abstract class AbstractControllableLifecycleTests extends AbstractConstru
 		}
 		return eventGeneratingTaskId;
 	}
+	private TaskSummary findTaskSummary(List<TaskSummary> list, String taskName) {
+		// ******WHEN
+		for (TaskSummary ts : list) {
+			if (ts.getName().equals(taskName)) {
+				return ts;
+			}
+		}
+		throw new IllegalArgumentException("Task '" + taskName + "' not found");
+	}
 
 	@Test
 	public void testEventGeneratedOnAutomaticStartOfTask() throws Exception {
@@ -410,7 +419,7 @@ public abstract class AbstractControllableLifecycleTests extends AbstractConstru
 		getPersistence().commit();
 		params.put("housePlan", housePlan);
 		params.put("house", house);
-		params.put(Case.CASE_OWNER, getCaseOwner());
+		params.put(TaskParameters.CASE_OWNER, getCaseOwner());
 		getPersistence().start();
 		caseInstance = (CaseInstance) getRuntimeEngine().getKieSession().startProcess(getNameOfProcessToStart(), params);
 		getPersistence().commit();
@@ -434,7 +443,12 @@ public abstract class AbstractControllableLifecycleTests extends AbstractConstru
 		getPersistence().update(housePlan);
 		getPersistence().commit();
 		List<TaskSummary> list = getTaskService().getTasksAssignedAsPotentialOwner(getEventGeneratingTaskUser(), "en-UK");
-		getTaskService().claim(findTask(list, "TheEventGeneratingTaskPlanItem"), getEventGeneratingTaskUser());
+		TaskSummary ts = findTaskSummary(list, "TheEventGeneratingTaskPlanItem");
+		if(ts.getActualOwner()!=null && !ts.getActualOwner().getId().equals(getEventGeneratingTaskUser())){
+			//may have been assigned to the caseOwner/initiator
+			getTaskService().forward(ts.getId(), ts.getActualOwner().getId(), getEventGeneratingTaskUser());
+		}
+		getTaskService().claim(ts.getId(), getEventGeneratingTaskUser());
 	}
 
 }

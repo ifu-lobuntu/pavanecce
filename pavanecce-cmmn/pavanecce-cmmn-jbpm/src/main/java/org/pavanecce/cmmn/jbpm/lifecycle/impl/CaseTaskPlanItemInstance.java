@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.drools.core.RuntimeDroolsException;
-import org.drools.core.process.instance.WorkItem;
 import org.drools.core.spi.ProcessContext;
 import org.jbpm.process.core.context.exception.ExceptionScope;
 import org.jbpm.process.instance.ContextInstanceContainer;
@@ -24,6 +23,7 @@ import org.kie.api.runtime.process.EventListener;
 import org.kie.api.runtime.process.NodeInstance;
 import org.kie.internal.runtime.KnowledgeRuntime;
 import org.kie.internal.runtime.manager.context.ProcessInstanceIdContext;
+import org.pavanecce.cmmn.jbpm.TaskParameters;
 import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.flow.CaseTask;
 import org.pavanecce.cmmn.jbpm.flow.ParameterMapping;
@@ -38,7 +38,7 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask, Tas
 
 	private static final long serialVersionUID = -2144001908752174712L;
 	private static final Logger logger = LoggerFactory.getLogger(CaseTaskPlanItemInstance.class);
-	private long processInstanceId;
+	private long processInstanceId = -1;
 	transient private ProcessInstance processInstance;
 
 	@Override
@@ -63,6 +63,21 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask, Tas
 	public void reactivate() {
 		super.reactivate();
 		startProcess();
+	}
+
+	@Override
+	public void triggerCompleted() {
+		super.triggerCompleted();
+	}
+
+	@Override
+	public void triggerCompleted(String outType) {
+		super.triggerCompleted(outType);
+	}
+
+	@Override
+	protected void triggerCompleted(String type, boolean remove) {
+		super.triggerCompleted(type, remove);
 	}
 
 	private void startProcess() {
@@ -110,7 +125,7 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask, Tas
 	}
 
 	private Map<String, Object> transformParameters(List<ParameterMapping> parameterMappings, Map<String, Object> parametersToTransform) {
-		Map<String, Object> inputParameters = new HashMap<String, Object>();
+		Map<String, Object> inputParameters = new HashMap<String, Object>(parametersToTransform);
 		ProcessContext ctx = new ProcessContext(getProcessInstance().getKnowledgeRuntime());
 		ctx.setNodeInstance(this);
 		ctx.setProcessInstance(getProcessInstance());
@@ -201,7 +216,9 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask, Tas
 	}
 
 	private void addProcessListener() {
-		getProcessInstance().addEventListener("processInstanceCompleted:" + processInstanceId, this, true);
+		if (processInstanceId >= 0) {
+			getProcessInstance().addEventListener("processInstanceCompleted:" + processInstanceId, this, true);
+		}
 	}
 
 	public void removeEventListeners() {
@@ -210,17 +227,7 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask, Tas
 	}
 
 	public void signalEvent(String type, Object event) {
-		if (type.equals(WORK_ITEM_UPDATED) && isMyWorkItem((WorkItem) event)) {
-			this.workItem = (WorkItem) event;
-			PlanItemTransition transition = (PlanItemTransition) workItem.getResult(HumanTaskPlanItemInstance.TRANSITION);
-			if (transition == PlanItemTransition.TERMINATE) {
-				if (!getPlanElementState().isTerminalState()) {
-					transition.invokeOn(this);
-				}
-			} else {
-				transition.invokeOn(this);
-			}
-		} else if (("processInstanceCompleted:" + processInstanceId).equals(type) && !getPlanElementState().isTerminalState()) {
+		if (("processInstanceCompleted:" + processInstanceId).equals(type) && !getPlanElementState().isTerminalState()) {
 			processInstanceCompleted((ProcessInstance) event);
 		} else {
 			super.signalEvent(type, event);
@@ -228,12 +235,12 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask, Tas
 	}
 
 	public String[] getEventTypes() {
-		return new String[] { "processInstanceCompleted:" + processInstanceId, WORK_ITEM_UPDATED };
+		return new String[] { "processInstanceCompleted:" + processInstanceId, TaskParameters.WORK_ITEM_UPDATED };
 	}
 
 	public void processInstanceCompleted(ProcessInstance processInstance) {
 		this.processInstance = processInstance;
-		removeEventListeners();
+		getProcessInstance().removeEventListener("processInstanceCompleted:" + processInstanceId, this, true);
 		if (processInstance.getState() == ProcessInstance.STATE_ABORTED) {
 			String faultName = processInstance.getOutcome() == null ? "" : processInstance.getOutcome();
 			// handle exception as sub process failed with error code
@@ -273,17 +280,8 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask, Tas
 	}
 
 	@Override
-	protected String getIdealRole() {
+	protected String getIdealRoles() {
 		return getBusinessAdministrators();
 	}
-
-	@Override
-	protected String getIdealOwner() {
-		if (getCaseInstance().getCaseOwner() != null) {
-			return getCaseInstance().getCaseOwner();
-		}
-		return null;
-	}
-
 
 }

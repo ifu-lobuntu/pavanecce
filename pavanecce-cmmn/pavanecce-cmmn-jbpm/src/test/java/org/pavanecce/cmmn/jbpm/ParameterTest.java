@@ -59,6 +59,7 @@ public class ParameterTest extends AbstractConstructionTestCase {
 		getPersistence().commit();
 		params.put("housePlan", housePlan);
 		params.put("house", house);
+		params.put(TaskParameters.INITIATOR, "Spielman");
 		getPersistence().start();
 		caseInstance = (CaseInstance) getRuntimeEngine().getKieSession().startProcess("ParameterTests", params);
 		getPersistence().commit();

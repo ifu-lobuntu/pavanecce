@@ -192,7 +192,11 @@ public enum PlanElementState {
 			for (ItemInstanceLifecycle<?> child : pic.getChildren()) {
 				if (child.getPlanElementState().isBusyState(child)) {
 					if (isComplexLifecycle(child)) {
-						((ItemInstanceLifecycleWithHistory<?>) child).parentSuspend();
+						if (child instanceof ControllableItemInstanceLifecycle<?>) {
+							((ControllableItemInstanceLifecycle<?>) child).triggerTransitionOnTask(PARENT_SUSPEND);
+						} else {
+							((ItemInstanceLifecycleWithHistory<?>) child).parentSuspend();
+						}
 					} else if (child instanceof OccurrablePlanItemInstanceLifecycle) {
 						((OccurrablePlanItemInstanceLifecycle<?>) child).suspend();
 					}
@@ -231,8 +235,13 @@ public enum PlanElementState {
 			if (child.getPlanElementState() == SUSPENDED) {
 				if (child instanceof OccurrablePlanItemInstanceLifecycle) {
 					((OccurrablePlanItemInstanceLifecycle<?>) child).resume();
+
 				} else if (isComplexLifecycle(child)) {
-					((ItemInstanceLifecycleWithHistory<?>) child).parentResume();
+					if (child instanceof ControllableItemInstanceLifecycle) {
+						((ControllableItemInstanceLifecycle<?>) child).triggerTransitionOnTask(PARENT_RESUME);
+					} else {
+						((ItemInstanceLifecycleWithHistory<?>) child).parentResume();
+					}
 				}
 			}
 		}
@@ -253,7 +262,11 @@ public enum PlanElementState {
 		for (ItemInstanceLifecycle<?> child : pi2.getChildren()) {
 			if (!child.getPlanElementState().isTerminalState()) {
 				if (isComplexLifecycle(child)) {
-					((ItemInstanceLifecycleWithHistory<?>) child).exit();
+					if (child instanceof ControllableItemInstanceLifecycle<?>) {
+						((ControllableItemInstanceLifecycle<?>) child).triggerTransitionOnTask(EXIT);
+					} else {
+						((ItemInstanceLifecycleWithHistory<?>) child).exit();
+					}
 				} else if (child instanceof OccurrablePlanItemInstanceLifecycle) {
 					((OccurrablePlanItemInstanceLifecycle<?>) child).parentTerminate();
 				}
@@ -264,11 +277,7 @@ public enum PlanElementState {
 	public void exit(ItemInstanceLifecycleWithHistory<?> pi) {
 		validateTransition(pi, EXIT);
 		signalEvent(pi, PlanItemTransition.EXIT);
-		if (pi instanceof PlanElementLifecycleWithTask) {
-			((PlanElementLifecycleWithTask) pi).triggerTransitionOnTask(EXIT);
-		} else {
-			pi.setPlanElementState(TERMINATED);
-		}
+		pi.setPlanElementState(TERMINATED);
 	}
 
 	public void complete(PlanElementLifecycle pi) {
@@ -284,11 +293,7 @@ public enum PlanElementState {
 		validateTransition(pi, PARENT_SUSPEND);
 		signalEvent(pi, PlanItemTransition.PARENT_SUSPEND);
 		pi.setLastBusyState(pi.getPlanElementState());
-		if (pi instanceof PlanElementLifecycleWithTask) {
-			((PlanElementLifecycleWithTask) pi).triggerTransitionOnTask(SUSPEND);
-		} else {
-			pi.setPlanElementState(SUSPENDED);
-		}
+		pi.setPlanElementState(SUSPENDED);
 	}
 
 	public void parentResume(ItemInstanceLifecycleWithHistory<?> pi) {

@@ -12,7 +12,7 @@ import org.kie.api.runtime.process.WorkItemHandler;
 import org.kie.internal.runtime.manager.Disposable;
 import org.kie.internal.runtime.manager.DisposeListener;
 import org.kie.internal.task.api.EventService;
-import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementLifecycleWithTask;
+import org.pavanecce.cmmn.jbpm.TaskParameters;
 import org.pavanecce.cmmn.jbpm.task.CaseTaskWorkItemHandler;
 import org.pavanecce.cmmn.jbpm.task.UpdateTaskStatusWorkItemHandler;
 
@@ -49,7 +49,7 @@ public class CaseRegisterableItemsFactory extends DefaultRegisterableItemsFactor
         defaultHandlers.putAll(super.getWorkItemHandlers(runtime));
         UpdateTaskStatusWorkItemHandler stwih = new UpdateTaskStatusWorkItemHandler();
         stwih.setRuntimeManager(((RuntimeEngineImpl)runtime).getManager());
-		defaultHandlers.put(PlanElementLifecycleWithTask.UPDATE_TASK_STATUS, stwih);
+		defaultHandlers.put(TaskParameters.UPDATE_TASK_STATUS, stwih);
         return defaultHandlers;
     }
 

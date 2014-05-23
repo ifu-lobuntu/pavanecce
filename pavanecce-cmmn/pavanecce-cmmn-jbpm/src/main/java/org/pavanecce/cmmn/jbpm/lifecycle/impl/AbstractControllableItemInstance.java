@@ -17,14 +17,17 @@ import org.jbpm.services.task.wih.util.PeopleAssignmentHelper;
 import org.jbpm.workflow.instance.WorkflowRuntimeException;
 import org.jbpm.workflow.instance.node.CompositeContextNodeInstance;
 import org.kie.api.runtime.process.NodeInstance;
+import org.pavanecce.cmmn.jbpm.TaskParameters;
 import org.pavanecce.cmmn.jbpm.flow.DiscretionaryItem;
 import org.pavanecce.cmmn.jbpm.flow.PlanItem;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemControl;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemTransition;
 import org.pavanecce.cmmn.jbpm.flow.TableItem;
+import org.pavanecce.cmmn.jbpm.flow.TaskDefinition;
 import org.pavanecce.cmmn.jbpm.flow.TaskItemWithDefinition;
 import org.pavanecce.cmmn.jbpm.lifecycle.ControllableItemInstanceLifecycle;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementLifecycleWithTask;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
 
 public abstract class AbstractControllableItemInstance<T extends PlanItemDefinition, X extends TaskItemWithDefinition<T>> extends CompositeContextNodeInstance implements
@@ -42,12 +45,45 @@ public abstract class AbstractControllableItemInstance<T extends PlanItemDefinit
 		super();
 	}
 
-	protected abstract String getIdealRole();
+	protected abstract String getIdealRoles();
 
-	protected abstract String getIdealOwner();
+	protected String getIdealOwner() {
+		if (PlanItemInstanceUtil.isActivatedManually(this)) {
+			return null;
+		} else {
+			return getCaseInstance().getCaseOwner();
+		}
+	}
+
+	protected String getInitiator() {
+		// by this time a case MUST have an owner
+		return getCaseInstance().getCaseOwner();
+	}
 
 	public final WorkItemImpl createWorkItem(Work work) {
-		return PlanItemInstanceUtil.createWorkItem(work, this, this.getItem().getDefinition());
+		PlanItemDefinition definition = this.getItem().getDefinition();
+		WorkItemImpl workItem = new WorkItemImpl();
+		workItem.setName(work.getName());
+		workItem.setProcessInstanceId(this.getProcessInstance().getId());
+		workItem.setParameters(new HashMap<String, Object>(work.getParameters()));
+		if (definition instanceof TaskDefinition) {
+			workItem.getParameters().putAll(PlanItemInstanceUtil.buildInputParameters(work, this, (TaskDefinition) definition));
+		}
+		workItem.setParameter(TaskParameters.INITIATOR, getInitiator());
+		workItem.setParameter(PeopleAssignmentHelper.ACTOR_ID, getIdealOwner());
+		workItem.setParameter(PeopleAssignmentHelper.GROUP_ID, getIdealRoles());
+		workItem.setParameter(PeopleAssignmentHelper.BUSINESSADMINISTRATOR_ID, getBusinessAdministrators());
+		String deploymentId = (String) getProcessInstance().getKnowledgeRuntime().getEnvironment().get("deploymentId");
+		workItem.setDeploymentId(deploymentId);
+		workItem.setParameter(TaskParameters.COMMENT, definition.getDescription());
+		if (this.getNodeInstanceContainer() instanceof PlanElementLifecycleWithTask) {
+			long parentWorkItemId = ((PlanElementLifecycleWithTask) this.getNodeInstanceContainer()).getWorkItemId();
+			if (parentWorkItemId >= 0) {
+				workItem.setParameter(TaskParameters.PARENT_WORK_ITEM_ID, parentWorkItemId);
+			}
+		}
+		workItem.setParameter(TaskParameters.CLAIM_IMMEDIATELY, false);
+		return workItem;
 	}
 
 	protected String getBusinessAdministrators() {
@@ -80,11 +116,12 @@ public abstract class AbstractControllableItemInstance<T extends PlanItemDefinit
 	@Override
 	public void triggerTransitionOnTask(PlanItemTransition transition) {
 		WorkItemImpl wi = new WorkItemImpl();
-		wi.setName(UPDATE_TASK_STATUS);
-		wi.setParameter(TASK_TRANSITION, transition);
-		wi.setParameter(WORK_ITEM_ID, getWorkItemId());
+		wi.setName(TaskParameters.UPDATE_TASK_STATUS);
+		wi.setParameter(TaskParameters.TASK_TRANSITION, transition);
+		wi.setParameter(TaskParameters.WORK_ITEM_ID, getWorkItemId());
 		wi.setParameter(PeopleAssignmentHelper.ACTOR_ID, getIdealOwner());
-		wi.setParameter(PeopleAssignmentHelper.GROUP_ID, getIdealRole());
+		wi.setParameter(TaskParameters.USERS_IN_ROLE, getCaseInstance().getRoleAssignments(getIdealRoles()));
+		wi.setParameter(PeopleAssignmentHelper.GROUP_ID, getIdealRoles());
 		wi.setParameter(PeopleAssignmentHelper.BUSINESSADMINISTRATOR_ID, getBusinessAdministrators());
 		executeWorkItem(wi);
 	}
@@ -151,6 +188,9 @@ public abstract class AbstractControllableItemInstance<T extends PlanItemDefinit
 
 	@Override
 	public long getWorkItemId() {
+		if (this.workItem != null) {
+			return workItem.getId();
+		}
 		return workItemId;
 	}
 
@@ -171,13 +211,13 @@ public abstract class AbstractControllableItemInstance<T extends PlanItemDefinit
 	}
 
 	private void addWorkItemUpdatedListener() {
-		getProcessInstance().addEventListener(WORK_ITEM_UPDATED, this, false);
+		getProcessInstance().addEventListener(TaskParameters.WORK_ITEM_UPDATED, this, false);
 	}
 
 	@Override
 	public void removeEventListeners() {
 		super.removeEventListeners();
-		getProcessInstance().addEventListener(WORK_ITEM_UPDATED, this, false);
+		getProcessInstance().removeEventListener(TaskParameters.WORK_ITEM_UPDATED, this, false);
 	}
 
 	@Override
@@ -190,14 +230,14 @@ public abstract class AbstractControllableItemInstance<T extends PlanItemDefinit
 
 	@Override
 	public String[] getEventTypes() {
-		return new String[] { WORK_ITEM_UPDATED };
+		return new String[] { TaskParameters.WORK_ITEM_UPDATED };
 	}
 
 	@Override
 	public void signalEvent(String type, Object event) {
-		if (type.equals(WORK_ITEM_UPDATED) && isMyWorkItem((WorkItem) event)) {
+		if (type.equals(TaskParameters.WORK_ITEM_UPDATED) && isMyWorkItem((WorkItem) event)) {
 			this.workItem = (WorkItem) event;
-			PlanItemTransition transition = (PlanItemTransition) workItem.getResult(HumanTaskPlanItemInstance.TRANSITION);
+			PlanItemTransition transition = (PlanItemTransition) workItem.getResult(TaskParameters.TRANSITION);
 			transition.invokeOn(this);
 		} else {
 			super.signalEvent(type, event);
@@ -293,7 +333,7 @@ public abstract class AbstractControllableItemInstance<T extends PlanItemDefinit
 	@Override
 	public Object getTask() {
 		if (getWorkItem() != null) {
-			return (Object) getWorkItem().getResult(TASK);
+			return (Object) getWorkItem().getResult(TaskParameters.TASK);
 		}
 		return null;
 	}
@@ -340,10 +380,7 @@ public abstract class AbstractControllableItemInstance<T extends PlanItemDefinit
 
 	@Override
 	public void terminate() {
-		if (planElementState != PlanElementState.TERMINATED) {
-			// Could have been fired by exiting event
-			planElementState.terminate(this);
-		}
+		planElementState.terminate(this);
 	}
 
 	@Override

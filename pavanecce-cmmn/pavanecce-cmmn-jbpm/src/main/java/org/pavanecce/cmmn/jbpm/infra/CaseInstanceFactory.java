@@ -36,6 +36,7 @@ import org.jbpm.process.instance.ProcessInstance;
 import org.jbpm.process.instance.context.variable.VariableScopeInstance;
 import org.kie.api.definition.process.Process;
 import org.kie.internal.process.CorrelationKey;
+import org.pavanecce.cmmn.jbpm.TaskParameters;
 import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
@@ -96,13 +97,16 @@ public class CaseInstanceFactory extends AbstractProcessInstanceFactory implemen
 		if(workItem!=null){
 			processInstance.setWorkItem(workItem);
 		}
-		String initiator = (String) parameters.get(Case.INITIATOR);
+		String initiator = (String) parameters.get(TaskParameters.INITIATOR);
 		if(initiator!=null){
-			variableScopeInstance.setVariable(Case.INITIATOR, initiator);
+			variableScopeInstance.setVariable(TaskParameters.INITIATOR, initiator);
 		}
-		String caseOwner = (String) parameters.get(Case.CASE_OWNER);
+		String caseOwner = (String) parameters.get(TaskParameters.CASE_OWNER);
 		if(caseOwner!=null){
-			variableScopeInstance.setVariable(Case.CASE_OWNER, caseOwner);
+			variableScopeInstance.setVariable(TaskParameters.CASE_OWNER, caseOwner);
+		}
+		if(caseOwner==null && initiator==null){
+			throw new IllegalArgumentException("A case must either have an owner, or initiator, or both");
 		}
 
 		return processInstance;

@@ -76,6 +76,7 @@ public class PlanningTest extends AbstractPlanItemInstanceContainerTest {
 		}
 		for (PlannedTask plannedTask : plannedTasks) {
 			((InternalTaskData) plannedTask.getTaskData()).setActualOwner(new UserImpl("salaboy"));
+			plannedTask.getPeopleAssignments().getPotentialOwners().add(new UserImpl("salaboy"));
 		}
 		getPlanningService().submitPlan(parentTaskId, plannedTasks,false);
 		List<TaskSummary> tasks = getTaskService().getTasksOwned("salaboy", "en-UK");

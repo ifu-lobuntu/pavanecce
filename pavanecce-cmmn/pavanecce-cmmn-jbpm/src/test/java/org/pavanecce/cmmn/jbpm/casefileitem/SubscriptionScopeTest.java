@@ -7,6 +7,7 @@ import java.util.Map;
 import org.junit.Test;
 import org.kie.api.task.model.TaskSummary;
 import org.pavanecce.cmmn.jbpm.AbstractConstructionTestCase;
+import org.pavanecce.cmmn.jbpm.TaskParameters;
 import org.pavanecce.cmmn.jbpm.event.CaseSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.event.SubscriptionManager;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
@@ -65,6 +66,7 @@ public abstract class SubscriptionScopeTest extends AbstractConstructionTestCase
 		getPersistence().commit();
 		params.put("housePlan", housePlan);
 		params.put("house", house);
+		params.put(TaskParameters.INITIATOR, "Spielman");
 		getPersistence().start();
 		caseInstance = (CaseInstance) getRuntimeEngine().getKieSession().startProcess("SubscriptionScopeTests", params);
 		getPersistence().commit();

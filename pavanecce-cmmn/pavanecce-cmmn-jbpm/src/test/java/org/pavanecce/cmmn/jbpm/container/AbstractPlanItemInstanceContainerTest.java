@@ -7,7 +7,7 @@ import java.util.Map;
 import org.kie.api.task.model.Status;
 import org.kie.api.task.model.TaskSummary;
 import org.pavanecce.cmmn.jbpm.AbstractConstructionTestCase;
-import org.pavanecce.cmmn.jbpm.flow.Case;
+import org.pavanecce.cmmn.jbpm.TaskParameters;
 import org.pavanecce.cmmn.jbpm.flow.DefaultJoin;
 import org.pavanecce.cmmn.jbpm.lifecycle.ItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
@@ -153,7 +153,7 @@ public abstract class AbstractPlanItemInstanceContainerTest extends AbstractCons
 		getPersistence().commit();
 		params.put("housePlan", housePlan);
 		params.put("house", house);
-		params.put(Case.CASE_OWNER, "Spielman");
+		params.put(TaskParameters.CASE_OWNER, "Spielman");
 		getPersistence().start();
 		caseInstance = (CaseInstance) getRuntimeEngine().getKieSession().startProcess(getCaseName(), params);
 		getPersistence().commit();

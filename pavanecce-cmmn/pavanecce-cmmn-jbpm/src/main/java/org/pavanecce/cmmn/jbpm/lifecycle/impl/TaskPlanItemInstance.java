@@ -13,7 +13,11 @@ public abstract class TaskPlanItemInstance<T extends TaskDefinition, X extends T
 
 	@Override
 	protected final boolean isBlocking() {
-		return getItem().getDefinition().isBlocking();
+		boolean blocking = getItem().getDefinition().isBlocking();
+		if(blocking==false){
+			System.out.println();
+		}
+		return blocking;
 	}
 
 	@Override

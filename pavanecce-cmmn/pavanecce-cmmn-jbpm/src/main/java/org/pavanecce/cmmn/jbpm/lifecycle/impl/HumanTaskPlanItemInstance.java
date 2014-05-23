@@ -3,6 +3,7 @@ package org.pavanecce.cmmn.jbpm.lifecycle.impl;
 import java.util.Collection;
 
 import org.drools.core.process.instance.WorkItem;
+import org.pavanecce.cmmn.jbpm.TaskParameters;
 import org.pavanecce.cmmn.jbpm.flow.HumanTask;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemContainer;
 import org.pavanecce.cmmn.jbpm.flow.PlanningTable;
@@ -18,20 +19,27 @@ public class HumanTaskPlanItemInstance extends TaskPlanItemInstance<HumanTask, T
 	}
 
 	@Override
-	protected String getIdealRole() {
+	protected String getIdealRoles() {
 		TaskItemWithDefinition<HumanTask> item = getItem();
 		return item.getDefinition().getPerformer().getName();
 	}
 
 	@Override
 	protected String getIdealOwner() {
-		Collection<String> roleAssignments = getCaseInstance().getRoleAssignments(getIdealRole());
-		if(roleAssignments.size()==1){
-			return roleAssignments.iterator().next();
+		if (PlanItemInstanceUtil.isActivatedManually(this)) {
+			// Let the role do the assignment
+			return null;
+		} else { 
+			// need to find someone
+			Collection<String> roleAssignments = getCaseInstance().getRoleAssignments(getIdealRoles());
+			if (roleAssignments.size() == 1) {
+				return roleAssignments.iterator().next();
+			}else{
+				///TODO think this through
+				return null;
+			}
 		}
-		return null;
 	}
-
 
 	@Override
 	public PlanningTable getPlanningTable() {
@@ -40,9 +48,9 @@ public class HumanTaskPlanItemInstance extends TaskPlanItemInstance<HumanTask, T
 
 	@Override
 	public void signalEvent(String type, Object event) {
-		if (type.equals(WORK_ITEM_UPDATED) && isMyWorkItem((WorkItem) event)) {
+		if (type.equals(TaskParameters.WORK_ITEM_UPDATED) && isMyWorkItem((WorkItem) event)) {
 			WorkItem wi = (WorkItem) event;
-			String owner = (String) wi.getResult(ACTUAL_OWNER);
+			String owner = (String) wi.getResult(TaskParameters.ACTUAL_OWNER);
 			if (owner != null) {
 				getCaseInstance().addRoleAssignment(getItem().getDefinition().getPerformer().getName(), owner);
 			}

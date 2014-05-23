@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.kie.api.runtime.process.NodeInstance;
 import org.kie.api.task.model.TaskSummary;
 import org.pavanecce.cmmn.jbpm.AbstractConstructionTestCase;
+import org.pavanecce.cmmn.jbpm.TaskParameters;
 import org.pavanecce.cmmn.jbpm.lifecycle.ItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
@@ -176,6 +177,7 @@ public abstract class AbstractOccurrableTestCase extends AbstractConstructionTes
 		getPersistence().commit();
 		params.put("housePlan", housePlan);
 		params.put("house", house);
+		params.put(TaskParameters.INITIATOR, "Spielman");
 		getPersistence().start();
 		caseInstance = (CaseInstance) getRuntimeEngine().getKieSession().startProcess(getCaseName(), params);
 		getPersistence().commit();

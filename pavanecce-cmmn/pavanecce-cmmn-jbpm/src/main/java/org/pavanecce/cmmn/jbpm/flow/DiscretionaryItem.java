@@ -11,8 +11,6 @@ import org.jbpm.services.task.wih.util.PeopleAssignmentHelper;
 
 public class DiscretionaryItem<T extends PlanItemDefinition> extends TableItem implements TaskItemWithDefinition<T> {
 	private static final long serialVersionUID = 2371336993789669482L;
-	public static final String PLANNED = "Planned";
-	public static final String DISCRETIONARY_ITEM_ID = "DiscretionaryItemId";
 	private T definition;
 	private String definitionRef;
 	private PlanItemControl itemControl;
@@ -85,6 +83,9 @@ public class DiscretionaryItem<T extends PlanItemDefinition> extends TableItem i
 		HashMap<Object, Object> copiedState = new HashMap<Object, Object>();
 		T from = getDefinition();
 		this.setNodeContainer(getParentTable().getFirstPlanItemContainer());
+		if(this.getNodeContainer()==null){
+			System.out.println();
+		}
 		copiedState.put(from, this);
 		copy(copiedState, from, this);
 	}

@@ -17,6 +17,7 @@ import org.kie.api.runtime.process.NodeInstance;
 import org.pavanecce.cmmn.jbpm.event.CaseEvent;
 import org.pavanecce.cmmn.jbpm.flow.OnPart;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemInstanceFactoryNode;
+import org.pavanecce.cmmn.jbpm.flow.PlanItemTransition;
 import org.pavanecce.cmmn.jbpm.flow.Sentry;
 import org.pavanecce.cmmn.jbpm.lifecycle.ControllableItemInstanceLifecycle;
 
@@ -134,7 +135,7 @@ public class SentryInstance extends JoinInstance {
 			if (found instanceof ControllableItemInstanceLifecycle) {
 				// Task planItem
 				ControllableItemInstanceLifecycle<?> pii = (ControllableItemInstanceLifecycle<?>) found;
-				pii.exit();
+				pii.triggerTransitionOnTask(PlanItemTransition.EXIT);
 				hasTriggered = true;
 			} else {
 				// TODO: SubProcessInstance? Exception?

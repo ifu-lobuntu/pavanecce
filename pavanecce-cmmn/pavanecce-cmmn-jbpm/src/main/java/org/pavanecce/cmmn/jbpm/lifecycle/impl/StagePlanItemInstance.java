@@ -79,15 +79,8 @@ public class StagePlanItemInstance extends AbstractControllableItemInstance<Stag
 	}
 
 	@Override
-	protected String getIdealRole() {
+	protected String getIdealRoles() {
 		return getBusinessAdministrators();
 	}
 
-	@Override
-	protected String getIdealOwner() {
-		if (getCaseInstance().getCaseOwner() != null) {
-			return getCaseInstance().getCaseOwner();
-		}
-		return null;
-	}
 }

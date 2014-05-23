@@ -53,8 +53,12 @@ public class SubmitPlanCommand extends AbstractPlanningCommand<Void> {
 		for (PlannedTask plannedTask : plannedTasks) {
 			pm.merge(plannedTask);
 			ts.addContent(plannedTask.getId(), plannedTask.getParameterOverrides());
-			InternalTaskData td = (InternalTaskData) ts.getTaskById(plannedTask.getId()).getTaskData();
+			Task currentTask = ts.getTaskById(plannedTask.getId());
+			InternalTaskData td = (InternalTaskData) currentTask.getTaskData();
 			td.setActualOwner(plannedTask.getTaskData().getActualOwner());
+			if(!currentTask.getPeopleAssignments().getPotentialOwners().contains(td.getActualOwner())){
+				currentTask.getPeopleAssignments().getPotentialOwners().add(td.getActualOwner());
+			}
 			WorkItemManager wim = (WorkItemManager) runtime.getKieSession().getWorkItemManager();
 			WorkItem wi = wim.getWorkItem(plannedTask.getTaskData().getWorkItemId());
 			Environment env = runtime.getKieSession().getEnvironment();

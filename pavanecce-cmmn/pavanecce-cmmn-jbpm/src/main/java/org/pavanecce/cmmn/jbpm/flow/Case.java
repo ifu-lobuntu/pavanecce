@@ -24,8 +24,7 @@ public class Case extends RuleFlowProcess implements PlanItemContainer {
 	private EndNode defaultEnd;
 	private DefaultJoin defaultJoin;
 	private PlanningTable planningTable;
-	public static final String INITIATOR = "initiator";
-	public static final String CASE_OWNER = "caseOwner";
+
 
 	@Override
 	public StartNode getDefaultStart() {

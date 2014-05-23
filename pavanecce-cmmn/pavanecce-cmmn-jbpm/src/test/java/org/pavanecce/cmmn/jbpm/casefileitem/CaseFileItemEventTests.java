@@ -7,6 +7,7 @@ import javax.naming.NamingException;
 
 import org.junit.Test;
 import org.pavanecce.cmmn.jbpm.AbstractConstructionTestCase;
+import org.pavanecce.cmmn.jbpm.TaskParameters;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 
 import test.ConstructionCase;
@@ -310,6 +311,7 @@ public abstract class CaseFileItemEventTests extends AbstractConstructionTestCas
 		getPersistence().commit();
 		params.put("housePlan", housePlan);
 		params.put("house", house);
+		params.put(TaskParameters.INITIATOR, "Spielman");
 		getPersistence().start();
 		caseInstance = (CaseInstance) getRuntimeEngine().getKieSession().startProcess("CaseFileItemEventTests", params);
 		getPersistence().commit();

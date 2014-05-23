@@ -39,6 +39,7 @@ public class BuilderTest extends AbstractConstructionTestCase {
 		getPersistence().commit();
 		params.put("housePlan", housePlan);
 		params.put("house", house);
+		params.put(TaskParameters.INITIATOR, "Spielman");
 		getPersistence().start();
 		CaseInstance processInstance = (CaseInstance) ksession.startProcess("hello", params);
 		getPersistence().commit();
@@ -108,6 +109,7 @@ public class BuilderTest extends AbstractConstructionTestCase {
 		getPersistence().commit();
 		params.put("housePlan", housePlan);
 		params.put("house", house);
+		params.put(TaskParameters.INITIATOR, "Spielman");
 		getPersistence().start();
 		CaseInstance processInstance = (CaseInstance) ksession.startProcess("bye", params);
 		getPersistence().commit();

@@ -33,14 +33,18 @@ import org.kie.api.task.model.Content;
 import org.kie.api.task.model.Task;
 import org.kie.internal.runtime.manager.InternalRuntimeManager;
 import org.kie.internal.runtime.manager.context.ProcessInstanceIdContext;
-import org.pavanecce.cmmn.jbpm.flow.Case;
+import org.pavanecce.cmmn.jbpm.TaskParameters;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemTransition;
 import org.pavanecce.cmmn.jbpm.lifecycle.ControllableItemInstanceLifecycle;
-import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementLifecycleWithTask;
+//TODO try to remove dependencies from 'impl'
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.StagePlanItemInstance;
+import org.pavanecce.cmmn.jbpm.task.AfterExitCriteriaEvent;
 import org.pavanecce.cmmn.jbpm.task.AfterTaskReactivatedEvent;
 import org.pavanecce.cmmn.jbpm.task.AfterTaskReenabledEvent;
+import org.pavanecce.cmmn.jbpm.task.AfterTaskResumedFromParentEvent;
+import org.pavanecce.cmmn.jbpm.task.AfterTaskStartedAutomaticallyEvent;
+import org.pavanecce.cmmn.jbpm.task.AfterTaskSuspendedFromParentEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,6 +63,20 @@ public class CaseTaskLifecycleListener extends ExternalTaskEventListener {
 	public void afterTaskReenabledEvent(@Observes(notifyObserver = Reception.IF_EXISTS) @AfterTaskReenabledEvent Task task) {
 		signalEvent(task, PlanItemTransition.REENABLE);
 	}
+	public void afterTaskParentSuspended(@Observes(notifyObserver = Reception.IF_EXISTS) @AfterTaskSuspendedFromParentEvent Task task) {
+		signalEvent(task, PlanItemTransition.PARENT_SUSPEND);
+	}
+	public void afterTaskParentResumed(@Observes(notifyObserver = Reception.IF_EXISTS) @AfterTaskResumedFromParentEvent Task task) {
+		signalEvent(task, PlanItemTransition.PARENT_RESUME);
+	}
+
+	public void afterTaskExitCriteriaEvent(@Observes(notifyObserver = Reception.IF_EXISTS) @AfterExitCriteriaEvent Task task) {
+		signalEvent(task, PlanItemTransition.EXIT);
+	}
+
+	public void afterTaskStartedAutomaticallyEvent(@Observes(notifyObserver = Reception.IF_EXISTS) @AfterTaskStartedAutomaticallyEvent Task task) {
+		signalEvent(task, PlanItemTransition.START);
+	}
 
 	@Override
 	public void afterTaskResumedEvent(@Observes(notifyObserver = Reception.IF_EXISTS) @AfterTaskResumedEvent Task task) {
@@ -70,8 +88,8 @@ public class CaseTaskLifecycleListener extends ExternalTaskEventListener {
 	}
 
 	@Override
-	public void afterTaskSuspendedEvent(@Observes(notifyObserver = Reception.IF_EXISTS) @AfterTaskSuspendedEvent Task ti) {
-		signalEvent(ti, PlanItemTransition.SUSPEND);
+	public void afterTaskSuspendedEvent(@Observes(notifyObserver = Reception.IF_EXISTS) @AfterTaskSuspendedEvent Task task) {
+		signalEvent(task, PlanItemTransition.SUSPEND);
 	}
 
 	@Override
@@ -82,13 +100,12 @@ public class CaseTaskLifecycleListener extends ExternalTaskEventListener {
 	}
 
 	private boolean isCaseInstance(Task task) {
-		RuntimeEngine runtime = getManager(task).getRuntimeEngine(ProcessInstanceIdContext.get(task.getTaskData().getProcessInstanceId()));
-		KieSession session = runtime.getKieSession();
+		KieSession session = getKieSession(task);
 		ProcessInstance pi = session.getProcessInstance(task.getTaskData().getProcessInstanceId());
 		boolean isCaseInstance = false;
 		if (pi instanceof CaseInstance) {
 			CaseInstance ci = (CaseInstance) pi;
-			if (ci.getWorkItemId() == task.getTaskData().getWorkItemId() || ci.getWorkItem().getId() == task.getTaskData().getWorkItemId()) {
+			if (ci.getWorkItemId() == task.getTaskData().getWorkItemId()) {
 				isCaseInstance = true;
 			}
 		}
@@ -96,8 +113,7 @@ public class CaseTaskLifecycleListener extends ExternalTaskEventListener {
 	}
 
 	public void beforeTaskCompletedEvent(@Observes(notifyObserver = Reception.IF_EXISTS) @BeforeTaskCompletedEvent Task task) {
-		RuntimeEngine runtime = getManager(task).getRuntimeEngine(ProcessInstanceIdContext.get(task.getTaskData().getProcessInstanceId()));
-		KieSession session = runtime.getKieSession();
+		KieSession session = getKieSession(task);
 		ProcessInstance pi = session.getProcessInstance(task.getTaskData().getProcessInstanceId());
 		if (pi instanceof CaseInstance) {
 			CaseInstance ci = (CaseInstance) pi;
@@ -118,18 +134,20 @@ public class CaseTaskLifecycleListener extends ExternalTaskEventListener {
 	}
 
 	@Override
-	public void afterTaskFailedEvent(@Observes(notifyObserver = Reception.IF_EXISTS) @AfterTaskFailedEvent Task ti) {
-		signalEvent(ti, PlanItemTransition.FAULT);
+	public void afterTaskFailedEvent(@Observes(notifyObserver = Reception.IF_EXISTS) @AfterTaskFailedEvent Task task) {
+		signalEvent(task, PlanItemTransition.FAULT);
 	}
 
 	@Override
-	public void afterTaskExitedEvent(@Observes(notifyObserver = Reception.IF_EXISTS) @AfterTaskExitedEvent Task ti) {
-		signalEvent(ti, PlanItemTransition.TERMINATE);// In CMMN exit is when exit criteria occur
+	public void afterTaskExitedEvent(@Observes(notifyObserver = Reception.IF_EXISTS) @AfterTaskExitedEvent Task task) {
+		signalEvent(task, PlanItemTransition.TERMINATE);// In CMMN exit is when exit criteria occur
 	}
 
 	@Override
-	public void afterTaskSkippedEvent(@Observes(notifyObserver = Reception.IF_EXISTS) @AfterTaskSkippedEvent Task ti) {
-		signalEvent(ti, PlanItemTransition.DISABLE);
+	public void afterTaskSkippedEvent(@Observes(notifyObserver = Reception.IF_EXISTS) @AfterTaskSkippedEvent Task task) {
+		if (!isCaseInstance(task)) {
+			signalEvent(task, PlanItemTransition.DISABLE);
+		}
 	}
 
 	@Override
@@ -138,13 +156,11 @@ public class CaseTaskLifecycleListener extends ExternalTaskEventListener {
 	}
 
 	protected void signalEvent(Task task, PlanItemTransition standardEvent) {
-
 		long processInstanceId = task.getTaskData().getProcessInstanceId();
 		if (processInstanceId <= 0) {
 			return;
 		}
-		RuntimeEngine runtime = getManager(task).getRuntimeEngine(ProcessInstanceIdContext.get(processInstanceId));
-		KieSession session = runtime.getKieSession();
+		KieSession session = getKieSession(task);
 		if (session == null) {
 			logger.error("EE: I've recieved an event but the session is not known by this handler ( " + task.getTaskData().getProcessSessionId() + ")");
 			return;
@@ -155,10 +171,10 @@ public class CaseTaskLifecycleListener extends ExternalTaskEventListener {
 			WorkItemManager workItemManager = (WorkItemManager) session.getWorkItemManager();
 			WorkItem workItem = workItemManager.getWorkItem(task.getTaskData().getWorkItemId());
 			if (workItem != null) {
-				Map<String, Object> results = buildWorkItemResults(task, standardEvent, runtime, session, manager);
+				Map<String, Object> results = buildWorkItemResults(task, standardEvent, getRuntimeEngine(task), session, manager);
 				workItem.setResults(results);
 				// In CMMN we need the state of the PlanItemInstance for completion calculations
-				workItemManager.signalEvent(PlanElementLifecycleWithTask.WORK_ITEM_UPDATED, workItem, processInstanceId);
+				workItemManager.signalEvent(TaskParameters.WORK_ITEM_UPDATED, workItem, processInstanceId);
 			}
 		} else {
 			super.processTaskState(task);
@@ -166,11 +182,15 @@ public class CaseTaskLifecycleListener extends ExternalTaskEventListener {
 
 	}
 
+	private RuntimeEngine getRuntimeEngine(Task task) {
+		return getManager(task).getRuntimeEngine(ProcessInstanceIdContext.get(task.getTaskData().getProcessInstanceId()));
+	}
+
 	protected Map<String, Object> buildWorkItemResults(Task task, PlanItemTransition standardEvent, RuntimeEngine runtime, KieSession session, RuntimeManager manager) {
 		Map<String, Object> results = new HashMap<String, Object>();
 		if (task.getTaskData().getActualOwner() != null) {
 			String userId = task.getTaskData().getActualOwner().getId();
-			results.put(PlanElementLifecycleWithTask.ACTUAL_OWNER, userId);
+			results.put(TaskParameters.ACTUAL_OWNER, userId);
 		}
 		long contentId = task.getTaskData().getOutputContentId();
 		if (contentId != -1) {
@@ -190,58 +210,64 @@ public class CaseTaskLifecycleListener extends ExternalTaskEventListener {
 				}
 			}
 		}
-		results.put(PlanElementLifecycleWithTask.TRANSITION, standardEvent);
-		results.put(PlanElementLifecycleWithTask.TASK, task);
+		results.put(TaskParameters.TRANSITION, standardEvent);
+		results.put(TaskParameters.TASK, task);
 		return results;
 	}
 
-	protected KieSession getKieSession(Task ti) {
-		return getManager(ti).getRuntimeEngine(ProcessInstanceIdContext.get(ti.getTaskData().getProcessInstanceId())).getKieSession();
-	}
-
 	@Override
-	public void afterTaskAddedEvent(@Observes(notifyObserver = Reception.IF_EXISTS) @AfterTaskAddedEvent Task ti) {
+	public void afterTaskAddedEvent(@Observes(notifyObserver = Reception.IF_EXISTS) @AfterTaskAddedEvent Task task) {
 
 	}
 
 	@Override
-	public void afterTaskReleasedEvent(@Observes(notifyObserver = Reception.IF_EXISTS) @AfterTaskReleasedEvent Task ti) {
+	public void afterTaskReleasedEvent(@Observes(notifyObserver = Reception.IF_EXISTS) @AfterTaskReleasedEvent Task task) {
 	}
 
 	@Override
-	public void afterTaskForwardedEvent(@Observes(notifyObserver = Reception.IF_EXISTS) @AfterTaskForwardedEvent Task ti) {
+	public void afterTaskForwardedEvent(@Observes(notifyObserver = Reception.IF_EXISTS) @AfterTaskForwardedEvent Task task) {
 	}
 
 	@Override
-	public void afterTaskDelegatedEvent(@Observes(notifyObserver = Reception.IF_EXISTS) @AfterTaskDelegatedEvent Task ti) {
+	public void afterTaskDelegatedEvent(@Observes(notifyObserver = Reception.IF_EXISTS) @AfterTaskDelegatedEvent Task task) {
 	}
 
 	@Override
 	public void afterTaskActivatedEvent(@Observes(notifyObserver = Reception.IF_EXISTS) @AfterTaskActivatedEvent Task task) {
-		signalEvent(task, PlanItemTransition.ENABLE);
+		if (!isCaseInstance(task)) {
+			signalEvent(task, PlanItemTransition.ENABLE);
+		}
 	}
 
 	@Override
 	public void afterTaskClaimedEvent(@Observes(notifyObserver = Reception.IF_EXISTS) @AfterTaskClaimedEvent Task task) {
 		updateCaseOwner(task);
 	}
-	
+
 	private void updateCaseOwner(Task task) {
 		long processInstanceId = task.getTaskData().getProcessInstanceId();
 		if (processInstanceId <= 0) {
 			return;
 		}
-		RuntimeEngine runtime = getManager(task).getRuntimeEngine(ProcessInstanceIdContext.get(processInstanceId));
-		KieSession session = runtime.getKieSession();
-		ProcessInstance pi = session.getProcessInstance(processInstanceId);
+		ProcessInstance pi = getProcessInstance(task, processInstanceId);
 		if (pi instanceof CaseInstance && task.getTaskData().getWorkItemId() == ((CaseInstance) pi).getWorkItemId()) {
 			CaseInstance ci = (CaseInstance) pi;
-			ci.setVariable(Case.CASE_OWNER, task.getTaskData().getActualOwner().getId());
+			ci.setVariable(TaskParameters.CASE_OWNER, task.getTaskData().getActualOwner().getId());
 		}
 	}
 
+	private ProcessInstance getProcessInstance(Task task, long processInstanceId) {
+		KieSession session = getKieSession(task);
+		ProcessInstance pi = session.getProcessInstance(processInstanceId);
+		return pi;
+	}
+
+	private KieSession getKieSession(Task task) {
+		return getRuntimeEngine(task).getKieSession();
+	}
+
 	@Override
-	public void afterTaskStoppedEvent(@Observes(notifyObserver = Reception.IF_EXISTS) @AfterTaskStoppedEvent Task ti) {
+	public void afterTaskStoppedEvent(@Observes(notifyObserver = Reception.IF_EXISTS) @AfterTaskStoppedEvent Task task) {
 	}
 
 }

@@ -17,11 +17,13 @@ import org.jbpm.process.core.context.variable.VariableScope;
 import org.jbpm.ruleflow.core.RuleFlowProcess;
 import org.jbpm.workflow.core.NodeContainer;
 import org.kie.api.definition.process.Node;
+import org.pavanecce.cmmn.jbpm.TaskParameters;
 import org.pavanecce.cmmn.jbpm.event.CaseEvent;
 import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItem;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemDefinition;
 import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
+import org.pavanecce.cmmn.jbpm.flow.CaseTask;
 import org.pavanecce.cmmn.jbpm.flow.Definitions;
 import org.pavanecce.cmmn.jbpm.flow.DiscretionaryItem;
 import org.pavanecce.cmmn.jbpm.flow.HumanTask;
@@ -116,15 +118,15 @@ public class CaseHandler extends PlanItemContainerHandler implements Handler {
 			variables.add(caseRole);
 		}
 
-		if (!roleNames.contains(Case.INITIATOR)) {
+		if (!roleNames.contains(TaskParameters.INITIATOR)) {
 			Variable initiator = new Variable();
-			initiator.setName(Case.INITIATOR);
+			initiator.setName(TaskParameters.INITIATOR);
 			initiator.setType(new StringDataType());
 			variables.add(initiator);
 		}
-		if (!roleNames.contains(Case.CASE_OWNER)) {
+		if (!roleNames.contains(TaskParameters.CASE_OWNER)) {
 			Variable caseOwner = new Variable();
-			caseOwner.setName(Case.CASE_OWNER);
+			caseOwner.setName(TaskParameters.CASE_OWNER);
 			caseOwner.setType(new StringDataType());
 			variables.add(caseOwner);
 		}
@@ -193,18 +195,18 @@ public class CaseHandler extends PlanItemContainerHandler implements Handler {
 		return process;
 	}
 
-	public void copyStages(NodeContainer nic) {
-		if(nic instanceof PlanningTableContainer){
-			PlanningTable pt = ((PlanningTableContainer) nic).getPlanningTable();
+	public void copyStages(NodeContainer nc) {
+		if(nc instanceof PlanningTableContainer){
+			PlanningTable pt = ((PlanningTableContainer) nc).getPlanningTable();
 			if(pt!=null){
 				for (TableItem ti : pt.getTableItems()) {
-					if(ti instanceof DiscretionaryItem && ((DiscretionaryItem<?>) ti).getDefinition() instanceof Stage){
+					if(ti instanceof DiscretionaryItem && (((DiscretionaryItem<?>) ti).getDefinition() instanceof Stage || ((DiscretionaryItem<?>) ti).getDefinition() instanceof CaseTask)){
 						((DiscretionaryItem<?>) ti).copyFromPlanItem();
 					}
 				}
 			}
 		}
-		Node[] nodes=nic.getNodes();
+		Node[] nodes=nc.getNodes();
 		for (Node node : nodes) {
 			if (node instanceof StagePlanItem) {
 				StagePlanItem spi = (StagePlanItem) node;
