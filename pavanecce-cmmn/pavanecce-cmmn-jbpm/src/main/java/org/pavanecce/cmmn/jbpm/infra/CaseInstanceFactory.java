@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -42,9 +41,6 @@ import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 
 public class CaseInstanceFactory extends AbstractProcessInstanceFactory implements Externalizable {
-	// Temporary HACK - find the right place to map caseKeys with
-	// knowledgeRuntimes
-	private static Map<String, InternalKnowledgeRuntime> knowledgeRuntimes = new HashMap<String, InternalKnowledgeRuntime>();
 	private static final long serialVersionUID = 510l;
 
 	@Override
@@ -66,10 +62,6 @@ public class CaseInstanceFactory extends AbstractProcessInstanceFactory implemen
 		processInstance.setKnowledgeRuntime(kruntime);
 		processInstance.setProcess(process);
 		Case theCase = (Case) process;
-		synchronized (knowledgeRuntimes) {
-			knowledgeRuntimes.put(theCase.getCaseKey(), kruntime);
-		}
-
 		((InternalProcessRuntime) kruntime.getProcessRuntime()).getProcessInstanceManager().addProcessInstance(processInstance, correlationKey);
 		// set variable default values
 		VariableScope variableScope = (VariableScope) ((ContextContainer) process).getDefaultContext(VariableScope.VARIABLE_SCOPE);
@@ -85,7 +77,7 @@ public class CaseInstanceFactory extends AbstractProcessInstanceFactory implemen
 						if (var != null) {
 							newVal.add(var);
 						}
-						var=newVal;
+						var = newVal;
 					}
 					variableScopeInstance.setVariable(caseParameter.getBoundVariable().getName(), var);
 				}
@@ -94,28 +86,22 @@ public class CaseInstanceFactory extends AbstractProcessInstanceFactory implemen
 			}
 		}
 		WorkItem workItem = (WorkItem) parameters.get(Case.WORK_ITEM);
-		if(workItem!=null){
+		if (workItem != null) {
 			processInstance.setWorkItem(workItem);
 		}
 		String initiator = (String) parameters.get(TaskParameters.INITIATOR);
-		if(initiator!=null){
+		if (initiator != null) {
 			variableScopeInstance.setVariable(TaskParameters.INITIATOR, initiator);
 		}
 		String caseOwner = (String) parameters.get(TaskParameters.CASE_OWNER);
-		if(caseOwner!=null){
+		if (caseOwner != null) {
 			variableScopeInstance.setVariable(TaskParameters.CASE_OWNER, caseOwner);
 		}
-		if(caseOwner==null && initiator==null){
+		if (caseOwner == null && initiator == null) {
 			throw new IllegalArgumentException("A case must either have an owner, or initiator, or both");
 		}
 
 		return processInstance;
-	}
-
-	public static InternalKnowledgeRuntime getEventManager(String caseKey) {
-		synchronized (knowledgeRuntimes) {
-			return knowledgeRuntimes.get(caseKey);
-		}
 	}
 
 }

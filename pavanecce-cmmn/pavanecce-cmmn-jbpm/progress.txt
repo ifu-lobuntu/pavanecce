@@ -32,6 +32,7 @@ CaseTask
  - automaticActivationRule
  - exit criteria achieved
  - parameterMapping
+ - parameter transformation
  - EXIT,DISABLE,ENABLE,MANUAL_START,START,COMPLETE,TERMINATE,FAULT,SUSPEND,RESUME,REENABLE,REACTIVATE,CREATE
 
 Human Task
@@ -55,7 +56,17 @@ CaseModel
  - manual completion
  - direct exit Criteria
  - CLOSE, COMPLETE,CREATE, SUSPEND, REACTIVATE (from suspended),TERMINATE,FAULT
+ - Write Output Parameters from Processes to Task.result (CaseTask, ProcessTask, Standalone Case) 
 
+PlanningTable
+ - authorizedRoles - pass the Case roles that the user is fulfilling 
+
+Planning Service
+ - startPlanning (include current parameters, authorizedRole)
+ - prepareDiscretionaryItem 
+ - submitPlan 
+   - update parameters (taskContent AND workItem ),
+   - role (do role-assignment in process too) and 
 
 Generate OCM and JPA test Java classes from UML along with CaseFileItemDefinition includes
 Implement OCLProcessDialect that extends JavaProcessDialect
@@ -75,17 +86,13 @@ CaseTask.reactivated - check that process is restarted - it failed previously
 
 3. To implement
 Planning Service
- - startPlanning (include current parameters, applicabilityRule, authorizedRole)
+ - startPlanning (include applicabilityRule)
  - prepareDiscretionaryItem 
    - recheck applicabilityRule
    - recheck authorizedRole
  - submitPlan 
-   - update parameters (taskContent AND workItem ),
-   - role (do role-assignment in process too) and 
    - status/transition, 
    - (due date?)
-
-Write Output Parameters from Processes to Task.result (CaseTask, ProcessTask, Standalone Case) 
 
 Role management
  - Store roleAssignment in process
@@ -100,17 +107,12 @@ Planning Tables - test HumanTask, Case AND Stage planningTables:
  - DiscretionaryItem.itemControl.automaticActivationRule
  - DiscretionaryItem.itemControl.repititionRule
  - ApplicabilityRule
- - authorizedRoles - pass the Case roles that the user is fulfilling 
-
-Process/Case Task
- - parameter transformation
 
 CaseModel:
  - REACTIVATE (from Failed,Terminated, Completed? need input from OMG)*
 
 4. Current potential problems 
 AbstractPersistentSubscriptionManager
- - Find a way to resolve the correct InternalKnowledgeRuntime from  somewhere
  - Find a way to get to the commandScopedEntity manager - the reflection won't work in CDI 
 
 PlanningService (look at TaskServiceFactory interface)
@@ -128,6 +130,5 @@ Plan fragments
  - For Discretionary Items
 ContextRefs for rules
 Internationalization
-Write Output parameters from Tasks to the containing case's caseFileItem (kind of superfluous in a pass by reference world).
 
  

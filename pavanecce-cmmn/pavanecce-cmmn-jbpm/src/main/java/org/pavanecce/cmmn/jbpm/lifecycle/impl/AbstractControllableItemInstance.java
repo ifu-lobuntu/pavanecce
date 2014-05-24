@@ -14,6 +14,7 @@ import org.jbpm.process.instance.ContextInstance;
 import org.jbpm.process.instance.ProcessInstance;
 import org.jbpm.process.instance.context.exception.ExceptionScopeInstance;
 import org.jbpm.services.task.wih.util.PeopleAssignmentHelper;
+import org.jbpm.workflow.core.impl.NodeImpl;
 import org.jbpm.workflow.instance.WorkflowRuntimeException;
 import org.jbpm.workflow.instance.node.CompositeContextNodeInstance;
 import org.kie.api.runtime.process.NodeInstance;
@@ -211,7 +212,7 @@ public abstract class AbstractControllableItemInstance<T extends PlanItemDefinit
 		final ContextInstance result = super.resolveContextInstance(contextId, param);
 		if (contextId.equals(VariableScope.VARIABLE_SCOPE)) {
 			// TODO make caseParameters available??
-			return new CustomVariableScopeInstance(result);
+			return new CustomVariableScopeInstance(this);
 		}
 		return result;
 	}

@@ -87,7 +87,7 @@ public class PlanItemInstanceContainerUtil {
 						if (onPart.getSourceCaseFileItem().getElementId().equals(parameter.getBoundVariable().getElementId())) {
 							OnPartInstanceSubscription subscription = target.get(onPartInstance);
 							if (subscription == null) {
-								target.put(onPartInstance, new OnPartInstanceSubscription(container.getCaseInstance().getCase().getCaseKey(), container.getCaseInstance().getId(), onPart, parameter));
+								target.put(onPartInstance, new OnPartInstanceSubscription(onPartInstance, parameter));
 							} else {
 								subscription.addParameter(parameter);
 							}

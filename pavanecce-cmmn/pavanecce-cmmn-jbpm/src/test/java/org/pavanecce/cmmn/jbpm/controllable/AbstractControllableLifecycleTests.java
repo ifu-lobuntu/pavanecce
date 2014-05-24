@@ -414,6 +414,7 @@ public abstract class AbstractControllableLifecycleTests extends AbstractConstru
 
 		ConstructionCase cc = new ConstructionCase("/cases/case1");
 		housePlan = new HousePlan(cc);
+		new WallPlan(housePlan);
 		house = new House(cc);
 		getPersistence().persist(cc);
 		getPersistence().commit();
@@ -440,15 +441,17 @@ public abstract class AbstractControllableLifecycleTests extends AbstractConstru
 	protected void triggerStartOfTask() throws Exception {
 		getPersistence().start();
 		housePlan = getPersistence().find(HousePlan.class, housePlan.getId());
-		getPersistence().persist(new WallPlan(housePlan));
+		new WallPlan(housePlan);
 		getPersistence().commit();
 		List<TaskSummary> list = getTaskService().getTasksAssignedAsPotentialOwner(getEventGeneratingTaskUser(), "en-UK");
+		getPersistence().start();
 		TaskSummary ts = findTaskSummary(list, "TheEventGeneratingTaskPlanItem");
 		if(ts.getActualOwner()!=null && !ts.getActualOwner().getId().equals(getEventGeneratingTaskUser())){
 			//may have been assigned to the caseOwner/initiator
 			getTaskService().forward(ts.getId(), ts.getActualOwner().getId(), getEventGeneratingTaskUser());
 		}
 		getTaskService().claim(ts.getId(), getEventGeneratingTaskUser());
+		getPersistence().commit();
 	}
 
 }

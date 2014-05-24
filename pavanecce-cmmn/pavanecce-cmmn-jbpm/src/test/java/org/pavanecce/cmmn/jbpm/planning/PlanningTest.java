@@ -25,11 +25,20 @@ public class PlanningTest extends AbstractPlanItemInstanceContainerTest {
 	public void testGetPlanningTable() throws Exception {
 		givenThatTheTestCaseIsStarted();
 		triggerInitialActivity();
+		getPersistence().start();
 		PlanningTableInstance pti = getPlanningService().startPlanning(getTaskService().getTaskByWorkItemId(caseInstance.getWorkItemId()).getId(), "ConstructionProjectManager",false);
+		assertEquals(0,pti.getApplicableDiscretionaryItems().size());
+		getPersistence().commit();
+		getPersistence().start();
+		reloadCaseInstance(caseInstance).getRoleAssignments("ConstructionProjectManagers").add("ConstructionProjectManager");
+		getPersistence().commit();
+		getPersistence().start();
+		pti = getPlanningService().startPlanning(getTaskService().getTaskByWorkItemId(caseInstance.getWorkItemId()).getId(), "ConstructionProjectManager",false);
 		for (PlannedTaskSummary plannedTaskSummary : pti.getPlannedTasks()) {
 			assertNull(plannedTaskSummary.getDiscretionaryItemId());
 			assertEquals(PlanningStatus.PLANNING_IN_PROGRESS, plannedTaskSummary.getPlanningStatus());
 		}
+		getPersistence().commit();
 		assertDiscretionaryItemPresent(pti.getApplicableDiscretionaryItems(), "TheCaseTask");
 		assertDiscretionaryItemPresent(pti.getApplicableDiscretionaryItems(), "TheHumanTask");
 		assertDiscretionaryItemPresent(pti.getApplicableDiscretionaryItems(), "TheStage");

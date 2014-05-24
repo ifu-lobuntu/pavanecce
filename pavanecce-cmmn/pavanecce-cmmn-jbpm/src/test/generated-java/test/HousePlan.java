@@ -1,23 +1,26 @@
 package test;
-import java.util.HashSet;
 import java.util.Set;
-
-import javax.persistence.CascadeType;
+import java.util.HashSet;
+import test.ConstructionCase;
+import test.RoofPlan;
+import test.RoomPlan;
+import test.WallPlan;
+import org.pavanecce.common.collections.OneToManySet;
+import org.pavanecce.common.collections.OneToManySet;
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
+import org.apache.jackrabbit.ocm.manager.beanconverter.impl.ParentBeanConverterImpl;
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Bean;
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Collection;
 import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.CascadeType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
-import org.apache.jackrabbit.ocm.manager.beanconverter.impl.ParentBeanConverterImpl;
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Bean;
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Collection;
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
-import org.pavanecce.common.collections.OneToManySet;
 @Node(jcrType = "test:housePlan", discriminator = false)
 @Entity(name="HousePlan")
 @Table(name="house_plan")
@@ -33,7 +36,7 @@ public class HousePlan{
   @GeneratedValue()
   private String id = null;
   @Bean(jcrName = "test:roofPlan")
-  @OneToOne(mappedBy="housePlan",cascade=CascadeType.ALL,orphanRemoval=true)
+  @OneToOne(mappedBy="housePlan",cascade=CascadeType.ALL)
   private RoofPlan roofPlan = null;
   @SuppressWarnings("serial")  private transient OneToManySet<HousePlan,RoomPlan> roomPlansWrapper = new OneToManySet<HousePlan,RoomPlan>(this){
       public Set<RoomPlan> getDelegate(){
@@ -57,7 +60,7 @@ public class HousePlan{
       }
   };
   @Collection(jcrName = "test:roomPlans", jcrElementName = "test:roomPlan")
-  @OneToMany(mappedBy="housePlan",cascade=CascadeType.ALL,orphanRemoval=true)
+  @OneToMany(mappedBy="housePlan",cascade=CascadeType.ALL)
   private Set<RoomPlan> roomPlans = new HashSet<RoomPlan>();
   @SuppressWarnings("serial")  private transient OneToManySet<HousePlan,WallPlan> wallPlansWrapper = new OneToManySet<HousePlan,WallPlan>(this){
       public Set<WallPlan> getDelegate(){
@@ -81,7 +84,7 @@ public class HousePlan{
       }
   };
   @Collection(jcrName = "test:wallPlans", jcrElementName = "test:wallPlan")
-  @OneToMany(mappedBy="housePlan",cascade=CascadeType.ALL,orphanRemoval=false)
+  @OneToMany(mappedBy="housePlan",cascade=CascadeType.ALL)
   private Set<WallPlan> wallPlans = new HashSet<WallPlan>();
   @Field(path=true)
   String path;

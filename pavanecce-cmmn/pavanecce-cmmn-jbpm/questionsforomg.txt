@@ -20,3 +20,5 @@ If there are multiple instances of a PlanItem, and the exitCriterion occurs, do 
 When a Stage needs to be completed manually, which users should be allowed to do that? Same goes for suspend/resume/terminate/close etc.
 Can a UserEvent occur more than once?
 ApplicabilityRules: AND or OR?
+For the context of rules, how is the context CaseFileItem referenced in an expression?
+For transformations of parameters, how is the "from" parameter value referenced in an expression?

@@ -2,6 +2,8 @@ package org.pavanecce.cmmn.jbpm.flow;
 
 import java.io.Serializable;
 
+import org.jbpm.process.instance.impl.ReturnValueConstraintEvaluator;
+import org.jbpm.process.instance.impl.ReturnValueEvaluator;
 import org.jbpm.workflow.core.Constraint;
 
 public class ParameterMapping implements Serializable, CMMNElement {
@@ -51,7 +53,13 @@ public class ParameterMapping implements Serializable, CMMNElement {
 	public Constraint getTransformation() {
 		return transformation;
 	}
-
+	public ReturnValueEvaluator getTransformer(){
+		if(transformation instanceof ReturnValueConstraintEvaluator){
+			return ((ReturnValueConstraintEvaluator) transformation).getReturnValueEvaluator();
+		}else{
+			return null;
+		}
+	}
 	public void setTransformation(Constraint transformation) {
 		this.transformation = transformation;
 	}

@@ -4,8 +4,8 @@ import java.util.Map;
 
 import org.jbpm.process.core.Context;
 import org.jbpm.process.core.context.variable.VariableScope;
-import org.jbpm.process.instance.ContextInstance;
 import org.jbpm.process.instance.ContextInstanceContainer;
+import org.jbpm.process.instance.ContextableInstance;
 import org.jbpm.process.instance.ProcessInstance;
 import org.jbpm.process.instance.context.variable.VariableScopeInstance;
 /**
@@ -16,30 +16,38 @@ import org.jbpm.process.instance.context.variable.VariableScopeInstance;
  */
 public final class CustomVariableScopeInstance extends VariableScopeInstance {
 	private static final long serialVersionUID = 6026168560982471308L;
-	private VariableScopeInstance delegate;
+	private AbstractControllableItemInstance<?,?> node;
 
-	public CustomVariableScopeInstance(ContextInstance result) {
-		delegate = (VariableScopeInstance) result;
+	public CustomVariableScopeInstance(AbstractControllableItemInstance<?,?> nodeImpl) {
+		this.node=nodeImpl;
 	}
 
 	@Override
 	public void setContextId(long contextId) {
-		delegate.setContextId(contextId);
+		getDelegate().setContextId(contextId);
 	}
 
 	@Override
 	public ContextInstanceContainer getContextInstanceContainer() {
-		return delegate.getContextInstanceContainer();
+		return getDelegate().getContextInstanceContainer();
+	}
+
+	private VariableScopeInstance getDelegate() {
+		VariableScopeInstance result = (VariableScopeInstance) node.getContextInstance(VariableScope.VARIABLE_SCOPE);
+		if(result==null){
+			return (VariableScopeInstance) ((ContextableInstance)node.getNodeInstanceContainer()).getContextInstance(VariableScope.VARIABLE_SCOPE);
+		}
+		return result;
 	}
 
 	@Override
 	public Context getContext() {
-		return delegate.getContext();
+		return getDelegate().getContext();
 	}
 
 	@Override
 	public String getContextType() {
-		return delegate.getContextType();
+		return getDelegate().getContextType();
 	}
 
 	@Override
@@ -50,41 +58,47 @@ public final class CustomVariableScopeInstance extends VariableScopeInstance {
 		if (name.equals("currentEvents")) {
 			return SentryInstance.getCurrentEvents();
 		}
-		return delegate.getVariable(name);
+		VariableScopeInstance delegate = getDelegate();
+		if(delegate!=null){
+			return delegate.getVariable(name);
+		}else{
+			//TODO find out when this happens
+			return null;
+		}
 	}
 
 	@Override
 	public ProcessInstance getProcessInstance() {
-		return delegate.getProcessInstance();
+		return getDelegate().getProcessInstance();
 	}
 
 	@Override
 	public Map<String, Object> getVariables() {
-		return delegate.getVariables();
+		return getDelegate().getVariables();
 	}
 
 	@Override
 	public void setProcessInstance(ProcessInstance processInstance) {
-		delegate.setProcessInstance(processInstance);
+		getDelegate().setProcessInstance(processInstance);
 	}
 
 	@Override
 	public void setVariable(String name, Object value) {
-		delegate.setVariable(name, value);
+		getDelegate().setVariable(name, value);
 	}
 
 	@Override
 	public void internalSetVariable(String name, Object value) {
-		delegate.internalSetVariable(name, value);
+		getDelegate().internalSetVariable(name, value);
 	}
 
 	@Override
 	public VariableScope getVariableScope() {
-		return delegate.getVariableScope();
+		return getDelegate().getVariableScope();
 	}
 
 	@Override
 	public void setContextInstanceContainer(ContextInstanceContainer contextInstanceContainer) {
-		delegate.setContextInstanceContainer(contextInstanceContainer);
+		getDelegate().setContextInstanceContainer(contextInstanceContainer);
 	}
 }

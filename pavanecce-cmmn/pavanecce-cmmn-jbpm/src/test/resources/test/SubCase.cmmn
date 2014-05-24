@@ -9,7 +9,7 @@
 	targetNamespace="http://ifu-lobuntu.org/test">
 	
 	&structureDefs;
-	<cmmn:case name="SubCase" id="SubCase" >
+	<cmmn:case name="SubCase" id="SubCase">
 		&caseFileModel;
 		<cmmn:casePlanModel name="SubCase" autoComplete="true">
 			<cmmn:planItem definitionRef="theUserEventId" name="TheUserEventPlanItem" id="theUserEventPlanItemId">
@@ -28,7 +28,7 @@
 					<cmmn:standardEvent>occur</cmmn:standardEvent>
 				</cmmn:planItemOnPart>
 			</cmmn:sentry>
-			<cmmn:milestone id="theMilestone" name="TheMilestone"/>
+			<cmmn:milestone id="theMilestone" name="TheMilestone" />
 			<cmmn:userEvent id="theUserEventId" name="TheUserEvent"></cmmn:userEvent>
 		</cmmn:casePlanModel>
 		<cmmn:caseRoles name="Builders" id="builderRoleId" />
@@ -37,6 +37,8 @@
 		<cmmn:input bindingRef="wallPlanFileItemId" id="wallPlanSubCaseParameterId" name="wallPlanSubCaseParameter">
 		</cmmn:input>
 		<cmmn:output bindingRef="wallPlanFileItemId" id="wallPlanSubCaseOutputId" name="wallPlanSubCaseOutput">
+		</cmmn:output>
+		<cmmn:output bindingRef="roofPlanFileItemId" id="roofPlanSubCaseOutputId" name="roofPlanSubCaseOutput">
 		</cmmn:output>
 	</cmmn:case>
 </cmmn:definitions>

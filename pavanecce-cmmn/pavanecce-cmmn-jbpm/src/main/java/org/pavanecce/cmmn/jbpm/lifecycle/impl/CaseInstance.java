@@ -186,7 +186,6 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 			ExpressionUtil.populateSubscriptionsActivatedByParameters(sc, getCase().getInputParameters());
 			populateSubscriptionsActivatedByParameters(sc);
 			subscriptionManager.updateSubscriptions(caseInstance, sc.getSubscriptions(), sc.getParentSubscriptions(), persistence);
-			subscriptionManager.commitSubscriptions(persistence);
 		}
 		shouldUpdateSubscriptions = false;
 

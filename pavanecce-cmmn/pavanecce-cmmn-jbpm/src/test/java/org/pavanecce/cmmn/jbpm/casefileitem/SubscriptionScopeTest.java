@@ -40,8 +40,10 @@ public abstract class SubscriptionScopeTest extends AbstractConstructionTestCase
 		getPersistence().commit();
 		List<TaskSummary> list = getRuntimeEngine().getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
 		assertEquals(1, list.size());
+		getPersistence().start();
 		getRuntimeEngine().getTaskService().start(list.get(0).getId(), "Builder");
 		getRuntimeEngine().getTaskService().complete(list.get(0).getId(), "Builder", new HashMap<String, Object>());
+		getPersistence().commit();
 		getPersistence().start();
 		CaseSubscriptionInfo<?> caseSubscriptionInfoFor = subManager.getCaseSubscriptionInfoFor(housePlan, getPersistence());
 		assertEquals(0, caseSubscriptionInfoFor.getCaseFileItemSubscriptions().size());

@@ -1,20 +1,21 @@
 package org.pavanecce.cmmn.jbpm.lifecycle.impl;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.drools.core.RuntimeDroolsException;
-import org.drools.core.spi.ProcessContext;
 import org.jbpm.process.core.context.exception.ExceptionScope;
 import org.jbpm.process.instance.ContextInstanceContainer;
 import org.jbpm.process.instance.ProcessInstance;
 import org.jbpm.process.instance.StartProcessHelper;
 import org.jbpm.process.instance.context.exception.ExceptionScopeInstance;
 import org.jbpm.process.instance.impl.ProcessInstanceImpl;
-import org.jbpm.process.instance.impl.ReturnValueConstraintEvaluator;
 import org.jbpm.workflow.instance.WorkflowProcessInstance;
 import org.kie.api.KieBase;
 import org.kie.api.definition.process.Node;
@@ -40,7 +41,7 @@ import org.slf4j.LoggerFactory;
 public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask, TaskItemWithDefinition<CaseTask>> implements EventListener, ContextInstanceContainer {
 
 	private static final long serialVersionUID = -2144001908752174712L;
-	private static final Logger logger = LoggerFactory.getLogger(CaseTaskPlanItemInstance.class);
+	static final Logger logger = LoggerFactory.getLogger(CaseTaskPlanItemInstance.class);
 	private long processInstanceId = -1;
 	transient private ProcessInstance processInstance;
 
@@ -68,21 +69,6 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask, Tas
 		startProcess();
 	}
 
-	@Override
-	public void triggerCompleted() {
-		super.triggerCompleted();
-	}
-
-	@Override
-	public void triggerCompleted(String outType) {
-		super.triggerCompleted(outType);
-	}
-
-	@Override
-	protected void triggerCompleted(String type, boolean remove) {
-		super.triggerCompleted(type, remove);
-	}
-
 	private void startProcess() {
 		String processId = getItem().getDefinition().getProcessId();
 		KieBase kbase = ((ProcessInstance) getProcessInstance()).getKnowledgeRuntime().getKieBase();
@@ -104,15 +90,16 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask, Tas
 			throw new RuntimeDroolsException("Could not find process " + processId);
 		} else {
 			List<ParameterMapping> parameterMappings = getItem().getDefinition().prepareInputMappings(process);
-			Map<String, Object> inputParameters = transformParameters(parameterMappings, getWorkItem().getParameters());
-			inputParameters.put(Case.WORK_ITEM, getWorkItem());
+			Map<String, Object> parametersToMap = ExpressionUtil.transformParameters(parameterMappings, getWorkItem().getParameters(), this);
+			Map<String, Object> inputParamaters = mapParameters(parameterMappings, parametersToMap);
+			inputParamaters.put(Case.WORK_ITEM, getWorkItem());
 			KnowledgeRuntime kruntime = ((ProcessInstance) getProcessInstance()).getKnowledgeRuntime();
 			RuntimeManager manager = (RuntimeManager) kruntime.getEnvironment().get("RuntimeManager");
 			if (manager != null) {
 				RuntimeEngine runtime = manager.getRuntimeEngine(ProcessInstanceIdContext.get());
 				kruntime = (KnowledgeRuntime) runtime.getKieSession();
 			}
-			ProcessInstance processInstance = (ProcessInstance) kruntime.createProcessInstance(processId, inputParameters);
+			ProcessInstance processInstance = (ProcessInstance) kruntime.createProcessInstance(processId, inputParamaters);
 			this.processInstanceId = processInstance.getId();
 			((ProcessInstanceImpl) processInstance).setMetaData("ParentProcessInstanceId", getProcessInstance().getId());
 			((ProcessInstanceImpl) processInstance).setParentProcessInstanceId(getProcessInstance().getId());
@@ -125,26 +112,6 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask, Tas
 				addProcessListener();
 			}
 		}
-	}
-
-	private Map<String, Object> transformParameters(List<ParameterMapping> parameterMappings, Map<String, Object> parametersToTransform) {
-		Map<String, Object> inputParameters = new HashMap<String, Object>(parametersToTransform);
-		ProcessContext ctx = new ProcessContext(getProcessInstance().getKnowledgeRuntime());
-		ctx.setNodeInstance(this);
-		ctx.setProcessInstance(getProcessInstance());
-		for (ParameterMapping pm : parameterMappings) {
-			Object sourceValue = parametersToTransform.get(pm.getSourceParameterName());
-			if (pm.getTransformation() instanceof ReturnValueConstraintEvaluator) {
-				ReturnValueConstraintEvaluator rvce = (ReturnValueConstraintEvaluator) pm.getTransformation();
-				try {
-					sourceValue = rvce.getReturnValueEvaluator().evaluate(ctx);
-				} catch (Exception e) {
-					logger.error("Could not perform transformation", e);
-				}
-			}
-			inputParameters.put(pm.getTargetParameterName(), sourceValue);
-		}
-		return inputParameters;
 	}
 
 	@Override
@@ -260,31 +227,33 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask, Tas
 	@SuppressWarnings("unchecked")
 	@Override
 	protected Map<String, Object> buildParametersFor(PlanItemTransition transition) {
-		Map<String, Object> result = super.buildParametersFor(transition);
 		if (transition == PlanItemTransition.FAULT) {
+			return Collections.emptyMap();
 		} else if (transition == PlanItemTransition.COMPLETE) {
 			List<ParameterMapping> parameterMappings = getItem().getDefinition().prepareOutputMappings(processInstance.getProcess());
+			Map<String, Object> parametersRead = new HashMap<String, Object>();
 			if (processInstance instanceof CaseInstance) {
-				result.putAll(transformParameters(parameterMappings, ((CaseInstance) processInstance).getResult()));
+				parametersRead = ExpressionUtil.transformParameters(parameterMappings, ((CaseInstance) processInstance).getResult(), this);
 			} else {
 				for (ParameterMapping pm : parameterMappings) {
-					result.put(pm.getTargetParameterName(), ((WorkflowProcessInstance) processInstance).getVariable(pm.getSourceParameterName()));
+					parametersRead.put(pm.getTargetParameterName(), ((WorkflowProcessInstance) processInstance).getVariable(pm.getSourceParameterName()));
 				}
 			}
+			Map<String, Object> result = mapParameters(parameterMappings, parametersRead);
 			for (CaseParameter cp : getItem().getDefinition().getOutputs()) {
 				Object val = result.get(cp.getName());
 				if (val != null) {
 					if (cp.getBindingRefinement().isValid()) {
-						ExpressionUtil.writeToBindingRefinement(this,cp, val);
+						ExpressionUtil.writeToBindingRefinement(this, cp, val);
 					} else {
 						if (cp.getBoundVariable().isCollection()) {
 							Collection<Object> coll = (Collection<Object>) getCaseInstance().getVariable(cp.getBoundVariable().getName());
 							if (coll == null) {
 								getCaseInstance().setVariable(cp.getBoundVariable().getName(), coll = new HashSet<Object>());
 							}
-							if(val instanceof Collection){
-								coll.addAll((Collection<Object>)val);
-							}else{
+							if (val instanceof Collection) {
+								coll.addAll((Collection<Object>) val);
+							} else {
 								coll.add(val);
 							}
 						} else {
@@ -292,6 +261,24 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask, Tas
 						}
 					}
 				}
+			}
+			return result;
+		} else {
+			return Collections.emptyMap();
+		}
+	}
+
+	private Map<String, Object> mapParameters(List<ParameterMapping> parameterMappings, Map<String, Object> parametersRead) {
+		Map<String, Object> result = new HashMap<String, Object>();
+		Set<String> sourceParameters = new HashSet<String>();
+		for (ParameterMapping pm : parameterMappings) {
+			Object value = parametersRead.get(pm.getSourceParameterName());
+			sourceParameters.add(pm.getSourceParameterName());
+			result.put(pm.getTargetParameterName(), value);
+		}
+		for (Entry<String, Object> entry : parametersRead.entrySet()) {
+			if(!sourceParameters.contains(entry.getKey())){
+				result.put(entry.getKey(), entry.getValue());
 			}
 		}
 		return result;

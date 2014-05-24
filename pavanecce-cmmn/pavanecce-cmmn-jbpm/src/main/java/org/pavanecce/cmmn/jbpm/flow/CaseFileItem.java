@@ -18,6 +18,24 @@ public class CaseFileItem extends Variable implements CMMNElement {
 	private boolean isCollection;
 	private List<CaseFileItem> children = new ArrayList<CaseFileItem>();
 	private Map<String,CaseFileItem> targets = new HashMap<String,CaseFileItem>();
+	private boolean isUnique=true;
+	private boolean isOrdered=false;
+	
+	public boolean isUnique() {
+		return isUnique;
+	}
+
+	public void setUnique(boolean isUnique) {
+		this.isUnique = isUnique;
+	}
+
+	public boolean isOrdered() {
+		return isOrdered;
+	}
+
+	public void setOrdered(boolean isOrdered) {
+		this.isOrdered = isOrdered;
+	}
 
 	@Override
 	public String getElementId() {

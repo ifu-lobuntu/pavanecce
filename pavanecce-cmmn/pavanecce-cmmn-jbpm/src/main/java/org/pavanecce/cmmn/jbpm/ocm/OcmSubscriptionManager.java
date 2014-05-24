@@ -30,6 +30,7 @@ import org.apache.jackrabbit.ocm.mapper.model.BeanDescriptor;
 import org.apache.jackrabbit.ocm.mapper.model.ClassDescriptor;
 import org.apache.jackrabbit.ocm.query.Filter;
 import org.apache.jackrabbit.ocm.query.Query;
+import org.kie.api.runtime.manager.RuntimeManager;
 import org.pavanecce.cmmn.jbpm.event.AbstractPersistentSubscriptionManager;
 import org.pavanecce.cmmn.jbpm.event.CaseFileItemSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.event.CaseSubscriptionInfo;
@@ -47,6 +48,13 @@ public class OcmSubscriptionManager extends AbstractPersistentSubscriptionManage
 	private OcmCasePersistence persistence;
 	private OcmFactory factory;
 	private ThreadLocal<Set<Node>> updatedNodes = new ThreadLocal<Set<Node>>();
+	private RuntimeManager runtimeManager;
+	
+
+	public OcmSubscriptionManager(RuntimeManager runtimeManager) {
+		super();
+		this.runtimeManager = runtimeManager;
+	}
 
 	public void setOcmFactory(OcmFactory factory) {
 		this.factory = factory;
@@ -94,27 +102,12 @@ public class OcmSubscriptionManager extends AbstractPersistentSubscriptionManage
 			}
 			fireUpdateEvents();
 			this.updatedNodes.set(null);
-			commitSubscriptions(getPersistence());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void commitSubscriptions(ObjectPersistence p ) {
-		Map<CaseSubscriptionKey, CaseSubscriptionInfo<?>> cachedSubscriptions = getCachedSubscriptions(getPersistence().getDelegate());
-		if (cachedSubscriptions.size() > 0) {
-			Collection<CaseSubscriptionInfo<?>> values = cachedSubscriptions.values();
-			for (CaseSubscriptionInfo<?> t : values) {
-				for (PersistedCaseFileItemSubscriptionInfo x : new HashSet<PersistedCaseFileItemSubscriptionInfo>(t.getCaseFileItemSubscriptions())) {
-					if (!x.isActive()) {
-						x.getCaseSubscription().getCaseFileItemSubscriptions().remove(x);
-					}
-				}
-				getPersistence().update(t);
-			}
-			cachedSubscriptions.clear();
-		}
-	}
+
 
 	private void fireNodeAddedEvent(Event event) {
 		try {
@@ -138,7 +131,7 @@ public class OcmSubscriptionManager extends AbstractPersistentSubscriptionManage
 	protected void fireAddsAndCreates(PropertyNodeInfo info, Object object, Set<? extends CaseFileItemSubscriptionInfo> caseFileItemSubscriptions) {
 		for (CaseFileItemSubscriptionInfo si : caseFileItemSubscriptions) {
 			if (isMatchingAddChild(si, info.javaPropertyName) || isMatchingCreate(si, info.javaPropertyName)) {
-				fireEvent(si, info.parentObject, object);
+				queueEvent(si, info.parentObject, object);
 			}
 		}
 	}
@@ -182,7 +175,7 @@ public class OcmSubscriptionManager extends AbstractPersistentSubscriptionManage
 	protected void fireRemovesAndDeletes(PropertyNodeInfo info, Object empty, Set<? extends CaseFileItemSubscriptionInfo> caseFileItemSubscriptions) {
 		for (CaseFileItemSubscriptionInfo si : new HashSet<CaseFileItemSubscriptionInfo>( caseFileItemSubscriptions)) {
 			if (isMatchingRemoveChild(si, info.javaPropertyName) || isMatchingDelete(si, info.javaPropertyName)) {
-				fireEvent(si, info.parentObject, empty);
+				queueEvent(si, info.parentObject, empty);
 			}
 		}
 	}
@@ -284,7 +277,7 @@ public class OcmSubscriptionManager extends AbstractPersistentSubscriptionManage
 		for (CaseFileItemSubscriptionInfo fis : caseFileItemSubscriptions) {
 			if (fis.getTransition() == CaseFileItemTransition.UPDATE) {
 				Object object = getPersistence().find(node.getIdentifier());
-				fireEvent(fis, object, object);
+				queueEvent(fis, object, object);
 			}
 		}
 	}
@@ -395,11 +388,11 @@ public class OcmSubscriptionManager extends AbstractPersistentSubscriptionManage
 			Value[] values = prop.getValues();
 			for (Value value : values) {
 				if (value.getType() == PropertyType.REFERENCE) {
-					fireEvent(si, currentObject, getPersistence().getSession().getObjectByUuid(value.getString()));
+					queueEvent(si, currentObject, getPersistence().getSession().getObjectByUuid(value.getString()));
 				}
 			}
 		} else {
-			fireEvent(si, currentObject, getPersistence().getSession().getObjectByUuid(prop.getString()));
+			queueEvent(si, currentObject, getPersistence().getSession().getObjectByUuid(prop.getString()));
 		}
 	}
 
@@ -408,7 +401,7 @@ public class OcmSubscriptionManager extends AbstractPersistentSubscriptionManage
 		 * TODO This is not good enough. Still need to get the old value from somewhere
 		 */
 		Object oldValue = currentObject;
-		fireEvent(si, currentObject, oldValue);
+		queueEvent(si, currentObject, oldValue);
 	}
 
 	private boolean isPropertyMultiple(Node currentNode, String jcrPropertyName) throws PathNotFoundException, RepositoryException {
@@ -445,7 +438,7 @@ public class OcmSubscriptionManager extends AbstractPersistentSubscriptionManage
 
 	private OcmCasePersistence getPersistence() {
 		if (persistence == null) {
-			persistence = new OcmCasePersistence(factory);
+			persistence = new OcmCasePersistence(factory,runtimeManager);
 			persistence.start();
 		}
 		return persistence;

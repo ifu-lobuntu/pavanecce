@@ -19,6 +19,7 @@ import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseTaskPlanItemInstance;
 
 import test.ConstructionCase;
 import test.HousePlan;
+import test.RoofPlan;
 import test.WallPlan;
 
 public class CaseTaskTest extends AbstractControllableLifecycleTests {
@@ -49,7 +50,7 @@ public class CaseTaskTest extends AbstractControllableLifecycleTests {
 		// *****GIVEN
 		givenThatTheTestCaseIsStarted();
 		// *****WHEN
-		triggerStartOfTask();
+		triggerStartOfTask(); // Creates a second wallPlan
 		List<TaskSummary> list = getTaskService().getTasksAssignedAsPotentialOwner("ConstructionProjectManager", "en-UK");
 		assertEquals(2, list.size());
 		long subTaskId = -1;
@@ -67,7 +68,10 @@ public class CaseTaskTest extends AbstractControllableLifecycleTests {
 		@SuppressWarnings("unchecked")
 		Collection<WallPlan> wallPlans = (Collection<WallPlan>) pi.getVariable("wallPlans");
 		assertEquals(super.housePlan.getId(), housePlan.getId());
-		assertEquals(1, wallPlans.size());
+		assertEquals(2, wallPlans.size());
+		for (WallPlan wallPlan : wallPlans) {
+			assertEquals("I Am Transformed", wallPlan.getShortDescription());
+		}
 		getPersistence().commit();
 		// *****THEN
 	}
@@ -104,6 +108,7 @@ public class CaseTaskTest extends AbstractControllableLifecycleTests {
 		return subProccessInstanceId;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void completeTask(long taskId) {
 		getPersistence().start();
@@ -115,9 +120,11 @@ public class CaseTaskTest extends AbstractControllableLifecycleTests {
 		newWallPlans.add(new WallPlan(otherHousePlan));
 		newWallPlans.add(new WallPlan(otherHousePlan));
 		newWallPlans.add(new WallPlan(otherHousePlan));
+		RoofPlan newRoofPlan = new RoofPlan(otherHousePlan);
 		getPersistence().persist(otherCase);
 		CaseInstance sp = (CaseInstance) getRuntimeEngine().getKieSession().getProcessInstance(subProcessInstanceId);
 		sp.setVariable("wallPlans", newWallPlans);
+		sp.setVariable("roofPlan", newRoofPlan);
 		getPersistence().commit();
 		// Now complete the Case
 		getPersistence().start();
@@ -132,13 +139,20 @@ public class CaseTaskTest extends AbstractControllableLifecycleTests {
 		getPersistence().start();
 		this.housePlan = getPersistence().find(HousePlan.class, housePlan.getId());
 		assertTrue(this.housePlan.getWallPlans().containsAll(newWallPlans));
+		assertEquals(5, this.housePlan.getWallPlans().size());
+		assertEquals(newRoofPlan, this.housePlan.getRoofPlan());
 		getPersistence().commit();
-
+		//Check the task's result
 		Task task = getTaskService().getTaskById(taskId);
 		Content outputContent = getTaskService().getContentById(task.getTaskData().getOutputContentId());
 		getPersistence().start();
 		Map<String, Object> outputAsMap = (Map<String, Object>) ContentMarshallerHelper.unmarshall(outputContent.getContent(), getTaskService().getMarshallerContext(task).getEnvironment());
-		Object taskOutput = outputAsMap.get("wallPlanTaskOutput");
+		Collection<WallPlan> wallPlanTaskOutput = (Collection<WallPlan>) outputAsMap.get("wallPlanTaskOutput");
+		assertEquals(3, wallPlanTaskOutput.size());
+		for (WallPlan wallPlan : wallPlanTaskOutput) {
+			assertEquals("I Am Transformed Twice", wallPlan.getShortDescription());
+		}
+		assertEquals(newRoofPlan, outputAsMap.get("roofPlanTaskOutput"));
 		getPersistence().commit();
 
 	}

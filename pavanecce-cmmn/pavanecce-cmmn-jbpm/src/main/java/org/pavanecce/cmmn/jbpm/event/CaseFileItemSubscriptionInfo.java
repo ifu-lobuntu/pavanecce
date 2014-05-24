@@ -10,11 +10,11 @@ public interface CaseFileItemSubscriptionInfo {
 
 	String getRelatedItemName();
 
-	boolean isActive();
+	boolean isValid();
 
-	void activate();
+	void validate();
 
-	void deactivate();
+	void invalidate();
 
 	boolean isEquivalent(CaseFileItemSubscriptionInfo other);
 

@@ -127,7 +127,14 @@ public class DefinitionsHandler extends BaseAbstractHandler implements Handler {
 				}
 			}
 			if (variable.isCollection()) {
-				CollectionDataType c = new CollectionDataType();
+				String className="java.util.Collection";
+				if(variable.isUnique()){
+					className="java.util.Set";
+				}
+				if(variable.isOrdered()){
+					className="java.util.List";
+				}
+				CollectionDataType c = new CollectionDataType(className);
 				c.setElementClassName(dataType.getStringType());
 				dataType = c;
 			}

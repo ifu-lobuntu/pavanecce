@@ -17,7 +17,7 @@ import org.pavanecce.common.ObjectPersistence;
 public class OcmObjectPersistence implements ObjectPersistence {
 	private UserTransaction transaction;
 	private OcmFactory factory;
-	private boolean startedTransaction = false;
+	protected boolean startedTransaction = false;
 
 	public OcmObjectPersistence(OcmFactory factory) {
 		this.factory = factory;
@@ -90,7 +90,7 @@ public class OcmObjectPersistence implements ObjectPersistence {
 		return factory.getCurrentObjectContentManager();
 	}
 
-	UserTransaction getTransaction() throws NamingException {
+	protected UserTransaction getTransaction() throws NamingException {
 		if (transaction == null) {
 			transaction = (UserTransaction) new InitialContext().lookup("java:comp/UserTransaction");
 		}

@@ -12,18 +12,15 @@ import java.util.Set;
 
 import javax.persistence.EntityManager;
 
-import org.drools.core.common.InternalKnowledgeRuntime;
 import org.drools.persistence.PersistenceContext;
 import org.drools.persistence.PersistenceContextManager;
 import org.drools.persistence.jpa.JpaPersistenceContextManager;
 import org.kie.api.runtime.EnvironmentName;
-import org.kie.api.runtime.KieSession;
-import org.kie.api.task.model.Task;
+import org.kie.api.runtime.manager.RuntimeEngine;
 import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItem;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
 import org.pavanecce.cmmn.jbpm.flow.OnPart;
-import org.pavanecce.cmmn.jbpm.infra.CaseInstanceFactory;
 import org.pavanecce.cmmn.jbpm.infra.OnPartInstanceSubscription;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 import org.pavanecce.common.ObjectPersistence;
@@ -32,9 +29,7 @@ public abstract class AbstractPersistentSubscriptionManager<T extends CaseSubscr
 
 	private boolean cascadeSubscription = false;
 	private static Map<Object, Map<CaseSubscriptionKey, CaseSubscriptionInfo<?>>> cachedSubscriptions = new HashMap<Object, Map<CaseSubscriptionKey, CaseSubscriptionInfo<?>>>();
-	private static ThreadLocal<Set<CaseFileItemEventWrapper>> eventQueue=new ThreadLocal<Set<CaseFileItemEventWrapper>>();
-
-	// private ThreadLocal<Map<String, X>> cachedItemSubscriptions = new ThreadLocal<Map<String, X>>();
+	private static ThreadLocal<Set<CaseFileItemEventWrapper>> eventQueue = new ThreadLocal<Set<CaseFileItemEventWrapper>>();
 
 	public AbstractPersistentSubscriptionManager() {
 		super();
@@ -61,7 +56,7 @@ public abstract class AbstractPersistentSubscriptionManager<T extends CaseSubscr
 		}
 	}
 
-	protected Map<CaseSubscriptionKey, CaseSubscriptionInfo<?>> getCachedSubscriptions(Object p) {
+	public static Map<CaseSubscriptionKey, CaseSubscriptionInfo<?>> getCachedSubscriptions(Object p) {
 		Map<CaseSubscriptionKey, CaseSubscriptionInfo<?>> map = cachedSubscriptions.get(p);
 		if (map == null) {
 			cachedSubscriptions.put(p, map = new HashMap<CaseSubscriptionKey, CaseSubscriptionInfo<?>>());
@@ -72,7 +67,7 @@ public abstract class AbstractPersistentSubscriptionManager<T extends CaseSubscr
 	private void invalidateCaseFileItemSubscriptions(CaseInstance caseInstance, T t) {
 		for (X x : t.getCaseFileItemSubscriptions()) {
 			if (x.getProcessInstanceId() == caseInstance.getId()) {
-				x.deactivate();
+				x.invalidate();
 			}
 		}
 	}
@@ -88,12 +83,11 @@ public abstract class AbstractPersistentSubscriptionManager<T extends CaseSubscr
 		}
 	}
 
-	protected static void fireEvent(CaseFileItemSubscriptionInfo is, Object parentObject, Object value) {
+	protected static void queueEvent(CaseFileItemSubscriptionInfo is, Object parentObject, Object value) {
 		CaseFileItemEvent event = new CaseFileItemEvent(is.getItemName(), is.getTransition(), parentObject, value);
 		if (is instanceof OnPartInstanceSubscription) {
 			OnPartInstanceSubscription opis = (OnPartInstanceSubscription) is;
-			InternalKnowledgeRuntime eventManager = CaseInstanceFactory.getEventManager(opis.getCaseKey());
-			CaseInstance ci = (CaseInstance) eventManager.getProcessInstance(opis.getProcessInstanceId());
+			CaseInstance ci = (CaseInstance) opis.getKnowledgeRuntime().getProcessInstance(opis.getProcessInstanceId());
 			if (opis.meetsBindingRefinementCriteria(value, ci)) {
 				queueEvent(ci.getCase().getCaseKey(), ci.getId(), event);
 			}
@@ -101,12 +95,6 @@ public abstract class AbstractPersistentSubscriptionManager<T extends CaseSubscr
 			PersistedCaseFileItemSubscriptionInfo pcfis = (PersistedCaseFileItemSubscriptionInfo) is;
 			queueEvent(pcfis.getCaseKey(), pcfis.getProcessInstanceId(), event);
 		}
-	}
-
-	protected KieSession getKieSession(Task ti) {
-		return null;
-		// return
-		// getManager(ti).getRuntimeEngine(ProcessInstanceIdContext.get(ti.getTaskData().getProcessInstanceId())).getKieSession();
 	}
 
 	protected static void queueEvent(String caseKey, long processId, CaseFileItemEvent caseFileItemEvent) {
@@ -123,7 +111,7 @@ public abstract class AbstractPersistentSubscriptionManager<T extends CaseSubscr
 		return set;
 	}
 
-	public static boolean dispatchEventQueue() {
+	public static boolean dispatchEventQueue(RuntimeEngine engine) {
 		Set<CaseFileItemEventWrapper> eq = getEventQueue();
 		eventQueue.set(new HashSet<CaseFileItemEventWrapper>());
 		if (eq.size() > 0) {
@@ -131,25 +119,24 @@ public abstract class AbstractPersistentSubscriptionManager<T extends CaseSubscr
 				// mmm.... desperate measures
 				Method m = JpaPersistenceContextManager.class.getDeclaredMethod("getInternalCommandScopedEntityManager");
 				m.setAccessible(true);
+				PersistenceContextManager pcm = (PersistenceContextManager) engine.getKieSession().getEnvironment().get(EnvironmentName.PERSISTENCE_CONTEXT_MANAGER);
+				EntityManager em = (EntityManager) m.invoke(pcm);
+				em.joinTransaction();
+				pcm.beginCommandScopedEntityManager();
 				for (CaseFileItemEventWrapper w : eq) {
-					InternalKnowledgeRuntime eventManager = CaseInstanceFactory.getEventManager(w.getCaseKey());
-					PersistenceContextManager pcm = (PersistenceContextManager) eventManager.getEnvironment().get(EnvironmentName.PERSISTENCE_CONTEXT_MANAGER);
-					EntityManager em = (EntityManager) m.invoke(pcm);
-					em.joinTransaction();
-					pcm.beginCommandScopedEntityManager();
 					PersistenceContext pc = pcm.getCommandScopedPersistenceContext();
 					pc.joinTransaction();
 					CaseFileItemEvent event = w.getEvent();
 					String eventType = OnPart.getType(event.getCaseFileItemName(), event.getTransition());
-					eventManager.signalEvent(eventType, event, w.getProcessInstanceId());
-					em.flush();
-					pcm.endCommandScopedEntityManager();
+					engine.getKieSession().signalEvent(eventType, event, w.getProcessInstanceId());
 				}
+				em.flush();
+				pcm.endCommandScopedEntityManager();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			return true;
-		}else{
+		} else {
 			return false;
 		}
 	}
@@ -177,7 +164,7 @@ public abstract class AbstractPersistentSubscriptionManager<T extends CaseSubscr
 		}
 	}
 
-	protected void registerChildCreateAndDeleteSubscriptions(CaseInstance caseInstance, Collection<OnPartInstanceSubscription> subs, T parentInfo, CaseFileItem childCaseFileItem) {
+	private void registerChildCreateAndDeleteSubscriptions(CaseInstance caseInstance, Collection<OnPartInstanceSubscription> subs, T parentInfo, CaseFileItem childCaseFileItem) {
 		for (OnPartInstanceSubscription childSubscription : subs) {
 			if (childSubscription.getVariable().getElementId().equals(childCaseFileItem.getElementId()) && childSubscription.getTransition().requiresParentSubscription()) {
 				buildCaseFileItemSubscriptionInfo(caseInstance, parentInfo, childSubscription);
@@ -233,7 +220,7 @@ public abstract class AbstractPersistentSubscriptionManager<T extends CaseSubscr
 		// first try to find it and the actiate it
 		for (X x : info.getCaseFileItemSubscriptions()) {
 			if (x.isEquivalent(sub)) {
-				x.activate();
+				x.validate();
 				return x;
 			}
 		}
@@ -309,5 +296,24 @@ public abstract class AbstractPersistentSubscriptionManager<T extends CaseSubscr
 		 * In the case of CREATE and DELETE the itemName is actually the name of the property on the parent to the child
 		 */
 		return propertyName.equals(is.getItemName()) && (is.getTransition() == CaseFileItemTransition.CREATE || is.getTransition() == CaseFileItemTransition.DELETE);
+	}
+
+	public static void commitSubscriptionsTo(ObjectPersistence op) {
+		Object p = op.getDelegate();
+		Map<CaseSubscriptionKey, CaseSubscriptionInfo<?>> map1 = AbstractPersistentSubscriptionManager.getCachedSubscriptions(p);
+		AbstractPersistentSubscriptionManager.cachedSubscriptions.remove(p);
+		Map<CaseSubscriptionKey, CaseSubscriptionInfo<?>> map = map1;
+		Collection<CaseSubscriptionInfo<?>> values = map.values();
+		if (values.size() > 0) {
+			for (CaseSubscriptionInfo<?> t : values) {
+				for (PersistedCaseFileItemSubscriptionInfo x : new HashSet<PersistedCaseFileItemSubscriptionInfo>(t.getCaseFileItemSubscriptions())) {
+					if (!x.isValid()) {
+						x.getCaseSubscription().getCaseFileItemSubscriptions().remove(x);
+					}
+				}
+				op.update(t);
+			}
+			map.clear();
+		}
 	}
 }

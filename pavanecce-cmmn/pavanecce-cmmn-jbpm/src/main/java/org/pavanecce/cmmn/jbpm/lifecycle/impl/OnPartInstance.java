@@ -67,5 +67,8 @@ public class OnPartInstance extends EventNodeInstance  {
 	public CaseEvent getCaseEvent() {
 		return getOnPart().createEvent(getEventStack().peek());
 	}
+	public CaseInstance getCaseInstance(){
+		return (CaseInstance) getProcessInstance();
+	}
 
 }

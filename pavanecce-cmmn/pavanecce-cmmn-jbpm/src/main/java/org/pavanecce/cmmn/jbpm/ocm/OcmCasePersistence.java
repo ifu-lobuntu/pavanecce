@@ -3,12 +3,17 @@ package org.pavanecce.cmmn.jbpm.ocm;
 import javax.jcr.Node;
 
 import org.apache.jackrabbit.ocm.mapper.model.ClassDescriptor;
+import org.kie.api.runtime.manager.RuntimeManager;
+import org.kie.internal.runtime.manager.context.EmptyContext;
+import org.pavanecce.cmmn.jbpm.event.AbstractPersistentSubscriptionManager;
 import org.pavanecce.common.ocm.OcmFactory;
 import org.pavanecce.common.ocm.OcmObjectPersistence;
 
 public class OcmCasePersistence extends OcmObjectPersistence {
-	public OcmCasePersistence(OcmFactory factory) {
+	RuntimeManager runtimeManager;
+	public OcmCasePersistence(OcmFactory factory, RuntimeManager runtimeManager) {
 		super(factory);
+		this.runtimeManager=runtimeManager;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -34,7 +39,20 @@ public class OcmCasePersistence extends OcmObjectPersistence {
 
 	@Override
 	public void commit() {
-		super.commit();
+		try {
+			startTransaction();
+			getSession().save();
+			while (AbstractPersistentSubscriptionManager.dispatchEventQueue(runtimeManager.getRuntimeEngine(EmptyContext.get()))) {
+				AbstractPersistentSubscriptionManager.commitSubscriptionsTo(this);
+				getSession().save();
+			}
+			if (startedTransaction) {
+				getTransaction().commit();
+			}
+			startedTransaction = false;
+		} catch (Exception e) {
+			throw convertException(e);
+		}
 	}
 
 	protected OcmCaseSubscriptionInfo getSubscription(String className, String id) {

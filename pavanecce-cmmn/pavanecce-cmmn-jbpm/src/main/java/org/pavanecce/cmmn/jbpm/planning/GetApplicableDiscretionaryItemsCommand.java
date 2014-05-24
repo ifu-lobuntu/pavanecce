@@ -41,7 +41,8 @@ public class GetApplicableDiscretionaryItemsCommand extends TaskCommand<Collecti
 		Collection<Role> roles = ci.getCase().getRoles();
 		Set<String> usersRoles = new HashSet<String>();
 		for (Role role : roles) {
-			if(ci.getRoleAssignments(role.getName()).contains(userId)){
+			Collection<String> roleAssignments = ci.getRoleAssignments(role.getName());
+			if(roleAssignments.contains(userId)){
 				usersRoles.add(role.getName());
 			}
 		}

@@ -87,6 +87,7 @@ import org.pavanecce.cmmn.jbpm.infra.PlanItemBuilder;
 import org.pavanecce.cmmn.jbpm.infra.SentryBuilder;
 import org.pavanecce.cmmn.jbpm.jpa.CollectionPlaceHolderResolveStrategy;
 import org.pavanecce.cmmn.jbpm.jpa.HibernateSubscriptionManager;
+import org.pavanecce.cmmn.jbpm.jpa.JbpmJpaObjectPersistence;
 import org.pavanecce.cmmn.jbpm.jpa.JpaPlaceHolderResolverStrategy;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceLifecycle;
@@ -110,6 +111,11 @@ import org.pavanecce.common.ocm.OcmFactory;
 import org.pavanecce.common.ocm.OcmObjectPersistence;
 import org.pavanecce.common.util.FileUtil;
 
+
+
+
+
+
 //import test.ConstructionCase;
 //import test.House;
 //import test.HousePlan;
@@ -125,6 +131,7 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 	private OcmFactory ocmFactory;
 	private RuntimeEngine runtimeEngine;
 	private UserTransaction transaction;
+	private RuntimeManager runtimeManager;
 
 	public AbstractCmmnCaseTestCase() {
 		super();
@@ -311,27 +318,9 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 		try {
 			if (persistence == null) {
 				if (isJpa) {
-					persistence = new JpaObjectPersistence(getEmf()) {
-						@Override
-						public void commit() {
-							try {
-								startOrJoinTransaction();
-								getEntityManager().flush();
-								while(AbstractPersistentSubscriptionManager.dispatchEventQueue()){
-									getEntityManager().flush();
-								}
-								if (startedTransaction) {
-									getTransaction().commit();
-									this.startedTransaction = false;
-								}
-								close();
-							} catch (Exception e) {
-								throw convertException(e);
-							}
-						}
-					};
+					persistence = new JbpmJpaObjectPersistence(getEmf(),runtimeManager);
 				} else {
-					OcmObjectPersistence ocmObjectPersistence = new OcmCasePersistence(getOcmFactory());
+					OcmObjectPersistence ocmObjectPersistence = new OcmCasePersistence(getOcmFactory(),runtimeManager);
 					persistence = ocmObjectPersistence;
 				}
 			}
@@ -418,6 +407,7 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 		CaseInstanceMarshaller m = new CaseInstanceMarshaller();
 		ProcessMarshallerRegistry.INSTANCE.register(RuleFlowProcess.RULEFLOW_TYPE, m);
 		RuntimeManager rm = super.createRuntimeManager(processFile);
+		this.runtimeManager=rm;
 		RuntimeEngine runtimeEngine = getRuntimeEngine();
 		Environment env = runtimeEngine.getKieSession().getEnvironment();
 		env.set(OBJECT_MARSHALLING_STRATEGIES, getPlaceholdStrategies(env));
@@ -500,7 +490,7 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 					new SerializablePlaceholderResolverStrategy(ClassObjectMarshallingStrategyAcceptor.DEFAULT) };
 		} else {
 			return new ObjectMarshallingStrategy[] { new ProcessInstanceResolverStrategy(), new OcmPlaceHolderResolveStrategy(env), new JpaPlaceHolderResolverStrategy(env),
-					new CollectionPlaceHolderResolveStrategy(env), new OcmCollectionPlaceHolderResolveStrategy(env),
+					new OcmCollectionPlaceHolderResolveStrategy(env),new CollectionPlaceHolderResolveStrategy(env),
 					new SerializablePlaceholderResolverStrategy(ClassObjectMarshallingStrategyAcceptor.DEFAULT) };
 
 		}
@@ -527,7 +517,7 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 				CndImporter.registerNodeTypes(new InputStreamReader(AbstractCmmnCaseTestCase.class.getResourceAsStream("/test.cnd")), session);
 				session.save();
 				session.logout();
-				ocmFactory = new OcmFactory(tr, "admin", "admin", new AnnotationMapperImpl(Arrays.<Class> asList(getClasses())), new OcmSubscriptionManager());
+				ocmFactory = new OcmFactory(tr, "admin", "admin", new AnnotationMapperImpl(Arrays.<Class> asList(getClasses())), new OcmSubscriptionManager(runtimeManager));
 				OcmSubscriptionManager eventListener = (OcmSubscriptionManager) ocmFactory.getEventListener();
 				eventListener.setOcmFactory(ocmFactory);
 				return ocmFactory;

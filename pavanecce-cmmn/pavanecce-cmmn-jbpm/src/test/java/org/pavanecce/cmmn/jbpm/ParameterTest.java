@@ -42,9 +42,11 @@ public class ParameterTest extends AbstractConstructionTestCase {
 		assertEquals(1, list.size());
 		Task task = getRuntimeEngine().getTaskService().getTaskById(list.get(0).getId());
 		Content input = getRuntimeEngine().getTaskService().getContentById(task.getTaskData().getDocumentContentId());
+		getPersistence().start();
 		@SuppressWarnings("unchecked")
 		Map<String, Object> contentData = (Map<String, Object>) ContentMarshallerHelper.unmarshall(input.getContent(), getRuntimeEngine().getKieSession(). getEnvironment());
 		assertEquals(housePlan.getWallPlans().iterator().next().getId(), ((WallPlan) contentData.get("wallPlan")).getId());
+		getPersistence().commit();
 	}
 
 	protected void givenThatTheTestCaseIsStarted() {
@@ -71,6 +73,7 @@ public class ParameterTest extends AbstractConstructionTestCase {
 	}
 
 	private void triggerStartOfTask() throws Exception {
+		getPersistence().start();
 		housePlan = getPersistence().find(HousePlan.class, housePlan.getId());
 		new WallPlan(housePlan);
 		getPersistence().update(housePlan);

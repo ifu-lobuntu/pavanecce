@@ -55,7 +55,7 @@ public class JcrTestCase {
 		logDuration("4");
 		session.getRootNode().addNode("cases");
 		session.save();
-		OcmSubscriptionManager eventListener = new OcmSubscriptionManager();
+		OcmSubscriptionManager eventListener = new OcmSubscriptionManager(null);
 		OcmFactory factory = new OcmFactory(repository, "admin", "admin", getMapper(),eventListener );
 		eventListener.setOcmFactory(factory);
 		OcmObjectPersistence oop = new OcmObjectPersistence(factory);

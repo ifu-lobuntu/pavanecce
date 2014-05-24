@@ -1,7 +1,9 @@
 package org.pavanecce.cmmn.jbpm.casefileitem;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.naming.NamingException;
 
@@ -148,7 +150,12 @@ public abstract class CaseFileItemEventTests extends AbstractConstructionTestCas
 	}
 
 	protected void removeWallPlansFromHousePlan() {
+		getPersistence().start();
 		housePlan = getPersistence().find(HousePlan.class, housePlan.getId());
+		Set<WallPlan> wallPlans = new HashSet<WallPlan>(housePlan.getWallPlans());
+		for (WallPlan wallPlan : wallPlans) {
+			getPersistence().remove(wallPlan);
+		}
 		housePlan.getWallPlans().clear();
 		getPersistence().update(housePlan);
 		getPersistence().commit();
@@ -170,7 +177,6 @@ public abstract class CaseFileItemEventTests extends AbstractConstructionTestCas
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenRoofPlanDeleted");
 		assertNodeTriggered(caseInstance.getId(), "WaitingForRoofPlanDeletedSentry");
 	}
-
 
 	@Test
 	public void testRemoveChildOfObjectInCollectionFileItem() throws Exception {
@@ -249,6 +255,7 @@ public abstract class CaseFileItemEventTests extends AbstractConstructionTestCas
 		givenThatTheTestCaseIsStarted();
 		// *****WHEN
 		this.maybeStartSubscription();
+		getPersistence().start();
 		house = getPersistence().find(House.class, house.getId());
 		house.setDescription("newDescription");
 		getPersistence().update(house);
@@ -263,6 +270,7 @@ public abstract class CaseFileItemEventTests extends AbstractConstructionTestCas
 	}
 
 	protected void removeRoofPlanAsReferenceFromHouse() {
+		getPersistence().start();
 		house = getPersistence().find(House.class, house.getId());
 		house.setRoofPlan(null);
 		getPersistence().update(house);
@@ -270,13 +278,17 @@ public abstract class CaseFileItemEventTests extends AbstractConstructionTestCas
 	}
 
 	private void removeRoofPlanAsChildFromHousePlan() throws NamingException {
+		getPersistence().start();
 		housePlan = getPersistence().find(HousePlan.class, housePlan.getId());
+		RoofPlan roofPlan = housePlan.getRoofPlan();
 		housePlan.zz_internalSetRoofPlan(null);
+		getPersistence().remove(roofPlan);
 		getPersistence().update(housePlan);
 		getPersistence().commit();
 	}
 
 	private void addWallPlanAsReferenceToHouse() throws Exception {
+		getPersistence().start();
 		this.house = getPersistence().find(House.class, house.getId());
 		house.getWallPlans().addAll(housePlan.getWallPlans());
 		getPersistence().update(house);
@@ -285,6 +297,7 @@ public abstract class CaseFileItemEventTests extends AbstractConstructionTestCas
 	}
 
 	private void addRoofPlanAsReferenceToHouse() {
+		getPersistence().start();
 		this.house = getPersistence().find(House.class, house.getId());
 		house.setRoofPlan(this.housePlan.getRoofPlan());
 		getPersistence().update(house);
@@ -292,6 +305,7 @@ public abstract class CaseFileItemEventTests extends AbstractConstructionTestCas
 	}
 
 	private void addRoofPlanAsChildToHousePlan() {
+		getPersistence().start();
 		housePlan = getPersistence().find(HousePlan.class, housePlan.getId());
 		new RoofPlan(housePlan);
 		getPersistence().update(housePlan);
@@ -303,7 +317,6 @@ public abstract class CaseFileItemEventTests extends AbstractConstructionTestCas
 		createRuntimeManager("test/casefileitem/CaseFileItemEventTests.cmmn");
 		Map<String, Object> params = new HashMap<String, Object>();
 		getPersistence().start();
-
 		ConstructionCase cc = new ConstructionCase("/cases/case1");
 		housePlan = new HousePlan(cc);
 		house = new House(cc);
@@ -328,6 +341,7 @@ public abstract class CaseFileItemEventTests extends AbstractConstructionTestCas
 	}
 
 	private void removeWallPlansAsReferenceFromHouse() {
+		getPersistence().start();
 		house = getPersistence().find(House.class, house.getId());
 		house.getWallPlans().clear();
 		getPersistence().update(house);
@@ -335,6 +349,7 @@ public abstract class CaseFileItemEventTests extends AbstractConstructionTestCas
 	}
 
 	private void addWallPlanAsChildToHousePlan() throws Exception {
+		getPersistence().start();
 		housePlan = getPersistence().find(HousePlan.class, housePlan.getId());
 		new WallPlan(housePlan);
 		getPersistence().update(housePlan);

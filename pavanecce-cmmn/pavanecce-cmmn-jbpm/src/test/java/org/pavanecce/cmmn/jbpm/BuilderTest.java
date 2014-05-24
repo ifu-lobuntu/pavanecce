@@ -1,9 +1,12 @@
 package org.pavanecce.cmmn.jbpm;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.manager.RuntimeEngine;
@@ -23,6 +26,12 @@ public class BuilderTest extends AbstractConstructionTestCase {
 		super(true, true, "org.jbpm.persistence.jpa");
 	}
 
+	@AfterClass
+	@BeforeClass
+	public static void deleteJcrRepo() throws IOException {
+		JcrTestCase.deleteTempRepo();
+	}
+
 	@Test
 	public void testSimpleEntryCriteria() throws Exception {
 		createRuntimeManager("test/hello.cmmn");
@@ -31,7 +40,6 @@ public class BuilderTest extends AbstractConstructionTestCase {
 		TaskService taskService = runtimeEngine.getTaskService();
 		Map<String, Object> params = new HashMap<String, Object>();
 		getPersistence().start();
-
 		ConstructionCase cc = new ConstructionCase("/cases/case1");
 		HousePlan housePlan = new HousePlan(cc);
 		House house = new House (cc);

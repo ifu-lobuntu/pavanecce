@@ -17,6 +17,7 @@ public class JpaPersistentSubscriptionEventTest extends CaseFileItemEventTests {
 	@Test
 	public void testModel() throws Exception {
 		JpaObjectPersistence p = new JpaObjectPersistence(getEmf());
+		p.start();
 		ConstructionCase constructionCase = new ConstructionCase("/cases/case1");
 		constructionCase.setName("MyConstructionCase");
 		this.housePlan = new HousePlan(constructionCase);
@@ -31,6 +32,7 @@ public class JpaPersistentSubscriptionEventTest extends CaseFileItemEventTests {
 		house.setRoofPlan(housePlan.getRoofPlan());
 		p.persist(constructionCase);
 		p.commit();
+		p.start();
 		constructionCase = p.find(ConstructionCase.class, constructionCase.getId());
 		assertEquals("MyConstructionCase", constructionCase.getName());
 		assertEquals("MyHouse", constructionCase.getHouse().getDescription());
@@ -40,6 +42,6 @@ public class JpaPersistentSubscriptionEventTest extends CaseFileItemEventTests {
 		assertSame(constructionCase.getHousePlan().getRoofPlan(), constructionCase.getHouse().getRoofPlan());
 		assertEquals(3, constructionCase.getHouse().getWalls().size());
 		assertEquals(2, constructionCase.getHousePlan().getWallPlans().size());
-
+		p.commit();
 	}
 }

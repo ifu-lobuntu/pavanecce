@@ -14,10 +14,8 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import javax.transaction.Synchronization;
 
 import org.hibernate.HibernateException;
-import org.hibernate.Session;
 import org.hibernate.collection.spi.PersistentCollection;
 import org.hibernate.event.spi.EventSource;
 import org.hibernate.event.spi.FlushEntityEvent;
@@ -32,10 +30,8 @@ import org.hibernate.type.OneToOneType;
 import org.kie.api.runtime.Environment;
 import org.pavanecce.cmmn.jbpm.event.AbstractPersistentSubscriptionManager;
 import org.pavanecce.cmmn.jbpm.event.CaseFileItemSubscriptionInfo;
-import org.pavanecce.cmmn.jbpm.event.CaseSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.event.CaseSubscriptionKey;
 import org.pavanecce.cmmn.jbpm.event.DemarcatedSubscriptionContext;
-import org.pavanecce.cmmn.jbpm.event.PersistedCaseFileItemSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.event.SubscriptionManager;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
 import org.pavanecce.cmmn.jbpm.infra.OnPartInstanceSubscription;
@@ -120,39 +116,23 @@ public class HibernateSubscriptionManager extends AbstractPersistentSubscription
 		}
 	}
 
-	static class DirtyOneToOne {
-		int i;
-		Object oldValue;
-		Object newValue;
-
-		public DirtyOneToOne(Object oldValue, Object newValue, int i) {
-			super();
-			this.oldValue = oldValue;
-			this.newValue = newValue;
-			this.i = i;
-		}
-
-	}
-
 	private DirtyOneToOne fireSingletonEvents(FlushEntityEvent event, CaseFileItemSubscriptionInfo is, int i) {
-		// Object oldValue = event.hasDatabaseSnapshot() ? event.getDatabaseSnapshot()[i] :
-		// event.getEntityEntry().getLoadedState()[i];
 		Object oldValue = event.getEntityEntry().getLoadedState()[i];
 		Object owner = event.getEntity();
 		Object newValue = event.getPropertyValues()[i];
 		if (isEntityValueDirty(oldValue, newValue, event.getSession())) {
 			if (oldValue != null) {
 				if (is.getTransition() == CaseFileItemTransition.DELETE || is.getTransition() == CaseFileItemTransition.REMOVE_CHILD || is.getTransition() == CaseFileItemTransition.REMOVE_REFERENCE) {
-					fireEvent(is, owner, oldValue);
+					queueEvent(is, owner, oldValue);
 				}
 			}
 			if (newValue != null) {
 				if (is.getTransition() == CaseFileItemTransition.CREATE || is.getTransition() == CaseFileItemTransition.ADD_CHILD || is.getTransition() == CaseFileItemTransition.ADD_REFERENCE) {
-					fireEvent(is, owner, newValue);
+					queueEvent(is, owner, newValue);
 				}
 			}
 			if (event.getEntityEntry().getPersister().getPropertyTypes()[i] instanceof OneToOneType) {
-				return new DirtyOneToOne(oldValue, newValue, i);
+				return new DirtyOneToOne(newValue, i);
 			}
 		}
 		return null;
@@ -188,14 +168,14 @@ public class HibernateSubscriptionManager extends AbstractPersistentSubscription
 		for (Object oldObject : oldState) {
 			if (!newState.contains(oldObject)) {
 				if (is.getTransition() == CaseFileItemTransition.DELETE || is.getTransition() == CaseFileItemTransition.REMOVE_CHILD || is.getTransition() == CaseFileItemTransition.REMOVE_REFERENCE) {
-					fireEvent(is, owner, oldObject);
+					queueEvent(is, owner, oldObject);
 				}
 			}
 		}
 		for (Object newObject : newState) {
 			if (!oldState.contains(newObject)) {
 				if (is.getTransition() == CaseFileItemTransition.CREATE || is.getTransition() == CaseFileItemTransition.ADD_CHILD || is.getTransition() == CaseFileItemTransition.ADD_REFERENCE) {
-					fireEvent(is, owner, newObject);
+					queueEvent(is, owner, newObject);
 				}
 			}
 		}
@@ -205,7 +185,7 @@ public class HibernateSubscriptionManager extends AbstractPersistentSubscription
 		for (int i = 0; i < event.getEntityEntry().getLoadedState().length; i++) {
 			if (!event.getEntityEntry().getPersister().getPropertyTypes()[i].isEntityType() && !event.getEntityEntry().getPersister().getPropertyTypes()[i].isCollectionType()
 					&& event.getEntityEntry().getPersister().getPropertyTypes()[i].isDirty(event.getEntityEntry().getLoadedState()[i], event.getPropertyValues()[i], event.getSession())) {
-				fireEvent(is, event.getEntity(), event.getEntity());
+				queueEvent(is, event.getEntity(), event.getEntity());
 				break;
 			}
 		}
@@ -213,43 +193,12 @@ public class HibernateSubscriptionManager extends AbstractPersistentSubscription
 
 	@Override
 	public void onFlush(FlushEvent event) throws HibernateException {
-		Session delegate = event.getSession();
-		flush(delegate);
-	}
-
-	public static class TransactionBasedFlusher implements Synchronization {
-
-		@Override
-		public void beforeCompletion() {
-		}
-
-		@Override
-		public void afterCompletion(int status) {
-		}
-
-	}
-
-	protected void flush(Session delegate) {
-		Map<CaseSubscriptionKey, CaseSubscriptionInfo<?>> map = getCachedSubscriptions(delegate);
-		Collection<CaseSubscriptionInfo<?>> values = map.values();
-		if (values.size() > 0) {
-			for (CaseSubscriptionInfo<?> t : values) {
-				for (PersistedCaseFileItemSubscriptionInfo x : new HashSet<PersistedCaseFileItemSubscriptionInfo>(t.getCaseFileItemSubscriptions())) {
-					if (!x.isActive()) {
-						x.getCaseSubscription().getCaseFileItemSubscriptions().remove(x);
-					}
-				}
-				delegate.update(t);
-			}
-			map.clear();// TODO only clear when we CLOSE the session
-			delegate.flush();
-		}
 	}
 
 	@Override
 	public void onPostDelete(PostDeleteEvent event) {
 		for (OnPartInstanceSubscription s : DemarcatedSubscriptionContext.getSubscriptionsInScopeForFor(event.getEntity(), DELETE)) {
-			fireEvent(s, null, event.getEntity());
+			queueEvent(s, null, event.getEntity());
 		}
 
 	}
@@ -257,7 +206,7 @@ public class HibernateSubscriptionManager extends AbstractPersistentSubscription
 	@Override
 	public void onPostInsert(PostInsertEvent event) {
 		for (OnPartInstanceSubscription s : DemarcatedSubscriptionContext.getSubscriptionsInScopeForFor(event.getEntity(), CREATE)) {
-			fireEvent(s, null, event.getEntity());
+			queueEvent(s, null, event.getEntity());
 		}
 	}
 
@@ -279,9 +228,16 @@ public class HibernateSubscriptionManager extends AbstractPersistentSubscription
 
 	}
 
-	@Override
-	public void commitSubscriptions(ObjectPersistence p) {
-		flush((Session) p.getDelegate());
+	private static class DirtyOneToOne {
+		int i;
+		Object newValue;
+
+		public DirtyOneToOne(Object newValue, int i) {
+			super();
+			this.newValue = newValue;
+			this.i = i;
+		}
+
 	}
 
 }

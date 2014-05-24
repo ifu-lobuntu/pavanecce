@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.drools.core.common.InternalKnowledgeRuntime;
+import org.kie.internal.runtime.KnowledgeRuntime;
 import org.pavanecce.cmmn.jbpm.event.CaseFileItemSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItem;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemOnPart;
@@ -13,44 +15,48 @@ import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
 import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.ExpressionUtil;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.OnPartInstance;
 import org.pavanecce.cmmn.jbpm.ocm.AbstractCaseFileItemSubscriptionInfo;
 
 public class OnPartInstanceSubscription extends AbstractCaseFileItemSubscriptionInfo implements CaseFileItemSubscriptionInfo {
 	CaseFileItemOnPart source;
 	private Set<CaseParameter> subscribingParameters = new HashSet<CaseParameter>();
+	private InternalKnowledgeRuntime kr;
 	private String caseKey;
 	private long processInstanceId;
 
-	public OnPartInstanceSubscription(String caseKey, long processInstanceId, CaseFileItemOnPart source, CaseParameter caseParameter) {
+	public OnPartInstanceSubscription(OnPartInstance source, CaseParameter caseParameter) {
 		super();
-		this.caseKey = caseKey;
+//		InternalRuntimeManager manager = (InternalRuntimeManager) source.getCaseInstance().getKnowledgeRuntime().getEnvironment().get("RuntimeManager");
 		this.subscribingParameters.add(caseParameter);
-		this.source = source;
-		this.processInstanceId = processInstanceId;
+		kr = source.getProcessInstance().getKnowledgeRuntime();
+		this.source = (CaseFileItemOnPart) source.getOnPart();
+		this.caseKey = source.getCaseInstance().getCase().getCaseKey();
+		this.processInstanceId = source.getCaseInstance().getId();
 	}
 
 	public CaseFileItemOnPart getSource() {
-		return source;
+		return (CaseFileItemOnPart) source;
 	}
 
 	@Override
 	public String getItemName() {
-		return source.getSourceCaseFileItem().getName();
+		return getSource().getSourceCaseFileItem().getName();
 	}
 
 	@Override
 	public CaseFileItemTransition getTransition() {
-		return source.getStandardEvent();
+		return getSource().getStandardEvent();
 	}
 
 	@Override
 	public String getRelatedItemName() {
-		return source.getRelatedCaseFileItem() != null ? source.getRelatedCaseFileItem().getName() : null;
+		return getSource().getRelatedCaseFileItem() != null ? getSource().getRelatedCaseFileItem().getName() : null;
 	}
 
 	public boolean meetsBindingRefinementCriteria(Object o, CaseInstance caseInstance) {
 		Set<CaseParameter> subscribingParameters2 = this.subscribingParameters;
-		if (source.getStandardEvent() == CREATE || source.getStandardEvent() == DELETE) {
+		if (getSource().getStandardEvent() == CREATE || getSource().getStandardEvent() == DELETE) {
 			return true;// TODO Can't make assumptions about whether the process state contains the new/old
 						// object
 		}
@@ -58,7 +64,7 @@ public class OnPartInstanceSubscription extends AbstractCaseFileItemSubscription
 			if (caseParameter.getBindingRefinement() == null || !caseParameter.getBindingRefinement().isValid()) {
 				return true;
 			} else {
-				Object val = ExpressionUtil.readFromBindingRefinement(caseParameter, caseInstance,null);
+				Object val = ExpressionUtil.readFromBindingRefinement(caseParameter, caseInstance, null);
 				if (caseParameter.getBoundVariable().isCollection()) {
 					if (val instanceof Collection && ((Collection<?>) val).contains(o)) {
 						return true;
@@ -77,7 +83,7 @@ public class OnPartInstanceSubscription extends AbstractCaseFileItemSubscription
 	}
 
 	public CaseFileItem getVariable() {
-		return source.getSourceCaseFileItem();
+		return getSource().getSourceCaseFileItem();
 	}
 
 	private static boolean isInstance(Object source, String stringType) {
@@ -108,12 +114,17 @@ public class OnPartInstanceSubscription extends AbstractCaseFileItemSubscription
 
 	@Override
 	public String getCaseKey() {
-		return this.caseKey;
+		return caseKey;
+
 	}
 
 	@Override
 	public long getProcessInstanceId() {
-		return this.processInstanceId;
+		return processInstanceId;
+	}
+
+	public KnowledgeRuntime getKnowledgeRuntime() {
+		return kr;
 	}
 
 }

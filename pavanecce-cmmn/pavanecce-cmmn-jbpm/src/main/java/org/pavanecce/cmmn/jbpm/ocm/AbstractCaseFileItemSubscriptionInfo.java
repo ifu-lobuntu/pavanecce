@@ -10,17 +10,17 @@ public abstract class AbstractCaseFileItemSubscriptionInfo implements CaseFileIt
 	}
 
 	@Override
-	public void deactivate() {
+	public void invalidate() {
 		active = false;
 	}
 
 	@Override
-	public void activate() {
+	public void validate() {
 		active = true;
 	}
 
 	@Override
-	public boolean isActive() {
+	public boolean isValid() {
 		return active;
 	}
 

@@ -37,9 +37,9 @@ public class ParameterMappingHandler extends AbstractCaseElementHandler implemen
 	@Override
 	public Object end(String uri, String localName, ExtensibleXmlParser parser) throws SAXException {
 		Element el = parser.endElementBuilder();
-		ParameterMapping ParameterMapping = (ParameterMapping) parser.getCurrent();
-		ParameterMapping.setTransformation(ConstraintExtractor.extractExpression(el, "transformation"));
-		return ParameterMapping;
+		ParameterMapping pm = (ParameterMapping) parser.getCurrent();
+		pm.setTransformation(ConstraintExtractor.extractExpression(el, "transformation"));
+		return pm;
 	}
 
 	@Override

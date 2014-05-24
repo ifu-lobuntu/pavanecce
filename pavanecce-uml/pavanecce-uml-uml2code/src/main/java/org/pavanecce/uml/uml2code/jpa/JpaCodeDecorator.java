@@ -39,7 +39,7 @@ public class JpaCodeDecorator extends AbstractJavaCodeDecorator {
 		dataTypeStrategies.put(new CodeTypeReference(false, "StandardSimpleTypes", "LargeText"), JpaRelationalDataType.TEXT);
 		dataTypeStrategies.put(new CodeTypeReference(false, "StandardSimpleTypes", "BinaryLargeObject"), JpaRelationalDataType.BINARY);
 	}
-	private boolean softDelete=false;
+	private boolean softDelete=true;
 	@Override
 	public void appendAdditionalFields(JavaCodeGenerator sb, CodeClassifier cc) {
 		IRelationalElement element = cc.getData(IRelationalElement.class);
