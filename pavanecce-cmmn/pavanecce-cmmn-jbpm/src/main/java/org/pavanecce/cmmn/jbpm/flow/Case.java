@@ -80,7 +80,7 @@ public class Case extends RuleFlowProcess implements PlanItemContainer {
 	}
 
 	public void addOutputParameter(CaseParameter cp) {
-		inputParameters.put(cp.getElementId(),cp);
+		outputParameters.put(cp.getElementId(),cp);
 	}
 
 	public Collection<CaseParameter> getOutputParameters() {

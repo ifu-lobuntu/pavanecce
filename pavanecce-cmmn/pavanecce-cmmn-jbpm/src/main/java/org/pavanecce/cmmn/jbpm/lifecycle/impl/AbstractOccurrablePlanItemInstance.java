@@ -3,7 +3,6 @@ package org.pavanecce.cmmn.jbpm.lifecycle.impl;
 import org.jbpm.workflow.instance.node.StateBasedNodeInstance;
 import org.pavanecce.cmmn.jbpm.flow.ItemWithDefinition;
 import org.pavanecce.cmmn.jbpm.flow.PlanItem;
-import org.pavanecce.cmmn.jbpm.flow.PlanItemControl;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 import org.pavanecce.cmmn.jbpm.lifecycle.OccurrablePlanItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
@@ -96,25 +95,6 @@ public abstract class AbstractOccurrablePlanItemInstance<T extends PlanItemDefin
 	@Override
 	public PlanElementState getPlanElementState() {
 		return planElementState;
-	}
-
-	@Override
-	public T getPlanItemDefinition() {
-		return getItem().getDefinition();
-	}
-
-	@Override
-	public String getItemName() {
-		return getItem().getName();
-	}
-
-	@Override
-	public PlanItemControl getItemControl() {
-		if (getItem().getItemControl() == null) {
-			return getItem().getDefinition().getDefaultControl();
-		} else {
-			return getItem().getItemControl();
-		}
 	}
 
 	@Override

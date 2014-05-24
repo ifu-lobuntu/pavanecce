@@ -12,8 +12,8 @@
 		&caseFileModel;
 		<cmmn:casePlanModel name="CaseTaskTests">
 			<cmmn:planningTable id="theRootPlanningTableId" authorizedRoleRefs="constructionProjectManagerRoleId">
-				<cmmn:applicabilityRule id="noHouseplan" >
-					<cmmn:condition language="http://www.java.com/java" >
+				<cmmn:applicabilityRule id="noHouseplan">
+					<cmmn:condition language="http://www.java.com/java">
 						<cmmn:body>return housePlan==null;</cmmn:body>
 					</cmmn:condition>
 				</cmmn:applicabilityRule>
@@ -33,11 +33,18 @@
 				</cmmn:inputs>
 				<cmmn:inputs bindingRef="wallPlanFileItemId" id="wallPlanTaskParameter" name="wallPlanTaskParameter">
 				</cmmn:inputs>
+				<cmmn:outputs bindingRef="wallPlanFileItemId" id="wallPlanTaskOutput" name="wallPlanTaskOutput">
+					<bindingRefinement  language="http://www.java.com/java">
+						<body>return housePlan.getWallPlans();</body>
+					</bindingRefinement>
+				</cmmn:outputs>
 				<cmmn:parameterMapping sourceRef="housePlanTaskParameter" targetRef="SubCase.cmmn#housePlanSubCaseParameterId" />
 				<cmmn:parameterMapping sourceRef="wallPlanTaskParameter" targetRef="SubCase.cmmn#wallPlanSubCaseParameterId">
 					<cmmn:transformation language="http://www.java.com/java">
 						<cmmn:body>return housePlan.getWallPlans().iterator().next();</cmmn:body>
 					</cmmn:transformation>
+				</cmmn:parameterMapping>
+				<cmmn:parameterMapping sourceRef="SubCase.cmmn#wallPlanSubCaseOutputId" targetRef="wallPlanTaskOutput">
 				</cmmn:parameterMapping>
 			</cmmn:caseTask>
 			<cmmn:humanTask id="designHouseTaskId" name="Design House" performerRef="designerRoleId"></cmmn:humanTask>

@@ -36,33 +36,35 @@ public class PlanItemInfo<T extends PlanItemDefinition> {
 		return Collections.unmodifiableMap(exitCriteria);
 	}
 
-	public void addEntryCriterionRef(String s) {
-		entryCriteria.put(s, null);
+	public void putEntryCriterion(String s, Sentry c) {
+		entryCriteria.put(s, c);
 	}
 
-	public void addExitCriterionRef(String s) {
-		exitCriteria.put(s, null);
+	public void putExitCriterion(String s, Sentry c) {
+		exitCriteria.put(s, c);
 	}
-	private PlanItemInstanceFactoryNode createFactoryNode(){
+
+	private PlanItemInstanceFactoryNode createFactoryNode() {
 		PlanItemInstanceFactoryNode result = new PlanItemInstanceFactoryNode();
-		result.setId(id/34123);
-		result.setName(getName()+"Factory");
+		result.setId(id / 34123);
+		result.setName(getName() + "Factory");
 		return result;
 	}
+
 	@SuppressWarnings("unchecked")
 	public PlanItem<T> buildPlanItem() {
 		if (definition instanceof HumanTask) {
-			planItem = (PlanItem<T>) new HumanTaskPlanItem((PlanItemInfo<HumanTask>) this,createFactoryNode());
+			planItem = (PlanItem<T>) new HumanTaskPlanItem((PlanItemInfo<HumanTask>) this, createFactoryNode());
 		} else if (definition instanceof Stage) {
-			planItem = (PlanItem<T>) new StagePlanItem((PlanItemInfo<Stage>) this,createFactoryNode());
+			planItem = (PlanItem<T>) new StagePlanItem((PlanItemInfo<Stage>) this, createFactoryNode());
 		} else if (definition instanceof UserEventListener) {
 			planItem = (PlanItem<T>) new UserEventPlanItem((PlanItemInfo<UserEventListener>) this);
 		} else if (definition instanceof TimerEventListener) {
 			planItem = (PlanItem<T>) new TimerEventPlanItem((PlanItemInfo<TimerEventListener>) this);
 		} else if (definition instanceof Milestone) {
-			planItem = (PlanItem<T>) new MilestonePlanItem((PlanItemInfo<Milestone>) this,createFactoryNode());
+			planItem = (PlanItem<T>) new MilestonePlanItem((PlanItemInfo<Milestone>) this, createFactoryNode());
 		} else if (definition instanceof CaseTask) {
-			planItem = (PlanItem<T>) new CaseTaskPlanItem((PlanItemInfo<CaseTask>) this,createFactoryNode());
+			planItem = (PlanItem<T>) new CaseTaskPlanItem((PlanItemInfo<CaseTask>) this, createFactoryNode());
 		}
 		planItem.setPlanItemContainer(nodeContainer);// possible duplication here of setNodeContainer
 		planItem.setElementId(getElementId());
@@ -71,7 +73,7 @@ public class PlanItemInfo<T extends PlanItemDefinition> {
 		nodeContainer.addNode(planItem);
 		if (planItem instanceof MultiInstancePlanItem) {
 			nodeContainer.addNode(((MultiInstancePlanItem) planItem).getFactoryNode());
-			((MultiInstancePlanItem) planItem).getFactoryNode().setPlanItem(planItem);
+			((MultiInstancePlanItem) planItem).getFactoryNode().setItemToInstantiate(planItem);
 		}
 
 		return planItem;
@@ -94,14 +96,6 @@ public class PlanItemInfo<T extends PlanItemDefinition> {
 		if (planItem instanceof MultiInstancePlanItem) {
 			new ConnectionImpl(((MultiInstancePlanItem) planItem).getFactoryNode(), Node.CONNECTION_DEFAULT_TYPE, planItem, Node.CONNECTION_DEFAULT_TYPE);
 		}
-	}
-
-	public void putEntryCriterion(String s, Sentry c) {
-		entryCriteria.put(s, c);
-	}
-
-	public void putExitCriterion(String s, Sentry c) {
-		exitCriteria.put(s, c);
 	}
 
 	public String getDefinitionRef() {

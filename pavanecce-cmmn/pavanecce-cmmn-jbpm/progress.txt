@@ -17,6 +17,8 @@ JPA/Hibernate demarcated subscriptions
 
 Timer Event
  - OCCUR,CREATE,SUSPEND,RESUME,TERMINATE,PARENT_TERMINATE
+ - timerStart CaseFileItem
+ - timerStart PlanItem
 
 Milestone
  - entry criteria achieved
@@ -83,25 +85,22 @@ Planning Service
    - status/transition, 
    - (due date?)
 
-TimerEventListener.timerStart CaseFileItem
-TimerEventListener.timerStart PlanItem
-
 Write Output Parameters from Processes to Task.result (CaseTask, ProcessTask, Standalone Case) 
 
 Role management
- - Resolve cleverly which user should own system-initiated tasks 
- - Store roleAssignment in process 
-   - do it as variables with set values 
-   - would be serialization friendly
-   - use this for automatic assignment
-   - could be used to authorize but remember  people could have the required role elsewhere
+ - Store roleAssignment in process
  - Validate authorization for planning - get it from the UserInfo service
 
-Planning Tables:
+PlanItemOnPart.sentryRef
+
+Planning Tables - test HumanTask, Case AND Stage planningTables:
  - DiscretionaryItem.entryCriteria
  - DiscretionaryItem.exitCriteria
  - DiscretionaryItem.itemControl.requiredRule
+ - DiscretionaryItem.itemControl.automaticActivationRule
+ - DiscretionaryItem.itemControl.repititionRule
  - ApplicabilityRule
+ - authorizedRoles - pass the Case roles that the user is fulfilling 
 
 Process/Case Task
  - parameter transformation
@@ -127,7 +126,6 @@ Optimize caching of SubscriptionInfo and perhaps even other OCM objects IN OCMSu
 Plan fragments 
  - For Plan Items
  - For Discretionary Items
- 
 ContextRefs for rules
 Internationalization
 Write Output parameters from Tasks to the containing case's caseFileItem (kind of superfluous in a pass by reference world).

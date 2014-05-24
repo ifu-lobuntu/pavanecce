@@ -10,6 +10,7 @@ import org.kie.api.runtime.manager.RuntimeManager;
 import org.kie.api.task.model.Status;
 import org.kie.api.task.model.TaskSummary;
 import org.kie.internal.task.api.model.InternalTaskData;
+import org.pavanecce.cmmn.jbpm.ApplicableDiscretionaryItem;
 import org.pavanecce.cmmn.jbpm.container.AbstractPlanItemInstanceContainerTest;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;

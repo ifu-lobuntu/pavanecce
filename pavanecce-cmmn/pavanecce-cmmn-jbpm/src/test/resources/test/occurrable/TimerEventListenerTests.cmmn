@@ -13,6 +13,9 @@
 		&caseFileModel;
 		<cmmn:casePlanModel name="CompletionTests">
 			<!-- TimerEvent specific -->
+			<cmmn:planItem definitionRef="timerEventWithCaseFileItemTriggerId" name="TimerEventWithCaseFileItemTriggerPlanItem" id="timerEventWithCaseFileItemTriggerPlanItemId"/>
+			<cmmn:planItem definitionRef="timerEventWithPlanItemTriggerId" name="TimerEventWithPlanItemTriggerPlanItem" id="timerEventWithPlanItemTriggerPlanItemId"/>
+			<cmmn:planItem definitionRef="theUserEventId" name="TheUserEventPlanItem" id="theUserEventPlanItemId"/>
 			<cmmn:planItem definitionRef="theOccurrablePlanItemDefinitionId" name="TheOccurrablePlanItem" id="theOccurrablePlanItemId">
 				<cmmn:itemControl>
 					<cmmn:requiredRule>
@@ -28,12 +31,33 @@
 			<cmmn:timerEvent id="theOccurrablePlanItemDefinitionId" name="TheTimerEvent">
 				<cmmn:timerExpression language="http://www.mvel.org/mvel">
 					<cmmn:body>R5/P1D</cmmn:body>
-					
 				</cmmn:timerExpression>
 			</cmmn:timerEvent>
+			<cmmn:timerEvent id="timerEventWithCaseFileItemTriggerId" name="TimerEventWithCaseFileItemTrigger">
+				<cmmn:caseFileItemStartTrigger sourceRef="wallPlanFileItemId" id="wallPlanCreatedTrigger">
+					<standardEvent>create</standardEvent>
+				</cmmn:caseFileItemStartTrigger>
+				<cmmn:timerExpression language="http://www.mvel.org/mvel">
+					<cmmn:body>R5/P1D</cmmn:body>
+				</cmmn:timerExpression>
+			</cmmn:timerEvent>
+			<cmmn:timerEvent id="timerEventWithPlanItemTriggerId" name="TimerEventWithPlanItemTrigger">
+				<cmmn:planItemStartTrigger sourceRef="theUserEventPlanItemId" id="theUserEventTrigger">
+					<standardEvent>occur</standardEvent>
+				</cmmn:planItemStartTrigger>
+				<cmmn:timerExpression language="http://www.mvel.org/mvel">
+					<cmmn:body>R5/P1D</cmmn:body>
+				</cmmn:timerExpression>
+			</cmmn:timerEvent>
+			<cmmn:userEvent id="theUserEventId" name="TheUserEvent" />
 		</cmmn:casePlanModel>
 		<cmmn:caseRoles name="Builders" id="builderRoleId" />
 		<cmmn:input bindingRef="housePlanFileItemId" id="housePlanInputId" name="housePlan">
+		</cmmn:input>
+		<cmmn:input bindingRef="wallPlanFileItemId" id="wallPlanInputId" name="wallPlan">
+			<cmmn:bindingRefinement language="http://www.java.com/java">
+				<cmmn:body>return housePlan.getWallPlans();</cmmn:body>
+			</cmmn:bindingRefinement>
 		</cmmn:input>
 		<cmmn:input bindingRef="houseFileItemId" id="houseInputId" name="house">
 		</cmmn:input>

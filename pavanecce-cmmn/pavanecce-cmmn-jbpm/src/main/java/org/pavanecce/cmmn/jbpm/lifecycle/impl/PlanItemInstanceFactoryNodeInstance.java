@@ -1,28 +1,23 @@
 package org.pavanecce.cmmn.jbpm.lifecycle.impl;
 
-import org.jbpm.process.instance.impl.ConstraintEvaluator;
 import org.jbpm.workflow.core.impl.NodeImpl;
 import org.jbpm.workflow.instance.node.StateNodeInstance;
 import org.kie.api.runtime.process.NodeInstance;
 import org.pavanecce.cmmn.jbpm.flow.ItemWithDefinition;
-import org.pavanecce.cmmn.jbpm.flow.PlanItem;
-import org.pavanecce.cmmn.jbpm.flow.PlanItemControl;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemInstanceFactoryNode;
 import org.pavanecce.cmmn.jbpm.flow.Stage;
 import org.pavanecce.cmmn.jbpm.flow.TaskDefinition;
 import org.pavanecce.cmmn.jbpm.lifecycle.ControllableItemInstanceLifecycle;
-import org.pavanecce.cmmn.jbpm.lifecycle.ItemInstanceLifecycleWithHistory;
 import org.pavanecce.cmmn.jbpm.lifecycle.OccurrablePlanItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceLifecycleWithHistory;
 
 /**
  * This class represents the lifecycle of controllablePlanInstances prior to instantiation of the PlanItem in question
  * 
- * @author ampie
- * 
  */
-public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> extends StateNodeInstance implements ItemInstanceLifecycleWithHistory<T>, Creatable {
+public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> extends StateNodeInstance implements PlanItemInstanceLifecycleWithHistory<T>, Creatable {
 
 	private static final long serialVersionUID = -5291618101988431033L;
 	private Boolean isPlanItemInstanceRequired;
@@ -52,7 +47,7 @@ public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> e
 
 	@Override
 	public boolean isComplexLifecycle() {
-		PlanItemDefinition def = getPlanItem().getPlanInfo().getDefinition();
+		PlanItemDefinition def = getItem().getDefinition();
 		return def instanceof TaskDefinition || def instanceof Stage;
 	}
 
@@ -121,15 +116,10 @@ public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> e
 
 	@Override
 	public void create() {
-		ItemWithDefinition<T> planItem = getPlanItem();
+		ItemWithDefinition<T> planItem = getItem();
 		PlanItemInstanceFactoryNodeInstance<T> contextNodeInstance = this;
-		this.isPlanItemInstanceRequired = PlanItemInstanceUtil.isRequired(planItem, contextNodeInstance);
-		if (planItem.getItemControl() != null && planItem.getItemControl().getRepetitionRule() instanceof ConstraintEvaluator) {
-			ConstraintEvaluator constraintEvaluator = (ConstraintEvaluator) planItem.getItemControl().getRepetitionRule();
-			isRepeating = constraintEvaluator.evaluate(contextNodeInstance, null, constraintEvaluator);
-		} else {
-			isRepeating = false;
-		}
+		this.isPlanItemInstanceRequired = ExpressionUtil.isRequired(planItem, contextNodeInstance);
+		isRepeating=ExpressionUtil.isRepeating(this,planItem);
 		hasPlanItemBeenInstantiated = false;
 		planElementState.create(contextNodeInstance);
 	}
@@ -149,14 +139,10 @@ public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> e
 		planElementState.terminate(this);
 	}
 
-	@Override
-	public String getItemName() {
-		return getPlanItem().getName();
-	}
-
 	@SuppressWarnings("unchecked")
-	public PlanItem<T> getPlanItem() {
-		return (PlanItem<T>) getNode().getPlanItem();
+	@Override
+	public ItemWithDefinition<T> getItem() {
+		return (ItemWithDefinition<T>) getNode().getItemToInstantiate();
 	}
 
 	@Override
@@ -201,17 +187,5 @@ public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> e
 		}
 	}
 
-	@Override
-	public T getPlanItemDefinition() {
-		return getPlanItemDefinition();
-	}
 
-	@Override
-	public PlanItemControl getItemControl() {
-		if (getPlanItem().getPlanInfo().getItemControl() == null) {
-			return getPlanItemDefinition().getDefaultControl();
-		} else {
-			return getPlanItem().getPlanInfo().getItemControl();
-		}
-	}
 }

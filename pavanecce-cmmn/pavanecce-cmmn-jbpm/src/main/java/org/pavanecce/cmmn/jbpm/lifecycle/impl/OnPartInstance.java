@@ -13,9 +13,7 @@ import org.pavanecce.cmmn.jbpm.flow.OnPart;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemOnPart;
 
 public class OnPartInstance extends EventNodeInstance  {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 377496036154216192L;
 
 	public OnPart getOnPart() {

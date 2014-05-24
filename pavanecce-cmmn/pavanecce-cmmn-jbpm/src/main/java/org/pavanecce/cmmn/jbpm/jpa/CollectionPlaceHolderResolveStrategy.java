@@ -17,14 +17,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 
 import org.drools.core.common.DroolsObjectInputStream;
 import org.drools.persistence.jpa.marshaller.JPAPlaceholderResolverStrategy;
 import org.kie.api.runtime.Environment;
-import org.kie.api.runtime.EnvironmentName;
+import org.pavanecce.common.jpa.JpaObjectPersistence;
 
 public class CollectionPlaceHolderResolveStrategy extends JPAPlaceholderResolverStrategy {
 	private Environment env;
@@ -116,19 +114,35 @@ public class CollectionPlaceHolderResolveStrategy extends JPAPlaceholderResolver
 		}
 		int size = is.readInt();
 		if (size > 0) {
-			Class<?> superClass = Class.forName(is.readUTF());
-			String idName = is.readUTF();
-			Collection<Object> ids = new ArrayList<Object>();
-			for (int i = 0; i < size; i++) {
-				ids.add(is.readObject());
-			}
-			EntityManagerFactory emf = (EntityManagerFactory) env.get(EnvironmentName.ENTITY_MANAGER_FACTORY);
-			EntityManager em = emf.createEntityManager();
-			Query q = em.createQuery("select o from " + superClass.getName() + " o where o." + idName + " in (:ids)");
-			q.setParameter("ids", ids);
-			coll.addAll(q.getResultList());
+			List<?> resultList = readCollection(is, size);
+			coll.addAll(resultList);
 		}
 		return coll;
+	}
+
+	@SuppressWarnings("unused")
+	private List<?> readCollectionOptimized(ObjectInputStream is, int size) throws ClassNotFoundException, IOException {
+		Class<?> superClass = Class.forName(is.readUTF());
+		String idName = is.readUTF();
+		Collection<Object> ids = new ArrayList<Object>();
+		for (int i = 0; i < size; i++) {
+			ids.add(is.readObject());
+		}
+		JpaObjectPersistence jop = (JpaObjectPersistence) env.get(JpaObjectPersistence.ENV_NAME);
+		Query q = jop.getEntityManager().createQuery("select o from " + superClass.getName() + " o where o." + idName + " in (:ids)");
+		q.setParameter("ids", ids);
+		return q.getResultList();
+	}
+	private List<?> readCollection(ObjectInputStream is, int size) throws ClassNotFoundException, IOException {
+		Class<?> superClass = Class.forName(is.readUTF());
+		@SuppressWarnings("unused")
+		String idName = is.readUTF();
+		List<Object> result = new ArrayList<Object>();
+		JpaObjectPersistence jop = (JpaObjectPersistence) env.get(JpaObjectPersistence.ENV_NAME);
+		for (int i = 0; i < size; i++) {
+			result.add(jop.find(superClass, is.readObject()));
+		}
+		return result;
 	}
 
 	@Override

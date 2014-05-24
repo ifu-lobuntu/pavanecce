@@ -36,6 +36,8 @@
 		</cmmn:input>
 		<cmmn:input bindingRef="wallPlanFileItemId" id="wallPlanSubCaseParameterId" name="wallPlanSubCaseParameter">
 		</cmmn:input>
+		<cmmn:output bindingRef="wallPlanFileItemId" id="wallPlanSubCaseOutputId" name="wallPlanSubCaseOutput">
+		</cmmn:output>
 	</cmmn:case>
 </cmmn:definitions>
 

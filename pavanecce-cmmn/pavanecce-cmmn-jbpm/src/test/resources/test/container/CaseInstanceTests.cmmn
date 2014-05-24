@@ -13,7 +13,7 @@
 	<cmmn:case name="CaseInstanceTests" id="CaseInstanceTests">
 		&caseFileModel;
 		<cmmn:casePlanModel name="CaseInstanceTests" exitCriteriaRefs="waitingForEndUserEventSentryId" autoComplete="false">
-			<cmmn:planningTable id="theRootPlanningTableId" authorizedRoleRefs="constructionProjectManagerRoleId"/>
+			<cmmn:planningTable id="theRootPlanningTableId" authorizedRoleRefs="constructionProjectManagerRoleId" />
 			&planItemDefinitions;
 			&planItemsAndSentries;
 		</cmmn:casePlanModel>
@@ -21,6 +21,9 @@
 		<cmmn:caseRoles name="ConstructionProjectManagers" id="constructionProjectManagerRoleId" />
 		<cmmn:input bindingRef="housePlanFileItemId" id="housePlanInputId" name="housePlan" />
 		<cmmn:input bindingRef="houseFileItemId" id="houseInputId" name="house" />
+		<cmmn:output bindingRef="wallPlanFileItemId" id="wallPlanOutputId" name="theResultingWallPlan" >
+			<bindingRefinement language="http://www.java.com/java"><body>return housePlan.getWallPlans().iterator().next();</body></bindingRefinement>
+		</cmmn:output>
 	</cmmn:case>
 </cmmn:definitions>
 

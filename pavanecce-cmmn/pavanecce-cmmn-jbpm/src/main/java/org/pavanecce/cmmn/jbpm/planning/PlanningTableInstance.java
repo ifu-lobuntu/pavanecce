@@ -3,6 +3,8 @@ package org.pavanecce.cmmn.jbpm.planning;
 import java.io.Serializable;
 import java.util.Collection;
 
+import org.pavanecce.cmmn.jbpm.ApplicableDiscretionaryItem;
+
 public class PlanningTableInstance implements Serializable {
 	private static final long serialVersionUID = 7379712745917913470L;
 	private Collection<PlannedTaskSummary> plannedTasks;

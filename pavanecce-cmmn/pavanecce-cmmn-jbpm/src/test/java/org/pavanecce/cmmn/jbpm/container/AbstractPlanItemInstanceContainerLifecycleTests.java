@@ -7,9 +7,8 @@ import org.junit.Test;
 import org.kie.api.task.model.Status;
 import org.kie.api.task.model.Task;
 import org.kie.api.task.model.TaskSummary;
-import org.pavanecce.cmmn.jbpm.flow.DefaultJoin;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
-import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceContainerLifecycle;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceContainer;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 
 public abstract class AbstractPlanItemInstanceContainerLifecycleTests extends AbstractPlanItemInstanceContainerTest {
@@ -61,7 +60,7 @@ public abstract class AbstractPlanItemInstanceContainerLifecycleTests extends Ab
 		// *****THEN
 		// Now we can complete it
 		getPersistence().start();
-		PlanItemInstanceContainerLifecycle piic = getPlanItemInstanceContainer();
+		PlanItemInstanceContainer piic = getPlanItemInstanceContainer();
 		assertTrue(piic.canComplete());
 		assertEquals(PlanElementState.ACTIVE, piic.getPlanElementState());
 		printState(" ", piic);
@@ -81,16 +80,10 @@ public abstract class AbstractPlanItemInstanceContainerLifecycleTests extends Ab
 		assertPlanItemInState(caseInstance.getId(), "StartUserEventPlanItem", PlanElementState.COMPLETED);
 		assertPlanItemInState(caseInstance.getId(), "TheStagePlanItem", PlanElementState.COMPLETED);
 		assertPlanItemInState(caseInstance.getId(), "TheCaseTaskPlanItem", PlanElementState.COMPLETED);
-		// and close it
-		if (piic instanceof CaseInstance) {
-			getPersistence().start();
-			CaseInstance ci = reloadCaseInstance();
-			ci.signalEvent(DefaultJoin.CLOSE, new Object());
-			assertEquals(PlanElementState.CLOSED, ci.getPlanElementState());
-			assertNull(getRuntimeEngine().getKieSession().getProcessInstance(caseInstance.getId()));
-			getPersistence().commit();
-		}
-		// *****THEN
+		testCloseAndOutput(piic);
+	}
+
+	protected void testCloseAndOutput(PlanItemInstanceContainer piic) {
 	}
 
 	@Test
@@ -108,7 +101,7 @@ public abstract class AbstractPlanItemInstanceContainerLifecycleTests extends Ab
 		getTaskService().suspend(taskByWorkItemId.getId(), "ConstructionProjectManager");
 		// *******THEN
 		getPersistence().start();
-		PlanItemInstanceContainerLifecycle piic = getPlanItemInstanceContainer();
+		PlanItemInstanceContainer piic = getPlanItemInstanceContainer();
 		assertEquals(PlanElementState.SUSPENDED, piic.getPlanElementState());
 		printState(" ", piic);
 		getPersistence().commit();
@@ -197,7 +190,7 @@ public abstract class AbstractPlanItemInstanceContainerLifecycleTests extends Ab
 		getTaskService().exit(taskByWorkItemId.getId(), "ConstructionProjectManager");
 		// *******THEN
 		getPersistence().start();
-		PlanItemInstanceContainerLifecycle piic = getPlanItemInstanceContainer();
+		PlanItemInstanceContainer piic = getPlanItemInstanceContainer();
 		assertEquals(PlanElementState.TERMINATED, piic.getPlanElementState());
 		printState(" ", piic);
 		getPersistence().commit();

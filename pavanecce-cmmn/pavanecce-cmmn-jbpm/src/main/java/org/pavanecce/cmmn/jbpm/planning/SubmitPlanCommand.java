@@ -22,7 +22,7 @@ import org.kie.internal.command.Context;
 import org.kie.internal.runtime.manager.context.ProcessInstanceIdContext;
 import org.kie.internal.task.api.model.InternalTaskData;
 import org.pavanecce.cmmn.jbpm.lifecycle.ControllableItemInstanceLifecycle;
-import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementWithPlanningTable;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanningTableContainer;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.HumanTaskPlanItemInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.StagePlanItemInstance;
@@ -74,7 +74,7 @@ public class SubmitPlanCommand extends AbstractPlanningCommand<Void> {
 			}
 		}
 		if (resume) {
-			PlanElementWithPlanningTable p = ci.findPlanElementWithPlanningTable(workItemId);
+			PlanningTableContainer p = ci.findPlanElementWithPlanningTable(workItemId);
 			NodeInstanceContainer nic=null;
 			if(p instanceof HumanTaskPlanItemInstance){
 				 nic = ((HumanTaskPlanItemInstance) p).getNodeInstanceContainer();

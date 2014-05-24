@@ -16,6 +16,6 @@ public interface SubscriptionManager {
 
 	CaseSubscriptionInfo<?> getCaseSubscriptionInfoFor(Object housePlan, ObjectPersistence p);
 
-	public void flush(ObjectPersistence p);
+	void commitSubscriptions(ObjectPersistence p);
 
 }

@@ -1,3 +1,4 @@
+BindingRef for input parameters to Cases - how long is that subscrciption valid?
 Discrepancies in XSD:
   - In the XSD, TimerEventListener.timerExpression is a fully fledged expression, but in the spec it is just string. Does the result of this expression still have to be a ISO-8601 compliant string, or could it be a date/duration/etc. ?
   - The XSD does not have AuthorizedRoleRefs for user events.
@@ -15,6 +16,7 @@ There is a bit of ambiguity in my head around the lifecycle of a Stage/CaseTask/
   - however, given a repetitionRule=true, does this mean we create a new instance which progresses normally through the lifecycle, depending on manual activation, either from the Enabled or the Active state,
       while the old instance remains in the Available state "under the covers" so to speak, to await the entryCriteria?
 
+If there are multiple instances of a PlanItem, and the exitCriterion occurs, do we exit all of the instances?
 When a Stage needs to be completed manually, which users should be allowed to do that? Same goes for suspend/resume/terminate/close etc.
 Can a UserEvent occur more than once?
 ApplicabilityRules: AND or OR?

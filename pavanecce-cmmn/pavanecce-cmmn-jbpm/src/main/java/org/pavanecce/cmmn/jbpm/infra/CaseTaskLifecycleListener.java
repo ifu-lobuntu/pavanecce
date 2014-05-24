@@ -126,7 +126,7 @@ public class CaseTaskLifecycleListener extends ExternalTaskEventListener {
 			} else {
 				ControllableItemInstanceLifecycle<?> node = ci.findNodeForWorkItem(task.getTaskData().getWorkItemId());
 				if (node instanceof StagePlanItemInstance && !((StagePlanItemInstance) node).canComplete()) {
-					throw new IllegalStateException("Task " + task + " represents Stage Instance " + node.getItemName() + "[" + ci.getId() + "] which cannot be completed yet");
+					throw new IllegalStateException("Task " + task + " represents Stage Instance " + node.getItem().getEffectiveName() + "[" + ci.getId() + "] which cannot be completed yet");
 				}
 			}
 		}

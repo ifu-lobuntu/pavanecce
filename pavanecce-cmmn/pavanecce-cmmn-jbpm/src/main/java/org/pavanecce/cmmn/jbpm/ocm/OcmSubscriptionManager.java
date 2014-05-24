@@ -94,13 +94,13 @@ public class OcmSubscriptionManager extends AbstractPersistentSubscriptionManage
 			}
 			fireUpdateEvents();
 			this.updatedNodes.set(null);
-			flush(getPersistence());
+			commitSubscriptions(getPersistence());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void flush(ObjectPersistence p ) {
+	public void commitSubscriptions(ObjectPersistence p ) {
 		Map<CaseSubscriptionKey, CaseSubscriptionInfo<?>> cachedSubscriptions = getCachedSubscriptions(getPersistence().getDelegate());
 		if (cachedSubscriptions.size() > 0) {
 			Collection<CaseSubscriptionInfo<?>> values = cachedSubscriptions.values();

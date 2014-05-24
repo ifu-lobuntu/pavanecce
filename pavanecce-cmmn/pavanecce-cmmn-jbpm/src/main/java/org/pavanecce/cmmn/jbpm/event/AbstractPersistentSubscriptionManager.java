@@ -31,7 +31,8 @@ import org.pavanecce.common.ObjectPersistence;
 public abstract class AbstractPersistentSubscriptionManager<T extends CaseSubscriptionInfo<X>, X extends PersistedCaseFileItemSubscriptionInfo> implements SubscriptionManager {
 
 	private boolean cascadeSubscription = false;
-	private static Map<Object,Map<CaseSubscriptionKey, CaseSubscriptionInfo<?>>> cachedSubscriptions = new HashMap<Object, Map<CaseSubscriptionKey, CaseSubscriptionInfo<?>>>();
+	private static Map<Object, Map<CaseSubscriptionKey, CaseSubscriptionInfo<?>>> cachedSubscriptions = new HashMap<Object, Map<CaseSubscriptionKey, CaseSubscriptionInfo<?>>>();
+	private static ThreadLocal<Set<CaseFileItemEventWrapper>> eventQueue=new ThreadLocal<Set<CaseFileItemEventWrapper>>();
 
 	// private ThreadLocal<Map<String, X>> cachedItemSubscriptions = new ThreadLocal<Map<String, X>>();
 
@@ -63,7 +64,7 @@ public abstract class AbstractPersistentSubscriptionManager<T extends CaseSubscr
 	protected Map<CaseSubscriptionKey, CaseSubscriptionInfo<?>> getCachedSubscriptions(Object p) {
 		Map<CaseSubscriptionKey, CaseSubscriptionInfo<?>> map = cachedSubscriptions.get(p);
 		if (map == null) {
-			cachedSubscriptions.put(p, map=new HashMap<CaseSubscriptionKey,CaseSubscriptionInfo<?>>());
+			cachedSubscriptions.put(p, map = new HashMap<CaseSubscriptionKey, CaseSubscriptionInfo<?>>());
 		}
 		return map;
 	}
@@ -74,7 +75,6 @@ public abstract class AbstractPersistentSubscriptionManager<T extends CaseSubscr
 				x.deactivate();
 			}
 		}
-
 	}
 
 	private void subscribeToUnknownNumberOfObjects(CaseInstance process, Collection<OnPartInstanceSubscription> subs, Object target, ObjectPersistence em) {
@@ -88,8 +88,6 @@ public abstract class AbstractPersistentSubscriptionManager<T extends CaseSubscr
 		}
 	}
 
-
-
 	protected static void fireEvent(CaseFileItemSubscriptionInfo is, Object parentObject, Object value) {
 		CaseFileItemEvent event = new CaseFileItemEvent(is.getItemName(), is.getTransition(), parentObject, value);
 		if (is instanceof OnPartInstanceSubscription) {
@@ -97,41 +95,64 @@ public abstract class AbstractPersistentSubscriptionManager<T extends CaseSubscr
 			InternalKnowledgeRuntime eventManager = CaseInstanceFactory.getEventManager(opis.getCaseKey());
 			CaseInstance ci = (CaseInstance) eventManager.getProcessInstance(opis.getProcessInstanceId());
 			if (opis.meetsBindingRefinementCriteria(value, ci)) {
-				fireEvent(ci.getCase().getCaseKey(), ci.getId(), event);
+				queueEvent(ci.getCase().getCaseKey(), ci.getId(), event);
 			}
 		} else if (is instanceof PersistedCaseFileItemSubscriptionInfo) {
 			PersistedCaseFileItemSubscriptionInfo pcfis = (PersistedCaseFileItemSubscriptionInfo) is;
-			fireEvent(pcfis.getCaseKey(), pcfis.getProcessInstanceId(), event);
+			queueEvent(pcfis.getCaseKey(), pcfis.getProcessInstanceId(), event);
 		}
 	}
+
 	protected KieSession getKieSession(Task ti) {
 		return null;
-//		return getManager(ti).getRuntimeEngine(ProcessInstanceIdContext.get(ti.getTaskData().getProcessInstanceId())).getKieSession();
+		// return
+		// getManager(ti).getRuntimeEngine(ProcessInstanceIdContext.get(ti.getTaskData().getProcessInstanceId())).getKieSession();
 	}
 
-	protected static void fireEvent(String caseKey, long processId, CaseFileItemEvent caseFileItemEvent) {
-		//TODO use deploymentId here
-		InternalKnowledgeRuntime eventManager = CaseInstanceFactory.getEventManager(caseKey);
-		String eventType = OnPart.getType(caseFileItemEvent.getCaseFileItemName(), caseFileItemEvent.getTransition());
-		PersistenceContextManager pcm = (PersistenceContextManager) eventManager.getEnvironment().get(EnvironmentName.PERSISTENCE_CONTEXT_MANAGER);
-		pcm.beginCommandScopedEntityManager();
-		PersistenceContext pc = pcm.getCommandScopedPersistenceContext();
-		pc.joinTransaction();
-		try {
-			// mmm.... desperate measures
-			Method m = JpaPersistenceContextManager.class.getDeclaredMethod("getInternalCommandScopedEntityManager");
-			m.setAccessible(true);
-			EntityManager em = (EntityManager) m.invoke(pcm);
-			em.joinTransaction();
-			eventManager.signalEvent(eventType, caseFileItemEvent, processId);
-			em.flush();
-		} catch (Exception e) {
-			e.printStackTrace();
+	protected static void queueEvent(String caseKey, long processId, CaseFileItemEvent caseFileItemEvent) {
+		// TODO use deploymentId here
+		Set<CaseFileItemEventWrapper> set = getEventQueue();
+		set.add(new CaseFileItemEventWrapper(caseFileItemEvent, caseKey, processId));
+	}
+
+	private static Set<CaseFileItemEventWrapper> getEventQueue() {
+		Set<CaseFileItemEventWrapper> set = eventQueue.get();
+		if (set == null) {
+			eventQueue.set(set = new HashSet<CaseFileItemEventWrapper>());
 		}
-		pcm.endCommandScopedEntityManager();
+		return set;
 	}
 
-
+	public static boolean dispatchEventQueue() {
+		Set<CaseFileItemEventWrapper> eq = getEventQueue();
+		eventQueue.set(new HashSet<CaseFileItemEventWrapper>());
+		if (eq.size() > 0) {
+			try {
+				// mmm.... desperate measures
+				Method m = JpaPersistenceContextManager.class.getDeclaredMethod("getInternalCommandScopedEntityManager");
+				m.setAccessible(true);
+				for (CaseFileItemEventWrapper w : eq) {
+					InternalKnowledgeRuntime eventManager = CaseInstanceFactory.getEventManager(w.getCaseKey());
+					PersistenceContextManager pcm = (PersistenceContextManager) eventManager.getEnvironment().get(EnvironmentName.PERSISTENCE_CONTEXT_MANAGER);
+					EntityManager em = (EntityManager) m.invoke(pcm);
+					em.joinTransaction();
+					pcm.beginCommandScopedEntityManager();
+					PersistenceContext pc = pcm.getCommandScopedPersistenceContext();
+					pc.joinTransaction();
+					CaseFileItemEvent event = w.getEvent();
+					String eventType = OnPart.getType(event.getCaseFileItemName(), event.getTransition());
+					eventManager.signalEvent(eventType, event, w.getProcessInstanceId());
+					em.flush();
+					pcm.endCommandScopedEntityManager();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return true;
+		}else{
+			return false;
+		}
+	}
 
 	private void subscribeToSingleObject(CaseInstance caseInstance, Collection<OnPartInstanceSubscription> subs, Object target, ObjectPersistence em) {
 		T info = findOrCreateCaseSubscriptionInfo(caseInstance, target, em);

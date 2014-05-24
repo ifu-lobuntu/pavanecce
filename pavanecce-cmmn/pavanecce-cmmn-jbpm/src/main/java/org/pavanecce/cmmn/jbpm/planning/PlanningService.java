@@ -9,6 +9,7 @@ import org.jbpm.shared.services.api.JbpmServicesPersistenceManager;
 import org.kie.api.runtime.manager.RuntimeManager;
 import org.kie.internal.command.Context;
 import org.kie.internal.task.api.InternalTaskService;
+import org.pavanecce.cmmn.jbpm.ApplicableDiscretionaryItem;
 
 public class PlanningService {
 	@Inject

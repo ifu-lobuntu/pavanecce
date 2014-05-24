@@ -6,13 +6,13 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.drools.core.spi.ProcessContext;
 import org.pavanecce.cmmn.jbpm.event.CaseFileItemSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItem;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemOnPart;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
 import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.ExpressionUtil;
 import org.pavanecce.cmmn.jbpm.ocm.AbstractCaseFileItemSubscriptionInfo;
 
 public class OnPartInstanceSubscription extends AbstractCaseFileItemSubscriptionInfo implements CaseFileItemSubscriptionInfo {
@@ -55,16 +55,15 @@ public class OnPartInstanceSubscription extends AbstractCaseFileItemSubscription
 						// object
 		}
 		for (CaseParameter caseParameter : subscribingParameters2) {
-			if (caseParameter.getBindingRefinementEvaluator() == null) {
+			if (caseParameter.getBindingRefinement() == null || !caseParameter.getBindingRefinement().isValid()) {
 				return true;
 			} else {
-				Object val = readBindingRefinement(caseParameter, caseInstance);
+				Object val = ExpressionUtil.readFromBindingRefinement(caseParameter, caseInstance,null);
 				if (caseParameter.getBoundVariable().isCollection()) {
 					if (val instanceof Collection && ((Collection<?>) val).contains(o)) {
 						return true;
 					}
 					if (val != null && val.equals(o)) {
-
 						return true;
 					}
 				}
@@ -73,21 +72,8 @@ public class OnPartInstanceSubscription extends AbstractCaseFileItemSubscription
 		return false;
 	}
 
-	protected Object readBindingRefinement(CaseParameter caseParameter, CaseInstance caseInstance) {
-		try {
-			ProcessContext processContext = new ProcessContext(caseInstance.getKnowledgeRuntime());
-			processContext.setNodeInstance(caseInstance.getFirstNodeInstance(source.getId()));
-			processContext.setProcessInstance(caseInstance);
-			Object val = caseParameter.getBindingRefinementEvaluator().evaluate(processContext);
-			return val;
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
 	public void addParameter(CaseParameter parameter) {
 		this.subscribingParameters.add(parameter);
-
 	}
 
 	public CaseFileItem getVariable() {
@@ -129,7 +115,5 @@ public class OnPartInstanceSubscription extends AbstractCaseFileItemSubscription
 	public long getProcessInstanceId() {
 		return this.processInstanceId;
 	}
-
-
 
 }

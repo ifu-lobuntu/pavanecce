@@ -27,7 +27,6 @@ import org.drools.core.audit.event.LogEvent;
 import org.drools.core.audit.event.RuleFlowNodeLogEvent;
 import org.drools.core.marshalling.impl.ClassObjectMarshallingStrategyAcceptor;
 import org.drools.core.marshalling.impl.SerializablePlaceholderResolverStrategy;
-import org.drools.persistence.jpa.marshaller.JPAPlaceholderResolverStrategy;
 import org.jbpm.marshalling.impl.ProcessInstanceResolverStrategy;
 import org.jbpm.marshalling.impl.ProcessMarshallerRegistry;
 import org.jbpm.process.audit.NodeInstanceLog;
@@ -65,6 +64,7 @@ import org.pavanecce.cmmn.jbpm.event.SubscriptionManager;
 import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemDefinitionType;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemOnPart;
+import org.pavanecce.cmmn.jbpm.flow.CaseFileItemStartTrigger;
 import org.pavanecce.cmmn.jbpm.flow.CaseTaskPlanItem;
 import org.pavanecce.cmmn.jbpm.flow.DefaultJoin;
 import org.pavanecce.cmmn.jbpm.flow.DefaultSplit;
@@ -74,6 +74,7 @@ import org.pavanecce.cmmn.jbpm.flow.MilestonePlanItem;
 import org.pavanecce.cmmn.jbpm.flow.OnPart;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemInstanceFactoryNode;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemOnPart;
+import org.pavanecce.cmmn.jbpm.flow.PlanItemStartTrigger;
 import org.pavanecce.cmmn.jbpm.flow.Sentry;
 import org.pavanecce.cmmn.jbpm.flow.StagePlanItem;
 import org.pavanecce.cmmn.jbpm.flow.TimerEventPlanItem;
@@ -86,8 +87,9 @@ import org.pavanecce.cmmn.jbpm.infra.PlanItemBuilder;
 import org.pavanecce.cmmn.jbpm.infra.SentryBuilder;
 import org.pavanecce.cmmn.jbpm.jpa.CollectionPlaceHolderResolveStrategy;
 import org.pavanecce.cmmn.jbpm.jpa.HibernateSubscriptionManager;
-import org.pavanecce.cmmn.jbpm.lifecycle.ItemInstanceLifecycle;
+import org.pavanecce.cmmn.jbpm.jpa.JpaPlaceHolderResolverStrategy;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.DefaultJoinInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.DefaultSplitInstance;
@@ -229,7 +231,7 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 		for (NodeInstance ni : ci.getNodeInstances()) {
 			if (ni instanceof PlanItemInstanceFactoryNodeInstance) {
 				PlanItemInstanceFactoryNode node = (PlanItemInstanceFactoryNode) ni.getNode();
-				if (node.getPlanItem().getName().equals(planItemName)) {
+				if (node.getItemToInstantiate().getName().equals(planItemName)) {
 					PlanItemInstanceFactoryNodeInstance<?> piil = (PlanItemInstanceFactoryNodeInstance<?>) ni;
 					if (piil.isPlanItemInstanceStillRequired() && s == PlanElementState.AVAILABLE) {
 						sr.count++;
@@ -245,11 +247,11 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 		}
 		if (sr.count == 0) {
 			for (NodeInstance ni : ci.getNodeInstances()) {
-				if (ni instanceof ItemInstanceLifecycle && ni.getNodeName().equals(planItemName)) {
-					if (((ItemInstanceLifecycle<?>) ni).getPlanElementState() == s) {
+				if (ni instanceof PlanItemInstanceLifecycle && ni.getNodeName().equals(planItemName)) {
+					if (((PlanItemInstanceLifecycle<?>) ni).getPlanElementState() == s) {
 						sr.count++;
 					} else {
-						sr.foundState = ((ItemInstanceLifecycle<?>) ni).getPlanElementState().name();
+						sr.foundState = ((PlanItemInstanceLifecycle<?>) ni).getPlanElementState().name();
 					}
 				} else if (ni instanceof StagePlanItemInstance) {
 					countItemInState(planItemName, s, (StagePlanItemInstance) ni, sr);
@@ -309,7 +311,25 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 		try {
 			if (persistence == null) {
 				if (isJpa) {
-					persistence = new JpaObjectPersistence(getEmf());
+					persistence = new JpaObjectPersistence(getEmf()) {
+						@Override
+						public void commit() {
+							try {
+								startOrJoinTransaction();
+								getEntityManager().flush();
+								while(AbstractPersistentSubscriptionManager.dispatchEventQueue()){
+									getEntityManager().flush();
+								}
+								if (startedTransaction) {
+									getTransaction().commit();
+									this.startedTransaction = false;
+								}
+								close();
+							} catch (Exception e) {
+								throw convertException(e);
+							}
+						}
+					};
 				} else {
 					OcmObjectPersistence ocmObjectPersistence = new OcmCasePersistence(getOcmFactory());
 					persistence = ocmObjectPersistence;
@@ -405,7 +425,10 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 		if (subscriptionManager != null) {
 			env.set(SubscriptionManager.ENV_NAME, subscriptionManager);
 		}
-		if (!isJpa) {
+		if (isJpa) {
+			env.set(JpaObjectPersistence.ENV_NAME, getPersistence());
+
+		} else {
 			env.set(OcmFactory.OBJECT_CONTENT_MANAGER_FACTORY, getOcmFactory());
 		}
 		NodeInstanceFactoryRegistry nodeInstanceFactoryRegistry = NodeInstanceFactoryRegistry.getInstance(env);
@@ -414,10 +437,12 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 		nodeInstanceFactoryRegistry.register(PlanItemInstanceFactoryNode.class, new ReuseNodeFactory(PlanItemInstanceFactoryNodeInstance.class));
 		nodeInstanceFactoryRegistry.register(OnPart.class, new ReuseNodeFactory(OnPartInstance.class));
 		nodeInstanceFactoryRegistry.register(CaseFileItemOnPart.class, new ReuseNodeFactory(OnPartInstance.class));
+		nodeInstanceFactoryRegistry.register(CaseFileItemStartTrigger.class, new ReuseNodeFactory(OnPartInstance.class));
+		nodeInstanceFactoryRegistry.register(PlanItemStartTrigger.class, new ReuseNodeFactory(OnPartInstance.class));
 		nodeInstanceFactoryRegistry.register(PlanItemOnPart.class, new ReuseNodeFactory(OnPartInstance.class));
 		nodeInstanceFactoryRegistry.register(StagePlanItem.class, new DelegatingNodeFactory());
 		nodeInstanceFactoryRegistry.register(DefaultSplit.class, new CreateNewNodeFactory(DefaultSplitInstance.class));
-		nodeInstanceFactoryRegistry.register(HumanTaskPlanItem.class,new DelegatingNodeFactory());
+		nodeInstanceFactoryRegistry.register(HumanTaskPlanItem.class, new DelegatingNodeFactory());
 		nodeInstanceFactoryRegistry.register(CaseTaskPlanItem.class, new DelegatingNodeFactory());
 		nodeInstanceFactoryRegistry.register(DiscretionaryItem.class, new DelegatingNodeFactory());
 		nodeInstanceFactoryRegistry.register(UserEventPlanItem.class, new DelegatingNodeFactory());
@@ -471,10 +496,10 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 
 	protected ObjectMarshallingStrategy[] getPlaceholdStrategies(Environment env) {
 		if (isJpa) {
-			return new ObjectMarshallingStrategy[] { new ProcessInstanceResolverStrategy(), new JPAPlaceholderResolverStrategy(env), new CollectionPlaceHolderResolveStrategy(env),
+			return new ObjectMarshallingStrategy[] { new ProcessInstanceResolverStrategy(), new JpaPlaceHolderResolverStrategy(env), new CollectionPlaceHolderResolveStrategy(env),
 					new SerializablePlaceholderResolverStrategy(ClassObjectMarshallingStrategyAcceptor.DEFAULT) };
 		} else {
-			return new ObjectMarshallingStrategy[] { new ProcessInstanceResolverStrategy(), new OcmPlaceHolderResolveStrategy(env), new JPAPlaceholderResolverStrategy(env),
+			return new ObjectMarshallingStrategy[] { new ProcessInstanceResolverStrategy(), new OcmPlaceHolderResolveStrategy(env), new JpaPlaceHolderResolverStrategy(env),
 					new CollectionPlaceHolderResolveStrategy(env), new OcmCollectionPlaceHolderResolveStrategy(env),
 					new SerializablePlaceholderResolverStrategy(ClassObjectMarshallingStrategyAcceptor.DEFAULT) };
 

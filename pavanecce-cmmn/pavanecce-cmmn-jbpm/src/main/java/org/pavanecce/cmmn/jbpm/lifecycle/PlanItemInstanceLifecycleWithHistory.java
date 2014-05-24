@@ -8,17 +8,13 @@ import org.pavanecce.cmmn.jbpm.lifecycle.impl.PlanItemInstanceFactoryNodeInstanc
  * and parentSuspend to manipulate the history state. An obvious sub-interface is the
  * {@link ControllableItemInstanceLifecycle}, but the {@link PlanItemInstanceFactoryNodeInstance} is also required to
  * store the history state
- * 
- * @author ampie
- * 
- * @param <T>
  */
-public interface ItemInstanceLifecycleWithHistory<T extends PlanItemDefinition> extends ItemInstanceLifecycle<T> {
+public interface PlanItemInstanceLifecycleWithHistory<T extends PlanItemDefinition> extends PlanItemInstanceLifecycle<T> {
 	/**
 	 * Exit happens from within the process, when the parent stage resumes. If there is a task associated with this
 	 * element, this task needs to be resumed too, triggering the resume
 	 */
-	
+
 	void parentSuspend();
 
 	/**

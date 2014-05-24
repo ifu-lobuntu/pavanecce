@@ -10,11 +10,11 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import javax.transaction.Synchronization;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -30,7 +30,6 @@ import org.hibernate.event.spi.PostInsertEvent;
 import org.hibernate.event.spi.PostInsertEventListener;
 import org.hibernate.type.OneToOneType;
 import org.kie.api.runtime.Environment;
-import org.kie.api.runtime.EnvironmentName;
 import org.pavanecce.cmmn.jbpm.event.AbstractPersistentSubscriptionManager;
 import org.pavanecce.cmmn.jbpm.event.CaseFileItemSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.event.CaseSubscriptionInfo;
@@ -44,16 +43,14 @@ import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 import org.pavanecce.common.ObjectPersistence;
 import org.pavanecce.common.jpa.JpaObjectPersistence;
 
-public class HibernateSubscriptionManager extends AbstractPersistentSubscriptionManager<JpaCaseSubscriptionInfo, JpaCaseFileItemSubscriptionInfo> implements SubscriptionManager, PostInsertEventListener,
-		PostDeleteEventListener, FlushEntityEventListener, FlushEventListener {
+public class HibernateSubscriptionManager extends AbstractPersistentSubscriptionManager<JpaCaseSubscriptionInfo, JpaCaseFileItemSubscriptionInfo> implements SubscriptionManager,
+		PostInsertEventListener, PostDeleteEventListener, FlushEntityEventListener, FlushEventListener {
 
 	private static final long serialVersionUID = -9103789384930931973L;
 
 	public JpaObjectPersistence getObjectPersistence(CaseInstance process) {
 		Environment env = process.getKnowledgeRuntime().getEnvironment();
-		EntityManagerFactory emf = (EntityManagerFactory) env.get(EnvironmentName.ENTITY_MANAGER_FACTORY);
-		JpaObjectPersistence p = new JpaObjectPersistence(emf);
-		return p;
+		return (JpaObjectPersistence) env.get(JpaObjectPersistence.ENV_NAME);
 	}
 
 	@Override
@@ -220,6 +217,18 @@ public class HibernateSubscriptionManager extends AbstractPersistentSubscription
 		flush(delegate);
 	}
 
+	public static class TransactionBasedFlusher implements Synchronization {
+
+		@Override
+		public void beforeCompletion() {
+		}
+
+		@Override
+		public void afterCompletion(int status) {
+		}
+
+	}
+
 	protected void flush(Session delegate) {
 		Map<CaseSubscriptionKey, CaseSubscriptionInfo<?>> map = getCachedSubscriptions(delegate);
 		Collection<CaseSubscriptionInfo<?>> values = map.values();
@@ -232,7 +241,7 @@ public class HibernateSubscriptionManager extends AbstractPersistentSubscription
 				}
 				delegate.update(t);
 			}
-			map.clear();
+			map.clear();// TODO only clear when we CLOSE the session
 			delegate.flush();
 		}
 	}
@@ -271,7 +280,7 @@ public class HibernateSubscriptionManager extends AbstractPersistentSubscription
 	}
 
 	@Override
-	public void flush(ObjectPersistence p) {
+	public void commitSubscriptions(ObjectPersistence p) {
 		flush((Session) p.getDelegate());
 	}
 

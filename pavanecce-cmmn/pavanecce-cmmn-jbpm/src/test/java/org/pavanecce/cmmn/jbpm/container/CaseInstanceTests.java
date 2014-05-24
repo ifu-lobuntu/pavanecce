@@ -1,9 +1,18 @@
 package org.pavanecce.cmmn.jbpm.container;
 
+import java.util.Map;
+
+import org.jbpm.services.task.utils.ContentMarshallerHelper;
 import org.junit.Test;
+import org.kie.api.task.model.Content;
+import org.kie.api.task.model.Task;
+import org.kie.internal.task.api.ContentMarshallerContext;
+import org.pavanecce.cmmn.jbpm.flow.DefaultJoin;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
-import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceContainerLifecycle;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceContainer;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
+
+import test.WallPlan;
 
 public class CaseInstanceTests extends AbstractPlanItemInstanceContainerLifecycleTests {
 
@@ -24,7 +33,7 @@ public class CaseInstanceTests extends AbstractPlanItemInstanceContainerLifecycl
 		getRuntimeEngine().getKieSession().signalEvent("EndUserEvent", new Object(), caseInstance.getId());
 		// *******THEN
 		getPersistence().start();
-		PlanItemInstanceContainerLifecycle piic = getPlanItemInstanceContainer();
+		PlanItemInstanceContainer piic = getPlanItemInstanceContainer();
 		assertEquals(PlanElementState.TERMINATED, piic.getPlanElementState());
 		printState(" ", piic);
 		getPersistence().commit();
@@ -50,12 +59,29 @@ public class CaseInstanceTests extends AbstractPlanItemInstanceContainerLifecycl
 		// assertPlanItemInState(caseInstance.getId(), "TheCaseTaskPlanItem", PlanElementState.ACTIVE);
 
 	}
+	protected void testCloseAndOutput(PlanItemInstanceContainer piic) {
+		// and close it
+		if (piic instanceof CaseInstance) {
+			getPersistence().start();
+			CaseInstance ci = reloadCaseInstance();
+			ci.signalEvent(DefaultJoin.CLOSE, new Object());
+			assertEquals(PlanElementState.CLOSED, ci.getPlanElementState());
+			assertNull(getRuntimeEngine().getKieSession().getProcessInstance(caseInstance.getId()));
+			Task task = getTaskService().getTaskByWorkItemId(caseInstance.getId());
+			Content output = getTaskService().getContentById(task.getTaskData().getOutputContentId());
+			ContentMarshallerContext mc = getTaskService().getMarshallerContext(task);
+			Map<String,Object> result=(Map<String, Object>) ContentMarshallerHelper.unmarshall(output.getContent(), mc.getEnvironment(), mc.getClassloader());
+			assertTrue(result.get("theResultingWallPlan") instanceof WallPlan);
+			getPersistence().commit();
+		}
+		// *****THEN
+	}
 
 	@Override
 	protected void ensurePlanItemContainerIsStarted() {
 
 	}
-
+	
 	@Override
 	public String getCaseName() {
 		return "CaseInstanceTests";

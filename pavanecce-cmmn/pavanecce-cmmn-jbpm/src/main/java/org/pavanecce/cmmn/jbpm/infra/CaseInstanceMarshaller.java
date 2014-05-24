@@ -26,9 +26,9 @@ import org.kie.api.runtime.process.NodeInstanceContainer;
 import org.kie.api.runtime.process.ProcessInstance;
 import org.kie.api.runtime.process.WorkflowProcessInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.ControllableItemInstanceLifecycle;
-import org.pavanecce.cmmn.jbpm.lifecycle.ItemInstanceLifecycleWithHistory;
 import org.pavanecce.cmmn.jbpm.lifecycle.OccurrablePlanItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceLifecycleWithHistory;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseTaskPlanItemInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.DefaultJoinInstance;
@@ -81,7 +81,7 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 		return read;
 	}
 
-	private void writePlanItemStates(ItemInstanceLifecycleWithHistory<?> pi, ObjectOutputStream stream) throws IOException {
+	private void writePlanItemStates(PlanItemInstanceLifecycleWithHistory<?> pi, ObjectOutputStream stream) throws IOException {
 		stream.writeInt(pi.getPlanElementState().ordinal());
 		stream.writeInt(pi.getLastBusyState().ordinal());
 		if (pi instanceof ControllableItemInstanceLifecycle && pi.getPlanElementState()!=PlanElementState.INITIAL) {
@@ -89,7 +89,7 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 		}
 	}
 
-	private void readPlanItemStates(ItemInstanceLifecycleWithHistory<?> pi, ObjectInputStream stream) throws IOException {
+	private void readPlanItemStates(PlanItemInstanceLifecycleWithHistory<?> pi, ObjectInputStream stream) throws IOException {
 		pi.setPlanElementState(PlanElementState.values()[stream.readInt()]);
 		pi.setLastBusyState(PlanElementState.values()[stream.readInt()]);
 		if (pi instanceof ControllableItemInstanceLifecycle && pi.getPlanElementState()!=PlanElementState.INITIAL) {

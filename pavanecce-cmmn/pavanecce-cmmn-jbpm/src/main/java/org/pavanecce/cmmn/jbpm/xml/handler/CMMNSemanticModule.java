@@ -25,8 +25,10 @@ public class CMMNSemanticModule extends DefaultSemanticModule{
 		super.addHandler("userEvent", new UserEventHandler());
 		super.addHandler("timerEvent", new TimerEventHandler());
 		super.addHandler("planItemOnPart", new PlanItemOnPartHandler());
+		super.addHandler("planItemStartTrigger", new PlanItemOnPartHandler());
 		super.addHandler("milestone", new MilestoneHandler());
 		super.addHandler("caseFileItemOnPart", new CaseFileItemOnPartHandler());
+		super.addHandler("caseFileItemStartTrigger", new CaseFileItemOnPartHandler());
 		super.addHandler("stage", new StageHandler());
 		super.addHandler("defaultControl", new PlanItemControlHandler());
 		super.addHandler("itemControl", new PlanItemControlHandler());

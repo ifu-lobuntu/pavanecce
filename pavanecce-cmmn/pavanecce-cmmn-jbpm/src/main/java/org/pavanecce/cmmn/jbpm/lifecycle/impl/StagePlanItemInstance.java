@@ -2,22 +2,29 @@ package org.pavanecce.cmmn.jbpm.lifecycle.impl;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
+import org.drools.core.process.instance.WorkItem;
 import org.jbpm.process.instance.ContextInstanceContainer;
 import org.jbpm.workflow.core.node.StartNode;
 import org.jbpm.workflow.instance.NodeInstanceContainer;
 import org.jbpm.workflow.instance.node.EventBasedNodeInstanceInterface;
 import org.jbpm.workflow.instance.node.EventNodeInstanceInterface;
 import org.kie.api.runtime.process.NodeInstance;
+import org.pavanecce.cmmn.jbpm.ApplicableDiscretionaryItem;
+import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemContainer;
 import org.pavanecce.cmmn.jbpm.flow.PlanningTable;
 import org.pavanecce.cmmn.jbpm.flow.Stage;
 import org.pavanecce.cmmn.jbpm.flow.TaskItemWithDefinition;
-import org.pavanecce.cmmn.jbpm.lifecycle.ItemInstanceLifecycle;
-import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceContainerLifecycle;
+import org.pavanecce.cmmn.jbpm.infra.OnPartInstanceSubscription;
+import org.pavanecce.cmmn.jbpm.lifecycle.ControllableItemInstanceLifecycle;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceContainer;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceLifecycle;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanningTableContainer;
 
-public class StagePlanItemInstance extends AbstractControllableItemInstance<Stage, TaskItemWithDefinition<Stage>> implements PlanItemInstanceContainerLifecycle, NodeInstanceContainer,
+public class StagePlanItemInstance extends AbstractControllableItemInstance<Stage, TaskItemWithDefinition<Stage>> implements PlanItemInstanceContainer, NodeInstanceContainer,
 		EventNodeInstanceInterface, EventBasedNodeInstanceInterface, ContextInstanceContainer {
 
 	private static final long serialVersionUID = 112341234123L;
@@ -42,40 +49,14 @@ public class StagePlanItemInstance extends AbstractControllableItemInstance<Stag
 	}
 
 	@Override
-	public Collection<ItemInstanceLifecycle<?>> getChildren() {
-		Set<ItemInstanceLifecycle<?>> result = new HashSet<ItemInstanceLifecycle<?>>();
+	public Collection<PlanItemInstanceLifecycle<?>> getChildren() {
+		Set<PlanItemInstanceLifecycle<?>> result = new HashSet<PlanItemInstanceLifecycle<?>>();
 		for (NodeInstance nodeInstance : getNodeInstances()) {
-			if (nodeInstance instanceof ItemInstanceLifecycle) {
-				result.add((ItemInstanceLifecycle<?>) nodeInstance);
+			if (nodeInstance instanceof PlanItemInstanceLifecycle) {
+				result.add((PlanItemInstanceLifecycle<?>) nodeInstance);
 			}
 		}
 		return result;
-	}
-
-	@Override
-	public boolean canComplete() {
-		return PlanItemInstanceUtil.canComplete(this);
-	}
-
-	@Override
-	public PlanItemContainer getPlanItemContainer() {
-		return getPlanItemDefinition();
-	}
-
-	@Override
-	public org.jbpm.workflow.instance.NodeInstance getFirstNodeInstance(long nodeId) {
-		Collection<NodeInstance> nodeInstances = getNodeInstances();
-		for (NodeInstance nodeInstance : nodeInstances) {
-			if (nodeInstance.getNodeId() == nodeId) {// ignore level
-				return (org.jbpm.workflow.instance.NodeInstance) nodeInstance;
-			}
-		}
-		return null;
-	}
-
-	@Override
-	public PlanningTable getPlanningTable() {
-		return getPlanItemDefinition().getPlanningTable();
 	}
 
 	@Override
@@ -83,4 +64,70 @@ public class StagePlanItemInstance extends AbstractControllableItemInstance<Stag
 		return getBusinessAdministrators();
 	}
 
+	/*** PlanningTableContainer implementation **/
+	@Override
+	public PlanItemInstanceContainer getPlanItemInstanceCreator() {
+		return this;
+	}
+
+	@Override
+	public ControllableItemInstanceLifecycle<?> ensurePlanItemCreated(String discretionaryItemId, WorkItem wi) {
+		return PlanningTableContainerUtil.ensurePlanItemCreated(this, discretionaryItemId, wi);
+	}
+
+	@Override
+	public void addApplicableItems(Map<String, ApplicableDiscretionaryItem> result, Set<String> usersRoles) {
+		PlanningTableContainerUtil.addApplicableItems(this, result, usersRoles);
+	}
+
+	@Override
+	public NodeInstance getPlanningContextNodeInstance() {
+		return this;
+	}
+
+	@Override
+	public WorkItem createPlannedItem(String tableItemId) {
+		return PlanningTableContainerUtil.createPlannedItem(this, tableItemId);
+	}
+
+	@Override
+	public PlanningTable getPlanningTable() {
+		return getItem().getDefinition().getPlanningTable();
+	}
+
+	/*** PlanItemInstanceContainer implementation ***/
+	@Override
+	public PlanItemContainer getPlanItemContainer() {
+		return getItem().getDefinition();
+	}
+
+	@Override
+	public void populateSubscriptionsActivatedByParameters(SubscriptionContext sc) {
+		PlanItemInstanceContainerUtil.populateSubscriptionsActivatedByParametersOfContainedTasks(this, sc);
+	}
+
+	@Override
+	public boolean canComplete() {
+		return PlanItemInstanceContainerUtil.canComplete(this);
+	}
+
+	@Override
+	public void addSubscribingCaseParameters(Set<CaseParameter> params) {
+		PlanItemInstanceContainerUtil.addSubscribingCaseParameters(params, this);
+	}
+
+	@Override
+	public void addCaseFileItemOnPartsForParameters(Collection<CaseParameter> items, Map<OnPartInstance, OnPartInstanceSubscription> onCaseFileItemParts) {
+		PlanItemInstanceContainerUtil.addCaseFileItemOnPartsForParameters(items, this, onCaseFileItemParts);
+	}
+
+	@Override
+	public ControllableItemInstanceLifecycle<?> findNodeForWorkItem(long id) {
+		return PlanItemInstanceContainerUtil.findNodeForWorkItem(this, id);
+	}
+
+	@Override
+	public PlanningTableContainer findPlanElementWithPlanningTable(long containerWorkItemId) {
+		return PlanItemInstanceContainerUtil.findPlanElementWithPlanningTable(this, containerWorkItemId);
+	}
 }

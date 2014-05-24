@@ -2,7 +2,7 @@ package org.pavanecce.cmmn.jbpm.container;
 
 import org.kie.api.runtime.process.NodeInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
-import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceContainerLifecycle;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceContainer;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.StagePlanItemInstance;
 
 public class StageAsContainerTests extends AbstractPlanItemInstanceContainerLifecycleTests {
@@ -21,7 +21,7 @@ public class StageAsContainerTests extends AbstractPlanItemInstanceContainerLife
 	}
 
 	@Override
-	protected PlanItemInstanceContainerLifecycle getPlanItemInstanceContainer() {
+	protected PlanItemInstanceContainer getPlanItemInstanceContainer() {
 		return getStagePlanItemInstance();
 	}
 

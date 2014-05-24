@@ -1,16 +1,23 @@
 package org.pavanecce.cmmn.jbpm.controllable;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import org.jbpm.services.task.utils.ContentMarshallerHelper;
 import org.junit.Test;
 import org.kie.api.runtime.process.NodeInstance;
+import org.kie.api.task.model.Content;
 import org.kie.api.task.model.Status;
+import org.kie.api.task.model.Task;
 import org.kie.api.task.model.TaskSummary;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseTaskPlanItemInstance;
 
+import test.ConstructionCase;
 import test.HousePlan;
 import test.WallPlan;
 
@@ -18,32 +25,37 @@ public class CaseTaskTest extends AbstractControllableLifecycleTests {
 	{
 		super.isJpa = true;
 	}
+
 	public CaseTaskTest() {
 		super(true, true, "org.jbpm.persistence.jpa");
 	}
+
 	public String getEventGeneratingTaskUser() {
 		return "ConstructionProjectManager";
 	}
+
 	@Override
 	protected String getBusinessAdministratorUser() {
 		return "ConstructionProjectManager";
 	}
+
 	@Override
 	protected String getCaseOwner() {
 		return "Spielman";
 	}
+
 	@Test
-	public void testParameterMappings() throws Exception{
+	public void testParameterMappings() throws Exception {
 		// *****GIVEN
 		givenThatTheTestCaseIsStarted();
 		// *****WHEN
 		triggerStartOfTask();
 		List<TaskSummary> list = getTaskService().getTasksAssignedAsPotentialOwner("ConstructionProjectManager", "en-UK");
 		assertEquals(2, list.size());
-		long subTaskId=-1;
+		long subTaskId = -1;
 		for (TaskSummary taskSummary : list) {
-			if(taskSummary.getName().equals("TheEventGeneratingTaskPlanItem")){
-				subTaskId=taskSummary.getId();
+			if (taskSummary.getName().equals("TheEventGeneratingTaskPlanItem")) {
+				subTaskId = taskSummary.getId();
 			}
 		}
 		getRuntimeEngine().getTaskService().start(subTaskId, "ConstructionProjectManager");
@@ -59,6 +71,7 @@ public class CaseTaskTest extends AbstractControllableLifecycleTests {
 		getPersistence().commit();
 		// *****THEN
 	}
+
 	@Override
 	public String[] getProcessFileNames() {
 		return new String[] { "test/controllable/CaseTaskTests.cmmn", "test/SubCase.cmmn" };
@@ -95,11 +108,39 @@ public class CaseTaskTest extends AbstractControllableLifecycleTests {
 	public void completeTask(long taskId) {
 		getPersistence().start();
 		long subProcessInstanceId = getSubProcessInstanceId(taskId);
-		getRuntimeEngine().getKieSession().signalEvent("TheUserEvent", new Object(), subProcessInstanceId);
+		// Lets mess around with the caseFile
+		ConstructionCase otherCase = new ConstructionCase();
+		HousePlan otherHousePlan = new HousePlan(otherCase);
+		Set<WallPlan> newWallPlans = new HashSet<WallPlan>();
+		newWallPlans.add(new WallPlan(otherHousePlan));
+		newWallPlans.add(new WallPlan(otherHousePlan));
+		newWallPlans.add(new WallPlan(otherHousePlan));
+		getPersistence().persist(otherCase);
 		CaseInstance sp = (CaseInstance) getRuntimeEngine().getKieSession().getProcessInstance(subProcessInstanceId);
+		sp.setVariable("wallPlans", newWallPlans);
+		getPersistence().commit();
+		// Now complete the Case
+		getPersistence().start();
+		getRuntimeEngine().getKieSession().signalEvent("TheUserEvent", new Object(), subProcessInstanceId);
+		getPersistence().commit();
+		getPersistence().start();
+		sp = (CaseInstance) getRuntimeEngine().getKieSession().getProcessInstance(subProcessInstanceId);
 		assertEquals(PlanElementState.COMPLETED, sp.getPlanElementState());
 		assertEquals(Status.Completed, getTaskService().getTaskByWorkItemId(sp.getWorkItemId()).getTaskData().getStatus());
 		getPersistence().commit();
+		// now look at the result - those new WallPlans must be added to the original housePlan due to the refinement
+		getPersistence().start();
+		this.housePlan = getPersistence().find(HousePlan.class, housePlan.getId());
+		assertTrue(this.housePlan.getWallPlans().containsAll(newWallPlans));
+		getPersistence().commit();
+
+		Task task = getTaskService().getTaskById(taskId);
+		Content outputContent = getTaskService().getContentById(task.getTaskData().getOutputContentId());
+		getPersistence().start();
+		Map<String, Object> outputAsMap = (Map<String, Object>) ContentMarshallerHelper.unmarshall(outputContent.getContent(), getTaskService().getMarshallerContext(task).getEnvironment());
+		Object taskOutput = outputAsMap.get("wallPlanTaskOutput");
+		getPersistence().commit();
+
 	}
 
 }

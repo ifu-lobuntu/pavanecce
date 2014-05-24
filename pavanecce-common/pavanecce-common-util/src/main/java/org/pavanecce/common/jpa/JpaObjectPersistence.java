@@ -4,17 +4,27 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.FlushModeType;
 import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
 import org.pavanecce.common.ObjectPersistence;
 
+/**
+ * This is a simple wrapper around JPA and JTA to allow demarcation of entityManagers and Transactions. It stores the
+ * entityManager in a static ThreadLocal variable. This is needed to ensure that all object reads from different cases
+ * can be read from the same entityManager. The command scoped entityManager is perfect for jBPM entities, but for
+ * user-provided entities the narrow scope becomes a problem<BR>
+ * NOT READY for a CMT environment (yet),
+ * 
+ */
 public class JpaObjectPersistence implements ObjectPersistence {
+	public static final String ENV_NAME = JpaObjectPersistence.class.getName() + "VAR";
 	private UserTransaction transaction;
-	EntityManager em;
+	static ThreadLocal<EntityManager> em = new ThreadLocal<EntityManager>();
 	EntityManagerFactory emf;
-	boolean startedTransaction = false;
+	protected boolean startedTransaction = false;
 
 	public JpaObjectPersistence(EntityManagerFactory emf2) {
 		this.emf = emf2;
@@ -28,9 +38,9 @@ public class JpaObjectPersistence implements ObjectPersistence {
 	@Override
 	public void start() {
 		try {
-			if (em != null && em.isOpen()) {
-				em.close();
-				em = null;
+			if (em.get() != null && em.get().isOpen()) {
+				em.get().close();
+				em.set(null);
 			}
 			startOrJoinTransaction();
 		} catch (Exception e) {
@@ -47,6 +57,7 @@ public class JpaObjectPersistence implements ObjectPersistence {
 				getTransaction().commit();
 				this.startedTransaction = false;
 			}
+			close();
 		} catch (Exception e) {
 			throw convertException(e);
 		}
@@ -100,11 +111,12 @@ public class JpaObjectPersistence implements ObjectPersistence {
 	}
 
 	public EntityManager getEntityManager() {
-		if (em == null || !em.isOpen()) {
-			em = emf.createEntityManager();
-			em.joinTransaction();
+		if (em.get() == null || !em.get().isOpen()) {
+			em.set(emf.createEntityManager());
+			em.get().joinTransaction();
+			em.get().setFlushMode(FlushModeType.COMMIT);
 		}
-		return em;
+		return em.get();
 	}
 
 	@Override
@@ -114,8 +126,8 @@ public class JpaObjectPersistence implements ObjectPersistence {
 
 	@Override
 	public void close() {
-		if (em != null && em.isOpen()) {
-			em.close();
+		if (em.get() != null && em.get().isOpen()) {
+			em.get().close();
 		}
 	}
 

@@ -18,5 +18,4 @@ public interface PlanElementLifecycleWithTask extends PlanElementLifecycle {
 
 	long getWorkItemId();
 
-	String getHumanTaskName();
 }

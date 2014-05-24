@@ -1,6 +1,8 @@
 package org.pavanecce.cmmn.jbpm.flow;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.drools.core.process.core.ParameterDefinition;
@@ -9,6 +11,8 @@ import org.drools.core.process.core.impl.ParameterDefinitionImpl;
 import org.drools.core.process.core.impl.WorkImpl;
 import org.jbpm.services.task.wih.util.PeopleAssignmentHelper;
 
+import com.sun.org.apache.xml.internal.serializer.ElemDesc;
+
 public class DiscretionaryItem<T extends PlanItemDefinition> extends TableItem implements TaskItemWithDefinition<T> {
 	private static final long serialVersionUID = 2371336993789669482L;
 	private T definition;
@@ -16,6 +20,24 @@ public class DiscretionaryItem<T extends PlanItemDefinition> extends TableItem i
 	private PlanItemControl itemControl;
 	private long id;
 	private Work work;
+	private Map<String, Sentry> entryCriteria = new HashMap<String, Sentry>();
+	private Map<String, Sentry> exitCriteria = new HashMap<String, Sentry>();
+
+	public Map<String, Sentry> getEntryCriteria() {
+		return Collections.unmodifiableMap(entryCriteria);
+	}
+
+	public Map<String, Sentry> getExitCriteria() {
+		return Collections.unmodifiableMap(exitCriteria);
+	}
+
+	public void putEntryCriterion(String s, Sentry c) {
+		entryCriteria.put(s, c);
+	}
+
+	public void putExitCriterion(String s, Sentry c) {
+		exitCriteria.put(s, c);
+	}
 
 	@Override
 	public T getDefinition() {
@@ -79,11 +101,12 @@ public class DiscretionaryItem<T extends PlanItemDefinition> extends TableItem i
 		return work;
 
 	}
+
 	public void copyFromPlanItem() {
 		HashMap<Object, Object> copiedState = new HashMap<Object, Object>();
 		T from = getDefinition();
 		this.setNodeContainer(getParentTable().getFirstPlanItemContainer());
-		if(this.getNodeContainer()==null){
+		if (this.getNodeContainer() == null) {
 			System.out.println();
 		}
 		copiedState.put(from, this);
@@ -91,8 +114,26 @@ public class DiscretionaryItem<T extends PlanItemDefinition> extends TableItem i
 	}
 
 	@Override
+	public PlanItemControl getEffectiveItemControl() {
+		if (getItemControl() == null) {
+			return getDefinition().getDefaultControl();
+		} else {
+			return getItemControl();
+		}
+	}
+
+	@Override
 	public PlanItemContainer getPlanItemContainer() {
 		return getParentTable().getFirstPlanItemContainer();
+	}
+	@Override
+	public String getPlanItemEventName() {
+		return this.getElementId();
+	}
+
+	@Override
+	public String getEffectiveName() {
+		return getDefinition().getName();
 	}
 
 }

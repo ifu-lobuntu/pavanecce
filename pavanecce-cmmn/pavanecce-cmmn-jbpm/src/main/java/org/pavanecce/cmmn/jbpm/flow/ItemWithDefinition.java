@@ -5,8 +5,14 @@ public interface ItemWithDefinition<T extends PlanItemDefinition> extends CMMNEl
 
 	PlanItemControl getItemControl();
 
+	PlanItemControl getEffectiveItemControl();
+
 	String getName();
 
+	String getEffectiveName();
+
 	PlanItemContainer getPlanItemContainer();
+
+	String getPlanItemEventName();
 
 }

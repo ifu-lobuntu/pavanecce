@@ -9,15 +9,16 @@ import org.kie.api.task.model.TaskSummary;
 import org.pavanecce.cmmn.jbpm.AbstractConstructionTestCase;
 import org.pavanecce.cmmn.jbpm.TaskParameters;
 import org.pavanecce.cmmn.jbpm.flow.DefaultJoin;
-import org.pavanecce.cmmn.jbpm.lifecycle.ItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
-import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceContainerLifecycle;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceContainer;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseTaskPlanItemInstance;
 
 import test.ConstructionCase;
 import test.House;
 import test.HousePlan;
+import test.WallPlan;
 
 public abstract class AbstractPlanItemInstanceContainerTest extends AbstractConstructionTestCase {
 
@@ -39,7 +40,7 @@ public abstract class AbstractPlanItemInstanceContainerTest extends AbstractCons
 
 	protected abstract void ensurePlanItemContainerIsStarted();
 
-	protected PlanItemInstanceContainerLifecycle getPlanItemInstanceContainer() {
+	protected PlanItemInstanceContainer getPlanItemInstanceContainer() {
 		return reloadCaseInstance();
 	}
 
@@ -125,18 +126,18 @@ public abstract class AbstractPlanItemInstanceContainerTest extends AbstractCons
 	
 	}
 
-	protected void printState(String s, PlanItemInstanceContainerLifecycle pi) {
+	protected void printState(String s, PlanItemInstanceContainer pi) {
 		if (true)
 			return;
 		System.out.println(pi);
-		for (ItemInstanceLifecycle<?> ni : pi.getChildren()) {
-			if (ni instanceof ItemInstanceLifecycle) {
-				System.out.println(s + ni.getItemName() + ":" + ni.getPlanElementState());
+		for (PlanItemInstanceLifecycle<?> ni : pi.getChildren()) {
+			if (ni instanceof PlanItemInstanceLifecycle) {
+				System.out.println(s + ni.getItem().getEffectiveName() + ":" + ni.getPlanElementState());
 			} else {
-				System.out.println(s + ni.getItemName());
+				System.out.println(s + ni.getItem().getEffectiveName());
 			}
-			if (ni instanceof PlanItemInstanceContainerLifecycle) {
-				printState(s + " ", (PlanItemInstanceContainerLifecycle) ni);
+			if (ni instanceof PlanItemInstanceContainer) {
+				printState(s + " ", (PlanItemInstanceContainer) ni);
 			}
 		}
 	}
@@ -149,6 +150,7 @@ public abstract class AbstractPlanItemInstanceContainerTest extends AbstractCons
 		ConstructionCase cc = new ConstructionCase("/cases/case1");
 		housePlan = new HousePlan(cc);
 		house = new House(cc);
+		new WallPlan(housePlan);
 		getPersistence().persist(cc);
 		getPersistence().commit();
 		params.put("housePlan", housePlan);

@@ -9,8 +9,8 @@ import org.kie.api.runtime.process.NodeInstance;
 import org.kie.api.task.model.TaskSummary;
 import org.pavanecce.cmmn.jbpm.AbstractConstructionTestCase;
 import org.pavanecce.cmmn.jbpm.TaskParameters;
-import org.pavanecce.cmmn.jbpm.lifecycle.ItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 
 import test.ConstructionCase;
@@ -43,10 +43,10 @@ public abstract class AbstractOccurrableTestCase extends AbstractConstructionTes
 		givenThatTheTestCaseIsStarted();
 		// *****WHEN
 		getPersistence().start();
-		ItemInstanceLifecycle<?> piil = null;
+		PlanItemInstanceLifecycle<?> piil = null;
 		for (NodeInstance ni : reloadCaseInstance(caseInstance).getNodeInstances()) {
-			if (ni instanceof ItemInstanceLifecycle && ((ItemInstanceLifecycle<?>) ni).getItemName().equals("TheOccurrablePlanItem")) {
-				piil = (ItemInstanceLifecycle<?>) ni;
+			if (ni instanceof PlanItemInstanceLifecycle && ((PlanItemInstanceLifecycle<?>) ni).getItem().getEffectiveName().equals("TheOccurrablePlanItem")) {
+				piil = (PlanItemInstanceLifecycle<?>) ni;
 			}
 		}
 		piil.suspend();
@@ -67,10 +67,10 @@ public abstract class AbstractOccurrableTestCase extends AbstractConstructionTes
 		givenThatTheTestCaseIsStarted();
 		// *****WHEN
 		getPersistence().start();
-		ItemInstanceLifecycle<?> piil = null;
+		PlanItemInstanceLifecycle<?> piil = null;
 		for (NodeInstance ni : reloadCaseInstance(caseInstance).getNodeInstances()) {
-			if (ni instanceof ItemInstanceLifecycle && ((ItemInstanceLifecycle<?>) ni).getItemName().equals("TheOccurrablePlanItem")) {
-				piil = (ItemInstanceLifecycle<?>) ni;
+			if (ni instanceof PlanItemInstanceLifecycle && ((PlanItemInstanceLifecycle<?>) ni).getItem().getEffectiveName().equals("TheOccurrablePlanItem")) {
+				piil = (PlanItemInstanceLifecycle<?>) ni;
 			}
 		}
 		piil.terminate();
@@ -91,10 +91,10 @@ public abstract class AbstractOccurrableTestCase extends AbstractConstructionTes
 		givenThatTheTestCaseIsStarted();
 		// *****WHEN
 		getPersistence().start();
-		ItemInstanceLifecycle<?> piil = null;
+		PlanItemInstanceLifecycle<?> piil = null;
 		for (NodeInstance ni : reloadCaseInstance(caseInstance).getNodeInstances()) {
-			if (ni instanceof ItemInstanceLifecycle && ((ItemInstanceLifecycle<?>) ni).getItemName().equals("TheOccurrablePlanItem")) {
-				piil = (ItemInstanceLifecycle<?>) ni;
+			if (ni instanceof PlanItemInstanceLifecycle && ((PlanItemInstanceLifecycle<?>) ni).getItem().getEffectiveName().equals("TheOccurrablePlanItem")) {
+				piil = (PlanItemInstanceLifecycle<?>) ni;
 			}
 		}
 		piil.parentTerminate();
@@ -114,10 +114,10 @@ public abstract class AbstractOccurrableTestCase extends AbstractConstructionTes
 		// *****GIVEN
 		givenThatTheTestCaseIsStarted();
 		getPersistence().start();
-		ItemInstanceLifecycle<?> piil = null;
+		PlanItemInstanceLifecycle<?> piil = null;
 		for (NodeInstance ni : reloadCaseInstance(caseInstance).getNodeInstances()) {
-			if (ni instanceof ItemInstanceLifecycle && ((ItemInstanceLifecycle<?>) ni).getItemName().equals("TheOccurrablePlanItem")) {
-				piil = (ItemInstanceLifecycle<?>) ni;
+			if (ni instanceof PlanItemInstanceLifecycle && ((PlanItemInstanceLifecycle<?>) ni).getItem().getEffectiveName().equals("TheOccurrablePlanItem")) {
+				piil = (PlanItemInstanceLifecycle<?>) ni;
 			}
 		}
 		piil.suspend();

@@ -438,9 +438,9 @@ public abstract class AbstractControllableLifecycleTests extends AbstractConstru
 	public abstract String[] getProcessFileNames();
 
 	protected void triggerStartOfTask() throws Exception {
+		getPersistence().start();
 		housePlan = getPersistence().find(HousePlan.class, housePlan.getId());
-		new WallPlan(housePlan);
-		getPersistence().update(housePlan);
+		getPersistence().persist(new WallPlan(housePlan));
 		getPersistence().commit();
 		List<TaskSummary> list = getTaskService().getTasksAssignedAsPotentialOwner(getEventGeneratingTaskUser(), "en-UK");
 		TaskSummary ts = findTaskSummary(list, "TheEventGeneratingTaskPlanItem");

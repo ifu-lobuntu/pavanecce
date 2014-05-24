@@ -3,34 +3,67 @@ package org.pavanecce.cmmn.jbpm.infra;
 import java.util.Collection;
 
 import org.drools.compiler.compiler.ReturnValueDescr;
+import org.drools.compiler.lang.descr.ActionDescr;
 import org.drools.compiler.lang.descr.ProcessDescr;
+import org.jbpm.process.builder.ActionBuilder;
 import org.jbpm.process.builder.ProcessBuildContext;
 import org.jbpm.process.builder.ProcessNodeBuilder;
 import org.jbpm.process.builder.ReturnValueEvaluatorBuilder;
 import org.jbpm.process.builder.dialect.ProcessDialectRegistry;
 import org.jbpm.process.instance.impl.ReturnValueConstraintEvaluator;
 import org.jbpm.workflow.core.Constraint;
+import org.jbpm.workflow.core.DroolsAction;
 import org.jbpm.workflow.core.impl.ConstraintImpl;
 import org.jbpm.workflow.core.impl.NodeImpl;
 import org.kie.api.definition.process.Node;
 import org.kie.api.definition.process.Process;
+import org.pavanecce.cmmn.jbpm.flow.ApplicabilityRule;
 import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
 import org.pavanecce.cmmn.jbpm.flow.CaseTask;
+import org.pavanecce.cmmn.jbpm.flow.DiscretionaryItem;
+import org.pavanecce.cmmn.jbpm.flow.ItemWithDefinition;
 import org.pavanecce.cmmn.jbpm.flow.ParameterMapping;
-import org.pavanecce.cmmn.jbpm.flow.PlanItem;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemControl;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
+import org.pavanecce.cmmn.jbpm.flow.PlanningTable;
+import org.pavanecce.cmmn.jbpm.flow.TableItem;
 import org.pavanecce.cmmn.jbpm.flow.TaskDefinition;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanningTableContainer;
 
 public class PlanItemBuilder implements ProcessNodeBuilder {
 
-	@SuppressWarnings("rawtypes")
 	@Override
 	public void build(Process process, ProcessDescr processDescr, ProcessBuildContext context, Node node) {
 		processCaseInputParameters(process, context); // TODO find a better place to do this?
-		PlanItem item = (PlanItem) node;
-		PlanItemDefinition def = item.getPlanInfo().getDefinition();
+		ItemWithDefinition<?> item = (ItemWithDefinition<?>) node;
+		if(item.getDefinition() instanceof PlanningTableContainer){
+			PlanningTableContainer ptc = (PlanningTableContainer) item.getDefinition() ;
+			PlanningTable planningTable = ptc.getPlanningTable();
+			if(planningTable!=null){
+				for (ApplicabilityRule ar : planningTable.getApplicabilityRules().values()) {
+					ar.setCondition(build(context, node, ar.getCondition()));
+				}
+				processPlanningTable(context, node, planningTable);
+			}
+		}
+		processItemWithDefinition(context, node, item);
+	}
+
+	private void processPlanningTable(ProcessBuildContext context, Node node, PlanningTable planningTable) {
+		Collection<TableItem> tableItems = planningTable.getTableItems();
+		for (TableItem tableItem : tableItems) {
+			if(tableItem instanceof DiscretionaryItem<?>){
+				DiscretionaryItem<?> di = (DiscretionaryItem<?>) tableItem;
+				processItemWithDefinition(context, node, di);
+			}else{
+				processPlanningTable(context, node, (PlanningTable) tableItem);
+			}
+		}
+	}
+
+	private void processItemWithDefinition(ProcessBuildContext context, Node node, ItemWithDefinition<?> item) {
+		PlanItemDefinition def = item.getDefinition();
 		if (def instanceof TaskDefinition) {
 			processParameters(context, node, ((TaskDefinition) def).getInputs());
 			processParameters(context, node, ((TaskDefinition) def).getOutputs());
@@ -41,7 +74,7 @@ public class PlanItemBuilder implements ProcessNodeBuilder {
 			}
 		}
 		buildControl(context, node, def.getDefaultControl());
-		buildControl(context, node, item.getPlanInfo().getItemControl());
+		buildControl(context, node, item.getItemControl());
 	}
 
 	protected void buildControl(ProcessBuildContext context, Node node, PlanItemControl itemControl) {
@@ -60,26 +93,36 @@ public class PlanItemBuilder implements ProcessNodeBuilder {
 
 	private void processParameters(ProcessBuildContext context, Node node, Collection<CaseParameter> inputs2) {
 		for (CaseParameter cp : inputs2) {
-			Constraint constraint = cp.getBindingRefinement();
-			if (constraint != null && !(constraint instanceof ReturnValueConstraintEvaluator) && cp.getBindingRefinementParent() == null) {
-				String parentExpression = getParentExpression(cp, constraint);
-				if (parentExpression != null) {
-					Constraint parentConstraint = new ConstraintImpl();
-					parentConstraint.setDialect(constraint.getDialect());
-					parentConstraint.setConstraint(parentExpression);
-					parentConstraint.setDefault(constraint.isDefault());
-					parentConstraint.setPriority(constraint.getPriority());
-					parentConstraint.setType(constraint.getType());
-					parentConstraint.setDialect(constraint.getDialect());
-					cp.setBindingRefinementParent(build(context, node, parentConstraint));
+			if (cp.getBindingRefinement() != null) {
+				Constraint constraint = cp.getBindingRefinement().getExpression();
+				if (constraint != null && !(constraint instanceof ReturnValueConstraintEvaluator) && cp.getBindingRefinement().getParentExpression() == null) {
+					String parentExpression = getParentExpression(cp, constraint);
+					if (parentExpression != null) {
+						Constraint parentConstraint = new ConstraintImpl();
+						parentConstraint.setDialect(constraint.getDialect());
+						parentConstraint.setConstraint(parentExpression);
+						parentConstraint.setDefault(constraint.isDefault());
+						parentConstraint.setPriority(constraint.getPriority());
+						parentConstraint.setType(constraint.getType());
+						parentConstraint.setDialect(constraint.getDialect());
+						cp.getBindingRefinement().setParentExpression(build(context, node, parentConstraint));
+						if (false) {
+							//TODO calculate setter code. For Java,OCl and MVEL it will be a method, for XPAth/JCR it will be Node.setValue or something
+							ActionBuilder builder = ProcessDialectRegistry.getDialect("java").getActionBuilder();
+							DroolsAction action = new DroolsAction();
+							ActionDescr actionDescr = new ActionDescr("setter for ....");
+							builder.build(context, action, actionDescr, (NodeImpl) node);
+							cp.getBindingRefinement().setSetterOnParent(action);
+						}
+					}
+					cp.getBindingRefinement().setExpression(build(context, node, constraint));
 				}
 			}
-			cp.setBindingRefinement(build(context, node, constraint));
 		}
 	}
 
 	public static String getParentExpression(CaseParameter cp, Constraint constraint) {
-		// TODO make this strategy configurable by dialect
+		// TODO make this strategy configurable by dialect - support XPath with JCR code
 		return getParentExpression(constraint.getConstraint(), cp.getBoundVariable().getName());
 	}
 

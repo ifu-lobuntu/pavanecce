@@ -10,7 +10,7 @@ import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
  * least, by the task's owner
  * 
  */
-public interface ControllableItemInstanceLifecycle<T extends PlanItemDefinition> extends ItemInstanceLifecycleWithHistory<T>, PlanElementLifecycleWithTask {
+public interface ControllableItemInstanceLifecycle<T extends PlanItemDefinition> extends PlanItemInstanceLifecycleWithHistory<T>, PlanElementLifecycleWithTask {
 
 	void enable();
 

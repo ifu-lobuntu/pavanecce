@@ -83,4 +83,23 @@ public class AbstractPlanItem<T extends PlanItemDefinition> extends AbstractItem
 		return planInfo;
 	}
 
+	@Override
+	public PlanItemControl getEffectiveItemControl() {
+		if (getItemControl() == null) {
+			return getDefinition().getDefaultControl();
+		} else {
+			return getItemControl();
+		}
+	}
+
+	@Override
+	public String getPlanItemEventName() {
+		return getEffectiveName();
+	}
+
+	@Override
+	public String getEffectiveName() {
+		return getName();
+	}
+
 }

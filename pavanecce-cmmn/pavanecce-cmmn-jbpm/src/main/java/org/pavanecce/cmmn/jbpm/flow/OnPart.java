@@ -58,4 +58,8 @@ public abstract class OnPart extends EventNode implements Serializable, CMMNElem
 	}
 
 	public abstract CaseEvent createEvent(Object peek);
+
+	public OnPart copy() {
+		return null;
+	}
 }

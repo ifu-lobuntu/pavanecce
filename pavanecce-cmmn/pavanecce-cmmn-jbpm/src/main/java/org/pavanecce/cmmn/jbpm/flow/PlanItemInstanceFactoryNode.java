@@ -5,13 +5,13 @@ import org.jbpm.workflow.core.node.StateNode;
 public class PlanItemInstanceFactoryNode extends StateNode {
 
 	private static final long serialVersionUID = -3811996856528514976L;
-	private PlanItem<?> planItem;
+	private ItemWithDefinition<?> planItem;
 	public PlanItemInstanceFactoryNode() {
 	}
-	public PlanItem<?> getPlanItem() {
+	public ItemWithDefinition<?> getItemToInstantiate() {
 		return planItem;
 	}
-	public void setPlanItem(PlanItem<?> planItem) {
+	public void setItemToInstantiate(ItemWithDefinition<?> planItem) {
 		this.planItem = planItem;
 	}
 }

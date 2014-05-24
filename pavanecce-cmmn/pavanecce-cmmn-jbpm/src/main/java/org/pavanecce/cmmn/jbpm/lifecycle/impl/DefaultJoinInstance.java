@@ -6,7 +6,7 @@ import org.jbpm.workflow.instance.node.JoinInstance;
 import org.kie.api.runtime.process.NodeInstance;
 import org.pavanecce.cmmn.jbpm.flow.DefaultJoin;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemTransition;
-import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceContainerLifecycle;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceContainer;
 
 public class DefaultJoinInstance extends JoinInstance implements EventNodeInstanceInterface {
 	private static final long serialVersionUID = -8715207082336857538L;
@@ -17,8 +17,8 @@ public class DefaultJoinInstance extends JoinInstance implements EventNodeInstan
 	@Override
 	public void internalTrigger(NodeInstance from, String type) {
 		super.internalTrigger(from, type);
-		if (!isInitializing && getNodeInstanceContainer() instanceof PlanItemInstanceContainerLifecycle) {
-			PlanItemInstanceContainerLifecycle piic = (PlanItemInstanceContainerLifecycle) getNodeInstanceContainer();
+		if (!isInitializing && getNodeInstanceContainer() instanceof PlanItemInstanceContainer) {
+			PlanItemInstanceContainer piic = (PlanItemInstanceContainer) getNodeInstanceContainer();
 			if (piic.canComplete() && piic.getPlanItemContainer().isAutoComplete()) {
 				piic.triggerTransitionOnTask(PlanItemTransition.COMPLETE);
 			}
@@ -35,8 +35,8 @@ public class DefaultJoinInstance extends JoinInstance implements EventNodeInstan
 
 	@Override
 	public void signalEvent(String type, Object event) {
-		if (getNodeInstanceContainer() instanceof PlanItemInstanceContainerLifecycle) {
-			PlanItemInstanceContainerLifecycle piic = (PlanItemInstanceContainerLifecycle) getNodeInstanceContainer();
+		if (getNodeInstanceContainer() instanceof PlanItemInstanceContainer) {
+			PlanItemInstanceContainer piic = (PlanItemInstanceContainer) getNodeInstanceContainer();
 			if (type.equals(DefaultJoin.CLOSE) && piic instanceof CaseInstance) {
 				if (piic.getPlanElementState().isTerminalState()) {
 					((CaseInstance) piic).close();

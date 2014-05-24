@@ -18,5 +18,6 @@ public class TaskParameters {
 	public static final String DISCRETIONARY_ITEM_ID = "DiscretionaryItemId";
 	public static final String INITIATOR = "initiator";
 	public static final String CASE_OWNER = "caseOwner";
+	public static final String SET_OUTPUT = "SetOutput";
 
 }

@@ -81,7 +81,7 @@ public class HousePlan{
       }
   };
   @Collection(jcrName = "test:wallPlans", jcrElementName = "test:wallPlan")
-  @OneToMany(mappedBy="housePlan",cascade=CascadeType.ALL,orphanRemoval=true)
+  @OneToMany(mappedBy="housePlan",cascade=CascadeType.ALL,orphanRemoval=false)
   private Set<WallPlan> wallPlans = new HashSet<WallPlan>();
   @Field(path=true)
   String path;

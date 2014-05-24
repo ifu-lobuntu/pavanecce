@@ -7,7 +7,6 @@ import java.util.Iterator;
 import org.drools.core.process.instance.WorkItemHandler;
 import org.jbpm.services.task.commands.ActivateTaskCommand;
 import org.jbpm.services.task.commands.ClaimTaskCommand;
-import org.jbpm.services.task.commands.CompleteTaskCommand;
 import org.jbpm.services.task.commands.FailTaskCommand;
 import org.jbpm.services.task.commands.SuspendTaskCommand;
 import org.jbpm.services.task.commands.TaskCommand;
@@ -55,44 +54,50 @@ public class UpdateTaskStatusWorkItemHandler implements WorkItemHandler {
 		String gidString = (String) workItem.getParameter(PeopleAssignmentHelper.GROUP_ID);
 		gidString = gidString == null ? "" : gidString;
 		String[] groupIds = gidString.split(System.getProperty("org.jbpm.ht.user.separator", ","));
-		switch (transition) {
-		case START:
-			if(currentUserId==null){
-				currentUserId = findBestUserFromGroups(its, groupIds);
+		if (transition == null) {
+			if(Boolean.TRUE.equals(workItem.getParameter(TaskParameters.SET_OUTPUT))){
+				cmd=new SetTaskOutputCommand(null, task.getId(), workItem.getParameters());
 			}
-			cmd = new AutomaticallyStartTaskCommand(taskId, currentUserId, workItem.getParameters());
-			break;
-		case EXIT:
-			cmd = new ExitCriteriaTaskCommand(taskId);
-			break;
-		case FAULT:
-			cmd = new FailTaskCommand(taskId, currentUserId, new HashMap<String, Object>());
-			break;
-		case PARENT_SUSPEND:
-			cmd = new SuspendTaskFromParentCommand(taskId, currentUserId);
-			break;
-		case PARENT_RESUME:
-			cmd = new ResumeTaskFromParentCommand(taskId, currentUserId);
-			break;
-		case SUSPEND:
-			cmd = new SuspendTaskCommand(taskId, currentUserId);
-			break;
-		case COMPLETE:
-			cmd = new CompleteTaskCommand(taskId, currentUserId, workItem.getParameters());
-			break;
-		case ENABLE:
-			if (task.getTaskData().getStatus() == Status.Created) {
-				cmd = new ActivateTaskCommand(taskId, "Administrator");
-				cmd.setGroupsIds(Arrays.asList(groupIds));
-				if(currentUserId!=null){
-					its.execute(cmd);
+		} else {
+			switch (transition) {
+			case START:
+				if (currentUserId == null) {
+					currentUserId = findBestUserFromGroups(its, groupIds);
 				}
+				cmd = new AutomaticallyStartTaskCommand(taskId, currentUserId, workItem.getParameters());
+				break;
+			case EXIT:
+				cmd = new ExitCriteriaTaskCommand(taskId);
+				break;
+			case FAULT:
+				cmd = new FailTaskCommand(taskId, currentUserId, new HashMap<String, Object>());
+				break;
+			case PARENT_SUSPEND:
+				cmd = new SuspendTaskFromParentCommand(taskId, currentUserId);
+				break;
+			case PARENT_RESUME:
+				cmd = new ResumeTaskFromParentCommand(taskId, currentUserId);
+				break;
+			case SUSPEND:
+				cmd = new SuspendTaskCommand(taskId, currentUserId);
+				break;
+			case COMPLETE:
+				cmd = new CompleteTaskCommand(null,taskId, currentUserId, workItem.getParameters());
+				break;
+			case ENABLE:
+				if (task.getTaskData().getStatus() == Status.Created) {
+					cmd = new ActivateTaskCommand(taskId, "Administrator");
+					cmd.setGroupsIds(Arrays.asList(groupIds));
+					if (currentUserId != null) {
+						its.execute(cmd);
+					}
+				}
+				if (currentUserId != null) {
+					cmd = new ClaimTaskCommand(taskId, currentUserId);
+				}
+				break;
+			default:
 			}
-			if (currentUserId != null) {
-				cmd = new ClaimTaskCommand(taskId, currentUserId);
-			}
-			break;
-		default:
 		}
 		if (cmd != null) {
 			cmd.setGroupsIds(Arrays.asList(groupIds));
@@ -105,12 +110,13 @@ public class UpdateTaskStatusWorkItemHandler implements WorkItemHandler {
 	}
 
 	private String findBestUserFromGroups(InternalTaskService its, String[] groupIds) {
-		String currentUserId="Administrator";
-		//TODO this is very primitive, think of a better solution
+		String currentUserId = "Administrator";
+		// TODO this is very primitive, think of a better solution, make it configurable with a strategy, perhaps using
+		// VDML data
 		for (String string : groupIds) {
 			Iterator<OrganizationalEntity> m = its.getUserInfo().getMembersForGroup(new GroupImpl(string));
-			if(m!=null &&  m.hasNext()){
-				currentUserId=m.next().getId();
+			if (m != null && m.hasNext()) {
+				currentUserId = m.next().getId();
 				break;
 			}
 		}

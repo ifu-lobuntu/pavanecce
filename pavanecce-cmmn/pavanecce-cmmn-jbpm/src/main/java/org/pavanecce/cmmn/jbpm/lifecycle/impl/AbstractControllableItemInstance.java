@@ -20,7 +20,6 @@ import org.kie.api.runtime.process.NodeInstance;
 import org.pavanecce.cmmn.jbpm.TaskParameters;
 import org.pavanecce.cmmn.jbpm.flow.DiscretionaryItem;
 import org.pavanecce.cmmn.jbpm.flow.PlanItem;
-import org.pavanecce.cmmn.jbpm.flow.PlanItemControl;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemTransition;
 import org.pavanecce.cmmn.jbpm.flow.TableItem;
@@ -47,12 +46,26 @@ public abstract class AbstractControllableItemInstance<T extends PlanItemDefinit
 
 	protected abstract String getIdealRoles();
 
+	public org.jbpm.workflow.instance.NodeInstance getFirstNodeInstance(final long nodeId) {
+		// level logic not relevant.
+		for (NodeInstance ni : this.getNodeInstances()) {
+			if (ni.getNodeId() == nodeId) {
+				return (org.jbpm.workflow.instance.NodeInstance) ni;
+			}
+		}
+		return null;
+	}
+
 	protected String getIdealOwner() {
-		if (PlanItemInstanceUtil.isActivatedManually(this)) {
+		if (isActivatedManually()) {
 			return null;
 		} else {
 			return getCaseInstance().getCaseOwner();
 		}
+	}
+
+	public boolean isActivatedManually() {
+		return ExpressionUtil.isActivatedManually(this, this.getItem());
 	}
 
 	protected String getInitiator() {
@@ -67,7 +80,7 @@ public abstract class AbstractControllableItemInstance<T extends PlanItemDefinit
 		workItem.setProcessInstanceId(this.getProcessInstance().getId());
 		workItem.setParameters(new HashMap<String, Object>(work.getParameters()));
 		if (definition instanceof TaskDefinition) {
-			workItem.getParameters().putAll(PlanItemInstanceUtil.buildInputParameters(work, this, (TaskDefinition) definition));
+			workItem.getParameters().putAll(ExpressionUtil.buildInputParameters(work, this, (TaskDefinition) definition));
 		}
 		workItem.setParameter(TaskParameters.INITIATOR, getInitiator());
 		workItem.setParameter(PeopleAssignmentHelper.ACTOR_ID, getIdealOwner());
@@ -109,10 +122,6 @@ public abstract class AbstractControllableItemInstance<T extends PlanItemDefinit
 		throw new IllegalStateException("Complex planItemInstances do not support to parentTerminate");
 	}
 
-	private boolean isActivatedAutomatically() {
-		return !PlanItemInstanceUtil.isActivatedManually(this);
-	}
-
 	@Override
 	public void triggerTransitionOnTask(PlanItemTransition transition) {
 		WorkItemImpl wi = new WorkItemImpl();
@@ -123,6 +132,7 @@ public abstract class AbstractControllableItemInstance<T extends PlanItemDefinit
 		wi.setParameter(TaskParameters.USERS_IN_ROLE, getCaseInstance().getRoleAssignments(getIdealRoles()));
 		wi.setParameter(PeopleAssignmentHelper.GROUP_ID, getIdealRoles());
 		wi.setParameter(PeopleAssignmentHelper.BUSINESSADMINISTRATOR_ID, getBusinessAdministrators());
+		wi.getParameters().putAll(buildParametersFor(transition));
 		executeWorkItem(wi);
 	}
 
@@ -155,16 +165,16 @@ public abstract class AbstractControllableItemInstance<T extends PlanItemDefinit
 
 	public void noteInstantiation() {
 		if (isCompletionRequired == null) {
-			isCompletionRequired = PlanItemInstanceUtil.isRequired(getItem(), this);
+			isCompletionRequired = ExpressionUtil.isRequired(getItem(), this);
 		}
-		if (isActivatedAutomatically()) {
-			triggerTransitionOnTask(PlanItemTransition.START);
-		} else {
+		if (isActivatedManually()) {
 			triggerTransitionOnTask(PlanItemTransition.ENABLE);
+		} else {
+			triggerTransitionOnTask(PlanItemTransition.START);
 		}
 	}
 
-	public void executeWorkItem(WorkItem wi) {
+	public WorkItem executeWorkItem(WorkItem wi) {
 		if (isInversionOfControl()) {
 			((ProcessInstance) getProcessInstance()).getKnowledgeRuntime().update(((ProcessInstance) getProcessInstance()).getKnowledgeRuntime().getFactHandle(this), this);
 		} else {
@@ -184,6 +194,8 @@ public abstract class AbstractControllableItemInstance<T extends PlanItemDefinit
 				exceptionScopeInstance.handleException(exceptionName, e);
 			}
 		}
+		return wi;
+
 	}
 
 	@Override
@@ -342,11 +354,6 @@ public abstract class AbstractControllableItemInstance<T extends PlanItemDefinit
 		this.workItemId = readLong;
 	}
 
-	@Override
-	public String getHumanTaskName() {
-		return getItemName();
-	}
-
 	@SuppressWarnings("unchecked")
 	public X getItem() {
 		return (X) getNode();
@@ -386,25 +393,6 @@ public abstract class AbstractControllableItemInstance<T extends PlanItemDefinit
 	@Override
 	public PlanElementState getPlanElementState() {
 		return planElementState;
-	}
-
-	@Override
-	public T getPlanItemDefinition() {
-		return getItem().getDefinition();
-	}
-
-	@Override
-	public String getItemName() {
-		return getItem().getName();
-	}
-
-	@Override
-	public PlanItemControl getItemControl() {
-		if (getItem().getItemControl() == null) {
-			return getItem().getDefinition().getDefaultControl();
-		} else {
-			return getItem().getItemControl();
-		}
 	}
 
 	@Override
