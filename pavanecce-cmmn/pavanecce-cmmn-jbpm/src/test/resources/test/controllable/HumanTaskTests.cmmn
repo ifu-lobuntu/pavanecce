@@ -14,7 +14,16 @@
 			<cmmn:humanTask id="theEventGeneratingTask" name="The Event Generating Task" performerRef="eventGeneratingBuilderRoleId" isBlocking="true">
 				<cmmn:defaultControl />
 				<cmmn:inputs name="wallPlan" bindingRef="wallPlanFileItemId"></cmmn:inputs>
-				<cmmn:outputs name="wall" bindingRef="wallFileItemId"></cmmn:outputs>
+				<cmmn:outputs bindingRef="wallPlanFileItemId" id="wallPlanOutputId" name="wallPlanOutput">
+					<cmmn:bindingRefinement language="http://www.java.com/java">
+						<cmmn:body>return housePlan.getWallPlans();</cmmn:body>
+					</cmmn:bindingRefinement>
+				</cmmn:outputs>
+				<cmmn:outputs bindingRef="roofPlanFileItemId" id="roofPlanOutputId" name="roofPlanOutput">
+					<cmmn:bindingRefinement language="http://www.java.com/java">
+						<cmmn:body>return housePlan.getRoofPlan();</cmmn:body>
+					</cmmn:bindingRefinement>
+				</cmmn:outputs>
 			</cmmn:humanTask>
 		</cmmn:casePlanModel>
 		<cmmn:caseRoles name="EventGeneratingBuilders" id="eventGeneratingBuilderRoleId" />

@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jbpm.ruleflow.core.RuleFlowProcess;
-import org.jbpm.workflow.core.node.CompositeNode;
 import org.jbpm.workflow.core.node.EndNode;
 import org.jbpm.workflow.core.node.StartNode;
 import org.kie.api.definition.process.Node;
@@ -16,7 +15,7 @@ public class Case extends RuleFlowProcess implements PlanItemContainer {
 	public static final String WORK_ITEM = "WorkItem";
 	private Map<String, CaseParameter> inputParameters = new HashMap<String, CaseParameter>();
 	private Map<String, CaseParameter> outputParameters = new HashMap<String, CaseParameter>();
-	private Collection<PlanItemDefinition> planItemDefinitions = new ArrayList<PlanItemDefinition>();
+	private Map<String, PlanItemDefinition> planItemDefinitions = new HashMap<String, PlanItemDefinition>();
 	private Collection<PlanItemInfo<?>> planItemInfo = new ArrayList<PlanItemInfo<?>>();
 	private Collection<Role> roles = new ArrayList<Role>();
 	private StartNode defaultStart;
@@ -93,31 +92,6 @@ public class Case extends RuleFlowProcess implements PlanItemContainer {
 		return outputParameters.get(id);
 	}
 
-	public Collection<CaseFileItemOnPart> findCaseFileItemOnPartsFor(CaseFileItem item) {
-		Node[] nodes = getNodes();
-		Map<String, CaseFileItemOnPart> onCaseFileItemParts = new HashMap<String, CaseFileItemOnPart>();
-		findCaseFileItemOnPartsFor(item, nodes, onCaseFileItemParts);
-		return onCaseFileItemParts.values();
-
-	}
-
-	private void findCaseFileItemOnPartsFor(CaseFileItem item, Node[] nodes, Map<String, CaseFileItemOnPart> onCaseFileItemParts) {
-		for (Node node : nodes) {
-			if (node instanceof Sentry) {
-				Sentry sentry = (Sentry) node;
-				for (OnPart onPart : sentry.getOnParts()) {
-					if (onPart instanceof CaseFileItemOnPart) {
-						CaseFileItemOnPart part = (CaseFileItemOnPart) onPart;
-						if (part.getSourceCaseFileItem().getElementId().equals(item.getElementId())) {
-							onCaseFileItemParts.put(((CaseFileItemOnPart) onPart).getIdentifier(), part);
-						}
-					}
-				}
-			} else if (node instanceof CompositeNode) {
-				findCaseFileItemOnPartsFor(item, ((CompositeNode) node).getNodes(), onCaseFileItemParts);
-			}
-		}
-	}
 
 	@Override
 	public Node getNode(long id) {
@@ -136,7 +110,7 @@ public class Case extends RuleFlowProcess implements PlanItemContainer {
 	}
 
 	public void addPlanItemDefinition(PlanItemDefinition d) {
-		planItemDefinitions.add(d);
+		planItemDefinitions.put(d.getElementId(),d);
 		if (d instanceof Stage) {
 			((Stage) d).setCase(this);
 		}
@@ -146,9 +120,11 @@ public class Case extends RuleFlowProcess implements PlanItemContainer {
 	public void addPlanItemInfo(PlanItemInfo<?> d) {
 		planItemInfo.add(d);
 	}
-
+	public PlanItemDefinition getPlanItemDefinition(String elementId){
+		return planItemDefinitions.get(elementId);
+	}
 	public Collection<PlanItemDefinition> getPlanItemDefinitions() {
-		return planItemDefinitions;
+		return planItemDefinitions.values();
 	}
 
 	public Collection<Role> getRoles() {

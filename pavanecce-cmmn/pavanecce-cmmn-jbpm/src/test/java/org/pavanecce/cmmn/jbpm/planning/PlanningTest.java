@@ -2,6 +2,7 @@ package org.pavanecce.cmmn.jbpm.planning;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import org.jbpm.services.task.impl.model.UserImpl;
@@ -39,32 +40,37 @@ public class PlanningTest extends AbstractPlanItemInstanceContainerTest {
 			assertEquals(PlanningStatus.PLANNING_IN_PROGRESS, plannedTaskSummary.getPlanningStatus());
 		}
 		getPersistence().commit();
-		assertDiscretionaryItemPresent(pti.getApplicableDiscretionaryItems(), "TheCaseTask");
-		assertDiscretionaryItemPresent(pti.getApplicableDiscretionaryItems(), "TheHumanTask");
-		assertDiscretionaryItemPresent(pti.getApplicableDiscretionaryItems(), "TheStage");
+		assertPlanItemDefinitionPresent(pti.getApplicableDiscretionaryItems(), "TheCaseTask");
+		assertPlanItemDefinitionPresent(pti.getApplicableDiscretionaryItems(), "TheHumanTask");
+		assertPlanItemDefinitionPresent(pti.getApplicableDiscretionaryItems(), "TheStage");
 		assertItemPresent(pti.getPlannedTasks(), "TheCaseTaskPlanItem");
 		assertItemPresent(pti.getPlannedTasks(), "TheStagePlanItem");
 		assertItemPresent(pti.getPlannedTasks(), "TheHumanTaskPlanItem");
+		for (PlannedTaskSummary pts : pti.getPlannedTasks()) {
+			if("theUnapplicableItem".equals(pts.getDiscretionaryItemId())){
+				fail();
+			}
+		}
 	}
 
 	@Test
 	public void testPreparePlannedTask() throws Exception {
 		givenThatTheTestCaseIsStarted();
 		triggerInitialActivity();
-		PlannedTask plannnedCaseTask = getPlanningService().preparePlannedTask(getTaskService().getTaskByWorkItemId(caseInstance.getWorkItemId()).getId(), "theCaseTaskDiscretionaryItemId");
-		PlannedTask plannnedHumanTask = getPlanningService().preparePlannedTask(getTaskService().getTaskByWorkItemId(caseInstance.getWorkItemId()).getId(), "theHumanTaskDiscretionaryItemId");
-		PlannedTask plannnedStage = getPlanningService().preparePlannedTask(getTaskService().getTaskByWorkItemId(caseInstance.getWorkItemId()).getId(), "theStageDiscretionaryItemId");
+		PlannedTask plannedCaseTask = getPlanningService().preparePlannedTask(getTaskService().getTaskByWorkItemId(caseInstance.getWorkItemId()).getId(), "theCaseTaskDiscretionaryItemId");
+		PlannedTask plannedHumanTask = getPlanningService().preparePlannedTask(getTaskService().getTaskByWorkItemId(caseInstance.getWorkItemId()).getId(), "theHumanTaskDiscretionaryItemId");
+		PlannedTask plannedStage = getPlanningService().preparePlannedTask(getTaskService().getTaskByWorkItemId(caseInstance.getWorkItemId()).getId(), "theStageDiscretionaryItemId");
 		getPersistence().start();
 		CaseInstance ci = reloadCaseInstance(caseInstance);
-		assertEquals("TheCaseTask", plannnedCaseTask.getNames().get(0).getText());
-		assertEquals("TheHumanTask", plannnedHumanTask.getNames().get(0).getText());
-		assertEquals("TheStage", plannnedStage.getNames().get(0).getText());
-		assertEquals(Status.Created, plannnedCaseTask.getTaskData().getStatus());
-		assertEquals(Status.Created, plannnedHumanTask.getTaskData().getStatus());
-		assertEquals(Status.Created, plannnedStage.getTaskData().getStatus());
-		assertNull(ci.findNodeForWorkItem(plannnedCaseTask.getTaskData().getWorkItemId()));
-		assertNull(ci.findNodeForWorkItem(plannnedHumanTask.getTaskData().getWorkItemId()));
-		assertNull(ci.findNodeForWorkItem(plannnedStage.getTaskData().getWorkItemId()));
+		assertEquals("TheCaseTask", plannedCaseTask.getNames().get(0).getText());
+		assertEquals("TheHumanTask", plannedHumanTask.getNames().get(0).getText());
+		assertEquals("TheStage", plannedStage.getNames().get(0).getText());
+		assertEquals(Status.Created, plannedCaseTask.getTaskData().getStatus());
+		assertEquals(Status.Created, plannedHumanTask.getTaskData().getStatus());
+		assertEquals(Status.Created, plannedStage.getTaskData().getStatus());
+		assertNull(ci.findNodeForWorkItem(plannedCaseTask.getTaskData().getWorkItemId()));
+		assertNull(ci.findNodeForWorkItem(plannedHumanTask.getTaskData().getWorkItemId()));
+		assertNull(ci.findNodeForWorkItem(plannedStage.getTaskData().getWorkItemId()));
 		getPersistence().commit();
 	}
 
@@ -72,15 +78,16 @@ public class PlanningTest extends AbstractPlanItemInstanceContainerTest {
 	public void testSubmitPlanWithContainerAlreadyActive() throws Exception {
 		givenThatTheTestCaseIsStarted();
 		triggerInitialActivity();
+		getPersistence().start();
 		Long parentTaskId = getTaskService().getTaskByWorkItemId(caseInstance.getWorkItemId()).getId();
 		List<PlannedTask> plannedTasks = new ArrayList<PlannedTask>();
-		PlannedTask plannnedCaseTask = getPlanningService().preparePlannedTask(parentTaskId, "theCaseTaskDiscretionaryItemId");
-		PlannedTask plannnedHumanTask = getPlanningService().preparePlannedTask(parentTaskId, "theHumanTaskDiscretionaryItemId");
-		PlannedTask plannnedStage = getPlanningService().preparePlannedTask(parentTaskId, "theStageDiscretionaryItemId");
+		PlannedTask plannedCaseTask = getPlanningService().preparePlannedTask(parentTaskId, "theCaseTaskDiscretionaryItemId");
+		PlannedTask plannedHumanTask = getPlanningService().preparePlannedTask(parentTaskId, "theHumanTaskDiscretionaryItemId");
+		PlannedTask plannedStage = getPlanningService().preparePlannedTask(parentTaskId, "theStageDiscretionaryItemId");
 		PlanningTableInstance pti = getPlanningService().startPlanning(getTaskService().getTaskByWorkItemId(caseInstance.getWorkItemId()).getId(), "ConstructionProjectManager",false);
-		plannedTasks.add(plannnedCaseTask);
-		plannedTasks.add(plannnedStage);
-		plannedTasks.add(plannnedHumanTask);
+		plannedTasks.add(plannedCaseTask);
+		plannedTasks.add(plannedStage);
+		plannedTasks.add(plannedHumanTask);
 		for (PlannedTaskSummary s : pti.getPlannedTasks()) {
 			plannedTasks.add(getPlanningService().getPlannedTaskById(s.getId()));
 		}
@@ -88,20 +95,35 @@ public class PlanningTest extends AbstractPlanItemInstanceContainerTest {
 			((InternalTaskData) plannedTask.getTaskData()).setActualOwner(new UserImpl("salaboy"));
 			plannedTask.getPeopleAssignments().getPotentialOwners().add(new UserImpl("salaboy"));
 		}
+		getPersistence().commit();
+		getPersistence().start();
 		getPlanningService().submitPlan(parentTaskId, plannedTasks,false);
+		getPersistence().commit();
+		getPersistence().start();
+		caseInstance = reloadCaseInstance(caseInstance);
+		assertFalse(caseInstance.canComplete());
+		assertNotNull(caseInstance.findNodeForWorkItem(plannedCaseTask.getTaskData().getWorkItemId()));
+		assertNotNull(caseInstance.findNodeForWorkItem(plannedHumanTask.getTaskData().getWorkItemId()));
+		assertNotNull(caseInstance.findNodeForWorkItem(plannedStage.getTaskData().getWorkItemId()));
+		assertEquals(PlanElementState.ENABLED, caseInstance.findNodeForWorkItem(plannedCaseTask.getTaskData().getWorkItemId()).getPlanElementState());
+		assertEquals(PlanElementState.ENABLED, caseInstance.findNodeForWorkItem(plannedHumanTask.getTaskData().getWorkItemId()).getPlanElementState());
+		//Automatic activation:
+		assertEquals(PlanElementState.ACTIVE, caseInstance.findNodeForWorkItem(plannedStage.getTaskData().getWorkItemId()).getPlanElementState());
+		getPersistence().commit();
+		getPersistence().start();
 		List<TaskSummary> tasks = getTaskService().getTasksOwned("salaboy", "en-UK");
 		assertEquals(6,tasks.size());
-		for (TaskSummary taskSummary : tasks) {
-			if(taskSummary.getId()==plannnedCaseTask.getId() || taskSummary.getId()==plannnedHumanTask.getId()||taskSummary.getId()==plannnedStage.getId()){
-				//They're all ENABLED
-				assertEquals(Status.Reserved, taskSummary.getStatus());
-			}
-		}
+		assertTaskInState(tasks, plannedCaseTask.getPlanItemName(), Status.Reserved);
+		assertTaskInState(tasks, plannedHumanTask.getPlanItemName(), Status.Reserved);
+		assertTaskInState(tasks, plannedStage.getPlanItemName(), Status.InProgress);
+		super.completeTasks(tasks);
+		getPersistence().commit();
+		getTaskService().start(plannedHumanTask.getId(), "salaboy");
+		getTaskService().complete(plannedHumanTask.getId(), "salaboy",new HashMap<String,Object>());
+		getPersistence().commit();
 		getPersistence().start();
-		CaseInstance ci = reloadCaseInstance(caseInstance);
-		assertNotNull(ci.findNodeForWorkItem(plannnedCaseTask.getTaskData().getWorkItemId()));
-		assertNotNull(ci.findNodeForWorkItem(plannnedHumanTask.getTaskData().getWorkItemId()));
-		assertNotNull(ci.findNodeForWorkItem(plannnedStage.getTaskData().getWorkItemId()));
+		caseInstance = reloadCaseInstance(caseInstance);
+		assertTrue(caseInstance.canComplete());
 		getPersistence().commit();
 	}
 	@Test
@@ -110,13 +132,13 @@ public class PlanningTest extends AbstractPlanItemInstanceContainerTest {
 		triggerInitialActivity();
 		Long parentTaskId = getTaskService().getTaskByWorkItemId(caseInstance.getWorkItemId()).getId();
 		List<PlannedTask> plannedTasks = new ArrayList<PlannedTask>();
-		PlannedTask plannnedCaseTask = getPlanningService().preparePlannedTask(parentTaskId, "theCaseTaskDiscretionaryItemId");
-		PlannedTask plannnedHumanTask = getPlanningService().preparePlannedTask(parentTaskId, "theHumanTaskDiscretionaryItemId");
-		PlannedTask plannnedStage = getPlanningService().preparePlannedTask(parentTaskId, "theStageDiscretionaryItemId");
+		PlannedTask plannedCaseTask = getPlanningService().preparePlannedTask(parentTaskId, "theCaseTaskDiscretionaryItemId");
+		PlannedTask plannedHumanTask = getPlanningService().preparePlannedTask(parentTaskId, "theHumanTaskDiscretionaryItemId");
+		PlannedTask plannedStage = getPlanningService().preparePlannedTask(parentTaskId, "theStageDiscretionaryItemId");
 		PlanningTableInstance pti = getPlanningService().startPlanning(getTaskService().getTaskByWorkItemId(caseInstance.getWorkItemId()).getId(), "ConstructionProjectManager",true);
-		plannedTasks.add(plannnedCaseTask);
-		plannedTasks.add(plannnedStage);
-		plannedTasks.add(plannnedHumanTask);
+		plannedTasks.add(plannedCaseTask);
+		plannedTasks.add(plannedStage);
+		plannedTasks.add(plannedHumanTask);
 		assertEquals(PlanElementState.SUSPENDED, reloadCaseInstance().getPlanElementState());
 		for (PlannedTaskSummary s : pti.getPlannedTasks()) {
 			plannedTasks.add(getPlanningService().getPlannedTaskById(s.getId()));
@@ -124,11 +146,13 @@ public class PlanningTest extends AbstractPlanItemInstanceContainerTest {
 		for (PlannedTask plannedTask : plannedTasks) {
 			((InternalTaskData) plannedTask.getTaskData()).setActualOwner(new UserImpl("salaboy"));
 		}
+		getPersistence().start();
 		getPlanningService().submitPlan(parentTaskId, plannedTasks,false);
+		getPersistence().commit();
 		List<TaskSummary> tasks = getTaskService().getTasksOwned("salaboy", "en-UK");
 		assertEquals(6,tasks.size());
 		for (TaskSummary taskSummary : tasks) {
-			if(taskSummary.getId()==plannnedCaseTask.getId() || taskSummary.getId()==plannnedHumanTask.getId()||taskSummary.getId()==plannnedStage.getId()){
+			if(taskSummary.getId()==plannedCaseTask.getId() || taskSummary.getId()==plannedHumanTask.getId()||taskSummary.getId()==plannedStage.getId()){
 				//They're all ENABLED
 				assertEquals(Status.Created, taskSummary.getStatus());
 			}else{
@@ -136,14 +160,27 @@ public class PlanningTest extends AbstractPlanItemInstanceContainerTest {
 			}
 		}
 		getPersistence().start();
-		CaseInstance ci = reloadCaseInstance(caseInstance);
-		assertNotNull(ci.findNodeForWorkItem(plannnedCaseTask.getTaskData().getWorkItemId()));
-		assertNotNull(ci.findNodeForWorkItem(plannnedHumanTask.getTaskData().getWorkItemId()));
-		assertNotNull(ci.findNodeForWorkItem(plannnedStage.getTaskData().getWorkItemId()));
+		caseInstance = reloadCaseInstance(caseInstance);
+		assertNotNull(caseInstance.findNodeForWorkItem(plannedCaseTask.getTaskData().getWorkItemId()));
+		assertNotNull(caseInstance.findNodeForWorkItem(plannedHumanTask.getTaskData().getWorkItemId()));
+		assertNotNull(caseInstance);
+		assertEquals(PlanElementState.INITIAL, caseInstance.findNodeForWorkItem(plannedCaseTask.getTaskData().getWorkItemId()).getPlanElementState());
+		assertEquals(PlanElementState.INITIAL, caseInstance.findNodeForWorkItem(plannedHumanTask.getTaskData().getWorkItemId()).getPlanElementState());
+		assertEquals(PlanElementState.INITIAL, caseInstance.findNodeForWorkItem(plannedStage.getTaskData().getWorkItemId()).getPlanElementState());
+		getPersistence().commit();
+		getPersistence().start();
+		getTaskService().resume(parentTaskId,"ConstructionProjectManager");
+		getPersistence().commit();
+		getPersistence().start();
+		caseInstance=reloadCaseInstance(caseInstance);
+		assertEquals(PlanElementState.ENABLED, caseInstance.findNodeForWorkItem(plannedCaseTask.getTaskData().getWorkItemId()).getPlanElementState());
+		assertEquals(PlanElementState.ENABLED, caseInstance.findNodeForWorkItem(plannedHumanTask.getTaskData().getWorkItemId()).getPlanElementState());
+		//Automatic activation:
+		assertEquals(PlanElementState.ACTIVE, caseInstance.findNodeForWorkItem(plannedStage.getTaskData().getWorkItemId()).getPlanElementState());
 		getPersistence().commit();
 	}
 
-	private void assertDiscretionaryItemPresent(Collection<ApplicableDiscretionaryItem> pts, String itemName) {
+	private void assertPlanItemDefinitionPresent(Collection<ApplicableDiscretionaryItem> pts, String itemName) {
 		for (ApplicableDiscretionaryItem pt : pts) {
 			if (itemName.equals(pt.getPlanItemName())) {
 				return;

@@ -36,7 +36,8 @@ public class SentryInstance extends JoinInstance {
 
 	@Override
 	public void internalTrigger(NodeInstance from, String type) {
-		if (getSentry().getPlanItemContainer() != null && from.getNodeId() == getSentry().getPlanItemContainer().getDefaultSplit().getId()) {
+		if (from instanceof DefaultSplitInstance) {
+			//TODO not pretty - dependency on a precending node's type
 			List<Connection> outgoingConnections = getNode().getOutgoingConnections(NodeImpl.CONNECTION_DEFAULT_TYPE);
 			if (outgoingConnections.isEmpty()) {
 				// an exit criterion

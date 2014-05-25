@@ -4,8 +4,8 @@ Generate JCR node types (CND) for tasks to store parameters.
 Allow OCM objects as values for Parameters, and interpret them correctly when building up the JCR task
 Parameters will be either "wants" or "offers" - publish them accordingly against the wanting/offering user
 Generate the mod-xxxworkflow.xml spring descriptor
-Generate permissions for tasks based on Role
-
+Generate Jahia permissions for tasks based on Role
+XPath processDialect on JCR
 Pure JCR persistent subscriptions
  - scope of subscriptions
  - bindingRefined

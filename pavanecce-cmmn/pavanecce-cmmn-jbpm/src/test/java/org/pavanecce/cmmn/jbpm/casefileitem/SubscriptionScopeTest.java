@@ -1,5 +1,6 @@
 package org.pavanecce.cmmn.jbpm.casefileitem;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,19 +35,25 @@ public abstract class SubscriptionScopeTest extends AbstractConstructionTestCase
 
 		triggerStartOfTask();
 		getPersistence().start();
-		assertEquals(2, subManager.getCaseSubscriptionInfoFor(housePlan, getPersistence()).getCaseFileItemSubscriptions().size());
-		assertNotNull(subManager.getCaseSubscriptionInfoFor(housePlan, getPersistence()).findCaseFileItemSubscription("wallPlans", CaseFileItemTransition.CREATE));
-		assertNotNull(subManager.getCaseSubscriptionInfoFor(housePlan, getPersistence()).findCaseFileItemSubscription("roofPlan", CaseFileItemTransition.DELETE));
+		assertEquals(0, subManager.getCaseSubscriptionInfoFor(housePlan, getPersistence()).getCaseFileItemSubscriptions().size());
 		getPersistence().commit();
 		List<TaskSummary> list = getRuntimeEngine().getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
 		assertEquals(1, list.size());
 		getPersistence().start();
 		getRuntimeEngine().getTaskService().start(list.get(0).getId(), "Builder");
+		getPersistence().commit();
+		getPersistence().start();
+		assertEquals(2, subManager.getCaseSubscriptionInfoFor(housePlan, getPersistence()).getCaseFileItemSubscriptions().size());
+		assertNotNull(subManager.getCaseSubscriptionInfoFor(housePlan, getPersistence()).findCaseFileItemSubscription("wallPlans", CaseFileItemTransition.CREATE));
+		assertNotNull(subManager.getCaseSubscriptionInfoFor(housePlan, getPersistence()).findCaseFileItemSubscription("roofPlan", CaseFileItemTransition.DELETE));
+		getPersistence().commit();
+		getPersistence().start();
 		getRuntimeEngine().getTaskService().complete(list.get(0).getId(), "Builder", new HashMap<String, Object>());
 		getPersistence().commit();
 		getPersistence().start();
 		CaseSubscriptionInfo<?> caseSubscriptionInfoFor = subManager.getCaseSubscriptionInfoFor(housePlan, getPersistence());
-		assertEquals(0, caseSubscriptionInfoFor.getCaseFileItemSubscriptions().size());
+		Collection<?> caseFileItemSubscriptions = caseSubscriptionInfoFor.getCaseFileItemSubscriptions();
+		assertEquals(0, caseFileItemSubscriptions.size());
 		getPersistence().commit();
 		// *****THEN
 		// @SuppressWarnings("unchecked")

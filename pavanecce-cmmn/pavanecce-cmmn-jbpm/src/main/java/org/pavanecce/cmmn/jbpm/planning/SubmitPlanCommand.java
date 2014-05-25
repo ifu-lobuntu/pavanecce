@@ -22,7 +22,7 @@ import org.kie.internal.command.Context;
 import org.kie.internal.runtime.manager.context.ProcessInstanceIdContext;
 import org.kie.internal.task.api.model.InternalTaskData;
 import org.pavanecce.cmmn.jbpm.lifecycle.ControllableItemInstanceLifecycle;
-import org.pavanecce.cmmn.jbpm.lifecycle.PlanningTableContainer;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanningTableContainerInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.HumanTaskPlanItemInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.StagePlanItemInstance;
@@ -70,11 +70,11 @@ public class SubmitPlanCommand extends AbstractPlanningCommand<Void> {
 			pc.merge(wii);
 			ControllableItemInstanceLifecycle<?> pi = ci.ensurePlanItemCreated(workItemId, plannedTask.getDiscretionaryItemId(), wi);
 			if (td.getStatus() == Status.Created) {
-				td.setStatus(StatusConverter.convertState(pi.getPlanElementState(), td.getActualOwner() != null));
+//				td.setStatus(Status.Ready);
 			}
 		}
 		if (resume) {
-			PlanningTableContainer p = ci.findPlanElementWithPlanningTable(workItemId);
+			PlanningTableContainerInstance p = ci.findPlanElementWithPlanningTable(workItemId);
 			NodeInstanceContainer nic=null;
 			if(p instanceof HumanTaskPlanItemInstance){
 				 nic = ((HumanTaskPlanItemInstance) p).getNodeInstanceContainer();

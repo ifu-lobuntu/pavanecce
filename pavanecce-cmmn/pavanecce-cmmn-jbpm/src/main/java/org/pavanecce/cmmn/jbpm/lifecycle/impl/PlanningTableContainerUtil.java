@@ -20,10 +20,10 @@ import org.pavanecce.cmmn.jbpm.flow.TaskDefinition;
 import org.pavanecce.cmmn.jbpm.lifecycle.ControllableItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceContainer;
-import org.pavanecce.cmmn.jbpm.lifecycle.PlanningTableContainer;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanningTableContainerInstance;
 
 public class PlanningTableContainerUtil {
-	public static WorkItem createPlannedItem(PlanningTableContainer ptc, String discretionaryItemId) {
+	public static WorkItem createPlannedTask(PlanningTableContainerInstance ptc, String discretionaryItemId) {
 		if (ptc != null && ptc.getPlanningTable() != null) {
 			NodeInstance contextNodeInstance = ptc.getPlanningContextNodeInstance();
 			DiscretionaryItem<? extends PlanItemDefinition> di = ptc.getPlanningTable().getDiscretionaryItemById(discretionaryItemId);
@@ -50,32 +50,32 @@ public class PlanningTableContainerUtil {
 
 	}
 
-	public static ControllableItemInstanceLifecycle<?> ensurePlanItemCreated(PlanningTableContainer e, String discretionaryItemId, WorkItem wi) {
+	public static ControllableItemInstanceLifecycle<?> ensurePlanItemCreated(PlanningTableContainerInstance e, String discretionaryItemId, WorkItem wi) {
 		DiscretionaryItem<?> item = e.getPlanningTable().getDiscretionaryItemById(discretionaryItemId);
-		PlanItemInstanceContainer piic = null;
-		if (e instanceof PlanItemInstanceContainer) {
-			piic = (PlanItemInstanceContainer) e;
-		} else {
-			piic = (PlanItemInstanceContainer) ((NodeInstance) e).getNodeInstanceContainer();
-		}
-		ControllableItemInstanceLifecycle<?> found = (ControllableItemInstanceLifecycle<?>) piic.getNodeInstance(item);
-		found.internalTriggerWithoutInstantiation(piic.getNodeInstance(piic.getPlanItemContainer().getDefaultSplit()), NodeImpl.CONNECTION_DEFAULT_TYPE, wi);
-		if (e.getPlanElementState() == PlanElementState.ACTIVE) {
-			found.create();
-			found.noteInstantiation();
-		} else {
-			found.setPlanElementState(PlanElementState.INITIAL);
+		PlanItemInstanceContainer piic = e.getPlanItemInstanceCreator();
+		// TODO we may want to work through the factory node here
+		ControllableItemInstanceLifecycle<?> found = piic.findNodeForWorkItem(wi.getId());
+		if (found == null) {
+			found = (ControllableItemInstanceLifecycle<?>) piic.getNodeInstance(item);
+			found.internalTriggerWithoutInstantiation(piic.getNodeInstance(piic.getPlanItemContainer().getDefaultSplit()), NodeImpl.CONNECTION_DEFAULT_TYPE, wi);
+			if (e.getPlanElementState() == PlanElementState.ACTIVE) {
+				found.create();
+				found.noteInstantiation();
+				System.out.println(wi.getParameter("NodeName") + " = " + found.getPlanElementState());
+			} else {
+				found.setPlanElementState(PlanElementState.INITIAL);
+			}
 		}
 		return found;
 	}
 
-	public static void addApplicableItems(PlanningTableContainer container, Map<String, ApplicableDiscretionaryItem> result, Set<String> usersRoles) {
+	public static void addApplicableItems(PlanningTableContainerInstance container, Map<String, ApplicableDiscretionaryItem> result, Set<String> usersRoles) {
 		if (container.getPlanningTable() != null && isAuthorized(usersRoles, container.getPlanningTable().getAuthorizedRoles())) {
 			addApplicableItems(container, result, usersRoles, container.getPlanningTable());
 		}
 	}
 
-	private static void addApplicableItems(PlanningTableContainer container, Map<String, ApplicableDiscretionaryItem> target, Set<String> usersRoles, PlanningTable currentTable) {
+	private static void addApplicableItems(PlanningTableContainerInstance container, Map<String, ApplicableDiscretionaryItem> target, Set<String> usersRoles, PlanningTable currentTable) {
 		for (TableItem ti : currentTable.getTableItems()) {
 			if (isAuthorized(usersRoles, ti.getAuthorizedRoles()) && ExpressionUtil.isApplicable(ti, container.getPlanningContextNodeInstance())) {
 				if (ti instanceof DiscretionaryItem<?>) {

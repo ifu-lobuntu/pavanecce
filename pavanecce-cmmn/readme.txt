@@ -1,1 +1,1 @@
-This POM project contains all the projects that implement the CMMN runtime
+This POM project contains all the projects that implement the CMMN runtime, some extensions to it and custom integration wiht Jahia

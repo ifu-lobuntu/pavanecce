@@ -8,6 +8,7 @@ import java.util.Set;
 import org.kie.api.runtime.process.NodeInstance;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemOnPart;
 import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
+import org.pavanecce.cmmn.jbpm.flow.ItemWithDefinition;
 import org.pavanecce.cmmn.jbpm.flow.PlanItem;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 import org.pavanecce.cmmn.jbpm.flow.TaskDefinition;
@@ -16,7 +17,7 @@ import org.pavanecce.cmmn.jbpm.lifecycle.ControllableItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceContainer;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceLifecycle;
-import org.pavanecce.cmmn.jbpm.lifecycle.PlanningTableContainer;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanningTableContainerInstance;
 
 /**
  * Defines all the logic common to CaseInstances and StagePlanItemInstances. This is required as it is not possible to
@@ -43,17 +44,17 @@ public class PlanItemInstanceContainerUtil {
 
 	}
 
-	public static boolean isSubscribing(ControllableItemInstanceLifecycle<?> ni) {
+	private static boolean isSubscribing(ControllableItemInstanceLifecycle<?> ni) {
 		return ni.getPlanElementState() == PlanElementState.ACTIVE || ni.getPlanElementState() == PlanElementState.ENABLED;
 	}
 
 	public static void populateSubscriptionsActivatedByParametersOfContainedTasks(PlanItemInstanceContainer caseInstance, SubscriptionContext sc) {
 		Collection<NodeInstance> nodeInstances = caseInstance.getNodeInstances();
 		for (NodeInstance ni : nodeInstances) {
-			if (ni.getNode() instanceof PlanItem) {
-				PlanItem<?> pi = (PlanItem<?>) ni.getNode();
-				if (pi.getPlanInfo().getDefinition() instanceof TaskDefinition && ni instanceof ControllableItemInstanceLifecycle && isSubscribing((ControllableItemInstanceLifecycle<?>) ni)) {
-					TaskDefinition td = (TaskDefinition) pi.getPlanInfo().getDefinition();
+			if (ni.getNode() instanceof ItemWithDefinition<?>) {
+				ItemWithDefinition<?> pi = (ItemWithDefinition<?>) ni.getNode();
+				if (pi.getDefinition() instanceof TaskDefinition && ni instanceof ControllableItemInstanceLifecycle && isSubscribing((ControllableItemInstanceLifecycle<?>) ni)) {
+					TaskDefinition td = (TaskDefinition) pi.getDefinition();
 					ExpressionUtil.populateSubscriptionsActivatedByParameters(sc, td.getOutputs());
 				}
 			}
@@ -114,8 +115,8 @@ public class PlanItemInstanceContainerUtil {
 		return null;
 	}
 
-	public static PlanningTableContainer findPlanElementWithPlanningTable(PlanItemInstanceContainer container, long containerWorkItemId) {
-		PlanningTableContainer pewpt = null;
+	public static PlanningTableContainerInstance findPlanElementWithPlanningTable(PlanItemInstanceContainer container, long containerWorkItemId) {
+		PlanningTableContainerInstance pewpt = null;
 		if (containerWorkItemId == container.getWorkItemId()) {
 			//Coz we have to check for the current element first
 			pewpt = container;

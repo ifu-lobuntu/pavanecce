@@ -3,7 +3,9 @@ package org.pavanecce.cmmn.jbpm.lifecycle.impl;
 import org.jbpm.workflow.core.impl.NodeImpl;
 import org.jbpm.workflow.instance.node.StateNodeInstance;
 import org.kie.api.runtime.process.NodeInstance;
+import org.pavanecce.cmmn.jbpm.flow.DiscretionaryItem;
 import org.pavanecce.cmmn.jbpm.flow.ItemWithDefinition;
+import org.pavanecce.cmmn.jbpm.flow.Milestone;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemInstanceFactoryNode;
 import org.pavanecce.cmmn.jbpm.flow.Stage;
@@ -23,6 +25,7 @@ public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> e
 	private Boolean isPlanItemInstanceRequired;
 	private boolean hasPlanItemBeenInstantiated = false;
 	private Boolean isRepeating;
+	private boolean isIncludedByDiscretion = false;
 	private PlanElementState planElementState = PlanElementState.INITIAL;
 	private PlanElementState lastBusyState = PlanElementState.NONE;
 
@@ -35,6 +38,10 @@ public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> e
 
 	public void setPlanElementState(PlanElementState planElementState) {
 		this.planElementState = planElementState;
+	}
+
+	public boolean isDiscretionary() {
+		return getItem() instanceof DiscretionaryItem;
 	}
 
 	@Override
@@ -58,14 +65,20 @@ public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> e
 
 	@Override
 	public void internalTrigger(NodeInstance from, String type) {
-		if (planElementState == PlanElementState.SUSPENDED || planElementState == PlanElementState.TERMINATED) {
-			// do nothing
-		} else if (!isHasPlanItemBeenInstantiated() || isRepeating()) {
+		if (!isInactive() && !isExcludedByDiscretion() && (isRepeating() || !isHasPlanItemBeenInstantiatedYet())) {
 			super.internalTrigger(from, type);
 			hasPlanItemBeenInstantiated = true;
 			triggerCompleted(NodeImpl.CONNECTION_DEFAULT_TYPE, false);
 			setLastBusyState(getPlanElementState());
 		}
+	}
+
+	private boolean isExcludedByDiscretion() {
+		return isDiscretionary() && !isIncludedByDiscretion();
+	}
+
+	private boolean isInactive() {
+		return planElementState == PlanElementState.SUSPENDED || planElementState == PlanElementState.TERMINATED;
 	}
 
 	@Override
@@ -98,7 +111,7 @@ public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> e
 		}
 	}
 
-	public boolean isHasPlanItemBeenInstantiated() {
+	public boolean isHasPlanItemBeenInstantiatedYet() {
 		return hasPlanItemBeenInstantiated;
 	}
 
@@ -119,7 +132,7 @@ public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> e
 		ItemWithDefinition<T> planItem = getItem();
 		PlanItemInstanceFactoryNodeInstance<T> contextNodeInstance = this;
 		this.isPlanItemInstanceRequired = ExpressionUtil.isRequired(planItem, contextNodeInstance);
-		isRepeating=ExpressionUtil.isRepeating(this,planItem);
+		isRepeating = ExpressionUtil.isRepeating(this, planItem);
 		hasPlanItemBeenInstantiated = false;
 		planElementState.create(contextNodeInstance);
 	}
@@ -187,5 +200,12 @@ public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> e
 		}
 	}
 
+	public boolean isIncludedByDiscretion() {
+		return isIncludedByDiscretion;
+	}
+
+	public void setIncludedByDiscretion(boolean isIncludedByDiscretion) {
+		this.isIncludedByDiscretion = isIncludedByDiscretion;
+	}
 
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.drools.core.process.instance.impl.WorkItemImpl;
 import org.jbpm.services.task.impl.model.GroupImpl;
@@ -133,7 +134,7 @@ public class CaseTaskWorkItemHandler extends LocalHTWorkItemHandler {
 		KieSession ksessionById = runtime.getKieSession();
 
 		final Task task = createTaskBasedOnWorkItemParams(ksessionById, workItem);
-		final ContentData content = createTaskContentBasedOnWorkItemParams(ksessionById, workItem);
+		final Map<String,Object> content = workItem.getParameters();
 		try {
 			InternalTaskService its = (InternalTaskService) runtime.getTaskService();
 			if (Boolean.TRUE.equals(workItem.getParameter(TaskParameters.PLANNED))) {
@@ -182,23 +183,6 @@ public class CaseTaskWorkItemHandler extends LocalHTWorkItemHandler {
 				logger.error(logMsg.toString(), e);
 			}
 		}
-	}
-
-	@Override
-	protected ContentData createTaskContentBasedOnWorkItemParams(KieSession session, WorkItem workItem) {
-		ContentData content = null;
-		Object contentObject = workItem.getParameter("Content");
-		if (contentObject == null) {
-			contentObject = new HashMap<String, Object>(workItem.getParameters());
-		}
-		if (contentObject != null) {
-			Environment env = null;
-			if (session != null) {
-				env = session.getEnvironment();
-			}
-			content = ContentMarshallerHelper.marshal(contentObject, env);
-		}
-		return content;
 	}
 
 	@Override

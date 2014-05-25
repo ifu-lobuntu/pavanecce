@@ -32,8 +32,6 @@ public class DefaultSplitInstance extends SplitInstance {
 				triggerNodeInstance((org.jbpm.workflow.instance.NodeInstance) nodeInstance, NodeImpl.CONNECTION_DEFAULT_TYPE);
 			}
 		}
-		defaultJoinInstance.setInitializing(false);
-		triggerNodeInstance(defaultJoinInstance, NodeImpl.CONNECTION_DEFAULT_TYPE);
 		for (NodeInstance nodeInstance : toNodeInstances) {
 			if (!isSentry(nodeInstance) && nodeInstance != defaultJoinInstance) {
 				if(nodeInstance instanceof Creatable){
@@ -42,6 +40,8 @@ public class DefaultSplitInstance extends SplitInstance {
 				triggerNodeInstance((org.jbpm.workflow.instance.NodeInstance) nodeInstance, NodeImpl.CONNECTION_DEFAULT_TYPE);
 			}
 		}
+		defaultJoinInstance.setInitializing(false);
+		triggerNodeInstance(defaultJoinInstance, NodeImpl.CONNECTION_DEFAULT_TYPE);
 	    ((org.jbpm.workflow.instance.NodeInstanceContainer) getNodeInstanceContainer())
     	.removeNodeInstance(this);
 	}

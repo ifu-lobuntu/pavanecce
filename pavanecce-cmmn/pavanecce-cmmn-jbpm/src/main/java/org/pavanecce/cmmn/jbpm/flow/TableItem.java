@@ -8,15 +8,12 @@ import java.util.Map;
 public class TableItem extends AbstractItem implements CMMNElement {
 	private static final long serialVersionUID = 6743815602437868413L;
 	private Map<String, Role> authorizedRoles = new HashMap<String, Role>();
-	private String elementId;
+
 	private PlanningTable planningTable;
 	private String description;
 	private Map<String, ApplicabilityRule> applicabilityRules = new HashMap<String, ApplicabilityRule>();
 
-	@Override
-	public String getElementId() {
-		return elementId;
-	}
+
 
 	public void putApplicabilityRule(String id, ApplicabilityRule r) {
 		this.applicabilityRules.put(id, r);
@@ -26,9 +23,6 @@ public class TableItem extends AbstractItem implements CMMNElement {
 		return applicabilityRules;
 	}
 
-	public void setElementId(String elementId) {
-		this.elementId = elementId;
-	}
 
 	public void putAuthorizedRole(String id, Role role) {
 		authorizedRoles.put(id, role);

@@ -1,6 +1,5 @@
 package org.pavanecce.cmmn.jbpm.lifecycle.impl;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -224,7 +223,6 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask, Tas
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected Map<String, Object> buildParametersFor(PlanItemTransition transition) {
 		if (transition == PlanItemTransition.FAULT) {
@@ -243,23 +241,7 @@ public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask, Tas
 			for (CaseParameter cp : getItem().getDefinition().getOutputs()) {
 				Object val = result.get(cp.getName());
 				if (val != null) {
-					if (cp.getBindingRefinement().isValid()) {
-						ExpressionUtil.writeToBindingRefinement(this, cp, val);
-					} else {
-						if (cp.getBoundVariable().isCollection()) {
-							Collection<Object> coll = (Collection<Object>) getCaseInstance().getVariable(cp.getBoundVariable().getName());
-							if (coll == null) {
-								getCaseInstance().setVariable(cp.getBoundVariable().getName(), coll = new HashSet<Object>());
-							}
-							if (val instanceof Collection) {
-								coll.addAll((Collection<Object>) val);
-							} else {
-								coll.add(val);
-							}
-						} else {
-							getCaseInstance().setVariable(cp.getBoundVariable().getName(), val);
-						}
-					}
+					writeToBinding(cp, val);
 				}
 			}
 			return result;

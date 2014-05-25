@@ -139,7 +139,6 @@ public class CaseHandler extends PlanItemContainerHandler implements Handler {
 		Case process = (Case) parser.getCurrent();
 		Element cpm = (Element) el.getElementsByTagName("casePlanModel").item(0);
 		process.setAutoComplete("true".equals(cpm.getAttribute("autoComplete")));
-
 		VariableScope variableScope = process.getVariableScope();
 		List<Variable> variables = variableScope.getVariables();
 		for (Variable variable : variables) {
@@ -180,7 +179,8 @@ public class CaseHandler extends PlanItemContainerHandler implements Handler {
 				super.linkPlanItems((Stage) planItemDefinition, parser);
 			}
 		}
-		copyStages(process);
+		copyStagePlanItems(process);
+		copyDiscretionaryItems(process);
 		String exitsString = cpm.getAttribute("exitCriteriaRefs");
 		if (exitsString != null) {
 			String[] exitCriteriaRefs = exitsString.split("\\ ");
@@ -195,23 +195,38 @@ public class CaseHandler extends PlanItemContainerHandler implements Handler {
 		return process;
 	}
 
-	public void copyStages(NodeContainer nc) {
+	private void copyDiscretionaryItems(NodeContainer nc) {
 		if(nc instanceof PlanningTableContainer){
 			PlanningTable pt = ((PlanningTableContainer) nc).getPlanningTable();
 			if(pt!=null){
-				for (TableItem ti : pt.getTableItems()) {
-					if(ti instanceof DiscretionaryItem && (((DiscretionaryItem<?>) ti).getDefinition() instanceof Stage || ((DiscretionaryItem<?>) ti).getDefinition() instanceof CaseTask)){
-						((DiscretionaryItem<?>) ti).copyFromPlanItem();
-					}
+				copyDiscretionaryItemsInTable(pt);
+			}
+			Node[] nodes = nc.getNodes();
+			for (Node node : nodes) {
+				if(node instanceof NodeContainer){
+					copyDiscretionaryItems((NodeContainer) node);
 				}
 			}
 		}
+	}
+
+	private void copyDiscretionaryItemsInTable(PlanningTable pt) {
+		for (TableItem ti : pt.getTableItems()) {
+			if(ti instanceof DiscretionaryItem && (((DiscretionaryItem<?>) ti).getDefinition() instanceof Stage || ((DiscretionaryItem<?>) ti).getDefinition() instanceof CaseTask)){
+				((DiscretionaryItem<?>) ti).copyFromDefinition();
+			}else if(ti instanceof PlanningTable){
+				copyDiscretionaryItemsInTable((PlanningTable) ti);
+			}
+		}
+	}
+
+	private void copyStagePlanItems(NodeContainer nc) {
 		Node[] nodes=nc.getNodes();
 		for (Node node : nodes) {
 			if (node instanceof StagePlanItem) {
 				StagePlanItem spi = (StagePlanItem) node;
 				spi.copyFromStage();
-				copyStages(spi);
+				copyStagePlanItems(spi);
 			}
 		}
 	}

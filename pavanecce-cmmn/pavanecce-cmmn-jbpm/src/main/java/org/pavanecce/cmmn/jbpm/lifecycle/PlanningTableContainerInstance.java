@@ -8,7 +8,7 @@ import org.kie.api.runtime.process.NodeInstance;
 import org.pavanecce.cmmn.jbpm.ApplicableDiscretionaryItem;
 import org.pavanecce.cmmn.jbpm.flow.PlanningTable;
 
-public interface PlanningTableContainer extends PlanElementLifecycleWithTask {
+public interface PlanningTableContainerInstance extends PlanElementLifecycleWithTask {
 	PlanningTable getPlanningTable();
 
 	PlanItemInstanceContainer getPlanItemInstanceCreator();

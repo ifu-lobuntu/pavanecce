@@ -33,6 +33,7 @@ CaseTask
  - exit criteria achieved
  - parameterMapping
  - parameter transformation
+ - writing result to bindingRef/bindingRefinement
  - EXIT,DISABLE,ENABLE,MANUAL_START,START,COMPLETE,TERMINATE,FAULT,SUSPEND,RESUME,REENABLE,REACTIVATE,CREATE
 
 Human Task
@@ -40,6 +41,7 @@ Human Task
  - repetitionRule
  - entry criteria achieved
  - exit criteria achieved
+ - writing result to bindingRef/bindingRefinement
  - EXIT,DISABLE,ENABLE,MANUAL_START,START,COMPLETE,TERMINATE,FAULT,SUSPEND,RESUME,REENABLE,REACTIVATE,CREATE
 
 UserEvent
@@ -67,7 +69,10 @@ Planning Service
  - submitPlan 
    - update parameters (taskContent AND workItem ),
    - role (do role-assignment in process too) and 
-
+DiscretionaryItem
+ - itemControl.automaticActivationRule
+  - ApplicabilityRule
+  - itemControl.requiredRule
 Generate OCM and JPA test Java classes from UML along with CaseFileItemDefinition includes
 Implement OCLProcessDialect that extends JavaProcessDialect
 Output ParameterMapping, bindingRefinement and scoped subscriptions
@@ -85,31 +90,23 @@ Storage of event variables inside StageInstances
 CaseTask.reactivated - check that process is restarted - it failed previously
 
 3. To implement
-Planning Service
- - startPlanning (include applicabilityRule)
- - prepareDiscretionaryItem 
-   - recheck applicabilityRule
-   - recheck authorizedRole
- - submitPlan 
-   - status/transition, 
-   - (due date?)
+Planning Service - HumanTask, Stage AND CasePlanModel
+ - startPlanning (include applicabilityRule) *
+ - prepareDiscretionaryItem *
+   - recheck applicabilityRule*
+   - recheck authorizedRole*
+ - submitPlan *
+   - status/transition, *
+   - (due date?)*
 
-Role management
- - Store roleAssignment in process
- - Validate authorization for planning - get it from the UserInfo service
+PlanItemOnPart.sentryRef *
 
-PlanItemOnPart.sentryRef
+DiscretionaryItem - need input from OMG
+ - entryCriteria 
+ - exitCriteria
+ - itemControl.repititionRule
 
-Planning Tables - test HumanTask, Case AND Stage planningTables:
- - DiscretionaryItem.entryCriteria
- - DiscretionaryItem.exitCriteria
- - DiscretionaryItem.itemControl.requiredRule
- - DiscretionaryItem.itemControl.automaticActivationRule
- - DiscretionaryItem.itemControl.repititionRule
- - ApplicabilityRule
 
-CaseModel:
- - REACTIVATE (from Failed,Terminated, Completed? need input from OMG)*
 
 4. Current potential problems 
 AbstractPersistentSubscriptionManager
@@ -120,6 +117,7 @@ PlanningService (look at TaskServiceFactory interface)
  - find a way to get to the InternalTaskService
 
 5. Difficult
+Validate authorization for planning - get the possible roles from somewhere, perhaps the UserInfo service, but group != role 
 Sentry.condition without onParts - when to trigger the evaluation of the condition.
 With JCR Property.CHANGE events, try to get the original value and only fire events for ADD_/REMOVE_REFERENCE when they applicable - JCR limitation
 Optimize caching of SubscriptionInfo and perhaps even other OCM objects IN OCMSubscriptioinManager
@@ -130,5 +128,7 @@ Plan fragments
  - For Discretionary Items
 ContextRefs for rules
 Internationalization
+CaseModel:
+ - REACTIVATE (from Failed,Terminated, Completed? need input from OMG)
 
  

@@ -25,6 +25,19 @@ public class DiscretionaryItemHandler extends AbstractTableItemHandler implement
 		DiscretionaryItem item = new DiscretionaryItem<>();
 		item.setDefinitionRef(attrs.getValue("definitionRef"));
 		populateCommonItems(attrs, item);
+		String entry = attrs.getValue("entryCriteriaRefs");
+		if (entry != null) {
+			for (String string : entry.split("\\ ")) {
+				item.putEntryCriterion(string, null);
+			}
+		}
+		String exit = attrs.getValue("exitCriteriaRefs");
+		if (exit != null) {
+			for (String string : exit.split("\\ ")) {
+				item.putExitCriterion(string, null);
+			}
+		}
+
 		item.setId(IdGenerator.getIdAsUniqueAsUuid(parser,item));
 		PlanningTable parent = (PlanningTable) parser.getParent();
 		parent.addTableItem(item);

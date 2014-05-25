@@ -220,6 +220,7 @@ public enum PlanElementState {
 
 	private void setActive(PlanElementLifecycle pi) {
 		pi.setPlanElementState(ACTIVE);
+		pi.getCaseInstance().markSubscriptionsForUpdate();
 		if (pi instanceof PlanItemInstanceContainer) {
 			for (PlanItemInstanceLifecycle<?> child : ((PlanItemInstanceContainer) pi).getChildren()) {
 				if (child instanceof ControllableItemInstanceLifecycle && child.getPlanElementState() == INITIAL) {
@@ -235,7 +236,6 @@ public enum PlanElementState {
 			if (child.getPlanElementState() == SUSPENDED) {
 				if (child instanceof OccurrablePlanItemInstanceLifecycle) {
 					((OccurrablePlanItemInstanceLifecycle<?>) child).resume();
-
 				} else if (isComplexLifecycle(child)) {
 					if (child instanceof ControllableItemInstanceLifecycle) {
 						((ControllableItemInstanceLifecycle<?>) child).triggerTransitionOnTask(PARENT_RESUME);
@@ -376,4 +376,6 @@ public enum PlanElementState {
 		}
 		return false;
 	}
+
+
 }

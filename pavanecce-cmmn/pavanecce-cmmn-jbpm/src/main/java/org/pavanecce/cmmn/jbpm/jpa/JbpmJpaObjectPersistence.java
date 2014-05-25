@@ -1,17 +1,10 @@
 package org.pavanecce.cmmn.jbpm.jpa;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-
 import javax.persistence.EntityManagerFactory;
 
 import org.kie.api.runtime.manager.RuntimeManager;
 import org.kie.internal.runtime.manager.context.EmptyContext;
 import org.pavanecce.cmmn.jbpm.event.AbstractPersistentSubscriptionManager;
-import org.pavanecce.cmmn.jbpm.event.CaseSubscriptionInfo;
-import org.pavanecce.cmmn.jbpm.event.CaseSubscriptionKey;
-import org.pavanecce.cmmn.jbpm.event.PersistedCaseFileItemSubscriptionInfo;
 import org.pavanecce.common.jpa.JpaObjectPersistence;
 
 /**
@@ -26,7 +19,7 @@ public class JbpmJpaObjectPersistence extends JpaObjectPersistence {
 
 	public JbpmJpaObjectPersistence(EntityManagerFactory emf, RuntimeManager rm) {
 		super(emf);
-		this.runtimeManager=rm;
+		this.runtimeManager = rm;
 	}
 
 	@Override
@@ -34,17 +27,33 @@ public class JbpmJpaObjectPersistence extends JpaObjectPersistence {
 		try {
 			startOrJoinTransaction();
 			getEntityManager().flush();
-			while (AbstractPersistentSubscriptionManager.dispatchEventQueue(runtimeManager.getRuntimeEngine(EmptyContext.get()))) {
-				AbstractPersistentSubscriptionManager.commitSubscriptionsTo(this);
-				getEntityManager().flush();
-			}
+			doCaseFileItemEvents();
 			if (startedTransaction) {
 				getTransaction().commit();
 				this.startedTransaction = false;
+				boolean workItemsProcessed = false;
+				do {
+					startOrJoinTransaction();
+					workItemsProcessed = AbstractPersistentSubscriptionManager.dispatchWorkItemQueue(runtimeManager.getRuntimeEngine(EmptyContext.get()));
+					if (workItemsProcessed) {
+						doCaseFileItemEvents();
+					}
+					getTransaction().commit();
+				} while (workItemsProcessed);
 			}
 			close();
 		} catch (Exception e) {
 			throw convertException(e);
+		}
+	}
+
+	private void doCaseFileItemEvents() {
+		while (AbstractPersistentSubscriptionManager.dispatchEventQueue(runtimeManager.getRuntimeEngine(EmptyContext.get()))) {
+			AbstractPersistentSubscriptionManager.commitSubscriptionsTo(this);
+			getEntityManager().flush();
+		}
+		if (AbstractPersistentSubscriptionManager.commitSubscriptionsTo(this)) {
+			getEntityManager().flush();
 		}
 	}
 

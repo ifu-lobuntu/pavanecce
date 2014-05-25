@@ -12,8 +12,8 @@ public class Sentry extends Join implements CMMNElement {
 	private List<OnPart> onParts = new ArrayList<OnPart>();
 	private String elementId;
 	private Constraint condition;
-	private PlanItem<?> planItemExiting;
-	private PlanItem<?> planItemEntering;
+	private ItemWithDefinition<?> planItemExiting;
+	private ItemWithDefinition<?> planItemEntering;
 	private boolean exitsCase;
 	public Sentry() {
 		setType(TYPE_AND);
@@ -49,19 +49,19 @@ public class Sentry extends Join implements CMMNElement {
 		this.elementId = elementId;
 	}
 
-	public void setPlanItemExiting(PlanItem<?> planItem) {
+	public void setPlanItemExiting(ItemWithDefinition<?> planItem) {
 		planItemExiting = planItem;
 	}
 
-	public PlanItem<?> getPlanItemExiting() {
+	public ItemWithDefinition<?> getPlanItemExiting() {
 		return planItemExiting;
 	}
 
-	public PlanItem<?> getPlanItemEntering() {
+	public ItemWithDefinition<?> getPlanItemEntering() {
 		return planItemEntering;
 	}
 
-	public void setPlanItemEntering(PlanItem<?> planItemEntering) {
+	public void setPlanItemEntering(ItemWithDefinition<?> planItemEntering) {
 		this.planItemEntering = planItemEntering;
 	}
 

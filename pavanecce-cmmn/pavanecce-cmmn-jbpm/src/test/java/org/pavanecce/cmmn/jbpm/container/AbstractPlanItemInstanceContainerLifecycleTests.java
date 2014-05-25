@@ -98,7 +98,10 @@ public abstract class AbstractPlanItemInstanceContainerLifecycleTests extends Ab
 		assertTaskInState(subTasksByParent, "TheCaseTaskPlanItem", Status.InProgress);
 
 		// *****WHEN
+		getPersistence().start();
 		getTaskService().suspend(taskByWorkItemId.getId(), "ConstructionProjectManager");
+		getPersistence().commit();
+		
 		// *******THEN
 		getPersistence().start();
 		PlanItemInstanceContainer piic = getPlanItemInstanceContainer();
@@ -119,7 +122,9 @@ public abstract class AbstractPlanItemInstanceContainerLifecycleTests extends Ab
 		assertTaskInState(subTasksByParent, "TheCaseTaskPlanItem", Status.Suspended);
 		assertEquals(PlanElementState.SUSPENDED, reloadCaseInstance(subCase).getPlanElementState());
 		// reactivate
+		getPersistence().start();
 		getTaskService().resume(taskByWorkItemId.getId(), "ConstructionProjectManager");
+		getPersistence().commit();
 		assertEquals(PlanElementState.ACTIVE, reloadCaseInstance(subCase).getPlanElementState());
 		assertPlanItemInState(caseInstance.getId(), "TheMilestonePlanItem", PlanElementState.COMPLETED);
 		assertPlanItemInState(caseInstance.getId(), "TheTimerEventPlanItem", PlanElementState.AVAILABLE);

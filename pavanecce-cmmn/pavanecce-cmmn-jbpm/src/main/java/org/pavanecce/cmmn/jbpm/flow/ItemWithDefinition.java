@@ -1,6 +1,8 @@
 package org.pavanecce.cmmn.jbpm.flow;
 
-public interface ItemWithDefinition<T extends PlanItemDefinition> extends CMMNElement {
+import org.jbpm.workflow.core.Node;
+
+public interface ItemWithDefinition<T extends PlanItemDefinition> extends CMMNElement,Node {
 	T getDefinition();
 
 	PlanItemControl getItemControl();

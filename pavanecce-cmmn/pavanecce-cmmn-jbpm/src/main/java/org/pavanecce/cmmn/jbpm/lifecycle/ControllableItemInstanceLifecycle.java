@@ -32,4 +32,6 @@ public interface ControllableItemInstanceLifecycle<T extends PlanItemDefinition>
 
 	void internalTriggerWithoutInstantiation(NodeInstance from, String type, WorkItem wi);
 
+	boolean isActivatedManually();
+
 }

@@ -76,29 +76,26 @@ public class BuilderTest extends AbstractConstructionTestCase {
 		assertNodeActive(processInstance.getId(), ksession, "LayBricksPlanItem");
 		assertNodeActive(processInstance.getId(), ksession, "LayFoundationPlanItem");
 		getPersistence().commit();
+		getPersistence().start();
 		taskService.start(list.get(1).getId(), "Builder");
 		taskService.complete(list.get(1).getId(), "Builder", new HashMap<String, Object>());
+		getPersistence().commit();
 
 		list = taskService.getTasksAssignedAsPotentialOwner("Builder", "en-UK");
 		assertEquals(2, list.size());
 		assertEquals("LayBricksPlanItem", list.get(0).getName());
 		assertEquals("LayBricksPlanItem", list.get(1).getName());
+		getPersistence().start();
 		taskService.start(list.get(0).getId(), "Builder");
 		taskService.complete(list.get(0).getId(), "Builder", new HashMap<String, Object>());
+		getPersistence().commit();
 		list = taskService.getTasksAssignedAsPotentialOwner("Builder", "en-UK");
 		assertEquals(1, list.size());
 		taskService.start(list.get(0).getId(), "Builder");
+		getPersistence().start();
 		taskService.complete(list.get(0).getId(), "Builder", new HashMap<String, Object>());
+		getPersistence().commit();
 
-		// TODO:l
-		// When all planItems complete, check the process completes
-		// TaskSummary task = list.get(0);
-		// logger.info("John is executing task {}", task.getName());
-		// taskService.start(task.getId(), "john");
-		// taskService.complete(task.getId(), "john", null);
-		//
-		// assertNodeTriggered(processInstance.getId(), "End");
-		// assertProcessInstanceCompleted(processInstance.getId(), ksession);
 	}
 
 	@Test

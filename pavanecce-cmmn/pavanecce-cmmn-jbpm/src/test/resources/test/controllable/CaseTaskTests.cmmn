@@ -32,19 +32,44 @@
 				<cmmn:inputs bindingRef="housePlanFileItemId" id="housePlanTaskParameter" name="housePlanTaskParameter">
 				</cmmn:inputs>
 				<cmmn:inputs bindingRef="wallPlanFileItemId" id="wallPlanTaskParameter" name="wallPlanTaskParameter">
+					<bindingRefinement  language="http://www.java.com/java">
+						<body>return housePlan.getWallPlans();</body>
+					</bindingRefinement>
 				</cmmn:inputs>
 				<cmmn:outputs bindingRef="wallPlanFileItemId" id="wallPlanTaskOutput" name="wallPlanTaskOutput">
 					<bindingRefinement  language="http://www.java.com/java">
 						<body>return housePlan.getWallPlans();</body>
 					</bindingRefinement>
 				</cmmn:outputs>
+				<cmmn:outputs bindingRef="roofPlanFileItemId" id="roofPlanTaskOutput" name="roofPlanTaskOutput">
+					<bindingRefinement  language="http://www.java.com/java">
+						<body>return housePlan.getRoofPlan();</body>
+					</bindingRefinement>
+				</cmmn:outputs>
 				<cmmn:parameterMapping sourceRef="housePlanTaskParameter" targetRef="SubCase.cmmn#housePlanSubCaseParameterId" />
 				<cmmn:parameterMapping sourceRef="wallPlanTaskParameter" targetRef="SubCase.cmmn#wallPlanSubCaseParameterId">
 					<cmmn:transformation language="http://www.java.com/java">
-						<cmmn:body>return housePlan.getWallPlans().iterator().next();</cmmn:body>
+						<cmmn:body>
+							source.setShortDescription("I Am Transformed");
+							return source;
+						</cmmn:body>
 					</cmmn:transformation>
 				</cmmn:parameterMapping>
 				<cmmn:parameterMapping sourceRef="SubCase.cmmn#wallPlanSubCaseOutputId" targetRef="wallPlanTaskOutput">
+					<cmmn:transformation language="http://www.java.com/java">
+						<cmmn:body>
+							source.setShortDescription("I Am Transformed Twice");
+							return source;
+						</cmmn:body>
+					</cmmn:transformation>
+				</cmmn:parameterMapping>
+				<cmmn:parameterMapping sourceRef="SubCase.cmmn#roofPlanSubCaseOutputId" targetRef="roofPlanTaskOutput">
+					<cmmn:transformation language="http://www.java.com/java">
+						<cmmn:body>
+							source.setShortDescription("I Am Transformed Twice");
+							return source;
+						</cmmn:body>
+					</cmmn:transformation>
 				</cmmn:parameterMapping>
 			</cmmn:caseTask>
 			<cmmn:humanTask id="designHouseTaskId" name="Design House" performerRef="designerRoleId"></cmmn:humanTask>
@@ -56,7 +81,7 @@
 		</cmmn:input>
 		<cmmn:input bindingRef="houseFileItemId" id="houseInputId" name="house">
 		</cmmn:input>
-		<cmmn:input bindingRef="wallPlanFileItemId" id="wallPlanInputId" name="housePlan">
+		<cmmn:input bindingRef="wallPlanFileItemId" id="wallPlanInputId" name="wallPlans">
 			<cmmn:bindingRefinement language="http://www.java.com/java">
 				<cmmn:body>return housePlan.getWallPlans();</cmmn:body>
 			</cmmn:bindingRefinement>
@@ -68,5 +93,3 @@
 		</cmmn:input>
 	</cmmn:case>
 </cmmn:definitions>
-
-	   

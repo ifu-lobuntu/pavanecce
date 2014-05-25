@@ -8,6 +8,8 @@ import org.apache.jackrabbit.ocm.manager.beanconverter.impl.ReferenceBeanConvert
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Bean;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Basic;
+import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -30,6 +32,10 @@ public class RoofPlan{
   @Id()
   @GeneratedValue()
   private String id = null;
+  @Field(jcrName = "test:shortDescription", jcrType = "STRING")
+  @Basic()
+  @Column(name="short_description")
+  private String shortDescription = "";
   @Field(path=true)
   String path;
   @Field(jcrName = "test:uuid", jcrType = "String")
@@ -50,6 +56,10 @@ public class RoofPlan{
   }
   public String getId(){
     String result = this.id;
+    return result;
+  }
+  public String getShortDescription(){
+    String result = this.shortDescription;
     return result;
   }
   public void setHouse(House newHouse){
@@ -82,6 +92,9 @@ public class RoofPlan{
   }
   public void setId(String id){
     this.id=id;
+  }
+  public void setShortDescription(String newShortDescription){
+    this.shortDescription=newShortDescription;
   }
   public void zz_internalSetHouse(House value){
     this.house=value;

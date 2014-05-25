@@ -8,14 +8,16 @@ import org.drools.core.process.instance.WorkItem;
 import org.kie.api.runtime.process.NodeInstance;
 import org.pavanecce.cmmn.jbpm.ApplicableDiscretionaryItem;
 import org.pavanecce.cmmn.jbpm.TaskParameters;
+import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
 import org.pavanecce.cmmn.jbpm.flow.HumanTask;
+import org.pavanecce.cmmn.jbpm.flow.PlanItemTransition;
 import org.pavanecce.cmmn.jbpm.flow.PlanningTable;
 import org.pavanecce.cmmn.jbpm.flow.TaskItemWithDefinition;
 import org.pavanecce.cmmn.jbpm.lifecycle.ControllableItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceContainer;
-import org.pavanecce.cmmn.jbpm.lifecycle.PlanningTableContainer;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanningTableContainerInstance;
 
-public class HumanTaskPlanItemInstance extends TaskPlanItemInstance<HumanTask, TaskItemWithDefinition<HumanTask>> implements PlanningTableContainer {
+public class HumanTaskPlanItemInstance extends TaskPlanItemInstance<HumanTask, TaskItemWithDefinition<HumanTask>> implements PlanningTableContainerInstance {
 
 	private static final long serialVersionUID = 8452936237272366757L;
 
@@ -54,8 +56,23 @@ public class HumanTaskPlanItemInstance extends TaskPlanItemInstance<HumanTask, T
 			if (owner != null) {
 				getCaseInstance().addRoleAssignment(getItem().getDefinition().getPerformer().getName(), owner);
 			}
+			PlanItemTransition transition=(PlanItemTransition) wi.getResult(TaskParameters.TRANSITION);
+			if(isCompletionTransition(transition)){
+				for (CaseParameter cp : getItem().getDefinition().getOutputs()) {
+					Object val = wi.getResult(cp.getName());
+					if (val != null) {
+						writeToBinding(cp, val);
+					}
+				}
+
+			}
 		}
 		super.signalEvent(type, event);
+	}
+
+	private boolean isCompletionTransition(PlanItemTransition transition) {
+		boolean isCompletionTransition1=transition==PlanItemTransition.COMPLETE || transition==PlanItemTransition.EXIT || transition==PlanItemTransition.FAULT;
+		return isCompletionTransition1;
 	}
 
 	/********* PlanningTableContainner implementation *******/
@@ -87,7 +104,7 @@ public class HumanTaskPlanItemInstance extends TaskPlanItemInstance<HumanTask, T
 
 	@Override
 	public WorkItem createPlannedItem(String tableItemId) {
-		return PlanningTableContainerUtil.createPlannedItem(this, tableItemId);
+		return PlanningTableContainerUtil.createPlannedTask(this, tableItemId);
 	}
 
 }

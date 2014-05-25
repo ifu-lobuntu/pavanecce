@@ -259,7 +259,7 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 			stream.writeShort(PLAN_ITEM_INSTANCE_FACTORY_NODE_INSTANCE);
 			writePlanItemStates((PlanItemInstanceFactoryNodeInstance<?>) nodeInstance, stream);
 			stream.writeBoolean(((PlanItemInstanceFactoryNodeInstance<?>) nodeInstance).isPlanItemInstanceRequired());
-			stream.writeBoolean(((PlanItemInstanceFactoryNodeInstance<?>) nodeInstance).isHasPlanItemBeenInstantiated());
+			stream.writeBoolean(((PlanItemInstanceFactoryNodeInstance<?>) nodeInstance).isHasPlanItemBeenInstantiatedYet());
 			stream.writeBoolean(((PlanItemInstanceFactoryNodeInstance<?>) nodeInstance).isRepeating());
 		} else if (nodeInstance instanceof OnPartInstance) {
 			stream.writeShort(ON_PART_INSTANCE);

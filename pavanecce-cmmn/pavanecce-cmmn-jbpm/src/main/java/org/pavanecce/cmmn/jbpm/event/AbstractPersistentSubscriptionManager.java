@@ -12,6 +12,9 @@ import java.util.Set;
 
 import javax.persistence.EntityManager;
 
+import org.drools.core.process.instance.WorkItem;
+import org.drools.core.process.instance.WorkItemManager;
+import org.drools.core.process.instance.impl.WorkItemImpl;
 import org.drools.persistence.PersistenceContext;
 import org.drools.persistence.PersistenceContextManager;
 import org.drools.persistence.jpa.JpaPersistenceContextManager;
@@ -30,6 +33,7 @@ public abstract class AbstractPersistentSubscriptionManager<T extends CaseSubscr
 	private boolean cascadeSubscription = false;
 	private static Map<Object, Map<CaseSubscriptionKey, CaseSubscriptionInfo<?>>> cachedSubscriptions = new HashMap<Object, Map<CaseSubscriptionKey, CaseSubscriptionInfo<?>>>();
 	private static ThreadLocal<Set<CaseFileItemEventWrapper>> eventQueue = new ThreadLocal<Set<CaseFileItemEventWrapper>>();
+	private static ThreadLocal<Set<WorkItem>> workItemQueue = new ThreadLocal<Set<WorkItem>>();
 
 	public AbstractPersistentSubscriptionManager() {
 		super();
@@ -112,6 +116,10 @@ public abstract class AbstractPersistentSubscriptionManager<T extends CaseSubscr
 	}
 
 	public static boolean dispatchEventQueue(RuntimeEngine engine) {
+		return dispatchCaseFileItemEventQueue(engine);
+	}
+
+	private static boolean dispatchCaseFileItemEventQueue(RuntimeEngine engine) {
 		Set<CaseFileItemEventWrapper> eq = getEventQueue();
 		eventQueue.set(new HashSet<CaseFileItemEventWrapper>());
 		if (eq.size() > 0) {
@@ -298,7 +306,7 @@ public abstract class AbstractPersistentSubscriptionManager<T extends CaseSubscr
 		return propertyName.equals(is.getItemName()) && (is.getTransition() == CaseFileItemTransition.CREATE || is.getTransition() == CaseFileItemTransition.DELETE);
 	}
 
-	public static void commitSubscriptionsTo(ObjectPersistence op) {
+	public static boolean commitSubscriptionsTo(ObjectPersistence op) {
 		Object p = op.getDelegate();
 		Map<CaseSubscriptionKey, CaseSubscriptionInfo<?>> map1 = AbstractPersistentSubscriptionManager.getCachedSubscriptions(p);
 		AbstractPersistentSubscriptionManager.cachedSubscriptions.remove(p);
@@ -314,6 +322,39 @@ public abstract class AbstractPersistentSubscriptionManager<T extends CaseSubscr
 				op.update(t);
 			}
 			map.clear();
+			return true;
 		}
+		return false;
+	}
+	public static boolean dispatchWorkItemQueue(RuntimeEngine re){
+		Set<WorkItem> workItemQueue2 = getWorkItemQueue();
+		workItemQueue.set(null);
+		for (WorkItem workItem : workItemQueue2) {
+			try {
+				CaseInstance ci = (CaseInstance) re.getKieSession().getProcessInstance(workItem.getProcessInstanceId());
+				ci.executeWorkItem(workItem);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return workItemQueue2.size()>0;
+	}
+	public static void queueWorkItem(WorkItemImpl wi) {
+		Set<WorkItem> set = getWorkItemQueue();
+		set.add(wi);
+	}
+
+	public static Set<WorkItem> getWorkItemQueue() {
+		Set<WorkItem> set = workItemQueue.get();
+		if(set==null){
+			workItemQueue.set(set=new HashSet<WorkItem>());
+		}
+		return set;
+	}
+
+	public static Set<WorkItem> pollWorkItemQueue() {
+		Set<WorkItem> result = getWorkItemQueue();
+		workItemQueue.set(null);
+		return result;
 	}
 }

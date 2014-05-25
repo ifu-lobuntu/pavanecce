@@ -290,6 +290,7 @@ public abstract class CaseFileItemEventTests extends AbstractConstructionTestCas
 	private void addWallPlanAsReferenceToHouse() throws Exception {
 		getPersistence().start();
 		this.house = getPersistence().find(House.class, house.getId());
+		this.housePlan = getPersistence().find(HousePlan.class, housePlan.getId());
 		house.getWallPlans().addAll(housePlan.getWallPlans());
 		getPersistence().update(house);
 		getPersistence().commit();

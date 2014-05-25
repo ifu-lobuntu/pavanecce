@@ -11,6 +11,7 @@ import org.jbpm.process.core.context.variable.VariableScope;
 import org.jbpm.workflow.core.impl.ConnectionImpl;
 import org.jbpm.workflow.core.node.EndNode;
 import org.jbpm.workflow.core.node.Join;
+import org.jbpm.workflow.core.node.MilestoneNode;
 import org.jbpm.workflow.core.node.Split;
 import org.jbpm.workflow.core.node.StartNode;
 import org.kie.api.definition.process.Node;
@@ -20,15 +21,16 @@ import org.pavanecce.cmmn.jbpm.flow.CaseFileItemOnPart;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemStartTrigger;
 import org.pavanecce.cmmn.jbpm.flow.DefaultJoin;
 import org.pavanecce.cmmn.jbpm.flow.DefaultSplit;
+import org.pavanecce.cmmn.jbpm.flow.DiscretionaryItem;
 import org.pavanecce.cmmn.jbpm.flow.MultiInstancePlanItem;
 import org.pavanecce.cmmn.jbpm.flow.OnPart;
 import org.pavanecce.cmmn.jbpm.flow.PlanItem;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemContainer;
-import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemInfo;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemOnPart;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemStartTrigger;
 import org.pavanecce.cmmn.jbpm.flow.Sentry;
+import org.pavanecce.cmmn.jbpm.flow.Stage;
 import org.pavanecce.cmmn.jbpm.flow.TimerEventListener;
 
 public abstract class PlanItemContainerHandler extends BaseAbstractHandler {
@@ -46,7 +48,7 @@ public abstract class PlanItemContainerHandler extends BaseAbstractHandler {
 		EndNode defaultEnd = container.getDefaultEnd();
 		defaultEnd.setTerminate(container instanceof Case);
 		for (PlanItemInfo pi : container.getPlanItemInfo()) {
-			pi.setDefinition(findPlanItemDefinition(container.getCase(), pi.getDefinitionRef()));
+			pi.setDefinition(container.getCase().getPlanItemDefinition(pi.getDefinitionRef()));
 			pi.buildPlanItem();
 		}
 		DefaultJoin defaultJoin = new DefaultJoin();
@@ -64,6 +66,24 @@ public abstract class PlanItemContainerHandler extends BaseAbstractHandler {
 				new ConnectionImpl(defaultSplit, DEFAULT, node, DEFAULT);
 				linkSentryOnPart(container, variableScope, (Sentry) node);
 			}
+		}
+	}
+
+	private void linkDiscretionaryItemCriteria(PlanItemContainer process, DiscretionaryItem<?> node) {
+		if (process.getDefaultJoin() != null) {
+			new ConnectionImpl(node, DEFAULT, process.getDefaultJoin(), DEFAULT);
+		}
+		for (String string : new ArrayList<String>(node.getEntryCriteria().keySet())) {
+			Sentry entry = findSentry(process, string);
+			node.putEntryCriterion(string, entry);
+		}
+		for (String string : new ArrayList<String>(node.getExitCriteria().keySet())) {
+			Sentry exit = findSentry(process, string);
+			node.putExitCriterion(string, exit);
+		}
+		node.linkItem();
+		if (node.getEntryCriteria().isEmpty()) {
+			new ConnectionImpl(process.getDefaultSplit(), DEFAULT, node.getFactoryNode(), DEFAULT);
 		}
 	}
 
@@ -86,18 +106,18 @@ public abstract class PlanItemContainerHandler extends BaseAbstractHandler {
 			} else if (node.getDefinition() instanceof TimerEventListener) {
 				TimerEventListener tel = (TimerEventListener) node.getDefinition();
 				if (tel.getStartTrigger() != null) {
-					if(tel.getStartTrigger() instanceof CaseFileItemStartTrigger){
-						CaseFileItemStartTrigger startTrigger = (CaseFileItemStartTrigger)tel.getStartTrigger();
+					if (tel.getStartTrigger() instanceof CaseFileItemStartTrigger) {
+						CaseFileItemStartTrigger startTrigger = (CaseFileItemStartTrigger) tel.getStartTrigger();
 						startTrigger.setSourceCaseFileItem(findCaseFileItemById(process.getCase().getVariableScope(), startTrigger.getSourceRef()));
-					}else if(tel.getStartTrigger() instanceof PlanItemStartTrigger){
-						PlanItemStartTrigger startTrigger = (PlanItemStartTrigger)tel.getStartTrigger();
+					} else if (tel.getStartTrigger() instanceof PlanItemStartTrigger) {
+						PlanItemStartTrigger startTrigger = (PlanItemStartTrigger) tel.getStartTrigger();
 						startTrigger.setSourcePlanItem(findPlanItem(process, startTrigger.getSourceRef()));
 					}
 					OnPart copy = tel.getStartTrigger().copy();
 					process.addNode(copy);
 					new ConnectionImpl(process.getDefaultSplit(), DEFAULT, copy, DEFAULT);
 					new ConnectionImpl(copy, DEFAULT, node, DEFAULT);
-				}else{
+				} else {
 					new ConnectionImpl(process.getDefaultSplit(), DEFAULT, node, DEFAULT);
 				}
 			} else {
@@ -144,15 +164,6 @@ public abstract class PlanItemContainerHandler extends BaseAbstractHandler {
 		for (Node node : process.getNodes()) {
 			if (node instanceof PlanItem && ((PlanItem<?>) node).getElementId().equals(sourceRef)) {
 				return (PlanItem<?>) node;
-			}
-		}
-		return null;
-	}
-
-	private PlanItemDefinition findPlanItemDefinition(Case process, String definitionRef) {
-		for (PlanItemDefinition node : process.getPlanItemDefinitions()) {
-			if (node.getElementId().equals(definitionRef)) {
-				return node;
 			}
 		}
 		return null;

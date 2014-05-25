@@ -11,7 +11,7 @@ import org.pavanecce.cmmn.jbpm.infra.OnPartInstanceSubscription;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.OnPartInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.SubscriptionContext;
 
-public interface PlanItemInstanceContainer extends PlanningTableContainer, NodeInstanceContainer {
+public interface PlanItemInstanceContainer extends PlanningTableContainerInstance, NodeInstanceContainer {
 
 	Collection<? extends PlanItemInstanceLifecycle<?>> getChildren();
 
@@ -27,5 +27,5 @@ public interface PlanItemInstanceContainer extends PlanningTableContainer, NodeI
 
 	ControllableItemInstanceLifecycle<?> findNodeForWorkItem(long id);
 
-	PlanningTableContainer findPlanElementWithPlanningTable(long containerWorkItemId);
+	PlanningTableContainerInstance findPlanElementWithPlanningTable(long containerWorkItemId);
 }

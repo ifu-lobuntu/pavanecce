@@ -1,10 +1,7 @@
 <mix='http://www.jcp.org/jcr/mix/1.0'>
 <test='http://test/'>
-[test:wallPlan] >  mix:lifecycle, mix:referenceable
-  - test:wall ( REFERENCE )  < test:wall
-  - test:roomPlans ( REFERENCE )  multiple < test:roomPlan
-  - test:shortDescription ( STRING )  mandatory
-  - test:house ( REFERENCE )  < test:house
+[test:wall] >  mix:lifecycle, mix:referenceable
+  - test:wallPlan ( REFERENCE )  < test:wallPlan
   - test:uuid ( STRING )  mandatory
 
 [test:roomPlan] >  mix:lifecycle, mix:referenceable
@@ -12,39 +9,22 @@
   - test:wallPlans ( REFERENCE )  multiple < test:wallPlan
   - test:uuid ( STRING )  mandatory
 
-[test:house] >  mix:lifecycle, mix:referenceable
-  - test:wallPlans ( REFERENCE )  multiple < test:wallPlan
-  - test:roofPlan ( REFERENCE )  < test:roofPlan
-  - test:description ( STRING )  mandatory
-  + test:walls (test:walls ) = test:walls
-  - test:uuid ( STRING )  mandatory
-
-[test:walls]
-  + test:wall (test:wall ) = test:wall multiple
-
 [test:roofPlan] >  mix:lifecycle, mix:referenceable
+  - test:shortDescription ( STRING )  mandatory
   - test:house ( REFERENCE )  < test:house
   - test:uuid ( STRING )  mandatory
 
-[test:wall] >  mix:lifecycle, mix:referenceable
-  - test:wallPlan ( REFERENCE )  < test:wallPlan
-  - test:uuid ( STRING )  mandatory
-
-[test:constructionCase] >  mix:lifecycle, mix:referenceable
-  - test:numberOfWalls ( LONG ) 
-  - test:picture ( BINARY ) 
-  - test:startDate ( DATE ) 
-  - test:name ( STRING )  mandatory
-  - test:active ( BOOLEAN ) 
-  - test:pricePerSquareMetre ( DOUBLE ) 
-  + test:housePlan (test:housePlan )
-  + test:house (test:house )
+[test:wallPlan] >  mix:lifecycle, mix:referenceable
+  - test:roomPlans ( REFERENCE )  multiple < test:roomPlan
+  - test:house ( REFERENCE )  < test:house
+  - test:wall ( REFERENCE )  < test:wall
+  - test:shortDescription ( STRING )  mandatory
   - test:uuid ( STRING )  mandatory
 
 [test:housePlan] >  mix:lifecycle, mix:referenceable
+  + test:roofPlan (test:roofPlan )
   + test:roomPlans (test:roomPlans ) = test:roomPlans
   + test:wallPlans (test:wallPlans ) = test:wallPlans
-  + test:roofPlan (test:roofPlan )
   - test:uuid ( STRING )  mandatory
 
 [test:roomPlans]
@@ -52,4 +32,25 @@
 
 [test:wallPlans]
   + test:wallPlan (test:wallPlan ) = test:wallPlan multiple
+
+[test:constructionCase] >  mix:lifecycle, mix:referenceable
+  - test:active ( BOOLEAN ) 
+  - test:startDate ( DATE ) 
+  - test:picture ( BINARY ) 
+  - test:pricePerSquareMetre ( DOUBLE ) 
+  - test:name ( STRING )  mandatory
+  - test:numberOfWalls ( LONG ) 
+  + test:house (test:house )
+  + test:housePlan (test:housePlan )
+  - test:uuid ( STRING )  mandatory
+
+[test:house] >  mix:lifecycle, mix:referenceable
+  - test:description ( STRING )  mandatory
+  - test:wallPlans ( REFERENCE )  multiple < test:wallPlan
+  - test:roofPlan ( REFERENCE )  < test:roofPlan
+  + test:walls (test:walls ) = test:walls
+  - test:uuid ( STRING )  mandatory
+
+[test:walls]
+  + test:wall (test:wall ) = test:wall multiple
 

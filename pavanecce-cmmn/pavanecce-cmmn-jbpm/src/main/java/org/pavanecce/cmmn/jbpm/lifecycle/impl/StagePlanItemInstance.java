@@ -9,12 +9,16 @@ import org.drools.core.process.instance.WorkItem;
 import org.jbpm.process.instance.ContextInstanceContainer;
 import org.jbpm.workflow.core.node.StartNode;
 import org.jbpm.workflow.instance.NodeInstanceContainer;
+import org.jbpm.workflow.instance.WorkflowProcessInstance;
 import org.jbpm.workflow.instance.node.EventBasedNodeInstanceInterface;
 import org.jbpm.workflow.instance.node.EventNodeInstanceInterface;
+import org.kie.api.definition.process.Node;
 import org.kie.api.runtime.process.NodeInstance;
 import org.pavanecce.cmmn.jbpm.ApplicableDiscretionaryItem;
 import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
+import org.pavanecce.cmmn.jbpm.flow.DiscretionaryItem;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemContainer;
+import org.pavanecce.cmmn.jbpm.flow.PlanItemInstanceFactoryNode;
 import org.pavanecce.cmmn.jbpm.flow.PlanningTable;
 import org.pavanecce.cmmn.jbpm.flow.Stage;
 import org.pavanecce.cmmn.jbpm.flow.TaskItemWithDefinition;
@@ -22,7 +26,7 @@ import org.pavanecce.cmmn.jbpm.infra.OnPartInstanceSubscription;
 import org.pavanecce.cmmn.jbpm.lifecycle.ControllableItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceContainer;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceLifecycle;
-import org.pavanecce.cmmn.jbpm.lifecycle.PlanningTableContainer;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanningTableContainerInstance;
 
 public class StagePlanItemInstance extends AbstractControllableItemInstance<Stage, TaskItemWithDefinition<Stage>> implements PlanItemInstanceContainer, NodeInstanceContainer,
 		EventNodeInstanceInterface, EventBasedNodeInstanceInterface, ContextInstanceContainer {
@@ -45,7 +49,6 @@ public class StagePlanItemInstance extends AbstractControllableItemInstance<Stag
 		StartNode defaultStart = getItem().getDefinition().getDefaultStart();
 		NodeInstance nodeInstance = getNodeInstance(defaultStart);
 		((org.jbpm.workflow.instance.NodeInstance) nodeInstance).trigger(null, null);
-		getCaseInstance().markSubscriptionsForUpdate();
 	}
 
 	@Override
@@ -87,7 +90,7 @@ public class StagePlanItemInstance extends AbstractControllableItemInstance<Stag
 
 	@Override
 	public WorkItem createPlannedItem(String tableItemId) {
-		return PlanningTableContainerUtil.createPlannedItem(this, tableItemId);
+		return PlanningTableContainerUtil.createPlannedTask(this, tableItemId);
 	}
 
 	@Override
@@ -127,7 +130,7 @@ public class StagePlanItemInstance extends AbstractControllableItemInstance<Stag
 	}
 
 	@Override
-	public PlanningTableContainer findPlanElementWithPlanningTable(long containerWorkItemId) {
+	public PlanningTableContainerInstance findPlanElementWithPlanningTable(long containerWorkItemId) {
 		return PlanItemInstanceContainerUtil.findPlanElementWithPlanningTable(this, containerWorkItemId);
 	}
 }

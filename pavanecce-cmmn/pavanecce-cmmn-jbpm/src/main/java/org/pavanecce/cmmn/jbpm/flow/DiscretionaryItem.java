@@ -4,14 +4,15 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.drools.core.process.core.ParameterDefinition;
 import org.drools.core.process.core.Work;
 import org.drools.core.process.core.impl.ParameterDefinitionImpl;
 import org.drools.core.process.core.impl.WorkImpl;
 import org.jbpm.services.task.wih.util.PeopleAssignmentHelper;
-
-import com.sun.org.apache.xml.internal.serializer.ElemDesc;
+import org.jbpm.workflow.core.Node;
+import org.jbpm.workflow.core.impl.ConnectionImpl;
 
 public class DiscretionaryItem<T extends PlanItemDefinition> extends TableItem implements TaskItemWithDefinition<T> {
 	private static final long serialVersionUID = 2371336993789669482L;
@@ -22,7 +23,7 @@ public class DiscretionaryItem<T extends PlanItemDefinition> extends TableItem i
 	private Work work;
 	private Map<String, Sentry> entryCriteria = new HashMap<String, Sentry>();
 	private Map<String, Sentry> exitCriteria = new HashMap<String, Sentry>();
-
+	private PlanItemInstanceFactoryNode factoryNode=new PlanItemInstanceFactoryNode();
 	public Map<String, Sentry> getEntryCriteria() {
 		return Collections.unmodifiableMap(entryCriteria);
 	}
@@ -31,6 +32,12 @@ public class DiscretionaryItem<T extends PlanItemDefinition> extends TableItem i
 		return Collections.unmodifiableMap(exitCriteria);
 	}
 
+	private PlanItemInstanceFactoryNode createFactoryNode() {
+		PlanItemInstanceFactoryNode result = new PlanItemInstanceFactoryNode();
+		result.setId(id / 3334123);
+		result.setName(getName() + "Factory");
+		return result;
+	}
 	public void putEntryCriterion(String s, Sentry c) {
 		entryCriteria.put(s, c);
 	}
@@ -102,15 +109,14 @@ public class DiscretionaryItem<T extends PlanItemDefinition> extends TableItem i
 
 	}
 
-	public void copyFromPlanItem() {
+	public void copyFromDefinition() {
+		long id=this.id;
 		HashMap<Object, Object> copiedState = new HashMap<Object, Object>();
 		T from = getDefinition();
 		this.setNodeContainer(getParentTable().getFirstPlanItemContainer());
-		if (this.getNodeContainer() == null) {
-			System.out.println();
-		}
 		copiedState.put(from, this);
 		copy(copiedState, from, this);
+		this.id=id;
 	}
 
 	@Override
@@ -126,6 +132,7 @@ public class DiscretionaryItem<T extends PlanItemDefinition> extends TableItem i
 	public PlanItemContainer getPlanItemContainer() {
 		return getParentTable().getFirstPlanItemContainer();
 	}
+
 	@Override
 	public String getPlanItemEventName() {
 		return this.getElementId();
@@ -134,6 +141,26 @@ public class DiscretionaryItem<T extends PlanItemDefinition> extends TableItem i
 	@Override
 	public String getEffectiveName() {
 		return getDefinition().getName();
+	}
+
+	public void linkItem() {
+		Set<Entry<String, Sentry>> entrySet = entryCriteria.entrySet();
+		for (Entry<String, Sentry> entry : entrySet) {
+			entry.getValue().setPlanItemEntering(this);
+			new ConnectionImpl(entry.getValue(), Node.CONNECTION_DEFAULT_TYPE, getFactoryNode(), Node.CONNECTION_DEFAULT_TYPE);
+		}
+		Set<Entry<String, Sentry>> exitSet = exitCriteria.entrySet();
+		for (Entry<String, Sentry> entry : exitSet) {
+			entry.getValue().setPlanItemExiting(this);
+		}
+		new ConnectionImpl(getFactoryNode(), Node.CONNECTION_DEFAULT_TYPE, this, Node.CONNECTION_DEFAULT_TYPE);
+	}
+
+	public PlanItemInstanceFactoryNode getFactoryNode() {
+		if(factoryNode==null){
+			factoryNode=createFactoryNode();
+		}
+		return factoryNode;
 	}
 
 }

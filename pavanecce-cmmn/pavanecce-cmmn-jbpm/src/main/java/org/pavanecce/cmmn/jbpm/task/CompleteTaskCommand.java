@@ -43,7 +43,7 @@ public class CompleteTaskCommand extends SetTaskOutputCommand {
 		}).fire(task);
 		boolean operationAllowed = (task.getTaskData().getActualOwner() != null && task.getTaskData().getActualOwner().equals(user));
 		if (!operationAllowed) {
-			String errorMessage = "The user" + user + "is not allowed to Start the task " + task.getId();
+			String errorMessage = "The user" + user + "is not allowed to Complete the task " + task.getId();
 			throw new PermissionDeniedException(errorMessage);
 		}
 		if (task.getTaskData().getStatus().equals(Status.InProgress)) {

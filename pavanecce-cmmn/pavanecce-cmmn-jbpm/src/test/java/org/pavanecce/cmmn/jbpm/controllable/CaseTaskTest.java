@@ -88,10 +88,12 @@ public class CaseTaskTest extends AbstractControllableLifecycleTests {
 
 	@Override
 	public void failTask(long taskId) {
+		getPersistence().start();
 		long subProccessInstanceId = getSubProcessInstanceId(taskId);
 		if (subProccessInstanceId >= 0) {
 			getRuntimeEngine().getKieSession().abortProcessInstance(subProccessInstanceId);
 		}
+		getPersistence().commit();
 	}
 
 	private long getSubProcessInstanceId(long taskId) {

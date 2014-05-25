@@ -83,6 +83,7 @@ public class ConstructionCaseExample extends AbstractPotentiallyJavaCompilingTes
 		createOneToMany(house, wall, CollectionKind.SET_LITERAL, AggregationKind.COMPOSITE_LITERAL);
 		wallPlan = (Class) getModel().createOwnedType("WallPlan", UMLPackage.eINSTANCE.getClass_());
 		wallPlan.createOwnedAttribute("shortDescription",  primitiveTypes.getOwnedType("String"));
+		roofPlan.createOwnedAttribute("shortDescription",  primitiveTypes.getOwnedType("String"));
 		createOneToOne(wallPlan, wall, AggregationKind.NONE_LITERAL,false);
 		createOneToMany(housePlan, wallPlan, CollectionKind.SET_LITERAL, AggregationKind.COMPOSITE_LITERAL);
 		createOneToMany(house, wallPlan, CollectionKind.SET_LITERAL, AggregationKind.NONE_LITERAL);

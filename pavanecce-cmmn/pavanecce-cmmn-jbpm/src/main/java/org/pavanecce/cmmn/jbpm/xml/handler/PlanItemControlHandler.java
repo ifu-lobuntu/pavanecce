@@ -46,6 +46,8 @@ public class PlanItemControlHandler extends AbstractCaseElementHandler implement
 			((PlanItemInfo<?>) parent).setItemControl(planItemControl);
 		} else if (parent instanceof PlanItemDefinition) {
 			((PlanItemDefinition) parent).setDefaultControl(planItemControl);
+		} else if (parent instanceof DiscretionaryItem) {
+			((DiscretionaryItem<?>) parent).setItemControl(planItemControl);
 		}
 		return planItemControl;
 	}

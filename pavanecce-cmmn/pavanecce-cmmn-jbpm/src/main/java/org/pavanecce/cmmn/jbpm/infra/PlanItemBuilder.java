@@ -11,9 +11,6 @@ import org.jbpm.process.builder.ProcessBuildContext;
 import org.jbpm.process.builder.ProcessNodeBuilder;
 import org.jbpm.process.builder.ReturnValueEvaluatorBuilder;
 import org.jbpm.process.builder.dialect.ProcessDialectRegistry;
-import org.jbpm.process.core.Context;
-import org.jbpm.process.core.ContextContainer;
-import org.jbpm.process.core.ContextResolver;
 import org.jbpm.process.core.context.variable.Variable;
 import org.jbpm.process.core.context.variable.VariableScope;
 import org.jbpm.process.instance.impl.ReturnValueConstraintEvaluator;
@@ -31,41 +28,55 @@ import org.pavanecce.cmmn.jbpm.flow.CaseTask;
 import org.pavanecce.cmmn.jbpm.flow.DiscretionaryItem;
 import org.pavanecce.cmmn.jbpm.flow.ItemWithDefinition;
 import org.pavanecce.cmmn.jbpm.flow.ParameterMapping;
+import org.pavanecce.cmmn.jbpm.flow.PlanItem;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemControl;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 import org.pavanecce.cmmn.jbpm.flow.PlanningTable;
+import org.pavanecce.cmmn.jbpm.flow.PlanningTableContainer;
 import org.pavanecce.cmmn.jbpm.flow.TableItem;
 import org.pavanecce.cmmn.jbpm.flow.TaskDefinition;
-import org.pavanecce.cmmn.jbpm.lifecycle.PlanningTableContainer;
 import org.pavanecce.common.util.NameConverter;
 
+//TODO this class hacks around to get to items not in the processTree. 
 public class PlanItemBuilder implements ProcessNodeBuilder {
 
 	@Override
 	public void build(Process process, ProcessDescr processDescr, ProcessBuildContext context, Node node) {
 		processCaseInputParameters(process, context); // TODO find a better place to do this?
+		if (((Case) process).getPlanningTable() != null) {
+			processPlanningTable(processDescr, context, node, ((Case) process).getPlanningTable());
+		}
+		buildImpl(process, processDescr, context, node);
+	}
+
+	private void buildImpl(Process process, ProcessDescr processDescr, ProcessBuildContext context, Node node) {
 		ItemWithDefinition<?> item = (ItemWithDefinition<?>) node;
 		if (item.getDefinition() instanceof PlanningTableContainer) {
 			PlanningTableContainer ptc = (PlanningTableContainer) item.getDefinition();
 			PlanningTable planningTable = ptc.getPlanningTable();
 			if (planningTable != null) {
-				for (ApplicabilityRule ar : planningTable.getApplicabilityRules().values()) {
-					ar.setCondition(build(context, node, ar.getCondition()));
-				}
-				processPlanningTable(context, node, planningTable);
+				processPlanningTable(processDescr, context, node, planningTable);
 			}
 		}
 		processItemWithDefinition(context, node, item);
 	}
 
-	private void processPlanningTable(ProcessBuildContext context, Node node, PlanningTable planningTable) {
+	private void processPlanningTable(ProcessDescr processDescr, ProcessBuildContext context, Node node, PlanningTable planningTable) {
+		for (ApplicabilityRule ar : planningTable.getApplicabilityRules().values()) {
+			ar.setCondition(build(context, node, ar.getCondition()));
+		}
 		Collection<TableItem> tableItems = planningTable.getTableItems();
 		for (TableItem tableItem : tableItems) {
 			if (tableItem instanceof DiscretionaryItem<?>) {
 				DiscretionaryItem<?> di = (DiscretionaryItem<?>) tableItem;
 				processItemWithDefinition(context, node, di);
+				for (Node child : di.getNodes()) {
+					if (child instanceof PlanItem) {
+						buildImpl(planningTable.getFirstPlanItemContainer().getCase(), processDescr, context, child);
+					}
+				}
 			} else {
-				processPlanningTable(context, node, (PlanningTable) tableItem);
+				processPlanningTable(processDescr, context, node, (PlanningTable) tableItem);
 			}
 		}
 	}

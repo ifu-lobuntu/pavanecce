@@ -42,16 +42,32 @@ public class OcmCasePersistence extends OcmObjectPersistence {
 		try {
 			startTransaction();
 			getSession().save();
-			while (AbstractPersistentSubscriptionManager.dispatchEventQueue(runtimeManager.getRuntimeEngine(EmptyContext.get()))) {
-				AbstractPersistentSubscriptionManager.commitSubscriptionsTo(this);
-				getSession().save();
-			}
+			doCaseFileItemEvents();
 			if (startedTransaction) {
 				getTransaction().commit();
+				boolean workItemsProcessed=false;
+				do {
+					getTransaction().begin();
+					workItemsProcessed = AbstractPersistentSubscriptionManager.dispatchWorkItemQueue(runtimeManager.getRuntimeEngine(EmptyContext.get()));
+					if (workItemsProcessed) {
+						doCaseFileItemEvents();
+					}
+					getTransaction().commit();
+				} while (workItemsProcessed);
 			}
 			startedTransaction = false;
 		} catch (Exception e) {
 			throw convertException(e);
+		}
+	}
+
+	private void doCaseFileItemEvents() {
+		while (AbstractPersistentSubscriptionManager.dispatchEventQueue(runtimeManager.getRuntimeEngine(EmptyContext.get()))) {
+			AbstractPersistentSubscriptionManager.commitSubscriptionsTo(this);
+			getSession().save();
+		}
+		if(AbstractPersistentSubscriptionManager.commitSubscriptionsTo(this)){
+			getSession().save();
 		}
 	}
 

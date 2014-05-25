@@ -14,11 +14,11 @@ import org.jbpm.process.instance.ContextInstance;
 import org.jbpm.process.instance.ProcessInstance;
 import org.jbpm.process.instance.context.exception.ExceptionScopeInstance;
 import org.jbpm.services.task.wih.util.PeopleAssignmentHelper;
-import org.jbpm.workflow.core.impl.NodeImpl;
 import org.jbpm.workflow.instance.WorkflowRuntimeException;
 import org.jbpm.workflow.instance.node.CompositeContextNodeInstance;
 import org.kie.api.runtime.process.NodeInstance;
 import org.pavanecce.cmmn.jbpm.TaskParameters;
+import org.pavanecce.cmmn.jbpm.event.AbstractPersistentSubscriptionManager;
 import org.pavanecce.cmmn.jbpm.flow.DiscretionaryItem;
 import org.pavanecce.cmmn.jbpm.flow.PlanItem;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
@@ -124,8 +124,11 @@ public abstract class AbstractControllableItemInstance<T extends PlanItemDefinit
 	}
 
 	@Override
-	public void triggerTransitionOnTask(PlanItemTransition transition) {
+	public final void triggerTransitionOnTask(PlanItemTransition transition) {
 		WorkItemImpl wi = new WorkItemImpl();
+		wi.setProcessInstanceId(this.getProcessInstance().getId());
+		String deploymentId = (String) getProcessInstance().getKnowledgeRuntime().getEnvironment().get("deploymentId");
+		wi.setDeploymentId(deploymentId);
 		wi.setName(TaskParameters.UPDATE_TASK_STATUS);
 		wi.setParameter(TaskParameters.TASK_TRANSITION, transition);
 		wi.setParameter(TaskParameters.WORK_ITEM_ID, getWorkItemId());
@@ -134,7 +137,8 @@ public abstract class AbstractControllableItemInstance<T extends PlanItemDefinit
 		wi.setParameter(PeopleAssignmentHelper.GROUP_ID, getIdealRoles());
 		wi.setParameter(PeopleAssignmentHelper.BUSINESSADMINISTRATOR_ID, getBusinessAdministrators());
 		wi.getParameters().putAll(buildParametersFor(transition));
-		executeWorkItem(wi);
+		AbstractPersistentSubscriptionManager.queueWorkItem(wi);
+		// executeWorkItem(wi);
 	}
 
 	protected Map<String, Object> buildParametersFor(PlanItemTransition transition) {
@@ -142,7 +146,6 @@ public abstract class AbstractControllableItemInstance<T extends PlanItemDefinit
 	}
 
 	public void internalTriggerWithoutInstantiation(NodeInstance from, String type, WorkItem wi) {
-		super.internalTrigger(from, type);
 		this.workItem = wi;
 		this.workItemId = wi.getId();
 		this.planElementState = PlanElementState.INITIAL;
@@ -151,7 +154,6 @@ public abstract class AbstractControllableItemInstance<T extends PlanItemDefinit
 	@Override
 	public void internalTrigger(NodeInstance from, String type) {
 		super.internalTrigger(from, type);
-		((CaseInstance) getProcessInstance()).markSubscriptionsForUpdate();
 		workItem = createWorkItem(getItem().getWork());
 		if (isBlocking()) {
 			addWorkItemUpdatedListener();
@@ -196,7 +198,6 @@ public abstract class AbstractControllableItemInstance<T extends PlanItemDefinit
 			}
 		}
 		return wi;
-
 	}
 
 	@Override
@@ -259,18 +260,6 @@ public abstract class AbstractControllableItemInstance<T extends PlanItemDefinit
 
 	protected boolean isMyWorkItem(WorkItem event) {
 		return event.getId() == getWorkItemId() || (getWorkItemId() == -1 && getWorkItem().getId() == (event.getId()));
-	}
-
-	@Override
-	public void triggerCompleted() {
-		super.triggerCompleted();
-		((CaseInstance) getProcessInstance()).markSubscriptionsForUpdate();
-	}
-
-	@Override
-	public void cancel() {
-		super.cancel();
-		((CaseInstance) getProcessInstance()).markSubscriptionsForUpdate();
 	}
 
 	@Override
@@ -362,7 +351,21 @@ public abstract class AbstractControllableItemInstance<T extends PlanItemDefinit
 
 	@Override
 	public void setPlanElementState(PlanElementState s) {
+		if (requiresSubscriptionUpdate(s)) {
+			getCaseInstance().markSubscriptionsForUpdate();
+		}
 		this.planElementState = s;
+	}
+
+	private boolean requiresSubscriptionUpdate(PlanElementState s) {
+		if (getCaseInstance() == null) {
+			return false;
+		} else if (this.planElementState == PlanElementState.ACTIVE) {
+			return s != PlanElementState.ACTIVE;
+		} else if (s == PlanElementState.ACTIVE) {
+			return this.planElementState != PlanElementState.ACTIVE;
+		}
+		return false;
 	}
 
 	public boolean isCompletionRequired() {

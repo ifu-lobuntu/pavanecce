@@ -12,9 +12,14 @@ import org.jbpm.workflow.core.node.StateNode;
 public class AbstractItem extends StateNode {
 
 	private static final long serialVersionUID = -377075234369815381L;
+	private String elementId;
 
 	public AbstractItem() {
 		super();
+	}
+
+	public String getElementId() {
+		return elementId;
 	}
 
 	protected void copy(Map<Object, Object> copiedState, Object from, Object to) {
@@ -27,11 +32,16 @@ public class AbstractItem extends StateNode {
 		}
 	}
 
+	public void setElementId(String elementId) {
+		getMetaData().put("UniqueId", elementId);
+		this.elementId = elementId;
+	}
+
 	private void copy(Map<Object, Object> copiedState, Object from, Object to, Class<?> class1) {
 		for (Field field : class1.getDeclaredFields()) {
 			if (!Modifier.isFinal(field.getModifiers()) && !Modifier.isStatic(field.getModifiers())) {
 				field.setAccessible(true);
-				Object toValue =null;
+				Object toValue = null;
 				try {
 					if (!isIgnored(to, field)) {
 						Object fromFieldValue = field.get(from);
@@ -41,7 +51,7 @@ public class AbstractItem extends StateNode {
 						}
 					}
 				} catch (IllegalArgumentException e) {
-					if(field.getType().isInstance(toValue)){
+					if (field.getType().isInstance(toValue)) {
 						throw e;
 					}
 				} catch (RuntimeException e) {

@@ -1,2 +1,0 @@
-org.jbpm.services.task.internals.lifecycle.MVELLifeCycleManager line 406 (delegate) misses a break statement
-org.jbpm.services.task.wih.AbstractHTWorkItemHandler.createTaskContentBasedOnWorkItemParams(KieSession, WorkItem) - env not set

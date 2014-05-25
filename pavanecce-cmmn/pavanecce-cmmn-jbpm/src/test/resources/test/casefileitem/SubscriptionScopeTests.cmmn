@@ -13,12 +13,13 @@
 		<cmmn:casePlanModel name="SubscriptionScopeTests">
 			<cmmn:planItem definitionRef="theUserEventId" name="TheUserEventPlanItem" id="theUserEventPlanItemId">
 			</cmmn:planItem>
-			<cmmn:planItem definitionRef="theTask" name="TheTaskOnCreateOfWallPlan" id="theTaskOnCreateOfWallPlanId" entryCriteriaRefs="waitingForWallPlanCreatedSentryId waitingForRoofPlanCreatedSentryId">
+			<cmmn:planItem definitionRef="theTask" name="TheTaskOnCreateOfWallPlan" id="theTaskOnCreateOfWallPlanId"
+				entryCriteriaRefs="waitingForWallPlanCreatedSentryId waitingForRoofPlanCreatedSentryId">
 			</cmmn:planItem>
 			<cmmn:planItem definitionRef="theTask" name="TheTask" id="theTaskId" entryCriteriaRefs="waitingForTheUserEventSentryId">
 			</cmmn:planItem>
 			<cmmn:sentry id="waitingForTheUserEventSentryId" name="WaitingForTheUserEventSentry">
-				<cmmn:planItemOnPart id="onTheUserEventOccurPartId" sourceRef="theUserEventPlanItemId" >
+				<cmmn:planItemOnPart id="onTheUserEventOccurPartId" sourceRef="theUserEventPlanItemId">
 					<cmmn:standardEvent>occur</cmmn:standardEvent>
 				</cmmn:planItemOnPart>
 			</cmmn:sentry>
@@ -33,7 +34,13 @@
 				</cmmn:caseFileItemOnPart>
 			</cmmn:sentry>
 			<cmmn:humanTask id="theTask" name="The Task" performerRef="builderRoleId" isBlocking="true">
-				<cmmn:defaultControl />
+				<cmmn:defaultControl>
+					<cmmn:manualActivationRule>
+						<cmmn:condition language="http://wwwjava.com/java">
+							<cmmn:body>return true;</cmmn:body>
+						</cmmn:condition>
+					</cmmn:manualActivationRule>
+				</cmmn:defaultControl>
 				<cmmn:outputs name="roofPlan" bindingRef="roofPlanFileItemId">
 					<cmmn:bindingRefinement language="http://www.java.com/java">
 						<cmmn:body>return housePlan.getRoofPlan();</cmmn:body>
