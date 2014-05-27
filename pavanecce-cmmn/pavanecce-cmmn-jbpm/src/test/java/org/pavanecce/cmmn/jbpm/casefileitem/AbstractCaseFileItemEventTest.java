@@ -7,17 +7,17 @@ import org.pavanecce.cmmn.jbpm.AbstractConstructionTestCase;
 import org.pavanecce.cmmn.jbpm.TaskParameters;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 
-public abstract class AbstractCaseFileItemEventTests extends AbstractConstructionTestCase {
+public abstract class AbstractCaseFileItemEventTest extends AbstractConstructionTestCase {
 
-	public AbstractCaseFileItemEventTests() {
+	public AbstractCaseFileItemEventTest() {
 		super();
 	}
 
-	public AbstractCaseFileItemEventTests(boolean setupDataSource, boolean sessionPersistence, String persistenceUnitName) {
+	public AbstractCaseFileItemEventTest(boolean setupDataSource, boolean sessionPersistence, String persistenceUnitName) {
 		super(setupDataSource, sessionPersistence, persistenceUnitName);
 	}
 
-	public AbstractCaseFileItemEventTests(boolean setupDataSource, boolean sessionPersistence) {
+	public AbstractCaseFileItemEventTest(boolean setupDataSource, boolean sessionPersistence) {
 		super(setupDataSource, sessionPersistence);
 	}
 

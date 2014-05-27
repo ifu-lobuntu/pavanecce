@@ -10,9 +10,11 @@ import org.pavanecce.common.text.workspace.SourceFolder;
 import org.pavanecce.common.text.workspace.TextDirectory;
 import org.pavanecce.common.text.workspace.TextFile;
 import org.pavanecce.common.text.workspace.TextProject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TextFileGenerator extends DefaultTextFileVisitor {
-
+	Logger logger = LoggerFactory.getLogger(getClass());
 	private Set<File> newFiles=new HashSet<File>();
 
 	public TextFileGenerator(File mappedRoot) {
@@ -50,7 +52,7 @@ public class TextFileGenerator extends DefaultTextFileVisitor {
 			File dir = getDirectoryFor(textFile.getParent());
 			dir.mkdirs();
 			File osFile = new File(dir, textFile.getName());
-			System.out.println("writing " + osFile);
+			logger.info("writing " + osFile);
 			if (!osFile.exists() || textFile.overwrite()) {
 				FileWriter fw = new FileWriter(osFile);
 				fw.write(textFile.getContent());

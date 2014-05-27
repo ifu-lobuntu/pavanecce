@@ -1,28 +1,30 @@
 package org.pavanecce.common.util;
 
 import org.pavanecce.uml.reverse.java.IProgressMonitor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DummyProgressMonitor implements IProgressMonitor {
-
+	Logger logger = LoggerFactory.getLogger(getClass());
 	@Override
 	public void beginTask(String string, int size) {
-		System.out.println("DummyProgressMonitor.beginTask("+string+","+size +" )");
+		logger.info("DummyProgressMonitor.beginTask("+string+","+size +" )");
 	}
 
 	@Override
 	public void worked(int i) {
-//		System.out.println("DummyProgressMonitor.worked("+i+")");
+//		logger.info(("DummyProgressMonitor.worked("+i+")");
 	}
 
 	@Override
 	public void done() {
-		System.out.println("DummyProgressMonitor.done()");
+		logger.info("DummyProgressMonitor.done()");
 
 	}
 
 	@Override
 	public boolean isCanceled() {
-		System.out.println("DummyProgressMonitor.isCanceled()");
+		logger.info("DummyProgressMonitor.isCanceled()");
 		return false;
 	}
 

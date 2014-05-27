@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -40,6 +41,7 @@ import org.pavanecce.uml.common.util.EmfPropertyUtil;
 
 @SuppressWarnings("restriction")
 public class ArtificialElementFactory implements IPropertyEmulation {
+	Logger logger = Logger.getLogger(getClass().getName());
 	private Map<NamedElement, Classifier> emulatedClassifiers = new HashMap<NamedElement, Classifier>();
 	private Map<Classifier, IEmulatedPropertyHolder> classifierAttributes = new HashMap<Classifier, IEmulatedPropertyHolder>();
 	private UriToFileConverter uriToFileConverter;
@@ -225,8 +227,7 @@ public class ArtificialElementFactory implements IPropertyEmulation {
 
 				}
 			} catch (IOException e) {
-			
-				System.out.println(e.toString());
+				logger.info(e.toString());
 			}finally{
 				if(zipFile!=null){
 					try {

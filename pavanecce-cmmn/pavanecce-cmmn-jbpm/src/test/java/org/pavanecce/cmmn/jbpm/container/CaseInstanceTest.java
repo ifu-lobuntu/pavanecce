@@ -14,13 +14,13 @@ import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 
 import test.WallPlan;
 
-public class CaseInstanceTests extends AbstractPlanItemInstanceContainerLifecycleTests {
+public class CaseInstanceTest extends AbstractPlanItemInstanceContainerLifecycleTest {
 
 	{
 		super.isJpa = true;
 	}
 
-	public CaseInstanceTests() {
+	public CaseInstanceTest() {
 		super(true, true, "org.jbpm.persistence.jpa");
 	}
 

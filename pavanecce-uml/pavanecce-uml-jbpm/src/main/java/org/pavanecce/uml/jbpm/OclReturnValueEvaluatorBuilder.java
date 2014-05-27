@@ -83,7 +83,6 @@ public class OclReturnValueEvaluatorBuilder implements ReturnValueEvaluatorBuild
 			}
 		}
 		sb.append(");");
-		System.out.println(sb);
 		returnValueDescr.setText(sb.toString());
 		ProcessDialectRegistry.getDialect("java").getReturnValueEvaluatorBuilder().build(context, returnValueConstraintEvaluator, returnValueDescr, contextResolver);
 	}

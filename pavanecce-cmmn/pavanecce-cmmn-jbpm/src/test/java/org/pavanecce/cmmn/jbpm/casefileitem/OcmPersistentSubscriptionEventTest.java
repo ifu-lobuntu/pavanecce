@@ -18,7 +18,7 @@ import test.RoofPlan;
 import test.Wall;
 import test.WallPlan;
 
-public class OcmPersistentSubscriptionEventTest extends CaseFileItemEventTests {
+public class OcmPersistentSubscriptionEventTest extends CaseFileItemEventTest {
 	{
 		super.isJpa = false;
 	}

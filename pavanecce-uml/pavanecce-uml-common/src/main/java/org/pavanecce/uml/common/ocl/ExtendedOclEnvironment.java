@@ -423,7 +423,6 @@ public final class ExtendedOclEnvironment extends DefaultParentOclEnvironment {
 			}
 		}
 		if(p==null && owner!=null){
-			System.out.println(1);
 			for (Property property : EmfPropertyUtil.getEffectiveProperties(owner)) {
 				if(name.equals(property.getName())){
 					return property;

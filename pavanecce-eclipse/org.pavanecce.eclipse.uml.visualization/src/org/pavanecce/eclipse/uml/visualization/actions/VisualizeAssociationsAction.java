@@ -38,7 +38,6 @@ public class VisualizeAssociationsAction extends AbstractEditingDomainAction {
 		if (elements.size() > 0) {
 
 			Set<IDiagramCreator> diagramCreators = UmlVisualizationPlugin.getDefault().getDiagramCreators();
-			System.out.println("VisualizeAssociationsAction.run()" + diagramCreators.size());
 			IEditorPart activeEditor = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
 			for (IDiagramCreator c : diagramCreators) {
 				if (c.matches(activeEditor)) {

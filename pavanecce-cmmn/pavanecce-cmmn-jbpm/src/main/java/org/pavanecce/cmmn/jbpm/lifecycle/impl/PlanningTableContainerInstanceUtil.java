@@ -66,7 +66,6 @@ public class PlanningTableContainerInstanceUtil {
 			if (e.getPlanElementState() == PlanElementState.ACTIVE) {
 				found.create();
 				found.noteInstantiation();
-				System.out.println(wi.getParameter("NodeName") + " = " + found.getPlanElementState());
 			} else {
 				found.setPlanElementState(PlanElementState.INITIAL);
 			}

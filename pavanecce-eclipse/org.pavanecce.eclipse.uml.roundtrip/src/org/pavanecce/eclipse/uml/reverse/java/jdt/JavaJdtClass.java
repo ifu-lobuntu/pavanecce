@@ -132,7 +132,6 @@ public class JavaJdtClass extends JdtAnnotated implements SourceClass {
 	@Override
 	public String getPackageName() {
 		if (typeBinding == null || typeBinding.getPackage() == null) {
-			System.out.println();
 			return null;
 		}
 		return typeBinding.getPackage().getName();

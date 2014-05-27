@@ -18,22 +18,22 @@ import test.House;
 import test.HousePlan;
 import test.WallPlan;
 
-public abstract class AbstractControllableLifecycleTests extends AbstractConstructionTestCase {
+public abstract class AbstractControllableLifecycleTest extends AbstractConstructionTestCase {
 
 
 	public abstract void failTask(long taskId);
 
 	public abstract void completeTask(long taskId);
 
-	public AbstractControllableLifecycleTests() {
+	public AbstractControllableLifecycleTest() {
 		super();
 	}
 
-	public AbstractControllableLifecycleTests(boolean setupDataSource, boolean sessionPersistence, String persistenceUnitName) {
+	public AbstractControllableLifecycleTest(boolean setupDataSource, boolean sessionPersistence, String persistenceUnitName) {
 		super(setupDataSource, sessionPersistence, persistenceUnitName);
 	}
 
-	public AbstractControllableLifecycleTests(boolean setupDataSource, boolean sessionPersistence) {
+	public AbstractControllableLifecycleTest(boolean setupDataSource, boolean sessionPersistence) {
 		super(setupDataSource, sessionPersistence);
 	}
 

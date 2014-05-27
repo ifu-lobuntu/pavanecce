@@ -4,7 +4,7 @@ import org.kie.api.task.model.Status;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.StagePlanItemInstance;
 
-public class StageAsPlanItemTest extends AbstractControllableLifecycleTests {
+public class StageAsPlanItemTest extends AbstractControllableLifecycleTest {
 	{
 		super.isJpa = true;
 	}

@@ -6,9 +6,12 @@ import java.net.URL;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.internal.adaptor.URLConverterImpl;
 import org.pavanecce.uml.common.util.IFileLocator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("restriction")
 public class AdaptableFileLocator implements IFileLocator {
+	Logger logger=LoggerFactory.getLogger(getClass());
 	URLConverterImpl uci = new URLConverterImpl();
 
 	@Override
@@ -25,7 +28,7 @@ public class AdaptableFileLocator implements IFileLocator {
 					e.printStackTrace();
 				}
 				if (find == null) {
-					System.out.println("Not found:" + url);
+					logger.info("Not found:" + url);
 				}
 				return url;
 			}

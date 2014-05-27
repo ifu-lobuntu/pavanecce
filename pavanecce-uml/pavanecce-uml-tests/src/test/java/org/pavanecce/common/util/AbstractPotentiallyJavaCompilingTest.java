@@ -46,9 +46,11 @@ import org.pavanecce.uml.uml2code.java.JavaCodeGenerator;
 import org.pavanecce.uml.uml2code.javascript.JavaScriptGenerator;
 import org.phidias.compile.BundleJavaManager;
 import org.phidias.compile.ResourceResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractPotentiallyJavaCompilingTest extends Assert {
-
+	Logger logger=LoggerFactory.getLogger(getClass());
 	protected IFileLocator fileLocator = new AdaptableFileLocator();
 	private AbstractCodeGenerator javaCodeGenerator;
 	private ScriptEngine javaScriptEngine;
@@ -207,7 +209,7 @@ public abstract class AbstractPotentiallyJavaCompilingTest extends Assert {
 
 			// Oh no, we got errors, list them
 			for (Diagnostic<?> dm : diagnostics.getDiagnostics()) {
-				System.err.println("COMPILE ERROR: " + dm);
+				logger.error("COMPILE ERROR: " + dm);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -220,10 +222,10 @@ public abstract class AbstractPotentiallyJavaCompilingTest extends Assert {
 		FileUtil.deleteAllChildren(destination);
 		newClassLoader = new URLClassLoader(new URL[] { destination.toURI().toURL() }, getClass().getClassLoader());
 		if (Thread.currentThread().getContextClassLoader() instanceof URLClassLoader) {
-			System.out.println("!!!!!!!!!!!!!!!!!!!!Compiling in Standalone architecture!!!!!!!!!!!!!!!!!!");
+			logger.info("!!!!!!!!!!!!!!!!!!!!Compiling in Standalone architecture!!!!!!!!!!!!!!!!!!");
 			compileInStandalone(set, destination);
 		} else {
-			System.out.println("!!!!!!!!!!!!!!!!!!!!Compiling in OSGi architecture!!!!!!!!!!!!!!!!!!");
+			logger.info("!!!!!!!!!!!!!!!!!!!!Compiling in OSGi architecture!!!!!!!!!!!!!!!!!!");
 			compileInOsgi(set, destination);
 		}
 		return newClassLoader;
@@ -254,7 +256,7 @@ public abstract class AbstractPotentiallyJavaCompilingTest extends Assert {
 	protected void appendClassPath(StringBuilder cp, URLClassLoader urlClassLoader) {
 		URL[] urLs = urlClassLoader.getURLs();
 		for (URL url : urLs) {
-			System.out.println("adding class path entry:" + url);
+			logger.info("adding class path entry:" + url);
 			cp.append(fileLocator.resolve(url).toExternalForm());
 			cp.append(File.pathSeparatorChar);
 		}

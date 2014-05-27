@@ -137,7 +137,6 @@ public class OclRuntimeLibrary{
 				// HACK until Topcased becomes Papyris
 				String lastSegment = resource.getURI().trimFileExtension().lastSegment();
 				if(lastSegment == null){
-					System.out.println("null:" +resource.getURI());
 				}else{
 					if(lastSegment.contains(".")){
 						lastSegment = lastSegment.substring(0, lastSegment.indexOf('.'));

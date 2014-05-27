@@ -15,7 +15,7 @@ import test.HousePlan;
 import test.RoofPlan;
 import test.WallPlan;
 
-public class HumanTaskTest extends AbstractControllableLifecycleTests {
+public class HumanTaskTest extends AbstractControllableLifecycleTest {
 	{
 		super.isJpa = true;
 	}

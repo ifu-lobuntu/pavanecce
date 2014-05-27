@@ -27,6 +27,8 @@ import org.pavanecce.cmmn.jbpm.ocm.OcmSubscriptionManager;
 import org.pavanecce.common.ocm.OcmFactory;
 import org.pavanecce.common.ocm.OcmObjectPersistence;
 import org.pavanecce.common.util.FileUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import test.ConstructionCase;
 import test.House;
@@ -36,10 +38,11 @@ import test.Wall;
 import test.WallPlan;
 
 public class JcrTestCase {
+	static Logger logger = LoggerFactory.getLogger(JcrTestCase.class);
 	long time = System.currentTimeMillis();
 
 	public void logDuration(String name) {
-		System.out.println(name + " took " + (System.currentTimeMillis() - time));
+		logger.info(name + " took " + (System.currentTimeMillis() - time));
 		time = System.currentTimeMillis();
 	}
 
@@ -88,8 +91,8 @@ public class JcrTestCase {
 //			String path=found.getHousePlan().getWallPlans().iterator().next().getPath();
 			// Retrieve content
 			// Node node = root.getNode("myBuildingCase/housePlan");
-			// System.out.println(node.getPath());
-			// System.out.println(node.getProperty("t:name").getString());
+			// logger.info(node.getPath());
+			// logger.info(node.getProperty("t:name").getString());
 
 			// Remove content
 			// root.getNode("myBuildingCase").remove();
@@ -102,7 +105,7 @@ public class JcrTestCase {
 	}
 
 	public static void printTree(String padding, Node node) throws Exception {
-		System.out.println(padding + node.getPath());
+		logger.info(padding + node.getPath());
 		NodeIterator nodes = node.getNodes();
 		while (nodes.hasNext()) {
 			printTree(padding + "  ", nodes.nextNode());
@@ -133,13 +136,13 @@ public class JcrTestCase {
 				if (line.endsWith(";")) {
 					line = line.substring(0, line.length() - 1);
 				}
-				System.out.println(line);
+				logger.info(line);
 				conn.createStatement().execute(line);
 			}
 		}
 		URL resource = JcrTestCase.class.getResource("/repository.xml");
 		File file = new File(resource.getPath());
-		System.out.println(file);
+		logger.info(file.toString());
 	}
 
 }

@@ -38,7 +38,6 @@ public class CollectExpressionTests extends AbstractOcl2CodeModelTest {
 		CodeMethod any1 = theClass.getMethod("collect1", Collections.emptyList());
 		assertTrue(any1.getBody().getStatements().get(0) instanceof CodeForStatement);
 		String methodBody = jcg.toMethodBody(any1);
-		System.out.println(methodBody);
 		BufferedReader getDefaultIntegerBody = new BufferedReader(new StringReader(methodBody));
 		assertEquals("    Collection<String> result = new ArrayList<String>();", getDefaultIntegerBody.readLine());
 		assertEquals("    for(Integer x : collectionLiteral0()){", getDefaultIntegerBody.readLine());

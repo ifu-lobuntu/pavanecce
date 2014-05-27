@@ -1,7 +1,6 @@
 package org.pavanecce.eclipse.uml.reverse.db;
 
-import static org.pavanecce.uml.common.util.TagNames.IS_SCHEMA;
-import static org.pavanecce.uml.common.util.TagNames.PERSISTENT_NAME;
+import static org.pavanecce.uml.common.util.TagNames.*;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,7 +36,6 @@ import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Namespace;
 import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.PackageImport;
-import org.eclipse.uml2.uml.PrimitiveType;
 import org.eclipse.uml2.uml.Profile;
 import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.Type;
@@ -273,9 +271,6 @@ public class ClassifierFactory {
 			} else if (dataType instanceof BinaryStringDataType) {
 				result = findInImports(model, "BinaryLargeObject");
 			}
-		}
-		if(result==null){
-			System.out.println();
 		}
 		return result;
 	}

@@ -28,7 +28,7 @@ import org.junit.Test;
 import org.pavanecce.eclipse.uml.reverse.db.ReverseEngineerTablesAction;
 
 public class ReverseDatabaseTests {
-
+	
 	private static final String OUR_DRIVER_ID = "Our Driver ID";
 
 	@Test

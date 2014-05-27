@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 public class FileUtil {
-
 	public static void deleteAllChildren(File f) {
 		File[] listFiles = f.listFiles();
 		for (File file : listFiles) {
@@ -28,8 +27,6 @@ public class FileUtil {
 				}
 				if (!repo.delete()) {
 					throw new RuntimeException("could not delete " + repo.getCanonicalPath());
-				} else {
-					System.out.println("deleted " + repo.getCanonicalPath());
 				}
 			}
 		} catch (IOException e) {

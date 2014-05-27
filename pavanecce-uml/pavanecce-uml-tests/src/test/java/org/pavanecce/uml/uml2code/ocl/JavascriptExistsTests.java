@@ -23,7 +23,6 @@ public class JavascriptExistsTests extends AbstractExistsTests {
 		evaluateResource("backbone.js");
 
 		for (File file : newFiles) {
-			System.out.println(file);
 			example.getJavaScriptEngine().eval(new FileReader(file));
 		}
 		// eval("ConstructionCase=Packages.test.ConstructionCase;");

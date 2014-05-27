@@ -26,9 +26,11 @@ import org.pavanecce.cmmn.jbpm.flow.OnPart;
 import org.pavanecce.cmmn.jbpm.infra.OnPartInstanceSubscription;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 import org.pavanecce.common.ObjectPersistence;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractPersistentSubscriptionManager<T extends CaseSubscriptionInfo<X>, X extends PersistedCaseFileItemSubscriptionInfo> implements SubscriptionManager {
-
+	static Logger logger=LoggerFactory.getLogger(AbstractPersistentSubscriptionManager.class);
 	private boolean cascadeSubscription = false;
 	private static Map<Object, Map<CaseSubscriptionKey, CaseSubscriptionInfo<?>>> cachedSubscriptions = new HashMap<Object, Map<CaseSubscriptionKey, CaseSubscriptionInfo<?>>>();
 	private static ThreadLocal<Set<CaseFileItemEventWrapper>> eventQueue = new ThreadLocal<Set<CaseFileItemEventWrapper>>();
@@ -325,19 +327,25 @@ public abstract class AbstractPersistentSubscriptionManager<T extends CaseSubscr
 		}
 		return false;
 	}
-	public static boolean dispatchWorkItemQueue(RuntimeEngine re){
+
+	public static boolean dispatchWorkItemQueue(RuntimeEngine re) {
 		Set<WorkItem> workItemQueue2 = getWorkItemQueue();
 		workItemQueue.set(null);
 		for (WorkItem workItem : workItemQueue2) {
 			try {
 				CaseInstance ci = (CaseInstance) re.getKieSession().getProcessInstance(workItem.getProcessInstanceId());
-				ci.executeWorkItem(workItem);
+				if (ci != null) {
+					ci.executeWorkItem(workItem);
+				}else{
+					logger.warn("ProcessInstance not found", workItem.getProcessInstanceId());
+				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error("Error occurred dispatching workitem", e);
 			}
 		}
-		return workItemQueue2.size()>0;
+		return workItemQueue2.size() > 0;
 	}
+
 	public static void queueWorkItem(WorkItemImpl wi) {
 		Set<WorkItem> set = getWorkItemQueue();
 		set.add(wi);
@@ -345,8 +353,8 @@ public abstract class AbstractPersistentSubscriptionManager<T extends CaseSubscr
 
 	public static Set<WorkItem> getWorkItemQueue() {
 		Set<WorkItem> set = workItemQueue.get();
-		if(set==null){
-			workItemQueue.set(set=new HashSet<WorkItem>());
+		if (set == null) {
+			workItemQueue.set(set = new HashSet<WorkItem>());
 		}
 		return set;
 	}

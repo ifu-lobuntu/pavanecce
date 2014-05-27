@@ -22,7 +22,7 @@ import test.HousePlan;
 import test.RoofPlan;
 import test.WallPlan;
 
-public class CaseTaskTest extends AbstractControllableLifecycleTests {
+public class CaseTaskTest extends AbstractControllableLifecycleTest {
 	{
 		super.isJpa = true;
 	}

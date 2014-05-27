@@ -21,8 +21,11 @@ import org.pavanecce.uml.uml2code.jpa.JpaCodeDecorator;
 import org.pavanecce.uml.uml2code.ocm.CndTextGenerator;
 import org.pavanecce.uml.uml2code.ocm.OcmCodeDecorator;
 import org.pavanecce.uml.uml2code.ocm.OcmTests;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CmmnTestArtifactGenerator extends OcmTests {
+	static Logger logger=LoggerFactory.getLogger(CmmnTestArtifactGenerator.class);
 	public static void main(String[] args) throws Exception {
 		final File outputRoot = new File("/home/ampie/Code/pavanecce/pavanecce-cmmn/");
 		// final File outputRoot = new File("/home/ampie/Code/pavanecce/pavanecce-uml");
@@ -60,6 +63,6 @@ public class CmmnTestArtifactGenerator extends OcmTests {
 		};
 		generateCndFile(new File(outputRoot, "pavanecce-cmmn-jbpm/src/test/generated-resources"), cndTextGenerator);
 		CmmnTextGenerator cmmn = new CmmnTextGenerator();
-		System.out.println(cmmn.generateCaseFileItemDefinitions(example.getModel()));
+		logger.info(cmmn.generateCaseFileItemDefinitions(example.getModel()));
 	}
 }

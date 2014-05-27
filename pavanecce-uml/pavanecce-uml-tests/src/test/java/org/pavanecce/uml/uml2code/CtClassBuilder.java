@@ -93,7 +93,7 @@ public class CtClassBuilder {
 //					CodeParameter codeParameter = parameters.get(i);
 //					bodyString = bodyString.replaceAll("\\b" + codeParameter.getName() + "\\b", "\\$" + i);
 //				}
-//				System.out.println(bodyString);
+//				logger.info((bodyString);
 //				ctMethod.setBody("{" + bodyString + "}");
 			}
 		}

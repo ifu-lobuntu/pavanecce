@@ -1,7 +1,6 @@
 package org.pavanecce.eclipse.uml.reverse.db;
 
-import static org.pavanecce.uml.common.util.TagNames.LINKED_PROPERTIES;
-import static org.pavanecce.uml.common.util.TagNames.SOURCE_PERSISTENT_NAME;
+import static org.pavanecce.uml.common.util.TagNames.*;
 
 import java.util.List;
 
@@ -54,9 +53,6 @@ public class EmfColumnUtil {
 				break;
 			} else {
 				Property to = findAssociationEnd(foreignKey, cur.getMemberEnds(), "");
-				if(to!=null &&  to.getOtherEnd()==null){
-					System.out.println();
-				}
 				if (to != null && to.getOtherEnd().getType().equals(fromClass)) {
 					ass = cur;
 					break;

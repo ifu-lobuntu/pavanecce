@@ -2,7 +2,7 @@ package org.pavanecce.cmmn.jbpm.casefileitem;
 
 import java.util.Map;
 
-public abstract class JcrCaseFileItemEventTest extends AbstractCaseFileItemEventTests {
+public abstract class JcrCaseFileItemEventTest extends AbstractCaseFileItemEventTest {
 
 	@Override
 	protected void addWallPlanAsChildToHousePlan() throws Exception {

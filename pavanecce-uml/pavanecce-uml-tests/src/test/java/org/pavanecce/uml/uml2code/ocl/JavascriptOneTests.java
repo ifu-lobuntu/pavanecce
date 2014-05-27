@@ -21,9 +21,7 @@ public class JavascriptOneTests extends AbstractOneTests {
 		Set<File> newFiles = example.getTextFileGenerator().getNewFiles();
 		evaluateResource("underscore.js");
 		evaluateResource("backbone.js");
-
 		for (File file : newFiles) {
-			System.out.println(file);
 			example.getJavaScriptEngine().eval(new FileReader(file));
 		}
 	}

@@ -127,7 +127,6 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 	private RuntimeEngine runtimeEngine;
 	private UserTransaction transaction;
 	private RuntimeManager runtimeManager;
-
 	public AbstractCmmnCaseTestCase() {
 		super();
 	}

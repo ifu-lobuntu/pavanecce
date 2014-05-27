@@ -11,17 +11,17 @@ import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceContainer;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 
-public abstract class AbstractPlanItemInstanceContainerLifecycleTests extends AbstractPlanItemInstanceContainerTest {
+public abstract class AbstractPlanItemInstanceContainerLifecycleTest extends AbstractPlanItemInstanceContainerTest {
 
-	public AbstractPlanItemInstanceContainerLifecycleTests() {
+	public AbstractPlanItemInstanceContainerLifecycleTest() {
 		super();
 	}
 
-	public AbstractPlanItemInstanceContainerLifecycleTests(boolean setupDataSource, boolean sessionPersistence, String persistenceUnitName) {
+	public AbstractPlanItemInstanceContainerLifecycleTest(boolean setupDataSource, boolean sessionPersistence, String persistenceUnitName) {
 		super(setupDataSource, sessionPersistence, persistenceUnitName);
 	}
 
-	public AbstractPlanItemInstanceContainerLifecycleTests(boolean setupDataSource, boolean sessionPersistence) {
+	public AbstractPlanItemInstanceContainerLifecycleTest(boolean setupDataSource, boolean sessionPersistence) {
 		super(setupDataSource, sessionPersistence);
 	}
 

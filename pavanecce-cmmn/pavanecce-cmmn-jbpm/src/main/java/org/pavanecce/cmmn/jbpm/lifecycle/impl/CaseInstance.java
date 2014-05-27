@@ -32,8 +32,11 @@ import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceContainer;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanningTableContainerInstance;
 import org.pavanecce.common.ObjectPersistence;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanceLifecycle {
+	Logger logger = LoggerFactory.getLogger(CaseInstance.class);
 	private static final long serialVersionUID = 8715128915363796623L;
 	private PlanElementState planElementState = PlanElementState.ACTIVE;
 	private long workItemId = -1;
@@ -89,7 +92,7 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 			this.workItem = (WorkItem) event;
 			PlanItemTransition transition = (PlanItemTransition) workItem.getResult(TaskParameters.TRANSITION);
 			if (getPlanElementState().isTerminalState() && transition == PlanItemTransition.TERMINATE) {
-				System.out.println("ignore - called from task service: " + TaskParameters.TRANSITION);
+				logger.info("ignore - called from task service: " + TaskParameters.TRANSITION);
 			} else if (transition == PlanItemTransition.COMPLETE) {
 				if (canComplete()) {
 					if (isStandaloneCaseInstance() && !getCase().isAutoComplete()) {

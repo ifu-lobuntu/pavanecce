@@ -48,10 +48,16 @@
 			<build>
 				<plugins>
 					<plugin>
+						<groupId>org.jacoco</groupId>
+						<artifactId>jacoco-maven-plugin</artifactId>
+						<version>0.6.4.201312101107</version>
+					</plugin>
+
+					<plugin>
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
 							<useManifestOnlyJar>false</useManifestOnlyJar>
-<!-- 							<useSystemClassLoader>false</useSystemClassLoader> -->
+							<!-- <useSystemClassLoader>false</useSystemClassLoader> -->
 							<includes>
 								<include>**/*Tests.class</include>
 							</includes>
@@ -104,6 +110,11 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.11</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.7.2</version>
 		</dependency>
 	</dependencies>
 </project>

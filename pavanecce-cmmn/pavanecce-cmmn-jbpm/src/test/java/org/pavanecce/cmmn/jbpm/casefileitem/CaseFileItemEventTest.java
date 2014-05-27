@@ -11,9 +11,9 @@ import test.HousePlan;
 import test.RoofPlan;
 import test.WallPlan;
 
-public abstract class CaseFileItemEventTests extends AbstractCaseFileItemEventTests {
+public abstract class CaseFileItemEventTest extends AbstractCaseFileItemEventTest {
 
-	public CaseFileItemEventTests() {
+	public CaseFileItemEventTest() {
 		super(true, true, "org.jbpm.persistence.jpa");
 	}
 

@@ -34,9 +34,6 @@ public class UmlToCodeReferenceMap {
 		if (map == null) {
 			map = new HashMap<String, CodeMappedType>();
 			typeMap.put(p, map);
-			if(p==null){
-				System.out.println();
-			}
 			if (p.eResource() != null && p.eResource().getResourceSet() != null) {
 				Resource eResource = p.eResource();
 				URI uri = eResource.getURI();

@@ -1,14 +1,6 @@
 package org.pavanecce.eclipse.uml.reverse.db;
 
-import static org.pavanecce.uml.common.util.TagNames.INDICES;
-import static org.pavanecce.uml.common.util.TagNames.IS_ASCENDING;
-import static org.pavanecce.uml.common.util.TagNames.IS_UNIQUE;
-import static org.pavanecce.uml.common.util.TagNames.LINKED_PROPERTIES;
-import static org.pavanecce.uml.common.util.TagNames.LINK_PERSISTENT_NAME;
-import static org.pavanecce.uml.common.util.TagNames.NAME;
-import static org.pavanecce.uml.common.util.TagNames.PROPERTIES;
-import static org.pavanecce.uml.common.util.TagNames.SOURCE_PERSISTENT_NAME;
-import static org.pavanecce.uml.common.util.TagNames.TARGET_PROPERTY;
+import static org.pavanecce.uml.common.util.TagNames.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -265,7 +257,6 @@ public class UmlGenerator {
 				} else {
 					Property match = findAttribute(im.getColumn(), getOwnedAttributes(cls));
 					if(match==null){
-						System.out.println("ASDFASDFASD!!!!!");
 					}else{
 						indexProperties.add(match);	
 					}
@@ -408,9 +399,6 @@ public class UmlGenerator {
 			ass = EmfColumnUtil.findAssociation(fromClass, foreignKey);
 			if (ass == null) {
 				ass = createAssociation(foreignKey, ownedTypes);
-			}
-			if(ass.getName().equals("User_user")){
-				System.out.println();
 			}
 			if (!ass.isStereotypeApplied(factory.getAssociationStereotype())) {
 				ass.applyStereotype(factory.getAssociationStereotype());

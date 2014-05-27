@@ -23,7 +23,6 @@ public class JavascriptCollectTests extends AbstractCollectTests {
 		evaluateResource("backbone.js");
 
 		for (File file : newFiles) {
-			System.out.println(file);
 			example.getJavaScriptEngine().eval(new FileReader(file));
 		}
 	}

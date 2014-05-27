@@ -38,7 +38,6 @@ public class SelectExpressionTests extends AbstractOcl2CodeModelTest {
 		CodeMethod any1 = theClass.getMethod("select1", Collections.emptyList());
 		assertTrue(any1.getBody().getStatements().get(0) instanceof CodeForStatement);
 		String methodBody = jcg.toMethodBody(any1);
-		System.out.println(methodBody);
 		BufferedReader getDefaultIntegerBody = new BufferedReader(new StringReader(methodBody));
 		assertEquals("    Set<Integer> result = new HashSet<Integer>();", getDefaultIntegerBody.readLine());
 		assertEquals("    for(Integer x : collectionLiteral0()){", getDefaultIntegerBody.readLine());

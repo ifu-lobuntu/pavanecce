@@ -37,7 +37,8 @@ Import-Package: bitronix.tm,
  org.osgi.framework,
  org.python,
  org.python.core,
- org.python.util
+ org.python.util,
+ org.slf4j
 Require-Bundle: org.eclipse.uml2.uml,
  org.eclipse.uml2.uml.resources,
  org.junit,

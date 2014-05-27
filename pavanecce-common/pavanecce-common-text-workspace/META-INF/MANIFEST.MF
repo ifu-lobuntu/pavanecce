@@ -10,3 +10,4 @@ Export-Package:
  org.pavanecce.common.text.workspace
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.pavanecce.common.util;bundle-version="0.0.1"
+Import-Package: org.slf4j

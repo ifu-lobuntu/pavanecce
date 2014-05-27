@@ -14,6 +14,8 @@ import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceContainer;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceLifecycle;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseTaskPlanItemInstance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import test.ConstructionCase;
 import test.House;
@@ -21,6 +23,7 @@ import test.HousePlan;
 import test.WallPlan;
 
 public abstract class AbstractPlanItemInstanceContainerTest extends AbstractConstructionTestCase {
+	Logger logger = LoggerFactory.getLogger(getClass());
 
 	public AbstractPlanItemInstanceContainerTest() {
 		super();
@@ -50,7 +53,7 @@ public abstract class AbstractPlanItemInstanceContainerTest extends AbstractCons
 		ci1.signalEvent("StartUserEvent", new Object());
 		printState(" ", ci1);
 		getPersistence().commit();
-	
+
 		assertPlanItemInState(caseInstance.getId(), "TheMilestonePlanItem", PlanElementState.COMPLETED);
 		assertPlanItemInState(caseInstance.getId(), "TheTimerEventPlanItem", PlanElementState.AVAILABLE);
 		assertPlanItemInState(caseInstance.getId(), "TheUserEventPlanItem", PlanElementState.AVAILABLE);
@@ -123,18 +126,16 @@ public abstract class AbstractPlanItemInstanceContainerTest extends AbstractCons
 		assertPlanItemInState(caseInstance.getId(), "StartUserEventPlanItem", PlanElementState.COMPLETED);
 		assertPlanItemInState(caseInstance.getId(), "TheStagePlanItem", PlanElementState.COMPLETED);
 		assertPlanItemInState(caseInstance.getId(), "TheCaseTaskPlanItem", PlanElementState.COMPLETED);
-	
+
 	}
 
 	protected void printState(String s, PlanItemInstanceContainer pi) {
-		if (true)
-			return;
-		System.out.println(pi);
+		logger.trace(pi.toString());
 		for (PlanItemInstanceLifecycle<?> ni : pi.getChildren()) {
 			if (ni instanceof PlanItemInstanceLifecycle) {
-				System.out.println(s + ni.getItem().getEffectiveName() + ":" + ni.getPlanElementState());
+				logger.trace(s + ni.getItem().getEffectiveName() + ":" + ni.getPlanElementState());
 			} else {
-				System.out.println(s + ni.getItem().getEffectiveName());
+				logger.trace(s + ni.getItem().getEffectiveName());
 			}
 			if (ni instanceof PlanItemInstanceContainer) {
 				printState(s + " ", (PlanItemInstanceContainer) ni);
@@ -146,7 +147,7 @@ public abstract class AbstractPlanItemInstanceContainerTest extends AbstractCons
 		createRuntimeManager(getProcessFile(), "test/SubCase.cmmn");
 		Map<String, Object> params = new HashMap<String, Object>();
 		getPersistence().start();
-	
+
 		ConstructionCase cc = new ConstructionCase("/cases/case1");
 		housePlan = new HousePlan(cc);
 		house = new House(cc);
@@ -173,19 +174,19 @@ public abstract class AbstractPlanItemInstanceContainerTest extends AbstractCons
 		assertPlanItemInState(caseInstance.getId(), "TheCaseTaskPlanItem", PlanElementState.AVAILABLE);
 		assertEquals(PlanElementState.ACTIVE, caseInstance.getPlanElementState());
 		ensurePlanItemContainerIsStarted();
-	
+
 	}
 
 	protected void assertTaskInState(List<TaskSummary> subTasksByParent, String string, Status expectedStatus) {
-		Status foundStatus=null;
+		Status foundStatus = null;
 		for (TaskSummary taskSummary : subTasksByParent) {
-			if(taskSummary.getName().equals(string)){
-				foundStatus=taskSummary.getStatus();
+			if (taskSummary.getName().equals(string)) {
+				foundStatus = taskSummary.getStatus();
 			}
 		}
-		if(foundStatus==null){
+		if (foundStatus == null) {
 			fail("Task '" + string + "' not found");
-		}else{
+		} else {
 			assertEquals(expectedStatus, foundStatus);
 		}
 	}

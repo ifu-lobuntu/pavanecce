@@ -7,8 +7,11 @@ import org.drools.core.xml.ExtensibleXmlParser;
 import org.pavanecce.cmmn.jbpm.flow.CMMNElement;
 import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class IdGenerator {
+	private static Logger logger = LoggerFactory.getLogger(IdGenerator.class);
 	static Set<Long> ids = new HashSet<Long>();
 
 	@SuppressWarnings("unchecked")
@@ -52,7 +55,7 @@ public class IdGenerator {
 		}
 		long abs = Math.abs(result);
 		if (ids.contains(abs)) {
-			System.out.println("duplicate found:" +elementId);
+			logger.info("duplicate found:" +elementId);
 		}
 		ids.add(abs);
 		return abs;

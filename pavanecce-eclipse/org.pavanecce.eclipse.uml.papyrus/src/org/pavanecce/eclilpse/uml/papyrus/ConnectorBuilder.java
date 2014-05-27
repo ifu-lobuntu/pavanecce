@@ -134,7 +134,6 @@ public class ConnectorBuilder extends UMLSwitch<Collection<Connector>>{
 					return Arrays.asList(associationConnector);
 				}
 			}else{
-				System.out.println(ass.getQualifiedName());
 			}
 		}
 		return super.caseAssociation(ass);
