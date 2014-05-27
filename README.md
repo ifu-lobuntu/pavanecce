@@ -3,6 +3,8 @@ pavanecce
 
 PlAtform for VAlue NEtwork Emergence and Continued Capability Evolution
 
+
+
 Build instructions and project configurations
 Background:
 Most Pavanecce projects need to build and execute consistently in both OSGi environments as well as non-OSGi (standalone) environments 
