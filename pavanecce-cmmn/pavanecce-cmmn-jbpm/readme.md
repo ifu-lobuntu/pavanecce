@@ -1,4 +1,4 @@
-This projects provides an extension of jBPM that enables CMMN runtime semantics. For more information about CMMN, see ((../readme.md))
+This projects provides an extension of jBPM that enables CMMN runtime semantics. For more information about CMMN, see [this readme GitHub!](../readme.md)
 It currently supports the following features
 
 1. CaseFileItem events generated from either JCR/Jackrabbit-OCM or JPA/Hibernate
