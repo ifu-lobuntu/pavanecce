@@ -1,8 +1,9 @@
-package org.pavanecce.common.ocm;
+package org.pavanecce.cmmn.jbpm.jcr;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.transaction.NotSupportedException;
@@ -10,22 +11,20 @@ import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
-import org.apache.jackrabbit.ocm.manager.ObjectContentManager;
-import org.apache.jackrabbit.ocm.mapper.model.ClassDescriptor;
 import org.pavanecce.common.ObjectPersistence;
 
-public class OcmObjectPersistence implements ObjectPersistence {
+public class JcrObjectPersistence implements ObjectPersistence {
 	private UserTransaction transaction;
-	private OcmFactory factory;
+	private JcrObjectPersistenceFactory factory;
 	protected boolean startedTransaction = false;
 
-	public OcmObjectPersistence(OcmFactory factory) {
+	public JcrObjectPersistence(JcrObjectPersistenceFactory factory) {
 		this.factory = factory;
 	}
 
 	@Override
 	public Object getDelegate() {
-		return getObjectContentManager().getSession();
+		return getObjectContentManager();
 	}
 
 	@Override
@@ -37,10 +36,6 @@ public class OcmObjectPersistence implements ObjectPersistence {
 		} catch (Exception e) {
 			throw convertException(e);
 		}
-	}
-
-	public ClassDescriptor getClassDescriptor(String jcrNodeType) {
-		return factory.getMapper().getClassDescriptorByNodeType(jcrNodeType);
 	}
 
 	protected void startTransaction() throws SystemException, NamingException, NotSupportedException {
@@ -78,15 +73,22 @@ public class OcmObjectPersistence implements ObjectPersistence {
 
 	@Override
 	public void persist(Object o) {
-		getObjectContentManager().insert(o);
+		try {
+			if (o instanceof Node) {
+				getObjectContentManager().getRootNode().addNode(((Node) o).getPath());
+			} else {
+
+			}
+		} catch (Exception e) {
+			throw convertException(e);
+		}
 	}
 
 	@Override
 	public void update(Object o) {
-		getObjectContentManager().update(o);
 	}
 
-	public ObjectContentManager getObjectContentManager() {
+	public Session getObjectContentManager() {
 		return factory.getCurrentObjectContentManager();
 	}
 
@@ -104,21 +106,37 @@ public class OcmObjectPersistence implements ObjectPersistence {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T find(Class<T> class1, Object id) {
-		return (T) getObjectContentManager().getObjectByUuid((String) id);
+		try {
+			return (T) getObjectContentManager().getNodeByIdentifier((String) id);
+		} catch (Exception e) {
+			throw convertException(e);
+		}
 	}
 
 	@Override
 	public void remove(Object s) {
-		getObjectContentManager().remove(s);
+		try {
+			if (s instanceof Node) {
+				getObjectContentManager().removeItem(((Node) s).getPath());
+			} else if (s instanceof JcrCaseFileItemSubscriptionInfo) {
+
+			}
+		} catch (Exception e) {
+			throw convertException(e);
+		}
 	}
 
 	public Object find(String identifier) {
-		return getObjectContentManager().getObjectByUuid(identifier);
+		try {
+			return getObjectContentManager().getNodeByIdentifier(identifier);
+		} catch (Exception e) {
+			throw convertException(e);
+		}
 	}
 
 	public Node findNode(String identifier) {
 		try {
-			return getObjectContentManager().getSession().getNodeByIdentifier(identifier);
+			return getObjectContentManager().getNodeByIdentifier(identifier);
 		} catch (ItemNotFoundException e) {
 			e.printStackTrace();
 		} catch (RepositoryException e) {

@@ -11,7 +11,6 @@ import org.jbpm.process.core.context.variable.VariableScope;
 import org.jbpm.workflow.core.impl.ConnectionImpl;
 import org.jbpm.workflow.core.node.EndNode;
 import org.jbpm.workflow.core.node.Join;
-import org.jbpm.workflow.core.node.MilestoneNode;
 import org.jbpm.workflow.core.node.Split;
 import org.jbpm.workflow.core.node.StartNode;
 import org.kie.api.definition.process.Node;
@@ -30,7 +29,6 @@ import org.pavanecce.cmmn.jbpm.flow.PlanItemInfo;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemOnPart;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemStartTrigger;
 import org.pavanecce.cmmn.jbpm.flow.Sentry;
-import org.pavanecce.cmmn.jbpm.flow.Stage;
 import org.pavanecce.cmmn.jbpm.flow.TimerEventListener;
 
 public abstract class PlanItemContainerHandler extends BaseAbstractHandler {
@@ -69,10 +67,7 @@ public abstract class PlanItemContainerHandler extends BaseAbstractHandler {
 		}
 	}
 
-	private void linkDiscretionaryItemCriteria(PlanItemContainer process, DiscretionaryItem<?> node) {
-		if (process.getDefaultJoin() != null) {
-			new ConnectionImpl(node, DEFAULT, process.getDefaultJoin(), DEFAULT);
-		}
+	protected void linkDiscretionaryItemCriteria(PlanItemContainer process, DiscretionaryItem<?> node) {
 		for (String string : new ArrayList<String>(node.getEntryCriteria().keySet())) {
 			Sentry entry = findSentry(process, string);
 			node.putEntryCriterion(string, entry);
@@ -83,6 +78,7 @@ public abstract class PlanItemContainerHandler extends BaseAbstractHandler {
 		}
 		node.linkItem();
 		if (node.getEntryCriteria().isEmpty()) {
+			process.addNode(node.getFactoryNode());
 			new ConnectionImpl(process.getDefaultSplit(), DEFAULT, node.getFactoryNode(), DEFAULT);
 		}
 	}

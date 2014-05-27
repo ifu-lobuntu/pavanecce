@@ -13,7 +13,6 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 
 import org.drools.core.process.instance.WorkItem;
-import org.drools.core.process.instance.WorkItemManager;
 import org.drools.core.process.instance.impl.WorkItemImpl;
 import org.drools.persistence.PersistenceContext;
 import org.drools.persistence.PersistenceContextManager;

@@ -23,7 +23,7 @@ public class OcmCasePersistence extends OcmObjectPersistence {
 			OcmCaseSubscriptionKey key = (OcmCaseSubscriptionKey) id;
 			return (T) getSubscription(key.getClassName(), key.getId());
 		}
-		return (T) getSession().getObjectByUuid((String) id);
+		return (T) getObjectContentManager().getObjectByUuid((String) id);
 	}
 
 	public OcmCaseSubscriptionKey getSubscription(Node node) {
@@ -41,7 +41,7 @@ public class OcmCasePersistence extends OcmObjectPersistence {
 	public void commit() {
 		try {
 			startTransaction();
-			getSession().save();
+			getObjectContentManager().save();
 			doCaseFileItemEvents();
 			if (startedTransaction) {
 				getTransaction().commit();
@@ -64,14 +64,14 @@ public class OcmCasePersistence extends OcmObjectPersistence {
 	private void doCaseFileItemEvents() {
 		while (AbstractPersistentSubscriptionManager.dispatchEventQueue(runtimeManager.getRuntimeEngine(EmptyContext.get()))) {
 			AbstractPersistentSubscriptionManager.commitSubscriptionsTo(this);
-			getSession().save();
+			getObjectContentManager().save();
 		}
 		if(AbstractPersistentSubscriptionManager.commitSubscriptionsTo(this)){
-			getSession().save();
+			getObjectContentManager().save();
 		}
 	}
 
 	protected OcmCaseSubscriptionInfo getSubscription(String className, String id) {
-		return (OcmCaseSubscriptionInfo) getSession().getObject("/subscriptions/" + className + "$" + id);
+		return (OcmCaseSubscriptionInfo) getObjectContentManager().getObject("/subscriptions/" + className + "$" + id);
 	}
 }

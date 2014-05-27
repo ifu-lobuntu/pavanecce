@@ -10,11 +10,8 @@ import org.jbpm.services.task.impl.model.ContentDataImpl;
 import org.jbpm.services.task.impl.model.ContentImpl;
 import org.jbpm.services.task.utils.ContentMarshallerHelper;
 import org.jbpm.shared.services.api.JbpmServicesPersistenceManager;
-import org.kie.api.runtime.Environment;
 import org.kie.api.task.model.Task;
 import org.kie.internal.task.api.ContentMarshallerContext;
-import org.kie.internal.task.api.model.ContentData;
-import org.kie.internal.task.api.model.InternalTaskData;
 
 public abstract class AbstractTaskCommand<T> extends TaskCommand<T> {
 

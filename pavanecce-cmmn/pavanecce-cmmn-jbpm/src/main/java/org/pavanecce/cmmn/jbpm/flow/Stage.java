@@ -39,6 +39,10 @@ public class Stage extends AbstractPlanItemDefinition implements PlanItemContain
 		parameterDefinitions.add(new ParameterDefinitionImpl("Content", new StringDataType()));
 		return work;
 	}
+	@Override
+	public Node superGetNode(long id) {
+		return super.getNode(id);
+	}
 
 	@Override
 	public StartNode getDefaultStart() {
@@ -48,7 +52,20 @@ public class Stage extends AbstractPlanItemDefinition implements PlanItemContain
 	public Node getNode(long id) {
 		Node node = super.getNode(id);
 		if(node==null && getPlanningTable()!=null){
-			return getPlanningTable().getNode(id);
+			node = getPlanningTable().getNode(id);
+			if(node ==null){
+				for (PlanItemInfo<?> pii : getPlanItemInfo()) {
+					if(pii.getDefinition() instanceof HumanTask){
+						HumanTask ht = (HumanTask) pii.getDefinition();
+						if(ht.getPlanningTable()!=null){
+							node=ht.getPlanningTable().getNode(id);
+							if(node !=null){
+								break;
+							}
+						}
+					}
+				}
+			}
 		}
 		return node;
 	}

@@ -50,6 +50,9 @@ public class PlanningService {
 	public PlannedTask preparePlannedTask(final long parentTaskId, final String discretionaryItemId) {
 		return taskService.execute(new PreparePlannedTaskCommand(runtimeManager, pm, discretionaryItemId, parentTaskId));
 	}
+	public void makeDiscretionaryItemAvailable(final long parentTaskId, final String discretionaryItemId) {
+		taskService.execute(new MakeDiscretionaryItemAvailableCommand(runtimeManager, pm, discretionaryItemId, parentTaskId));
+	}
 
 	protected long getWorkItemId(long parentTaskId) {
 		return taskService.getTaskById(parentTaskId).getTaskData().getWorkItemId();

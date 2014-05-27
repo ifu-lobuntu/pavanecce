@@ -9,16 +9,12 @@ import org.drools.core.process.instance.WorkItem;
 import org.jbpm.process.instance.ContextInstanceContainer;
 import org.jbpm.workflow.core.node.StartNode;
 import org.jbpm.workflow.instance.NodeInstanceContainer;
-import org.jbpm.workflow.instance.WorkflowProcessInstance;
 import org.jbpm.workflow.instance.node.EventBasedNodeInstanceInterface;
 import org.jbpm.workflow.instance.node.EventNodeInstanceInterface;
-import org.kie.api.definition.process.Node;
 import org.kie.api.runtime.process.NodeInstance;
 import org.pavanecce.cmmn.jbpm.ApplicableDiscretionaryItem;
 import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
-import org.pavanecce.cmmn.jbpm.flow.DiscretionaryItem;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemContainer;
-import org.pavanecce.cmmn.jbpm.flow.PlanItemInstanceFactoryNode;
 import org.pavanecce.cmmn.jbpm.flow.PlanningTable;
 import org.pavanecce.cmmn.jbpm.flow.Stage;
 import org.pavanecce.cmmn.jbpm.flow.TaskItemWithDefinition;
@@ -75,12 +71,12 @@ public class StagePlanItemInstance extends AbstractControllableItemInstance<Stag
 
 	@Override
 	public ControllableItemInstanceLifecycle<?> ensurePlanItemCreated(String discretionaryItemId, WorkItem wi) {
-		return PlanningTableContainerUtil.ensurePlanItemCreated(this, discretionaryItemId, wi);
+		return PlanningTableContainerInstanceUtil.ensurePlanItemCreated(this, discretionaryItemId, wi);
 	}
 
 	@Override
 	public void addApplicableItems(Map<String, ApplicableDiscretionaryItem> result, Set<String> usersRoles) {
-		PlanningTableContainerUtil.addApplicableItems(this, result, usersRoles);
+		PlanningTableContainerInstanceUtil.addApplicableItems(this, result, usersRoles);
 	}
 
 	@Override
@@ -90,7 +86,7 @@ public class StagePlanItemInstance extends AbstractControllableItemInstance<Stag
 
 	@Override
 	public WorkItem createPlannedItem(String tableItemId) {
-		return PlanningTableContainerUtil.createPlannedTask(this, tableItemId);
+		return PlanningTableContainerInstanceUtil.createPlannedTask(this, tableItemId);
 	}
 
 	@Override
@@ -130,7 +126,11 @@ public class StagePlanItemInstance extends AbstractControllableItemInstance<Stag
 	}
 
 	@Override
-	public PlanningTableContainerInstance findPlanElementWithPlanningTable(long containerWorkItemId) {
+	public PlanningTableContainerInstance findPlanningTableContainerInstance(long containerWorkItemId) {
 		return PlanItemInstanceContainerUtil.findPlanElementWithPlanningTable(this, containerWorkItemId);
+	}
+	@Override
+	public void makeDiscretionaryItemAvailable(String discretionaryItemId) {
+		PlanningTableContainerInstanceUtil.makeDiscretionaryItemAvailable(this, discretionaryItemId);
 	}
 }

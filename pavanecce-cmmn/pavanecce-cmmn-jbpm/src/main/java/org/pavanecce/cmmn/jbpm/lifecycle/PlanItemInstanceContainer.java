@@ -27,5 +27,5 @@ public interface PlanItemInstanceContainer extends PlanningTableContainerInstanc
 
 	ControllableItemInstanceLifecycle<?> findNodeForWorkItem(long id);
 
-	PlanningTableContainerInstance findPlanElementWithPlanningTable(long containerWorkItemId);
+	PlanningTableContainerInstance findPlanningTableContainerInstance(long containerWorkItemId);
 }

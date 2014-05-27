@@ -18,7 +18,7 @@
 						<cmmn:body>return false;</cmmn:body>
 					</cmmn:condition>
 				</cmmn:applicabilityRule>
-				<cmmn:discretionaryItem definitionRef="theHumanTaskId" id="theHumanTaskDiscretionaryItemWithEntryCriteriaId" entryCriteriaRefs="waitingForStartUserEventSentryId2" />
+				<cmmn:discretionaryItem definitionRef="theHumanTaskId" id="theHumanTaskDiscretionaryItemWithEntryCriteriaId" entryCriteriaRefs="waitingForDiscretionaryStartUserEventSentryId1" />
 				<cmmn:discretionaryItem definitionRef="theCaseTaskId" id="theCaseTaskDiscretionaryItemId">
 					<cmmn:itemControl>
 						<cmmn:requiredRule>

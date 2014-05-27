@@ -22,4 +22,6 @@ public interface PlanningTableContainerInstance extends PlanElementLifecycleWith
 	WorkItem executeWorkItem(WorkItem wu);
 
 	WorkItem createPlannedItem(String tableItemId);
+
+	void makeDiscretionaryItemAvailable(String discretionaryItemId);
 }

@@ -70,7 +70,7 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 	}
 
 	public WorkItem createPlannedItem(long containerWorkItemId, String tableItemId) {
-		PlanningTableContainerInstance ptc = findPlanElementWithPlanningTable(containerWorkItemId);
+		PlanningTableContainerInstance ptc = findPlanningTableContainerInstance(containerWorkItemId);
 		if (ptc != null) {
 			return ptc.createPlannedItem(tableItemId);
 		} else {
@@ -236,13 +236,13 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 		if (found != null) {
 			return found;
 		} else {
-			PlanningTableContainerInstance e = findPlanElementWithPlanningTable(parentWorkItemId);
+			PlanningTableContainerInstance e = findPlanningTableContainerInstance(parentWorkItemId);
 			return e.ensurePlanItemCreated(discretionaryItemId, wi);
 		}
 	}
 
 	public Set<ApplicableDiscretionaryItem> getApplicableDiscretionaryItems(long wi, Set<String> roles) {
-		PlanningTableContainerInstance pewt = findPlanElementWithPlanningTable(wi);
+		PlanningTableContainerInstance pewt = findPlanningTableContainerInstance(wi);
 		Map<String, ApplicableDiscretionaryItem> result = new HashMap<String, ApplicableDiscretionaryItem>();
 		if (pewt != null) {
 			pewt.addApplicableItems(result, roles);
@@ -272,7 +272,7 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 	}
 
 	@Override
-	public PlanningTableContainerInstance findPlanElementWithPlanningTable(long containerWorkItemId) {
+	public PlanningTableContainerInstance findPlanningTableContainerInstance(long containerWorkItemId) {
 		return PlanItemInstanceContainerUtil.findPlanElementWithPlanningTable(this, containerWorkItemId);
 	}
 
@@ -321,7 +321,7 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 
 	@Override
 	public ControllableItemInstanceLifecycle<?> ensurePlanItemCreated(String discretionaryItemId, WorkItem wi) {
-		return PlanningTableContainerUtil.ensurePlanItemCreated(this, discretionaryItemId, wi);
+		return PlanningTableContainerInstanceUtil.ensurePlanItemCreated(this, discretionaryItemId, wi);
 	}
 
 	@Override
@@ -331,7 +331,7 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 
 	@Override
 	public void addApplicableItems(Map<String, ApplicableDiscretionaryItem> result, Set<String> roles) {
-		PlanningTableContainerUtil.addApplicableItems(this, result, roles);
+		PlanningTableContainerInstanceUtil.addApplicableItems(this, result, roles);
 	}
 
 	// ***********CaseInstanceLifecyle implementation***********//
@@ -426,7 +426,12 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 
 	@Override
 	public WorkItem createPlannedItem(String tableItemId) {
-		return PlanningTableContainerUtil.createPlannedTask(this, tableItemId);
+		return PlanningTableContainerInstanceUtil.createPlannedTask(this, tableItemId);
+	}
+
+	@Override
+	public void makeDiscretionaryItemAvailable(String discretionaryItemId) {
+		PlanningTableContainerInstanceUtil.makeDiscretionaryItemAvailable(this, discretionaryItemId);
 	}
 
 }

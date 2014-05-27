@@ -26,7 +26,6 @@ import org.pavanecce.cmmn.jbpm.lifecycle.PlanningTableContainerInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.HumanTaskPlanItemInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.StagePlanItemInstance;
-import org.pavanecce.cmmn.jbpm.task.StatusConverter;
 
 public class SubmitPlanCommand extends AbstractPlanningCommand<Void> {
 	private static final long serialVersionUID = 7907971723514784829L;
@@ -74,7 +73,7 @@ public class SubmitPlanCommand extends AbstractPlanningCommand<Void> {
 			}
 		}
 		if (resume) {
-			PlanningTableContainerInstance p = ci.findPlanElementWithPlanningTable(workItemId);
+			PlanningTableContainerInstance p = ci.findPlanningTableContainerInstance(workItemId);
 			NodeInstanceContainer nic=null;
 			if(p instanceof HumanTaskPlanItemInstance){
 				 nic = ((HumanTaskPlanItemInstance) p).getNodeInstanceContainer();

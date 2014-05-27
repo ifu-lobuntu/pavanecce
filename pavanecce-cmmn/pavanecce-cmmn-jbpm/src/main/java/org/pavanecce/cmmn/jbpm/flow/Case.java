@@ -29,6 +29,10 @@ public class Case extends RuleFlowProcess implements PlanItemContainer {
 	public StartNode getDefaultStart() {
 		return defaultStart;
 	}
+	@Override
+	public Node superGetNode(long id) {
+		return super.getNode(id);
+	}
 
 	@Override
 	public void setDefaultStart(StartNode defaultStart) {
@@ -95,14 +99,7 @@ public class Case extends RuleFlowProcess implements PlanItemContainer {
 
 	@Override
 	public Node getNode(long id) {
-		try {
-			return super.getNode(id);
-		} catch (IllegalArgumentException e) {
-			if (getPlanningTable() != null) {
-				return getPlanningTable().getNode(id);
-			}
-		}
-		return null;
+		return PlanItemContainerUtil.getNode(this, id);
 	}
 
 	public String getCaseKey() {

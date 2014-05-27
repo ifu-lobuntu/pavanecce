@@ -1,11 +1,16 @@
 package org.pavanecce.cmmn.jbpm.lifecycle.impl;
 
+import java.util.Collections;
+import java.util.List;
+
+import org.jbpm.workflow.core.impl.ConnectionImpl;
 import org.jbpm.workflow.core.impl.NodeImpl;
 import org.jbpm.workflow.instance.node.StateNodeInstance;
+import org.kie.api.definition.process.Connection;
+import org.kie.api.definition.process.Node;
 import org.kie.api.runtime.process.NodeInstance;
 import org.pavanecce.cmmn.jbpm.flow.DiscretionaryItem;
 import org.pavanecce.cmmn.jbpm.flow.ItemWithDefinition;
-import org.pavanecce.cmmn.jbpm.flow.Milestone;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemInstanceFactoryNode;
 import org.pavanecce.cmmn.jbpm.flow.Stage;
@@ -21,6 +26,31 @@ import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceLifecycleWithHistory;
  */
 public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> extends StateNodeInstance implements PlanItemInstanceLifecycleWithHistory<T>, Creatable {
 
+	public static class EmulatedPlanItemInstanceFactoryNode extends PlanItemInstanceFactoryNode {
+		private static final long serialVersionUID = -7156500421241207274L;
+		private final PlanItemInstanceFactoryNode node;
+
+		public EmulatedPlanItemInstanceFactoryNode(PlanItemInstanceFactoryNode node) {
+			this.node = node;
+		}
+		@Override
+		public List<Connection> getOutgoingConnections(String type) {
+			return getDefaultOutgoingConnections();
+		}
+		@Override
+		public List<Connection> getDefaultOutgoingConnections() {
+			Connection conn = new ConnectionImpl(node, CONNECTION_DEFAULT_TYPE, (Node) this.node.getItemToInstantiate(), CONNECTION_DEFAULT_TYPE){
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void connect() {
+				}
+			};
+			return Collections.singletonList(conn);
+		}
+		
+	}
+
 	private static final long serialVersionUID = -5291618101988431033L;
 	private Boolean isPlanItemInstanceRequired;
 	private boolean hasPlanItemBeenInstantiated = false;
@@ -28,6 +58,7 @@ public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> e
 	private boolean isIncludedByDiscretion = false;
 	private PlanElementState planElementState = PlanElementState.INITIAL;
 	private PlanElementState lastBusyState = PlanElementState.NONE;
+	private transient boolean beingTriggered=false;
 
 	public PlanItemInstanceFactoryNodeInstance() {
 	}
@@ -60,7 +91,12 @@ public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> e
 
 	@Override
 	public PlanItemInstanceFactoryNode getNode() {
-		return (PlanItemInstanceFactoryNode) super.getNode();
+		final PlanItemInstanceFactoryNode node = (PlanItemInstanceFactoryNode) super.getNode();
+		if(beingTriggered &&  node.getItemToInstantiate() instanceof DiscretionaryItem && isIncludedByDiscretion){
+			//Fake an outgoing connectiong
+			return new EmulatedPlanItemInstanceFactoryNode(node);
+		}
+		return node;
 	}
 
 	@Override
@@ -68,7 +104,9 @@ public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> e
 		if (!isInactive() && !isExcludedByDiscretion() && (isRepeating() || !isHasPlanItemBeenInstantiatedYet())) {
 			super.internalTrigger(from, type);
 			hasPlanItemBeenInstantiated = true;
+			beingTriggered=true;
 			triggerCompleted(NodeImpl.CONNECTION_DEFAULT_TYPE, false);
+			beingTriggered=false;
 			setLastBusyState(getPlanElementState());
 		}
 	}
@@ -100,7 +138,11 @@ public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> e
 	}
 
 	public boolean isPlanItemInstanceStillRequired() {
-		if (hasPlanItemBeenInstantiated) {
+		if (getItem() instanceof TaskDefinition && !((TaskDefinition) getItem()).isBlocking()) {
+			return false;
+		} else if (isExcludedByDiscretion()) {
+			return false;
+		} else if (hasPlanItemBeenInstantiated) {
 			return false;
 		} else if (isPlanItemInstanceRequired == null) {
 			// still initializing

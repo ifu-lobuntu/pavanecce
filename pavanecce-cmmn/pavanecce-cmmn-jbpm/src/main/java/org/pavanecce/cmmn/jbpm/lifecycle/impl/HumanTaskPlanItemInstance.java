@@ -89,12 +89,12 @@ public class HumanTaskPlanItemInstance extends TaskPlanItemInstance<HumanTask, T
 
 	@Override
 	public ControllableItemInstanceLifecycle<?> ensurePlanItemCreated(String discretionaryItemId, WorkItem wi) {
-		return PlanningTableContainerUtil.ensurePlanItemCreated(this, discretionaryItemId, wi);
+		return PlanningTableContainerInstanceUtil.ensurePlanItemCreated(this, discretionaryItemId, wi);
 	}
 
 	@Override
 	public void addApplicableItems(Map<String, ApplicableDiscretionaryItem> result, Set<String> usersRoles) {
-		PlanningTableContainerUtil.addApplicableItems(this, result, usersRoles);
+		PlanningTableContainerInstanceUtil.addApplicableItems(this, result, usersRoles);
 	}
 
 	@Override
@@ -104,7 +104,11 @@ public class HumanTaskPlanItemInstance extends TaskPlanItemInstance<HumanTask, T
 
 	@Override
 	public WorkItem createPlannedItem(String tableItemId) {
-		return PlanningTableContainerUtil.createPlannedTask(this, tableItemId);
+		return PlanningTableContainerInstanceUtil.createPlannedTask(this, tableItemId);
+	}
+	@Override
+	public void makeDiscretionaryItemAvailable(String discretionaryItemId) {
+		PlanningTableContainerInstanceUtil.makeDiscretionaryItemAvailable(this, discretionaryItemId);
 	}
 
 }

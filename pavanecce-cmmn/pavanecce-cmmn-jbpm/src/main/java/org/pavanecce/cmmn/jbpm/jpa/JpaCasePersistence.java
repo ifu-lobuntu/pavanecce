@@ -14,10 +14,10 @@ import org.pavanecce.common.jpa.JpaObjectPersistence;
  * resolve, specifically w.r.t. clearing some static variables and avoiding memory leaks
  * 
  */
-public class JbpmJpaObjectPersistence extends JpaObjectPersistence {
+public class JpaCasePersistence extends JpaObjectPersistence {
 	private RuntimeManager runtimeManager;
 
-	public JbpmJpaObjectPersistence(EntityManagerFactory emf, RuntimeManager rm) {
+	public JpaCasePersistence(EntityManagerFactory emf, RuntimeManager rm) {
 		super(emf);
 		this.runtimeManager = rm;
 	}

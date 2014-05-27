@@ -1,4 +1,4 @@
-BindingRef for input parameters to Cases - how long is that subscrciption valid?
+BindingRef for input parameters to Cases - is that subscription active?
 Discrepancies in XSD:
   - In the XSD, TimerEventListener.timerExpression is a fully fledged expression, but in the spec it is just string. Does the result of this expression still have to be a ISO-8601 compliant string, or could it be a date/duration/etc. ?
   - The XSD does not have AuthorizedRoleRefs for user events.
@@ -20,5 +20,14 @@ If there are multiple instances of a PlanItem, and the exitCriterion occurs, do 
 When a Stage needs to be completed manually, which users should be allowed to do that? Same goes for suspend/resume/terminate/close etc.
 Can a UserEvent occur more than once?
 ApplicabilityRules: AND or OR?
-For the context of rules, how is the context CaseFileItem referenced in an expression?
-For transformations of parameters, how is the "from" parameter value referenced in an expression?
+If it is assumed that the planning activity could be used to override the user assigned to a task, or the input parameters in the task, would it be contrary to CMMN's philosophy to allow the Planning user to do this
+to non-discretionary tasks too?
+For Sentries with a Condition but not an OnPart - when do we evaluate the condition?
+
+
+Some ideas for the future:
+Names for reference associations.
+CaseFileOnParts listening to custom transitions in the statemachine of the document/entity
+ADD_CHILD, REMOVE_CHILD CaseFileOnParts that state which child relationship they're interested in  
+ADD_REFERENCE, REMOVE_REFERENCE CaseFileOnParts that state which reference relationship they're interested in
+A standard way of associating the "cause" of a CaseFileItem event with an input parameter in the task whose creation it triggered.  

@@ -87,7 +87,7 @@ import org.pavanecce.cmmn.jbpm.infra.PlanItemBuilder;
 import org.pavanecce.cmmn.jbpm.infra.SentryBuilder;
 import org.pavanecce.cmmn.jbpm.jpa.CollectionPlaceHolderResolveStrategy;
 import org.pavanecce.cmmn.jbpm.jpa.HibernateSubscriptionManager;
-import org.pavanecce.cmmn.jbpm.jpa.JbpmJpaObjectPersistence;
+import org.pavanecce.cmmn.jbpm.jpa.JpaCasePersistence;
 import org.pavanecce.cmmn.jbpm.jpa.JpaPlaceHolderResolverStrategy;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceLifecycle;
@@ -110,11 +110,6 @@ import org.pavanecce.common.jpa.JpaObjectPersistence;
 import org.pavanecce.common.ocm.OcmFactory;
 import org.pavanecce.common.ocm.OcmObjectPersistence;
 import org.pavanecce.common.util.FileUtil;
-
-
-
-
-
 
 //import test.ConstructionCase;
 //import test.House;
@@ -318,7 +313,7 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 		try {
 			if (persistence == null) {
 				if (isJpa) {
-					persistence = new JbpmJpaObjectPersistence(getEmf(),runtimeManager);
+					persistence = new JpaCasePersistence(getEmf(),runtimeManager);
 				} else {
 					OcmObjectPersistence ocmObjectPersistence = new OcmCasePersistence(getOcmFactory(),runtimeManager);
 					persistence = ocmObjectPersistence;

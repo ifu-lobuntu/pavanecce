@@ -12,7 +12,9 @@ import org.drools.core.process.core.impl.ParameterDefinitionImpl;
 import org.drools.core.process.core.impl.WorkImpl;
 import org.jbpm.services.task.wih.util.PeopleAssignmentHelper;
 import org.jbpm.workflow.core.Node;
+import org.jbpm.workflow.core.NodeContainer;
 import org.jbpm.workflow.core.impl.ConnectionImpl;
+import org.jbpm.workflow.core.node.CompositeNode;
 
 public class DiscretionaryItem<T extends PlanItemDefinition> extends TableItem implements TaskItemWithDefinition<T> {
 	private static final long serialVersionUID = 2371336993789669482L;
@@ -23,7 +25,7 @@ public class DiscretionaryItem<T extends PlanItemDefinition> extends TableItem i
 	private Work work;
 	private Map<String, Sentry> entryCriteria = new HashMap<String, Sentry>();
 	private Map<String, Sentry> exitCriteria = new HashMap<String, Sentry>();
-	private PlanItemInstanceFactoryNode factoryNode=new PlanItemInstanceFactoryNode();
+	private PlanItemInstanceFactoryNode factoryNode;
 	public Map<String, Sentry> getEntryCriteria() {
 		return Collections.unmodifiableMap(entryCriteria);
 	}
@@ -36,6 +38,7 @@ public class DiscretionaryItem<T extends PlanItemDefinition> extends TableItem i
 		PlanItemInstanceFactoryNode result = new PlanItemInstanceFactoryNode();
 		result.setId(id / 3334123);
 		result.setName(getName() + "Factory");
+		result.setItemToInstantiate(this);
 		return result;
 	}
 	public void putEntryCriterion(String s, Sentry c) {
@@ -149,11 +152,14 @@ public class DiscretionaryItem<T extends PlanItemDefinition> extends TableItem i
 			entry.getValue().setPlanItemEntering(this);
 			new ConnectionImpl(entry.getValue(), Node.CONNECTION_DEFAULT_TYPE, getFactoryNode(), Node.CONNECTION_DEFAULT_TYPE);
 		}
+		if(!entrySet.isEmpty()){
+			((NodeContainer) entrySet.iterator().next().getValue().getNodeContainer()).addNode(getFactoryNode());
+		}
 		Set<Entry<String, Sentry>> exitSet = exitCriteria.entrySet();
 		for (Entry<String, Sentry> entry : exitSet) {
 			entry.getValue().setPlanItemExiting(this);
 		}
-		new ConnectionImpl(getFactoryNode(), Node.CONNECTION_DEFAULT_TYPE, this, Node.CONNECTION_DEFAULT_TYPE);
+//		new ConnectionImpl(getFactoryNode(), Node.CONNECTION_DEFAULT_TYPE, this, Node.CONNECTION_DEFAULT_TYPE);
 	}
 
 	public PlanItemInstanceFactoryNode getFactoryNode() {

@@ -23,7 +23,7 @@ public class PlanningTest extends AbstractPlanItemInstanceContainerTest {
 	}
 
 	@Test
-	public void testGetPlanningTable() throws Exception {
+	public void testStartPlanning() throws Exception {
 		givenThatTheTestCaseIsStarted();
 		triggerInitialActivity();
 		getPersistence().start();
@@ -46,7 +46,8 @@ public class PlanningTest extends AbstractPlanItemInstanceContainerTest {
 		assertItemPresent(pti.getPlannedTasks(), "TheCaseTaskPlanItem");
 		assertItemPresent(pti.getPlannedTasks(), "TheStagePlanItem");
 		assertItemPresent(pti.getPlannedTasks(), "TheHumanTaskPlanItem");
-		for (PlannedTaskSummary pts : pti.getPlannedTasks()) {
+		assertEquals(4, pti.getApplicableDiscretionaryItems().size());
+		for (ApplicableDiscretionaryItem pts : pti.getApplicableDiscretionaryItems()) {
 			if("theUnapplicableItem".equals(pts.getDiscretionaryItemId())){
 				fail();
 			}
@@ -72,6 +73,24 @@ public class PlanningTest extends AbstractPlanItemInstanceContainerTest {
 		assertNull(ci.findNodeForWorkItem(plannedHumanTask.getTaskData().getWorkItemId()));
 		assertNull(ci.findNodeForWorkItem(plannedStage.getTaskData().getWorkItemId()));
 		getPersistence().commit();
+	}
+	@Test
+	public void testActivateDiscretionaryItem() throws Exception {
+		givenThatTheTestCaseIsStarted();
+		triggerInitialActivity();
+		getPlanningService().makeDiscretionaryItemAvailable(getTaskService().getTaskByWorkItemId(caseInstance.getWorkItemId()).getId(), "theHumanTaskDiscretionaryItemWithEntryCriteriaId");
+		assertNodeNotTriggered(caseInstance.getId(), "TheHumanTask");
+		getPersistence().start();
+		reloadCaseInstance(caseInstance).signalEvent("DiscretionaryStartUserEvent", new Object());
+		getPersistence().commit();
+		getPersistence().start();
+		assertNodeActive(caseInstance.getId(), getRuntimeEngine().getKieSession(), "TheHumanTask");
+		getPersistence().commit();
+		getPersistence().start();
+		List<TaskSummary> tasksAssignedAsPotentialOwner = getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
+		assertTaskInState(tasksAssignedAsPotentialOwner, "TheHumanTask", Status.Ready);
+		getPersistence().commit();
+		assertPlanItemInState(caseInstance.getId(), "TheHumanTask", PlanElementState.ENABLED);
 	}
 
 	@Test
@@ -118,6 +137,11 @@ public class PlanningTest extends AbstractPlanItemInstanceContainerTest {
 		assertTaskInState(tasks, plannedStage.getPlanItemName(), Status.InProgress);
 		super.completeTasks(tasks);
 		getPersistence().commit();
+		getPersistence().start();
+		caseInstance = reloadCaseInstance(caseInstance);
+		assertFalse(caseInstance.canComplete());
+		getPersistence().commit();
+		getPersistence().start();
 		getTaskService().start(plannedHumanTask.getId(), "salaboy");
 		getTaskService().complete(plannedHumanTask.getId(), "salaboy",new HashMap<String,Object>());
 		getPersistence().commit();

@@ -68,11 +68,15 @@ Planning Service
  - prepareDiscretionaryItem 
  - submitPlan 
    - update parameters (taskContent AND workItem ),
-   - role (do role-assignment in process too) and 
+   - role (do role-assignment in process too) and
+ - makeDiscretionaryItemAvailable
+ 
 DiscretionaryItem
+ - entryCriteria 
  - itemControl.automaticActivationRule
-  - ApplicabilityRule
-  - itemControl.requiredRule
+ - ApplicabilityRule
+ - itemControl.requiredRule
+ 
 Generate OCM and JPA test Java classes from UML along with CaseFileItemDefinition includes
 Implement OCLProcessDialect that extends JavaProcessDialect
 Output ParameterMapping, bindingRefinement and scoped subscriptions
@@ -88,6 +92,7 @@ Sentries with multiple onParts
 *.parentResume
 Storage of event variables inside StageInstances
 CaseTask.reactivated - check that process is restarted - it failed previously
+Planning Tables contained by HumanTasks and Stages
 
 3. To implement
 Planning Service - HumanTask, Stage AND CasePlanModel
@@ -100,13 +105,11 @@ Planning Service - HumanTask, Stage AND CasePlanModel
    - (due date?)*
 
 PlanItemOnPart.sentryRef *
+Sentry.condition without onParts *
 
 DiscretionaryItem - need input from OMG
- - entryCriteria 
  - exitCriteria
  - itemControl.repititionRule
-
-
 
 4. Current potential problems 
 AbstractPersistentSubscriptionManager
@@ -117,7 +120,7 @@ PlanningService (look at TaskServiceFactory interface)
  - find a way to get to the InternalTaskService
 
 5. Difficult
-Validate authorization for planning - get the possible roles from somewhere, perhaps the UserInfo service, but group != role 
+For the validation of authorization for planning - get the possible roles from somewhere, perhaps the UserInfo service, but group != role 
 Sentry.condition without onParts - when to trigger the evaluation of the condition.
 With JCR Property.CHANGE events, try to get the original value and only fire events for ADD_/REMOVE_REFERENCE when they applicable - JCR limitation
 Optimize caching of SubscriptionInfo and perhaps even other OCM objects IN OCMSubscriptioinManager

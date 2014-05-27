@@ -135,6 +135,7 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 			piifni.internalSetPlanItemInstanceRequired(context.stream.readBoolean());
 			piifni.internalSetHasPlanItemInstanceBeenInstantiated(context.stream.readBoolean());
 			piifni.internalSetRepeating(context.stream.readBoolean());
+			piifni.setIncludedByDiscretion(context.stream.readBoolean());
 			nodeInstance = piifni;
 			break;
 		case SENTRY_INSTANCE:
@@ -261,6 +262,7 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 			stream.writeBoolean(((PlanItemInstanceFactoryNodeInstance<?>) nodeInstance).isPlanItemInstanceRequired());
 			stream.writeBoolean(((PlanItemInstanceFactoryNodeInstance<?>) nodeInstance).isHasPlanItemBeenInstantiatedYet());
 			stream.writeBoolean(((PlanItemInstanceFactoryNodeInstance<?>) nodeInstance).isRepeating());
+			stream.writeBoolean(((PlanItemInstanceFactoryNodeInstance<?>) nodeInstance).isIncludedByDiscretion());
 		} else if (nodeInstance instanceof OnPartInstance) {
 			stream.writeShort(ON_PART_INSTANCE);
 		} else if (nodeInstance instanceof MilestonePlanItemInstance) {

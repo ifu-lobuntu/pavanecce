@@ -1,52 +1,62 @@
-package org.pavanecce.cmmn.jbpm.ocm;
+package org.pavanecce.cmmn.jbpm.jcr;
 
-import org.apache.jackrabbit.ocm.manager.enumconverter.EnumTypeConverter;
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Bean;
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
+import static org.pavanecce.cmmn.jbpm.jcr.JcrUtil.*;
+
+import javax.jcr.Node;
+
 import org.pavanecce.cmmn.jbpm.event.AbstractCaseFileItemSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.event.CaseSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.event.PersistedCaseFileItemSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
-import org.pavanecce.common.ocm.GrandParentBeanConverterImpl;
-
-@Node(discriminator = false, jcrType = "i:caseFileItemSubscription")
-public class OcmCaseFileItemSubscriptionInfo extends AbstractCaseFileItemSubscriptionInfo implements PersistedCaseFileItemSubscriptionInfo {
-	@Field(uuid = true)
+public class JcrCaseFileItemSubscriptionInfo extends AbstractCaseFileItemSubscriptionInfo implements PersistedCaseFileItemSubscriptionInfo, NodeAsObject {
 	private String id;
-	@Bean(converter = GrandParentBeanConverterImpl.class)
-	private OcmCaseSubscriptionInfo caseSubscription;
-	@Field(jcrName = "i:itemName")
+	private JcrCaseSubscriptionInfo caseSubscription;
 	private String itemName;
-	@Field(jcrName = "i:transition", converter = EnumTypeConverter.class)
 	private CaseFileItemTransition transition;
-	@Field(jcrName = "i:processInstanceId")
 	private long processInstanceId;
-	@Field(jcrName = "i:caseKey")
 	private String caseKey;
-	@Field(path = true)
 	private String path;
-	@Field(jcrName = "i:relatedItemName")
 	private String relatedItemName;
+	private Node node;
 
-	public OcmCaseFileItemSubscriptionInfo(OcmCaseSubscriptionInfo caseSubscription) {
+	public JcrCaseFileItemSubscriptionInfo(JcrCaseSubscriptionInfo caseSubscription) {
 		super();
-		this.caseSubscription = caseSubscription;
+		try {
+			this.caseSubscription = caseSubscription;
+			//TODO the info require is not there yet
+			this.node=caseSubscription.getNode().addNode(calculateRelativePath());
+		} catch (Exception e) {
+			throw convertException(e);
+		}
 	}
 
-	public OcmCaseFileItemSubscriptionInfo() {
+	public JcrCaseFileItemSubscriptionInfo() {
 		super();
 	}
 
-	public OcmCaseSubscriptionInfo getCaseSubscription() {
+	public JcrCaseFileItemSubscriptionInfo(Node node) {
+		this.node = node;
+	}
+
+	public Node getNode() {
+		return node;
+	}
+
+	public JcrCaseSubscriptionInfo getCaseSubscription() {
 		return caseSubscription;
 	}
 
 	public String getPath() {
 		if (path == null) {
-			path = caseSubscription.getPath() + "/caseFileItemSubscriptions/" + processInstanceId + itemName + transition.name();
+			String string = calculateRelativePath();
+			path = caseSubscription.getPath() + string;
 		}
 		return path;
+	}
+
+	private String calculateRelativePath() {
+		String string = "/caseFileItemSubscriptions/" + processInstanceId + itemName + transition.name();
+		return string;
 	}
 
 	public void setPath(String path) {
@@ -55,10 +65,10 @@ public class OcmCaseFileItemSubscriptionInfo extends AbstractCaseFileItemSubscri
 
 	@Override
 	public void setCaseSubscription(CaseSubscriptionInfo<?> caseSubscription) {
-		this.caseSubscription = (OcmCaseSubscriptionInfo) caseSubscription;
+		this.caseSubscription = (JcrCaseSubscriptionInfo) caseSubscription;
 	}
 
-	public void setCaseSubscription(OcmCaseSubscriptionInfo caseSubscription) {
+	public void setCaseSubscription(JcrCaseSubscriptionInfo caseSubscription) {
 		this.caseSubscription = caseSubscription;
 	}
 

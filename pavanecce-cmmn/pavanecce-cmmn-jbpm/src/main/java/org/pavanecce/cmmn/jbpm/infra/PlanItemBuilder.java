@@ -62,7 +62,7 @@ public class PlanItemBuilder implements ProcessNodeBuilder {
 	}
 
 	private void processPlanningTable(ProcessDescr processDescr, ProcessBuildContext context, Node node, PlanningTable planningTable) {
-		for (ApplicabilityRule ar : planningTable.getApplicabilityRules().values()) {
+		for (ApplicabilityRule ar : planningTable.getOwnedApplicabilityRules()) {
 			ar.setCondition(build(context, node, ar.getCondition()));
 		}
 		Collection<TableItem> tableItems = planningTable.getTableItems();

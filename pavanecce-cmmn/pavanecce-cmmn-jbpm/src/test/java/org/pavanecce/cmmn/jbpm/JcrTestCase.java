@@ -93,7 +93,7 @@ public class JcrTestCase {
 
 			// Remove content
 			// root.getNode("myBuildingCase").remove();
-			printTree("", oop.getSession().getSession().getNode("/cases"));
+			printTree("", oop.getObjectContentManager().getSession().getNode("/cases"));
 
 			session.save();
 		} finally {

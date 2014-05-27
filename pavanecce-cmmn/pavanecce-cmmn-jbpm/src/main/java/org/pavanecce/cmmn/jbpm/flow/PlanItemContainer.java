@@ -5,6 +5,7 @@ import java.util.Collection;
 import org.jbpm.workflow.core.NodeContainer;
 import org.jbpm.workflow.core.node.EndNode;
 import org.jbpm.workflow.core.node.StartNode;
+import org.kie.api.definition.process.Node;
 
 public interface PlanItemContainer extends NodeContainer, PlanningTableContainer {
 
@@ -35,4 +36,6 @@ public interface PlanItemContainer extends NodeContainer, PlanningTableContainer
 	void setPlanningTable(PlanningTable planningTable);
 
 	PlanningTable getPlanningTable();
+
+	Node superGetNode(long id);
 }

@@ -123,7 +123,7 @@ public class PlanItemInstanceContainerUtil {
 		} else {
 			for (NodeInstance ni : container.getNodeInstances()) {
 				if (ni instanceof PlanItemInstanceContainer) {
-					pewpt = ((PlanItemInstanceContainer) ni).findPlanElementWithPlanningTable(containerWorkItemId);
+					pewpt = ((PlanItemInstanceContainer) ni).findPlanningTableContainerInstance(containerWorkItemId);
 					if (pewpt != null) {
 						break;
 					}

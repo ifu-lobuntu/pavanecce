@@ -165,18 +165,26 @@ public class CaseHandler extends PlanItemContainerHandler implements Handler {
 							ht.setPerformer(role);
 						}
 					}
-					doRoleAndDefinitionMapping(process.getPlanItemDefinitions(),roles, ht.getPlanningTable());
+					doRoleAndDefinitionMapping(process.getPlanItemDefinitions(), roles, ht.getPlanningTable());
 				}
 				linkParametersToCaseFileItems(variableScope, ((TaskDefinition) pi).getInputs());
 				linkParametersToCaseFileItems(variableScope, ((TaskDefinition) pi).getOutputs());
 			} else if (pi instanceof Stage) {
-				doRoleAndDefinitionMapping(process.getPlanItemDefinitions(),process.getRoles(), ((Stage) pi).getPlanningTable());
+				doRoleAndDefinitionMapping(process.getPlanItemDefinitions(), process.getRoles(), ((Stage) pi).getPlanningTable());
 			}
 		}
 		linkPlanItems(process, parser);
 		for (PlanItemDefinition planItemDefinition : planItemDefinitions) {
 			if (planItemDefinition instanceof Stage) {
 				super.linkPlanItems((Stage) planItemDefinition, parser);
+			}
+		}
+		linkDiscretionaryItemCriteria(process.getPlanningTable());
+
+		for (PlanItemDefinition planItemDefinition : planItemDefinitions) {
+			if (planItemDefinition instanceof PlanningTableContainer) {
+				PlanningTable planningTable = ((PlanningTableContainer) planItemDefinition).getPlanningTable();
+				linkDiscretionaryItemCriteria(planningTable);
 			}
 		}
 		copyStagePlanItems(process);
@@ -195,15 +203,27 @@ public class CaseHandler extends PlanItemContainerHandler implements Handler {
 		return process;
 	}
 
+	private void linkDiscretionaryItemCriteria(PlanningTable planningTable) {
+		if (planningTable != null) {
+			for (TableItem tableItem : planningTable.getTableItems()) {
+				if (tableItem instanceof DiscretionaryItem) {
+					linkDiscretionaryItemCriteria(tableItem.getParentTable().getFirstPlanItemContainer(), (DiscretionaryItem<?>) tableItem);
+				} else {
+					linkDiscretionaryItemCriteria((PlanningTable) tableItem);
+				}
+			}
+		}
+	}
+
 	private void copyDiscretionaryItems(NodeContainer nc) {
-		if(nc instanceof PlanningTableContainer){
+		if (nc instanceof PlanningTableContainer) {
 			PlanningTable pt = ((PlanningTableContainer) nc).getPlanningTable();
-			if(pt!=null){
+			if (pt != null) {
 				copyDiscretionaryItemsInTable(pt);
 			}
 			Node[] nodes = nc.getNodes();
 			for (Node node : nodes) {
-				if(node instanceof NodeContainer){
+				if (node instanceof NodeContainer) {
 					copyDiscretionaryItems((NodeContainer) node);
 				}
 			}
@@ -212,16 +232,16 @@ public class CaseHandler extends PlanItemContainerHandler implements Handler {
 
 	private void copyDiscretionaryItemsInTable(PlanningTable pt) {
 		for (TableItem ti : pt.getTableItems()) {
-			if(ti instanceof DiscretionaryItem && (((DiscretionaryItem<?>) ti).getDefinition() instanceof Stage || ((DiscretionaryItem<?>) ti).getDefinition() instanceof CaseTask)){
+			if (ti instanceof DiscretionaryItem && (((DiscretionaryItem<?>) ti).getDefinition() instanceof Stage || ((DiscretionaryItem<?>) ti).getDefinition() instanceof CaseTask)) {
 				((DiscretionaryItem<?>) ti).copyFromDefinition();
-			}else if(ti instanceof PlanningTable){
+			} else if (ti instanceof PlanningTable) {
 				copyDiscretionaryItemsInTable((PlanningTable) ti);
 			}
 		}
 	}
 
 	private void copyStagePlanItems(NodeContainer nc) {
-		Node[] nodes=nc.getNodes();
+		Node[] nodes = nc.getNodes();
 		for (Node node : nodes) {
 			if (node instanceof StagePlanItem) {
 				StagePlanItem spi = (StagePlanItem) node;
@@ -234,18 +254,18 @@ public class CaseHandler extends PlanItemContainerHandler implements Handler {
 	@SuppressWarnings("unchecked")
 	protected void doRoleAndDefinitionMapping(Collection<PlanItemDefinition> defs, Collection<Role> roles, TableItem pt) {
 		if (pt != null) {
-			doRoleMapping(defs,roles, pt.getAuthorizedRoles());
+			doRoleMapping(defs, roles, pt.getAuthorizedRoles());
 			if (pt instanceof PlanningTable) {
 				Collection<TableItem> tableItems = ((PlanningTable) pt).getTableItems();
 				for (TableItem tableItem : tableItems) {
 					doRoleMapping(defs, roles, tableItem.getAuthorizedRoles());
 					doRoleAndDefinitionMapping(defs, roles, tableItem);
 				}
-			}else{
+			} else {
 				for (PlanItemDefinition pid : defs) {
 					@SuppressWarnings("rawtypes")
-					DiscretionaryItem di = (DiscretionaryItem<?>)pt;
-					if(pid.getElementId().equals(di.getDefinitionRef())){
+					DiscretionaryItem di = (DiscretionaryItem<?>) pt;
+					if (pid.getElementId().equals(di.getDefinitionRef())) {
 						di.setDefinition(pid);
 					}
 				}

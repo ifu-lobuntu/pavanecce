@@ -22,7 +22,12 @@ import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceContainer;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanningTableContainerInstance;
 
-public class PlanningTableContainerUtil {
+public class PlanningTableContainerInstanceUtil {
+	public static void makeDiscretionaryItemAvailable(PlanningTableContainerInstance ptc, String discretionaryItemId) {
+		DiscretionaryItem<?> di = ptc.getPlanningTable().getDiscretionaryItemById(discretionaryItemId);
+		PlanItemInstanceFactoryNodeInstance<?> ni = (PlanItemInstanceFactoryNodeInstance<?>) ptc.getPlanItemInstanceCreator().getFirstNodeInstance(di.getFactoryNode().getId());
+		ni.setIncludedByDiscretion(true);
+	}
 	public static WorkItem createPlannedTask(PlanningTableContainerInstance ptc, String discretionaryItemId) {
 		if (ptc != null && ptc.getPlanningTable() != null) {
 			NodeInstance contextNodeInstance = ptc.getPlanningContextNodeInstance();
@@ -82,7 +87,8 @@ public class PlanningTableContainerUtil {
 					DiscretionaryItem<?> di = (DiscretionaryItem<?>) ti;
 					ApplicableDiscretionaryItem adi = new ApplicableDiscretionaryItem(di.getElementId(), di.getDefinition().getName());
 					adi.setRepeatable(ExpressionUtil.isRepeating(container.getPlanningContextNodeInstance(), di));
-					adi.setActivatedManually(ExpressionUtil.isActivatedManually(container.getPlanningContextNodeInstance(), di) || di.getEntryCriteria().isEmpty());
+					adi.setActivatedManually(ExpressionUtil.isActivatedManually(container.getPlanningContextNodeInstance(), di));
+					adi.setHasEntryCriteria(!di.getEntryCriteria().isEmpty());
 					target.put(ti.getElementId(), adi);
 				} else {
 					addApplicableItems(container, target, usersRoles, (PlanningTable) ti);

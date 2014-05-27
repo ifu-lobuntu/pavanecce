@@ -1,7 +1,6 @@
 This provides an extension of jBPM that enables CMMN runtime semantics.
 It currently supports the following features
 
-
 1. CaseFileItem events generated from either JCR/Jackrabbit-OCM or JPA/Hibernate
 There are currently two supported persistence engines: JPA on top of Hibernate and Jackrabbit's OCM on top of JCR. Both these approaches require child CaseFileItems to be named after the properties 
 in the class that represents the parent CaseFileItem. The domain model hierarchy implemented by developers in Java therefore needs to reflect the CaseFileItem hierarchy defined in the CaseFile. The example domain that
@@ -47,30 +46,10 @@ WS Human Task lifecycle implemented in jBPM, such as activate/deactivation which
 5. Stages
 Unlike embedded subprocesses in jBPM, Stages in CMMN require human intervention almost like normal Human Tasks. As a result, we instantiate a Task in the jBPM task service representing the Stage, and the idea is that
 we would be using this task to suspend, resume, and complete a Stage. This task can also be used for planning activities such as explicit role and/or parameter assignment for specific tasks, or enabling/disabling 
-Discretionary items.
+Discretionary items applicable for that Stage.
  
 6. Milestones
 7. UserEventListeners
 8. TimerEventListeners
 9. CaseTasks
 10. ProcessTasks
-
-11. Notes on implementation.
-11.1. PlanItem instance classes
-We initially intended to use the existing jBPM instance classes. However CMMN defines very specific lifecycle requirements for PlanItems. As a result, we decided to implement PlanItem instance class for each type of
-PlanItemDefinition that could be used to define a PlanItem. The CaseInstanceMarshaller class ensures that they are all persisted correctly.
-11.2. Persistence
-CMMN has no limit on the multiplicity of CaseFileItems and CaseParameters. As a result, we need to implement support for collections in the form of ObjectMarshallingStrategies. During suscription demarcation, we 
-also require a close relationship with the persistence context to refine even handling, but we are still ironing out the complexities of this. 
-11.3. Diagramming
-No final decisions have been made regarding diagramming. There are obvious benefits to using the Kie workebench and its built Oryx modeler. However, the primary purpose of this CMMN implementation is for the 
-Ifu Lobuntu online collaboration offering. In this specific case, CMMN models and the associated UML and VDML models would be established collaboratively, which fits more intuitively with web content management systems 
-such as Jahia, Hippo and Magnolia, all of which use JCR and jBPM. In such a scenario, it may make more sense to leverage the content management facilities (versioning, checking out, checkin in, workflows, polling, 
-comments, etc). Ideally there would be a way to make this work at least with the Oryx modeler from the Kie Workbench, but it is unlike that we would be able to integrate Kie as a whole into Jahia, for instance
-
-
-
-
-
-
-  

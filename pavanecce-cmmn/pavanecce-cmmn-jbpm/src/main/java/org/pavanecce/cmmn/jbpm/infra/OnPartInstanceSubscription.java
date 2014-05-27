@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.drools.core.common.InternalKnowledgeRuntime;
 import org.kie.internal.runtime.KnowledgeRuntime;
+import org.pavanecce.cmmn.jbpm.event.AbstractCaseFileItemSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.event.CaseFileItemSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItem;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemOnPart;
@@ -16,7 +17,6 @@ import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.ExpressionUtil;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.OnPartInstance;
-import org.pavanecce.cmmn.jbpm.ocm.AbstractCaseFileItemSubscriptionInfo;
 
 public class OnPartInstanceSubscription extends AbstractCaseFileItemSubscriptionInfo implements CaseFileItemSubscriptionInfo {
 	CaseFileItemOnPart source;

@@ -373,7 +373,7 @@ public abstract class AbstractControllableItemInstance<T extends PlanItemDefinit
 	}
 
 	public boolean isCompletionStillRequired() {
-		return isCompletionRequired && !planElementState.isTerminalState() && !planElementState.isSemiTerminalState(this);
+		return isCompletionRequired && !planElementState.isTerminalState() && !planElementState.isSemiTerminalState(this) && !(getItem() instanceof TaskDefinition && !((TaskDefinition) getItem()).isBlocking());
 	}
 
 	public void internalSetCompletionRequired(boolean b) {

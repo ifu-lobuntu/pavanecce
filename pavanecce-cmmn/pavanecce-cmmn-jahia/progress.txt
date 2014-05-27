@@ -17,9 +17,6 @@ Pure JCR demarcated subscriptions
 Pure JCR with xPath as expression language
 
 jBPM on JCR
-(this is a lot of work and OCM performance is always a concern, and conflicts with the existing Jahia Workflow subsystem)
-Implement TaskService on OCM/JCR 
-Store planning model in OCM as well
 Create tasks directly under the user and make sure Jahia will interpret it in the correct way
 Provide standard templates for tasklists, planning tables, etc. 
 

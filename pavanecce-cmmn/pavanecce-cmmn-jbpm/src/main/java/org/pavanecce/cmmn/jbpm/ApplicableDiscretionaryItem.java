@@ -9,6 +9,7 @@ public class ApplicableDiscretionaryItem implements Serializable {
 	private String planItemName;
 	private boolean isRepeatable;
 	private boolean isActivatedManually;
+	private boolean hasEntryCriteria;
 
 	public ApplicableDiscretionaryItem() {
 		super();
@@ -50,6 +51,14 @@ public class ApplicableDiscretionaryItem implements Serializable {
 
 	public void setActivatedManually(boolean isActivatedAutomatically) {
 		this.isActivatedManually = isActivatedAutomatically;
+	}
+
+	public boolean isHasEntryCriteria() {
+		return hasEntryCriteria;
+	}
+
+	public void setHasEntryCriteria(boolean hasEntryCriteria) {
+		this.hasEntryCriteria = hasEntryCriteria;
 	}
 
 }

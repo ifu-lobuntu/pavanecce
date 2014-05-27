@@ -31,6 +31,10 @@ public class StagePlanItem extends AbstractPlanItem<Stage> implements MultiInsta
 		super(info);
 		this.factoryNode = planItemInstanceFactoryNode;
 	}
+	@Override
+	public Node superGetNode(long id) {
+		return super.getNode(id);
+	}
 
 	public StartNode getDefaultStart() {
 		return defaultStart;
@@ -42,15 +46,7 @@ public class StagePlanItem extends AbstractPlanItem<Stage> implements MultiInsta
 
 	@Override
 	public Node getNode(long id) {
-		try {
-			return super.getNode(id);
-		} catch (IllegalArgumentException e) {
-			if (getPlanningTable() != null) {
-				return getPlanningTable().getNode(id);
-			}
-		}
-		return null;
-
+		return PlanItemContainerUtil.getNode(this, id);
 	}
 
 	public DefaultSplit getDefaultSplit() {

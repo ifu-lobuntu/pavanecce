@@ -20,7 +20,7 @@
 	<classpathentry exported="true" kind="lib" path="libs/jackrabbit-api.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/jackrabbit-core.jar" sourcepath="libs/jackrabbit-core-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/jackrabbit-jcr-commons.jar" sourcepath="libs/jackrabbit-jcr-commons-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/jackrabbit-spi-commons.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jackrabbit-spi-commons.jar" sourcepath="libs/jackrabbit-spi-commons-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/jackrabbit-spi.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/jcl-over-slf4j.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/lucene-core.jar"/>
