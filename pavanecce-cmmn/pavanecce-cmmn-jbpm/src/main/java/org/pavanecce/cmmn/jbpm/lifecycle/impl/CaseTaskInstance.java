@@ -37,10 +37,10 @@ import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CaseTaskPlanItemInstance extends TaskPlanItemInstance<CaseTask, TaskItemWithDefinition<CaseTask>> implements EventListener, ContextInstanceContainer {
+public class CaseTaskInstance extends TaskPlanItemInstance<CaseTask, TaskItemWithDefinition<CaseTask>> implements EventListener, ContextInstanceContainer {
 
 	private static final long serialVersionUID = -2144001908752174712L;
-	static final Logger logger = LoggerFactory.getLogger(CaseTaskPlanItemInstance.class);
+	static final Logger logger = LoggerFactory.getLogger(CaseTaskInstance.class);
 	private long processInstanceId = -1;
 	transient private ProcessInstance processInstance;
 

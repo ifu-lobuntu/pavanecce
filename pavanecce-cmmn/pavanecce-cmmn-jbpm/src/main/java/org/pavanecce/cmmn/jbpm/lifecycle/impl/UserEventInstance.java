@@ -2,15 +2,15 @@ package org.pavanecce.cmmn.jbpm.lifecycle.impl;
 
 import org.jbpm.workflow.instance.node.EventNodeInstanceInterface;
 import org.pavanecce.cmmn.jbpm.event.PlanItemEvent;
-import org.pavanecce.cmmn.jbpm.flow.UserEventListener;
+import org.pavanecce.cmmn.jbpm.flow.UserEvent;
 import org.pavanecce.cmmn.jbpm.flow.UserEventPlanItem;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
 
-public class UserEventPlanItemInstance extends AbstractOccurrablePlanItemInstance<UserEventListener, UserEventPlanItem> implements EventNodeInstanceInterface, Creatable {
+public class UserEventInstance extends OccurrablePlanItemInstanceImpl<UserEvent, UserEventPlanItem> implements EventNodeInstanceInterface, Creatable {
 
 	private static final long serialVersionUID = 3069593690659509023L;
 
-	public UserEventPlanItemInstance() {
+	public UserEventInstance() {
 		super.internalSetCompletionRequired(false);
 		planElementState = PlanElementState.INITIAL;
 	}

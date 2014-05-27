@@ -1,4 +1,4 @@
-1. Done and Tested
+# 1. Done and Tested
 JCR/OCM persistent subscriptions
  - scope of subscriptions
  - bindingRefined
@@ -83,7 +83,7 @@ Output ParameterMapping, bindingRefinement and scoped subscriptions
 Recursive subscriptions, parameterizable
 
 
-2. To test more directly
+# 2. To test more directly
 Sentry.Conditions
 Sentries with multiple onParts
 *.no sentry
@@ -94,7 +94,7 @@ Storage of event variables inside StageInstances
 CaseTask.reactivated - check that process is restarted - it failed previously
 Planning Tables contained by HumanTasks and Stages
 
-3. To implement
+# 3. To implement
 Planning Service - HumanTask, Stage AND CasePlanModel
  - startPlanning (include applicabilityRule) *
  - prepareDiscretionaryItem *
@@ -111,7 +111,7 @@ DiscretionaryItem - need input from OMG
  - exitCriteria
  - itemControl.repititionRule
 
-4. Current potential problems 
+# 4. Current potential problems 
 AbstractPersistentSubscriptionManager
  - Find a way to get to the commandScopedEntity manager - the reflection won't work in CDI 
 
@@ -119,13 +119,13 @@ PlanningService (look at TaskServiceFactory interface)
  - find a way to get to the persistence context - the reflection won't work in CDI
  - find a way to get to the InternalTaskService
 
-5. Difficult
+# 5. Difficult
 For the validation of authorization for planning - get the possible roles from somewhere, perhaps the UserInfo service, but group != role 
 Sentry.condition without onParts - when to trigger the evaluation of the condition.
 With JCR Property.CHANGE events, try to get the original value and only fire events for ADD_/REMOVE_REFERENCE when they applicable - JCR limitation
 Optimize caching of SubscriptionInfo and perhaps even other OCM objects IN OCMSubscriptioinManager
 
-6 Low priority
+# Low priority
 Plan fragments 
  - For Plan Items
  - For Discretionary Items

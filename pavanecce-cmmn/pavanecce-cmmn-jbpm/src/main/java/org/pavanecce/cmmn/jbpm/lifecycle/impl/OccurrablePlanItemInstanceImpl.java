@@ -4,17 +4,17 @@ import org.jbpm.workflow.instance.node.StateBasedNodeInstance;
 import org.pavanecce.cmmn.jbpm.flow.ItemWithDefinition;
 import org.pavanecce.cmmn.jbpm.flow.PlanItem;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
-import org.pavanecce.cmmn.jbpm.lifecycle.OccurrablePlanItemInstanceLifecycle;
+import org.pavanecce.cmmn.jbpm.lifecycle.OccurrablePlanItemInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
 
-public abstract class AbstractOccurrablePlanItemInstance<T extends PlanItemDefinition, X extends ItemWithDefinition<T>> extends StateBasedNodeInstance implements
-		OccurrablePlanItemInstanceLifecycle<T> {
+public abstract class OccurrablePlanItemInstanceImpl<T extends PlanItemDefinition, X extends ItemWithDefinition<T>> extends StateBasedNodeInstance implements
+		OccurrablePlanItemInstance<T> {
 
 	private static final long serialVersionUID = -3451322686745364562L;
 	protected PlanElementState planElementState = PlanElementState.AVAILABLE;
 	protected Boolean isCompletionRequired;
 
-	public AbstractOccurrablePlanItemInstance() {
+	public OccurrablePlanItemInstanceImpl() {
 		super();
 	}
 

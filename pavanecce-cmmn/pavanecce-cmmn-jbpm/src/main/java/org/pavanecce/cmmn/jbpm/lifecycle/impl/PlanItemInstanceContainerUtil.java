@@ -13,10 +13,10 @@ import org.pavanecce.cmmn.jbpm.flow.PlanItem;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 import org.pavanecce.cmmn.jbpm.flow.TaskDefinition;
 import org.pavanecce.cmmn.jbpm.infra.OnPartInstanceSubscription;
-import org.pavanecce.cmmn.jbpm.lifecycle.ControllableItemInstanceLifecycle;
+import org.pavanecce.cmmn.jbpm.lifecycle.ControllableItemInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceContainer;
-import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceLifecycle;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanningTableContainerInstance;
 
 /**
@@ -29,13 +29,13 @@ public class PlanItemInstanceContainerUtil {
 		if (container.getPlanElementState() != PlanElementState.ACTIVE) {
 			return false;
 		}
-		Collection<? extends PlanItemInstanceLifecycle<?>> nodeInstances = container.getChildren();
-		for (PlanItemInstanceLifecycle<?> nodeInstance : nodeInstances) {
+		Collection<? extends PlanItemInstance<?>> nodeInstances = container.getChildren();
+		for (PlanItemInstance<?> nodeInstance : nodeInstances) {
 			if (nodeInstance instanceof PlanItemInstanceFactoryNodeInstance && ((PlanItemInstanceFactoryNodeInstance<?>) nodeInstance).isPlanItemInstanceStillRequired()) {
 				return false;
-			} else if (nodeInstance instanceof MilestonePlanItemInstance && ((MilestonePlanItemInstance) nodeInstance).isCompletionStillRequired()) {
+			} else if (nodeInstance instanceof MilestoneInstance && ((MilestoneInstance) nodeInstance).isCompletionStillRequired()) {
 				return false;
-			} else if (nodeInstance instanceof ControllableItemInstanceLifecycle && ((ControllableItemInstanceLifecycle<?>) nodeInstance).isCompletionStillRequired()) {
+			} else if (nodeInstance instanceof ControllableItemInstance && ((ControllableItemInstance<?>) nodeInstance).isCompletionStillRequired()) {
 				return false;
 			}
 
@@ -44,7 +44,7 @@ public class PlanItemInstanceContainerUtil {
 
 	}
 
-	private static boolean isSubscribing(ControllableItemInstanceLifecycle<?> ni) {
+	private static boolean isSubscribing(ControllableItemInstance<?> ni) {
 		return ni.getPlanElementState() == PlanElementState.ACTIVE || ni.getPlanElementState() == PlanElementState.ENABLED;
 	}
 
@@ -53,13 +53,13 @@ public class PlanItemInstanceContainerUtil {
 		for (NodeInstance ni : nodeInstances) {
 			if (ni.getNode() instanceof ItemWithDefinition<?>) {
 				ItemWithDefinition<?> pi = (ItemWithDefinition<?>) ni.getNode();
-				if (pi.getDefinition() instanceof TaskDefinition && ni instanceof ControllableItemInstanceLifecycle && isSubscribing((ControllableItemInstanceLifecycle<?>) ni)) {
+				if (pi.getDefinition() instanceof TaskDefinition && ni instanceof ControllableItemInstance && isSubscribing((ControllableItemInstance<?>) ni)) {
 					TaskDefinition td = (TaskDefinition) pi.getDefinition();
 					ExpressionUtil.populateSubscriptionsActivatedByParameters(sc, td.getOutputs());
 				}
 			}
-			if (ni instanceof StagePlanItemInstance) {
-				((StagePlanItemInstance) ni).populateSubscriptionsActivatedByParameters(sc);
+			if (ni instanceof StageInstance) {
+				((StageInstance) ni).populateSubscriptionsActivatedByParameters(sc);
 			}
 		}
 	}
@@ -72,8 +72,8 @@ public class PlanItemInstanceContainerUtil {
 				if (def instanceof TaskDefinition) {
 					params.addAll(((TaskDefinition) def).getOutputs());
 				}
-			} else if (ni instanceof StagePlanItemInstance) {
-				((StagePlanItemInstance) ni).addSubscribingCaseParameters(params);
+			} else if (ni instanceof StageInstance) {
+				((StageInstance) ni).addSubscribingCaseParameters(params);
 			}
 		}
 	}
@@ -94,19 +94,19 @@ public class PlanItemInstanceContainerUtil {
 							}
 						}
 					}
-				} else if (node instanceof StagePlanItemInstance) {
-					((StagePlanItemInstance) node).addCaseFileItemOnPartsForParameters(items, target);
+				} else if (node instanceof StageInstance) {
+					((StageInstance) node).addCaseFileItemOnPartsForParameters(items, target);
 				}
 			}
 		}
 	}
 
-	public static ControllableItemInstanceLifecycle<?> findNodeForWorkItem(PlanItemInstanceContainer container, long id) {
+	public static ControllableItemInstance<?> findNodeForWorkItem(PlanItemInstanceContainer container, long id) {
 		for (NodeInstance ni : container.getNodeInstances()) {
-			if (ni instanceof ControllableItemInstanceLifecycle && ((ControllableItemInstanceLifecycle<?>) ni).getWorkItemId() == id) {
-				return (ControllableItemInstanceLifecycle<?>) ni;
+			if (ni instanceof ControllableItemInstance && ((ControllableItemInstance<?>) ni).getWorkItemId() == id) {
+				return (ControllableItemInstance<?>) ni;
 			} else if (ni instanceof PlanItemInstanceContainer) {
-				ControllableItemInstanceLifecycle<?> found = ((PlanItemInstanceContainer) ni).findNodeForWorkItem(id);
+				ControllableItemInstance<?> found = ((PlanItemInstanceContainer) ni).findNodeForWorkItem(id);
 				if (found != null) {
 					return found;
 				}
@@ -133,11 +133,11 @@ public class PlanItemInstanceContainerUtil {
 		return pewpt;
 	}
 
-	public static Collection<? extends PlanItemInstanceLifecycle<?>> getChildren(PlanItemInstanceContainer container) {
-		Set<PlanItemInstanceLifecycle<?>> result = new HashSet<PlanItemInstanceLifecycle<?>>();
+	public static Collection<? extends PlanItemInstance<?>> getChildren(PlanItemInstanceContainer container) {
+		Set<PlanItemInstance<?>> result = new HashSet<PlanItemInstance<?>>();
 		for (NodeInstance nodeInstance :container.getNodeInstances()) {
-			if (nodeInstance instanceof PlanItemInstanceLifecycle) {
-				result.add((PlanItemInstanceLifecycle<?>) nodeInstance);
+			if (nodeInstance instanceof PlanItemInstance) {
+				result.add((PlanItemInstance<?>) nodeInstance);
 			}
 		}
 		return result;

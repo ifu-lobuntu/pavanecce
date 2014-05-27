@@ -11,9 +11,9 @@ import org.pavanecce.cmmn.jbpm.TaskParameters;
 import org.pavanecce.cmmn.jbpm.flow.DefaultJoin;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceContainer;
-import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceLifecycle;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
-import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseTaskPlanItemInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseTaskInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,8 +80,8 @@ public abstract class AbstractPlanItemInstanceContainerTest extends AbstractCons
 				getTaskService().start(taskSummary.getId(), "ConstructionProjectManager");
 				getPersistence().start();
 				long workItemId = getTaskService().getTaskById(taskSummary.getId()).getTaskData().getWorkItemId();
-				CaseTaskPlanItemInstance ni = (CaseTaskPlanItemInstance) reloadCaseInstance().findNodeForWorkItem(workItemId);
-				CaseInstance subCase = (CaseInstance) getRuntimeEngine().getKieSession().getProcessInstance(((CaseTaskPlanItemInstance) ni).getProcessInstanceId());
+				CaseTaskInstance ni = (CaseTaskInstance) reloadCaseInstance().findNodeForWorkItem(workItemId);
+				CaseInstance subCase = (CaseInstance) getRuntimeEngine().getKieSession().getProcessInstance(((CaseTaskInstance) ni).getProcessInstanceId());
 				getPersistence().commit();
 				return subCase;
 			}
@@ -102,7 +102,7 @@ public abstract class AbstractPlanItemInstanceContainerTest extends AbstractCons
 				getPersistence().start();
 				CaseInstance ci3 = reloadCaseInstance();
 				long workItemId = getTaskService().getTaskById(taskSummary.getId()).getTaskData().getWorkItemId();
-				CaseTaskPlanItemInstance ctpi = (CaseTaskPlanItemInstance) ci3.findNodeForWorkItem(workItemId);
+				CaseTaskInstance ctpi = (CaseTaskInstance) ci3.findNodeForWorkItem(workItemId);
 				getRuntimeEngine().getKieSession().getProcessInstance(ctpi.getProcessInstanceId()).signalEvent("TheUserEvent", new Object());
 				printState(" ", ci3);
 				getPersistence().commit();
@@ -131,8 +131,8 @@ public abstract class AbstractPlanItemInstanceContainerTest extends AbstractCons
 
 	protected void printState(String s, PlanItemInstanceContainer pi) {
 		logger.trace(pi.toString());
-		for (PlanItemInstanceLifecycle<?> ni : pi.getChildren()) {
-			if (ni instanceof PlanItemInstanceLifecycle) {
+		for (PlanItemInstance<?> ni : pi.getChildren()) {
+			if (ni instanceof PlanItemInstance) {
 				logger.trace(s + ni.getItem().getEffectiveName() + ":" + ni.getPlanElementState());
 			} else {
 				logger.trace(s + ni.getItem().getEffectiveName());

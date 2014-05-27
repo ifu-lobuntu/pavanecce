@@ -17,7 +17,7 @@ import org.pavanecce.cmmn.jbpm.flow.PlanningTable;
 import org.pavanecce.cmmn.jbpm.flow.Role;
 import org.pavanecce.cmmn.jbpm.flow.TableItem;
 import org.pavanecce.cmmn.jbpm.flow.TaskDefinition;
-import org.pavanecce.cmmn.jbpm.lifecycle.ControllableItemInstanceLifecycle;
+import org.pavanecce.cmmn.jbpm.lifecycle.ControllableItemInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceContainer;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanningTableContainerInstance;
@@ -55,13 +55,13 @@ public class PlanningTableContainerInstanceUtil {
 
 	}
 
-	public static ControllableItemInstanceLifecycle<?> ensurePlanItemCreated(PlanningTableContainerInstance e, String discretionaryItemId, WorkItem wi) {
+	public static ControllableItemInstance<?> ensurePlanItemCreated(PlanningTableContainerInstance e, String discretionaryItemId, WorkItem wi) {
 		DiscretionaryItem<?> item = e.getPlanningTable().getDiscretionaryItemById(discretionaryItemId);
 		PlanItemInstanceContainer piic = e.getPlanItemInstanceCreator();
 		// TODO we may want to work through the factory node here
-		ControllableItemInstanceLifecycle<?> found = piic.findNodeForWorkItem(wi.getId());
+		ControllableItemInstance<?> found = piic.findNodeForWorkItem(wi.getId());
 		if (found == null) {
-			found = (ControllableItemInstanceLifecycle<?>) piic.getNodeInstance(item);
+			found = (ControllableItemInstance<?>) piic.getNodeInstance(item);
 			found.internalTriggerWithoutInstantiation(piic.getNodeInstance(piic.getPlanItemContainer().getDefaultSplit()), NodeImpl.CONNECTION_DEFAULT_TYPE, wi);
 			if (e.getPlanElementState() == PlanElementState.ACTIVE) {
 				found.create();

@@ -57,10 +57,10 @@ public class PlanItemInfo<T extends PlanItemDefinition> {
 			planItem = (PlanItem<T>) new HumanTaskPlanItem((PlanItemInfo<HumanTask>) this, createFactoryNode());
 		} else if (definition instanceof Stage) {
 			planItem = (PlanItem<T>) new StagePlanItem((PlanItemInfo<Stage>) this, createFactoryNode());
-		} else if (definition instanceof UserEventListener) {
-			planItem = (PlanItem<T>) new UserEventPlanItem((PlanItemInfo<UserEventListener>) this);
-		} else if (definition instanceof TimerEventListener) {
-			planItem = (PlanItem<T>) new TimerEventPlanItem((PlanItemInfo<TimerEventListener>) this);
+		} else if (definition instanceof UserEvent) {
+			planItem = (PlanItem<T>) new UserEventPlanItem((PlanItemInfo<UserEvent>) this);
+		} else if (definition instanceof TimerEvent) {
+			planItem = (PlanItem<T>) new TimerEventPlanItem((PlanItemInfo<TimerEvent>) this);
 		} else if (definition instanceof Milestone) {
 			planItem = (PlanItem<T>) new MilestonePlanItem((PlanItemInfo<Milestone>) this, createFactoryNode());
 		} else if (definition instanceof CaseTask) {

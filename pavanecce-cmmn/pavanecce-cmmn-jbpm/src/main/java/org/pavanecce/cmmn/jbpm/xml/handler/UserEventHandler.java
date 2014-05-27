@@ -2,7 +2,7 @@ package org.pavanecce.cmmn.jbpm.xml.handler;
 
 import org.drools.core.xml.ExtensibleXmlParser;
 import org.pavanecce.cmmn.jbpm.flow.Case;
-import org.pavanecce.cmmn.jbpm.flow.UserEventListener;
+import org.pavanecce.cmmn.jbpm.flow.UserEvent;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -10,7 +10,7 @@ public class UserEventHandler extends AbstractCaseElementHandler {
 
 	@Override
 	public Object start(String uri, String localName, Attributes attrs, ExtensibleXmlParser parser) throws SAXException {
-		UserEventListener node = new UserEventListener();
+		UserEvent node = new UserEvent();
 		parser.startElementBuilder(localName, attrs);
 
 		node.setElementId(attrs.getValue("id"));
@@ -29,7 +29,7 @@ public class UserEventHandler extends AbstractCaseElementHandler {
 
 	@Override
 	public Class<?> generateNodeFor() {
-		return UserEventListener.class;
+		return UserEvent.class;
 	}
 
 }

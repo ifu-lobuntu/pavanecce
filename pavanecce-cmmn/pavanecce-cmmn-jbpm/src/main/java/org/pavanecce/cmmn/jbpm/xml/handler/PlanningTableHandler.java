@@ -21,8 +21,8 @@ import org.pavanecce.cmmn.jbpm.flow.Role;
 import org.pavanecce.cmmn.jbpm.flow.Sentry;
 import org.pavanecce.cmmn.jbpm.flow.Stage;
 import org.pavanecce.cmmn.jbpm.flow.TableItem;
-import org.pavanecce.cmmn.jbpm.flow.TimerEventListener;
-import org.pavanecce.cmmn.jbpm.flow.UserEventListener;
+import org.pavanecce.cmmn.jbpm.flow.TimerEvent;
+import org.pavanecce.cmmn.jbpm.flow.UserEvent;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -47,8 +47,8 @@ public class PlanningTableHandler extends AbstractTableItemHandler implements Ha
 		this.validPeers.add(Stage.class);
 		this.validPeers.add(Milestone.class);
 		this.validPeers.add(CaseParameter.class);
-		this.validPeers.add(UserEventListener.class);
-		this.validPeers.add(TimerEventListener.class);
+		this.validPeers.add(UserEvent.class);
+		this.validPeers.add(TimerEvent.class);
 		this.validPeers.add(PlanItemInfo.class);
 		this.validPeers.add(PlanItem.class);
 	}

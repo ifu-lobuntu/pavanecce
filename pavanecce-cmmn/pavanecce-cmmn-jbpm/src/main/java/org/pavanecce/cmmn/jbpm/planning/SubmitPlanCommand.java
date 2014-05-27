@@ -21,11 +21,11 @@ import org.kie.api.task.model.Task;
 import org.kie.internal.command.Context;
 import org.kie.internal.runtime.manager.context.ProcessInstanceIdContext;
 import org.kie.internal.task.api.model.InternalTaskData;
-import org.pavanecce.cmmn.jbpm.lifecycle.ControllableItemInstanceLifecycle;
+import org.pavanecce.cmmn.jbpm.lifecycle.ControllableItemInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanningTableContainerInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
-import org.pavanecce.cmmn.jbpm.lifecycle.impl.HumanTaskPlanItemInstance;
-import org.pavanecce.cmmn.jbpm.lifecycle.impl.StagePlanItemInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.HumanTaskInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.StageInstance;
 
 public class SubmitPlanCommand extends AbstractPlanningCommand<Void> {
 	private static final long serialVersionUID = 7907971723514784829L;
@@ -67,7 +67,7 @@ public class SubmitPlanCommand extends AbstractPlanningCommand<Void> {
 			wii.getWorkItem(env, irb).getParameters().putAll(plannedTask.getParameterOverrides());
 			wii.setId(wi.getId());
 			pc.merge(wii);
-			ControllableItemInstanceLifecycle<?> pi = ci.ensurePlanItemCreated(workItemId, plannedTask.getDiscretionaryItemId(), wi);
+			ControllableItemInstance<?> pi = ci.ensurePlanItemCreated(workItemId, plannedTask.getDiscretionaryItemId(), wi);
 			if (td.getStatus() == Status.Created) {
 //				td.setStatus(Status.Ready);
 			}
@@ -75,15 +75,15 @@ public class SubmitPlanCommand extends AbstractPlanningCommand<Void> {
 		if (resume) {
 			PlanningTableContainerInstance p = ci.findPlanningTableContainerInstance(workItemId);
 			NodeInstanceContainer nic=null;
-			if(p instanceof HumanTaskPlanItemInstance){
-				 nic = ((HumanTaskPlanItemInstance) p).getNodeInstanceContainer();
+			if(p instanceof HumanTaskInstance){
+				 nic = ((HumanTaskInstance) p).getNodeInstanceContainer();
 			}else{
 				nic=(NodeInstanceContainer) p;
 			}
 			if(nic instanceof CaseInstance){
 				((CaseInstance) nic).reactivate();
 			}else{
-				((StagePlanItemInstance) nic).resume();
+				((StageInstance) nic).resume();
 			}
 		}
 		return null;

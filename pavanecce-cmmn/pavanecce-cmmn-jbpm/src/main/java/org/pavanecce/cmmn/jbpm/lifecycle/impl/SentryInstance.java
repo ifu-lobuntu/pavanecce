@@ -19,7 +19,7 @@ import org.pavanecce.cmmn.jbpm.flow.OnPart;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemInstanceFactoryNode;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemTransition;
 import org.pavanecce.cmmn.jbpm.flow.Sentry;
-import org.pavanecce.cmmn.jbpm.lifecycle.ControllableItemInstanceLifecycle;
+import org.pavanecce.cmmn.jbpm.lifecycle.ControllableItemInstance;
 
 public class SentryInstance extends JoinInstance {
 	private static ThreadLocal<Deque<Collection<CaseEvent>>> currentEvents = new ThreadLocal<Deque<Collection<CaseEvent>>>();
@@ -133,9 +133,9 @@ public class SentryInstance extends JoinInstance {
 			NodeInstance found = findNodeInstance(nic, sentry.getPlanItemExiting());
 			// TODO refine which PlannItemInstance to exit, e.g. look at the
 			// output and see if the caseFileITem Instance associated matches
-			if (found instanceof ControllableItemInstanceLifecycle) {
+			if (found instanceof ControllableItemInstance) {
 				// Task planItem
-				ControllableItemInstanceLifecycle<?> pii = (ControllableItemInstanceLifecycle<?>) found;
+				ControllableItemInstance<?> pii = (ControllableItemInstance<?>) found;
 				pii.triggerTransitionOnTask(PlanItemTransition.EXIT);
 				hasTriggered = true;
 			} else {

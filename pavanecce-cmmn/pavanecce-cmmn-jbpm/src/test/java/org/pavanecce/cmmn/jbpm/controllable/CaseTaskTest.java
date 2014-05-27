@@ -15,7 +15,7 @@ import org.kie.api.task.model.Task;
 import org.kie.api.task.model.TaskSummary;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
-import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseTaskPlanItemInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseTaskInstance;
 
 import test.ConstructionCase;
 import test.HousePlan;
@@ -102,8 +102,8 @@ public class CaseTaskTest extends AbstractControllableLifecycleTest {
 		caseInstance = (CaseInstance) getRuntimeEngine().getKieSession().getProcessInstance(caseInstance.getId());
 		long subProccessInstanceId = -1;
 		for (NodeInstance nodeInstance : caseInstance.getNodeInstances()) {
-			if (nodeInstance instanceof CaseTaskPlanItemInstance && ((CaseTaskPlanItemInstance) nodeInstance).getWorkItemId() == workItemId) {
-				subProccessInstanceId = ((CaseTaskPlanItemInstance) nodeInstance).getProcessInstanceId();
+			if (nodeInstance instanceof CaseTaskInstance && ((CaseTaskInstance) nodeInstance).getWorkItemId() == workItemId) {
+				subProccessInstanceId = ((CaseTaskInstance) nodeInstance).getProcessInstanceId();
 			}
 		}
 		getPersistence().commit();

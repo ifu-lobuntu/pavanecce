@@ -221,7 +221,7 @@ public class ExpressionUtil {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static Map<String, Object> transformParameters(List<ParameterMapping> parameterMappings, Map<String, Object> fromParameters, CaseTaskPlanItemInstance nodeInstance) {
+	public static Map<String, Object> transformParameters(List<ParameterMapping> parameterMappings, Map<String, Object> fromParameters, CaseTaskInstance nodeInstance) {
 		Map<String, Object> inputParameters = new HashMap<String, Object>(fromParameters);
 		CustomContext ctx = buildCustomContext(nodeInstance);
 		for (ParameterMapping pm : parameterMappings) {

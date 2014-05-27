@@ -2,7 +2,7 @@ package org.pavanecce.cmmn.jbpm.flow;
 
 import org.jbpm.workflow.core.Constraint;
 
-public class TimerEventListener extends AbstractPlanItemDefinition {
+public class TimerEvent extends AbstractPlanItemDefinition {
 
 	private static final long serialVersionUID = 123L;
 	private Constraint timerExpression;

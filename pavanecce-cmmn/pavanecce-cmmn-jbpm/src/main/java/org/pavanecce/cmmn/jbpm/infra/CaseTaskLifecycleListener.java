@@ -35,10 +35,10 @@ import org.kie.internal.runtime.manager.InternalRuntimeManager;
 import org.kie.internal.runtime.manager.context.ProcessInstanceIdContext;
 import org.pavanecce.cmmn.jbpm.TaskParameters;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemTransition;
-import org.pavanecce.cmmn.jbpm.lifecycle.ControllableItemInstanceLifecycle;
+import org.pavanecce.cmmn.jbpm.lifecycle.ControllableItemInstance;
 //TODO try to remove dependencies from 'impl'
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
-import org.pavanecce.cmmn.jbpm.lifecycle.impl.StagePlanItemInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.StageInstance;
 import org.pavanecce.cmmn.jbpm.task.AfterExitCriteriaEvent;
 import org.pavanecce.cmmn.jbpm.task.AfterTaskReactivatedEvent;
 import org.pavanecce.cmmn.jbpm.task.AfterTaskReenabledEvent;
@@ -124,8 +124,8 @@ public class CaseTaskLifecycleListener extends ExternalTaskEventListener {
 					throw new IllegalStateException("Task " + task + " represents Case Instance " + ci.getCase().getName() + "[" + ci.getId() + "] which cannot be completed yet");
 				}
 			} else {
-				ControllableItemInstanceLifecycle<?> node = ci.findNodeForWorkItem(task.getTaskData().getWorkItemId());
-				if (node instanceof StagePlanItemInstance && !((StagePlanItemInstance) node).canComplete()) {
+				ControllableItemInstance<?> node = ci.findNodeForWorkItem(task.getTaskData().getWorkItemId());
+				if (node instanceof StageInstance && !((StageInstance) node).canComplete()) {
 					throw new IllegalStateException("Task " + task + " represents Stage Instance " + node.getItem().getEffectiveName() + "[" + ci.getId() + "] which cannot be completed yet");
 				}
 			}

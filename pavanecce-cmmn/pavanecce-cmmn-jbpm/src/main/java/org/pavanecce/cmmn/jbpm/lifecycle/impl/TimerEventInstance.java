@@ -16,13 +16,13 @@ import org.jbpm.workflow.core.Constraint;
 import org.jbpm.workflow.instance.WorkflowProcessInstance;
 import org.jbpm.workflow.instance.node.TimerNodeInstance;
 import org.kie.api.runtime.process.NodeInstance;
-import org.pavanecce.cmmn.jbpm.flow.TimerEventListener;
+import org.pavanecce.cmmn.jbpm.flow.TimerEvent;
 import org.pavanecce.cmmn.jbpm.flow.TimerEventPlanItem;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TimerEventPlanItemInstance extends AbstractOccurrablePlanItemInstance<TimerEventListener,TimerEventPlanItem> implements Creatable {
+public class TimerEventInstance extends OccurrablePlanItemInstanceImpl<TimerEvent,TimerEventPlanItem> implements Creatable {
 
 	private static final long serialVersionUID = 3034509023L;
 
@@ -31,7 +31,7 @@ public class TimerEventPlanItemInstance extends AbstractOccurrablePlanItemInstan
 	private long timerInstanceId;
 	private TimerInstance timerInstance;
 
-	public TimerEventPlanItemInstance() {
+	public TimerEventInstance() {
 		super.internalSetCompletionRequired(false);
 		planElementState = PlanElementState.INITIAL;
 	}

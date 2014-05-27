@@ -13,7 +13,7 @@ public interface PlanningTableContainerInstance extends PlanElementLifecycleWith
 
 	PlanItemInstanceContainer getPlanItemInstanceCreator();
 
-	ControllableItemInstanceLifecycle<?> ensurePlanItemCreated(String discretionaryItemId, WorkItem wi);
+	ControllableItemInstance<?> ensurePlanItemCreated(String discretionaryItemId, WorkItem wi);
 
 	void addApplicableItems(Map<String, ApplicableDiscretionaryItem> result, Set<String> roles);
 

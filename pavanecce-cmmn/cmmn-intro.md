@@ -9,7 +9,7 @@ All in all, it represents a significant shift away from sequential, predictive p
 CMMN is a relatively simple modeling language, with a very simple notation associated with it. However, the constructs introduced by the CMMN specification in themselves are loaded with meaning, and
 this document will look into these constructs without considering the notation just yet. Examples of the CMMN notation can be explored in the CMMN specification itself. 
 
-1 The Basics
+1. The Basics
 At the root of a Case definition, one finds 
 1.1. CaseFileItemDefinitions. 
 These are definitions of the data structures that will be used in the Case. Generally, these definitions merely point to an external source for the definition of the data structures such as an XML Schema, 

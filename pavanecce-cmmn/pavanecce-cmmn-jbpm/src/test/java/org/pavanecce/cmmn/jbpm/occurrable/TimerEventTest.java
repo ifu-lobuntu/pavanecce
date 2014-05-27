@@ -5,15 +5,16 @@ import java.util.Collection;
 import org.jbpm.process.instance.InternalProcessRuntime;
 import org.jbpm.process.instance.timer.TimerInstance;
 import org.jbpm.process.instance.timer.TimerManager;
+import org.junit.After;
 import org.junit.Test;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 
 import test.HousePlan;
 import test.WallPlan;
 
-public class TimerEventListenerTest extends AbstractOccurrableTestCase {
+public class TimerEventTest extends AbstractOccurrableTestCase {
 
-	public TimerEventListenerTest() {
+	public TimerEventTest() {
 		super(true, true, "org.jbpm.persistence.jpa");
 	}
 
@@ -23,6 +24,15 @@ public class TimerEventListenerTest extends AbstractOccurrableTestCase {
 
 	public String getProcessFile() {
 		return "test/occurrable/TimerEventListenerTests.cmmn";
+	}
+	@After
+	public void deleteTimers(){
+		getPersistence().start();
+		Collection<TimerInstance> timers = getTimerManager().getTimers();
+		for (TimerInstance timerInstance : timers) {
+			getTimerManager().cancelTimer(timerInstance.getId());
+		}
+		getPersistence().commit();
 	}
 
 	@Test

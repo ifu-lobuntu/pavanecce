@@ -26,10 +26,10 @@ import org.pavanecce.cmmn.jbpm.flow.PlanningTable;
 import org.pavanecce.cmmn.jbpm.flow.TableItem;
 import org.pavanecce.cmmn.jbpm.infra.OnPartInstanceSubscription;
 import org.pavanecce.cmmn.jbpm.lifecycle.CaseInstanceLifecycle;
-import org.pavanecce.cmmn.jbpm.lifecycle.ControllableItemInstanceLifecycle;
+import org.pavanecce.cmmn.jbpm.lifecycle.ControllableItemInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceContainer;
-import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceLifecycle;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanningTableContainerInstance;
 import org.pavanecce.common.ObjectPersistence;
 import org.slf4j.Logger;
@@ -234,8 +234,8 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 		}
 	}
 
-	public ControllableItemInstanceLifecycle<?> ensurePlanItemCreated(long parentWorkItemId, String discretionaryItemId, WorkItem wi) {
-		ControllableItemInstanceLifecycle<?> found = findNodeForWorkItem(wi.getId());
+	public ControllableItemInstance<?> ensurePlanItemCreated(long parentWorkItemId, String discretionaryItemId, WorkItem wi) {
+		ControllableItemInstance<?> found = findNodeForWorkItem(wi.getId());
 		if (found != null) {
 			return found;
 		} else {
@@ -270,7 +270,7 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 	}
 
 	@Override
-	public ControllableItemInstanceLifecycle<?> findNodeForWorkItem(long id) {
+	public ControllableItemInstance<?> findNodeForWorkItem(long id) {
 		return PlanItemInstanceContainerUtil.findNodeForWorkItem(this, id);
 	}
 
@@ -280,7 +280,7 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 	}
 
 	@Override
-	public Collection<? extends PlanItemInstanceLifecycle<?>> getChildren() {
+	public Collection<? extends PlanItemInstance<?>> getChildren() {
 		return PlanItemInstanceContainerUtil.getChildren(this);
 	}
 
@@ -323,7 +323,7 @@ public class CaseInstance extends RuleFlowProcessInstance implements CaseInstanc
 	}
 
 	@Override
-	public ControllableItemInstanceLifecycle<?> ensurePlanItemCreated(String discretionaryItemId, WorkItem wi) {
+	public ControllableItemInstance<?> ensurePlanItemCreated(String discretionaryItemId, WorkItem wi) {
 		return PlanningTableContainerInstanceUtil.ensurePlanItemCreated(this, discretionaryItemId, wi);
 	}
 

@@ -2,7 +2,7 @@ package org.pavanecce.cmmn.jbpm.controllable;
 
 import org.kie.api.task.model.Status;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
-import org.pavanecce.cmmn.jbpm.lifecycle.impl.StagePlanItemInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.StageInstance;
 
 public class StageAsPlanItemTest extends AbstractControllableLifecycleTest {
 	{
@@ -36,7 +36,7 @@ public class StageAsPlanItemTest extends AbstractControllableLifecycleTest {
 	public void failTask(long taskId) {
 		getPersistence().start();
 		long wi = getTaskService().getTaskById(taskId).getTaskData().getWorkItemId();
-		StagePlanItemInstance spi= (StagePlanItemInstance) reloadCaseInstance(caseInstance).findNodeForWorkItem(wi);
+		StageInstance spi= (StageInstance) reloadCaseInstance(caseInstance).findNodeForWorkItem(wi);
 		spi.fault();
 		getPersistence().commit();
 	}

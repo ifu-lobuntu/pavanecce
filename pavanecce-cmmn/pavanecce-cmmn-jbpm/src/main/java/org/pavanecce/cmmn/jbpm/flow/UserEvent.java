@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class UserEventListener extends AbstractPlanItemDefinition {
+public class UserEvent extends AbstractPlanItemDefinition {
 
 	private static final long serialVersionUID = 1144314141L;
 	private String eventName;

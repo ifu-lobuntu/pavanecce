@@ -13,7 +13,7 @@ import org.pavanecce.cmmn.jbpm.lifecycle.impl.SubscriptionContext;
 
 public interface PlanItemInstanceContainer extends PlanningTableContainerInstance, NodeInstanceContainer {
 
-	Collection<? extends PlanItemInstanceLifecycle<?>> getChildren();
+	Collection<? extends PlanItemInstance<?>> getChildren();
 
 	boolean canComplete();
 	
@@ -25,7 +25,7 @@ public interface PlanItemInstanceContainer extends PlanningTableContainerInstanc
 
 	void addCaseFileItemOnPartsForParameters(Collection<CaseParameter> items, Map<OnPartInstance, OnPartInstanceSubscription> onCaseFileItemParts);
 
-	ControllableItemInstanceLifecycle<?> findNodeForWorkItem(long id);
+	ControllableItemInstance<?> findNodeForWorkItem(long id);
 
 	PlanningTableContainerInstance findPlanningTableContainerInstance(long containerWorkItemId);
 }

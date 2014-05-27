@@ -9,7 +9,7 @@ import org.pavanecce.cmmn.jbpm.flow.CaseFileItemOnPart;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemStartTrigger;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
 import org.pavanecce.cmmn.jbpm.flow.Sentry;
-import org.pavanecce.cmmn.jbpm.flow.TimerEventListener;
+import org.pavanecce.cmmn.jbpm.flow.TimerEvent;
 import org.w3c.dom.NodeList;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -18,7 +18,7 @@ public class CaseFileItemOnPartHandler extends BaseAbstractHandler implements Ha
 	public CaseFileItemOnPartHandler() {
 		super.validParents = new HashSet<Class<?>>();
 		validParents.add(Sentry.class);
-		validParents.add(TimerEventListener.class);
+		validParents.add(TimerEvent.class);
 		super.validParents.add(Sentry.class);
 		super.validPeers = new HashSet<Class<?>>();
 		validPeers.add(CaseFileItemOnPart.class);
@@ -42,7 +42,7 @@ public class CaseFileItemOnPartHandler extends BaseAbstractHandler implements Ha
 		if (parent instanceof Sentry) {
 			((Sentry) parent).addOnPart(part);
 		} else {
-			((TimerEventListener) parent).setStartTrigger((CaseFileItemStartTrigger)part);
+			((TimerEvent) parent).setStartTrigger((CaseFileItemStartTrigger)part);
 		}
 		part.setSourceRef(attrs.getValue("sourceRef"));
 		part.setRelationRef(attrs.getValue("relationRef"));

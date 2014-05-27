@@ -16,9 +16,9 @@ import org.jbpm.process.instance.context.variable.VariableScopeInstance;
  */
 public final class CustomVariableScopeInstance extends VariableScopeInstance {
 	private static final long serialVersionUID = 6026168560982471308L;
-	private AbstractControllableItemInstance<?,?> node;
+	private ControllableItemInstanceImpl<?,?> node;
 
-	public CustomVariableScopeInstance(AbstractControllableItemInstance<?,?> nodeImpl) {
+	public CustomVariableScopeInstance(ControllableItemInstanceImpl<?,?> nodeImpl) {
 		this.node=nodeImpl;
 	}
 

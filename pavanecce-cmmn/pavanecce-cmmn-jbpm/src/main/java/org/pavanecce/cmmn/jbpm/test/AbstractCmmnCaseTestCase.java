@@ -90,14 +90,14 @@ import org.pavanecce.cmmn.jbpm.jpa.HibernateSubscriptionManager;
 import org.pavanecce.cmmn.jbpm.jpa.JpaCasePersistence;
 import org.pavanecce.cmmn.jbpm.jpa.JpaPlaceHolderResolverStrategy;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
-import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceLifecycle;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.DefaultJoinInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.DefaultSplitInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.OnPartInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.PlanItemInstanceFactoryNodeInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.SentryInstance;
-import org.pavanecce.cmmn.jbpm.lifecycle.impl.StagePlanItemInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.StageInstance;
 import org.pavanecce.cmmn.jbpm.ocm.OcmCasePersistence;
 import org.pavanecce.cmmn.jbpm.ocm.OcmCollectionPlaceHolderResolveStrategy;
 import org.pavanecce.cmmn.jbpm.ocm.OcmPlaceHolderResolveStrategy;
@@ -242,20 +242,20 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 						sr.foundState = piil.getPlanElementState().name();
 					}
 				}
-			} else if (ni instanceof StagePlanItemInstance) {
-				countItemInState(planItemName, s, (StagePlanItemInstance) ni, sr);
+			} else if (ni instanceof StageInstance) {
+				countItemInState(planItemName, s, (StageInstance) ni, sr);
 			}
 		}
 		if (sr.count == 0) {
 			for (NodeInstance ni : ci.getNodeInstances()) {
-				if (ni instanceof PlanItemInstanceLifecycle && ni.getNodeName().equals(planItemName)) {
-					if (((PlanItemInstanceLifecycle<?>) ni).getPlanElementState() == s) {
+				if (ni instanceof PlanItemInstance && ni.getNodeName().equals(planItemName)) {
+					if (((PlanItemInstance<?>) ni).getPlanElementState() == s) {
 						sr.count++;
 					} else {
-						sr.foundState = ((PlanItemInstanceLifecycle<?>) ni).getPlanElementState().name();
+						sr.foundState = ((PlanItemInstance<?>) ni).getPlanElementState().name();
 					}
-				} else if (ni instanceof StagePlanItemInstance) {
-					countItemInState(planItemName, s, (StagePlanItemInstance) ni, sr);
+				} else if (ni instanceof StageInstance) {
+					countItemInState(planItemName, s, (StageInstance) ni, sr);
 				}
 
 			}

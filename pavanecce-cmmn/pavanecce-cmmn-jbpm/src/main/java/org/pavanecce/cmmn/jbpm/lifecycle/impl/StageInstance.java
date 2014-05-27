@@ -19,12 +19,12 @@ import org.pavanecce.cmmn.jbpm.flow.PlanningTable;
 import org.pavanecce.cmmn.jbpm.flow.Stage;
 import org.pavanecce.cmmn.jbpm.flow.TaskItemWithDefinition;
 import org.pavanecce.cmmn.jbpm.infra.OnPartInstanceSubscription;
-import org.pavanecce.cmmn.jbpm.lifecycle.ControllableItemInstanceLifecycle;
+import org.pavanecce.cmmn.jbpm.lifecycle.ControllableItemInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceContainer;
-import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceLifecycle;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanningTableContainerInstance;
 
-public class StagePlanItemInstance extends AbstractControllableItemInstance<Stage, TaskItemWithDefinition<Stage>> implements PlanItemInstanceContainer, NodeInstanceContainer,
+public class StageInstance extends ControllableItemInstanceImpl<Stage, TaskItemWithDefinition<Stage>> implements PlanItemInstanceContainer, NodeInstanceContainer,
 		EventNodeInstanceInterface, EventBasedNodeInstanceInterface, ContextInstanceContainer {
 
 	private static final long serialVersionUID = 112341234123L;
@@ -48,11 +48,11 @@ public class StagePlanItemInstance extends AbstractControllableItemInstance<Stag
 	}
 
 	@Override
-	public Collection<PlanItemInstanceLifecycle<?>> getChildren() {
-		Set<PlanItemInstanceLifecycle<?>> result = new HashSet<PlanItemInstanceLifecycle<?>>();
+	public Collection<PlanItemInstance<?>> getChildren() {
+		Set<PlanItemInstance<?>> result = new HashSet<PlanItemInstance<?>>();
 		for (NodeInstance nodeInstance : getNodeInstances()) {
-			if (nodeInstance instanceof PlanItemInstanceLifecycle) {
-				result.add((PlanItemInstanceLifecycle<?>) nodeInstance);
+			if (nodeInstance instanceof PlanItemInstance) {
+				result.add((PlanItemInstance<?>) nodeInstance);
 			}
 		}
 		return result;
@@ -70,7 +70,7 @@ public class StagePlanItemInstance extends AbstractControllableItemInstance<Stag
 	}
 
 	@Override
-	public ControllableItemInstanceLifecycle<?> ensurePlanItemCreated(String discretionaryItemId, WorkItem wi) {
+	public ControllableItemInstance<?> ensurePlanItemCreated(String discretionaryItemId, WorkItem wi) {
 		return PlanningTableContainerInstanceUtil.ensurePlanItemCreated(this, discretionaryItemId, wi);
 	}
 
@@ -121,7 +121,7 @@ public class StagePlanItemInstance extends AbstractControllableItemInstance<Stag
 	}
 
 	@Override
-	public ControllableItemInstanceLifecycle<?> findNodeForWorkItem(long id) {
+	public ControllableItemInstance<?> findNodeForWorkItem(long id) {
 		return PlanItemInstanceContainerUtil.findNodeForWorkItem(this, id);
 	}
 

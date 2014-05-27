@@ -29,7 +29,7 @@ import org.pavanecce.cmmn.jbpm.flow.PlanItemInfo;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemOnPart;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemStartTrigger;
 import org.pavanecce.cmmn.jbpm.flow.Sentry;
-import org.pavanecce.cmmn.jbpm.flow.TimerEventListener;
+import org.pavanecce.cmmn.jbpm.flow.TimerEvent;
 
 public abstract class PlanItemContainerHandler extends BaseAbstractHandler {
 
@@ -99,8 +99,8 @@ public abstract class PlanItemContainerHandler extends BaseAbstractHandler {
 		if (node.getPlanInfo().getEntryCriteria().isEmpty()) {
 			if (node instanceof MultiInstancePlanItem) {
 				new ConnectionImpl(process.getDefaultSplit(), DEFAULT, ((MultiInstancePlanItem) node).getFactoryNode(), DEFAULT);
-			} else if (node.getDefinition() instanceof TimerEventListener) {
-				TimerEventListener tel = (TimerEventListener) node.getDefinition();
+			} else if (node.getDefinition() instanceof TimerEvent) {
+				TimerEvent tel = (TimerEvent) node.getDefinition();
 				if (tel.getStartTrigger() != null) {
 					if (tel.getStartTrigger() instanceof CaseFileItemStartTrigger) {
 						CaseFileItemStartTrigger startTrigger = (CaseFileItemStartTrigger) tel.getStartTrigger();

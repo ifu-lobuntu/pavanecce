@@ -15,24 +15,24 @@ import org.pavanecce.cmmn.jbpm.flow.ItemWithDefinition;
 import org.pavanecce.cmmn.jbpm.flow.Milestone;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 import org.pavanecce.cmmn.jbpm.flow.Stage;
-import org.pavanecce.cmmn.jbpm.flow.TimerEventListener;
-import org.pavanecce.cmmn.jbpm.flow.UserEventListener;
-import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseTaskPlanItemInstance;
-import org.pavanecce.cmmn.jbpm.lifecycle.impl.HumanTaskPlanItemInstance;
-import org.pavanecce.cmmn.jbpm.lifecycle.impl.MilestonePlanItemInstance;
-import org.pavanecce.cmmn.jbpm.lifecycle.impl.StagePlanItemInstance;
-import org.pavanecce.cmmn.jbpm.lifecycle.impl.TimerEventPlanItemInstance;
-import org.pavanecce.cmmn.jbpm.lifecycle.impl.UserEventPlanItemInstance;
+import org.pavanecce.cmmn.jbpm.flow.TimerEvent;
+import org.pavanecce.cmmn.jbpm.flow.UserEvent;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseTaskInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.HumanTaskInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.MilestoneInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.StageInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.TimerEventInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.impl.UserEventInstance;
 
 public final class DelegatingNodeFactory implements NodeInstanceFactory {
 	Map<Class<?>, NodeInstanceFactory> registry = new HashMap<Class<?>, NodeInstanceFactory>();
 	public DelegatingNodeFactory(){
-		registry.put(UserEventListener.class, new ReuseNodeFactory(UserEventPlanItemInstance.class));
-		registry.put(TimerEventListener.class, new ReuseNodeFactory(TimerEventPlanItemInstance.class));
-		registry.put(Milestone.class, new CreateNewNodeFactory(MilestonePlanItemInstance.class));
-		registry.put(Stage.class, new CreateNewNodeFactory(StagePlanItemInstance.class));
-		registry.put(HumanTask.class, new CreateNewNodeFactory(HumanTaskPlanItemInstance.class));
-		registry.put(CaseTask.class, new CreateNewNodeFactory(CaseTaskPlanItemInstance.class));
+		registry.put(UserEvent.class, new ReuseNodeFactory(UserEventInstance.class));
+		registry.put(TimerEvent.class, new ReuseNodeFactory(TimerEventInstance.class));
+		registry.put(Milestone.class, new CreateNewNodeFactory(MilestoneInstance.class));
+		registry.put(Stage.class, new CreateNewNodeFactory(StageInstance.class));
+		registry.put(HumanTask.class, new CreateNewNodeFactory(HumanTaskInstance.class));
+		registry.put(CaseTask.class, new CreateNewNodeFactory(CaseTaskInstance.class));
 	}
 
 	@Override

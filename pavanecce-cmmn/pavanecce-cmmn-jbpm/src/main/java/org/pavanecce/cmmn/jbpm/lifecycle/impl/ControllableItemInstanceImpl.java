@@ -26,12 +26,12 @@ import org.pavanecce.cmmn.jbpm.flow.PlanItemTransition;
 import org.pavanecce.cmmn.jbpm.flow.TableItem;
 import org.pavanecce.cmmn.jbpm.flow.TaskDefinition;
 import org.pavanecce.cmmn.jbpm.flow.TaskItemWithDefinition;
-import org.pavanecce.cmmn.jbpm.lifecycle.ControllableItemInstanceLifecycle;
+import org.pavanecce.cmmn.jbpm.lifecycle.ControllableItemInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementLifecycleWithTask;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
 
-public abstract class AbstractControllableItemInstance<T extends PlanItemDefinition, X extends TaskItemWithDefinition<T>> extends CompositeContextNodeInstance implements
-		ControllableItemInstanceLifecycle<T> {
+public abstract class ControllableItemInstanceImpl<T extends PlanItemDefinition, X extends TaskItemWithDefinition<T>> extends CompositeContextNodeInstance implements
+		ControllableItemInstance<T> {
 
 	private static final long serialVersionUID = 3200294767777991641L;
 
@@ -41,7 +41,7 @@ public abstract class AbstractControllableItemInstance<T extends PlanItemDefinit
 	protected PlanElementState planElementState = PlanElementState.AVAILABLE;
 	protected Boolean isCompletionRequired;
 
-	public AbstractControllableItemInstance() {
+	public ControllableItemInstanceImpl() {
 		super();
 	}
 

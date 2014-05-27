@@ -7,7 +7,7 @@ import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
 import org.pavanecce.cmmn.jbpm.flow.TaskDefinition;
 import org.pavanecce.cmmn.jbpm.flow.TaskItemWithDefinition;
 
-public abstract class TaskPlanItemInstance<T extends TaskDefinition, X extends TaskItemWithDefinition<T>> extends AbstractControllableItemInstance<T, X> {
+public abstract class TaskPlanItemInstance<T extends TaskDefinition, X extends TaskItemWithDefinition<T>> extends ControllableItemInstanceImpl<T, X> {
 
 	private static final long serialVersionUID = -2759757105782259528L;
 

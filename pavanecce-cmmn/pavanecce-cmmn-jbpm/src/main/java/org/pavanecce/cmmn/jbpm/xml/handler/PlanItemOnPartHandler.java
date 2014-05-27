@@ -10,7 +10,7 @@ import org.pavanecce.cmmn.jbpm.flow.PlanItemOnPart;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemStartTrigger;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemTransition;
 import org.pavanecce.cmmn.jbpm.flow.Sentry;
-import org.pavanecce.cmmn.jbpm.flow.TimerEventListener;
+import org.pavanecce.cmmn.jbpm.flow.TimerEvent;
 import org.w3c.dom.NodeList;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -19,7 +19,7 @@ public class PlanItemOnPartHandler extends BaseAbstractHandler implements Handle
 	public PlanItemOnPartHandler() {
 		super.validParents = new HashSet<Class<?>>();
 		validParents.add(Sentry.class);
-		validParents.add(TimerEventListener.class);
+		validParents.add(TimerEvent.class);
 		super.validParents.add(Sentry.class);
 		super.validPeers = new HashSet<Class<?>>();
 		validPeers.add(PlanItemOnPart.class);
@@ -40,7 +40,7 @@ public class PlanItemOnPartHandler extends BaseAbstractHandler implements Handle
 		if (parent instanceof Sentry) {
 			((Sentry) parent).addOnPart(part);
 		} else {
-			((TimerEventListener) parent).setStartTrigger(part);
+			((TimerEvent) parent).setStartTrigger(part);
 		}
 		return part;
 	}

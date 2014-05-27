@@ -15,8 +15,8 @@ import org.pavanecce.cmmn.jbpm.flow.PlanItemDefinition;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemInstanceFactoryNode;
 import org.pavanecce.cmmn.jbpm.flow.Stage;
 import org.pavanecce.cmmn.jbpm.flow.TaskDefinition;
-import org.pavanecce.cmmn.jbpm.lifecycle.ControllableItemInstanceLifecycle;
-import org.pavanecce.cmmn.jbpm.lifecycle.OccurrablePlanItemInstanceLifecycle;
+import org.pavanecce.cmmn.jbpm.lifecycle.ControllableItemInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.OccurrablePlanItemInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceLifecycleWithHistory;
 
@@ -121,10 +121,10 @@ public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> e
 
 	@Override
 	protected void triggerNodeInstance(org.jbpm.workflow.instance.NodeInstance nodeInstance, String type) {
-		if (nodeInstance instanceof OccurrablePlanItemInstanceLifecycle) {
-			((OccurrablePlanItemInstanceLifecycle<?>) nodeInstance).internalSetRequired(isPlanItemInstanceRequired);
+		if (nodeInstance instanceof OccurrablePlanItemInstance) {
+			((OccurrablePlanItemInstance<?>) nodeInstance).internalSetRequired(isPlanItemInstanceRequired);
 		} else {
-			((ControllableItemInstanceLifecycle<?>) nodeInstance).internalSetCompletionRequired(isPlanItemInstanceRequired);
+			((ControllableItemInstance<?>) nodeInstance).internalSetCompletionRequired(isPlanItemInstanceRequired);
 		}
 		super.triggerNodeInstance(nodeInstance, type);
 	}
