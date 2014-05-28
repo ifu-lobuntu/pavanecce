@@ -276,7 +276,11 @@ public class CaseTaskInstance extends TaskPlanItemInstance<CaseTask, TaskItemWit
 
 	@Override
 	protected String getIdealRoles() {
-		return getBusinessAdministrators();
+		String bas = getBusinessAdministrators();
+		if(bas.equals("Administrators") && getCaseInstance().getCaseOwner()!=null){
+			return getCaseInstance().getCaseOwner();
+		}
+		return bas;
 	}
 
 }

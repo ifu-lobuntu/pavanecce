@@ -16,10 +16,10 @@ import java.util.Stack;
 import org.apache.jackrabbit.ocm.manager.ObjectContentManager;
 import org.drools.core.common.DroolsObjectInputStream;
 import org.kie.api.runtime.Environment;
-import org.pavanecce.cmmn.jbpm.jpa.CollectionPlaceHolderResolveStrategy;
+import org.pavanecce.cmmn.jbpm.jpa.JpaCollectionPlaceHolderResolverStrategy;
 import org.pavanecce.common.ocm.OcmFactory;
 
-public class OcmCollectionPlaceHolderResolveStrategy extends CollectionPlaceHolderResolveStrategy {
+public class OcmCollectionPlaceHolderResolveStrategy extends JpaCollectionPlaceHolderResolverStrategy {
 	private Environment env;
 
 	public OcmCollectionPlaceHolderResolveStrategy(Environment env) {

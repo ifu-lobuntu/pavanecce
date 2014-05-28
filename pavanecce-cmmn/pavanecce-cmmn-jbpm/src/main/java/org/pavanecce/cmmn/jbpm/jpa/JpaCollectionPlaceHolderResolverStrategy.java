@@ -24,10 +24,10 @@ import org.drools.persistence.jpa.marshaller.JPAPlaceholderResolverStrategy;
 import org.kie.api.runtime.Environment;
 import org.pavanecce.common.jpa.JpaObjectPersistence;
 
-public class CollectionPlaceHolderResolveStrategy extends JPAPlaceholderResolverStrategy {
+public class JpaCollectionPlaceHolderResolverStrategy extends JPAPlaceholderResolverStrategy {
 	private Environment env;
 
-	public CollectionPlaceHolderResolveStrategy(Environment env) {
+	public JpaCollectionPlaceHolderResolverStrategy(Environment env) {
 		super(env);
 		this.env = env;
 	}

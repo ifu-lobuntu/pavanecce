@@ -18,9 +18,9 @@ import javax.jcr.Node;
 
 import org.drools.core.common.DroolsObjectInputStream;
 import org.kie.api.runtime.Environment;
-import org.pavanecce.cmmn.jbpm.jpa.CollectionPlaceHolderResolveStrategy;
+import org.pavanecce.cmmn.jbpm.jpa.JpaCollectionPlaceHolderResolverStrategy;
 
-public class JcrCollectionPlaceHolderResolveStrategy extends CollectionPlaceHolderResolveStrategy {
+public class JcrCollectionPlaceHolderResolveStrategy extends JpaCollectionPlaceHolderResolverStrategy {
 	private Environment env;
 
 	public JcrCollectionPlaceHolderResolveStrategy(Environment env) {

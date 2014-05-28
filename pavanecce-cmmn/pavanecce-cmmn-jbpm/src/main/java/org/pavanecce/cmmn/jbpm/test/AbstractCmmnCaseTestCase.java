@@ -85,7 +85,7 @@ import org.pavanecce.cmmn.jbpm.infra.CaseRegisterableItemsFactory;
 import org.pavanecce.cmmn.jbpm.infra.DelegatingNodeFactory;
 import org.pavanecce.cmmn.jbpm.infra.PlanItemBuilder;
 import org.pavanecce.cmmn.jbpm.infra.SentryBuilder;
-import org.pavanecce.cmmn.jbpm.jpa.CollectionPlaceHolderResolveStrategy;
+import org.pavanecce.cmmn.jbpm.jpa.JpaCollectionPlaceHolderResolverStrategy;
 import org.pavanecce.cmmn.jbpm.jpa.HibernateSubscriptionManager;
 import org.pavanecce.cmmn.jbpm.jpa.JpaCasePersistence;
 import org.pavanecce.cmmn.jbpm.jpa.JpaPlaceHolderResolverStrategy;
@@ -480,11 +480,11 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 
 	protected ObjectMarshallingStrategy[] getPlaceholdStrategies(Environment env) {
 		if (isJpa) {
-			return new ObjectMarshallingStrategy[] { new ProcessInstanceResolverStrategy(), new JpaPlaceHolderResolverStrategy(env), new CollectionPlaceHolderResolveStrategy(env),
+			return new ObjectMarshallingStrategy[] { new ProcessInstanceResolverStrategy(), new JpaPlaceHolderResolverStrategy(env), new JpaCollectionPlaceHolderResolverStrategy(env),
 					new SerializablePlaceholderResolverStrategy(ClassObjectMarshallingStrategyAcceptor.DEFAULT) };
 		} else {
 			return new ObjectMarshallingStrategy[] { new ProcessInstanceResolverStrategy(), new OcmPlaceHolderResolveStrategy(env), new JpaPlaceHolderResolverStrategy(env),
-					new OcmCollectionPlaceHolderResolveStrategy(env),new CollectionPlaceHolderResolveStrategy(env),
+					new OcmCollectionPlaceHolderResolveStrategy(env),new JpaCollectionPlaceHolderResolverStrategy(env),
 					new SerializablePlaceholderResolverStrategy(ClassObjectMarshallingStrategyAcceptor.DEFAULT) };
 
 		}

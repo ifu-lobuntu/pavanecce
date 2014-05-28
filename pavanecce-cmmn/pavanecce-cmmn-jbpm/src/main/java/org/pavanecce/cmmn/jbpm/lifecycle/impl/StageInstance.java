@@ -60,7 +60,11 @@ public class StageInstance extends ControllableItemInstanceImpl<Stage, TaskItemW
 
 	@Override
 	protected String getIdealRoles() {
-		return getBusinessAdministrators();
+		String bas = getBusinessAdministrators();
+		if(bas.equals("Administrators") && getCaseInstance().getCaseOwner()!=null){
+			return getCaseInstance().getCaseOwner();
+		}
+		return bas;
 	}
 
 	/*** PlanningTableContainer implementation **/
