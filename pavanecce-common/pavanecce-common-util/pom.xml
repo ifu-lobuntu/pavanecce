@@ -28,7 +28,7 @@
 			</dependencies>
 		</profile>
 		<profile>
-			<id>eclipse</id>
+			<id>osgi</id>
 			<activation>
 				<activeByDefault>false</activeByDefault>
 			</activation>
