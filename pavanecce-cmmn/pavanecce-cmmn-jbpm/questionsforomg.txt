@@ -1,8 +1,4 @@
 BindingRef for input parameters to Cases - is that subscription active?
-Discrepancies in XSD:
-  - In the XSD, TimerEventListener.timerExpression is a fully fledged expression, but in the spec it is just string. Does the result of this expression still have to be a ISO-8601 compliant string, or could it be a date/duration/etc. ?
-  - The XSD does not have AuthorizedRoleRefs for user events.
-  - The parentTerminate StandardEvent is absent from the XSD
 
 For an instance of the Stage representing the casePlanModel of a Case:
   - does table 7.9 pertain to the Stage instance representing the casePlanModel as well
