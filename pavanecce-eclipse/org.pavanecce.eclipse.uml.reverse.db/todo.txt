@@ -1,5 +1,0 @@
-When reversing properties into UML TODO check nullability/requirement for readOnly
-When reversing Database columns, create different uml.DataType for every configuration per column using constraints- 
-see if you can identify enums from tables (Like John's Lookup tables)
-When a PK is a FK, assume inheritance
-When a FK is unique, assume oneToOne

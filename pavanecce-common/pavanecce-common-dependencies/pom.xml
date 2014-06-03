@@ -10,7 +10,7 @@
 	<packaging>${packaging}</packaging>
 	<properties>
 		<embeddedGroupIds>
-			log4j,org.mvel,joda-time,com.google.protobuf,javax,org.javassist,org.python,javax,org.hibernate,org.codehaus.btm,com.h2database,org.apache,org.apache,org.jboss.logging,dom4j,antlr,org.slf4j,org.apache.jackrabbit,commons-io,concurrent,org.apache.derby,commons-dbcp,commons-pool,commons-lang,commons-beanutils,commons-collections,xalan,cglib,asm,org.jbpm,org.kie,org.drools,com.thoughtworks.xstream
+			junit,log4j,org.mvel,joda-time,com.google.protobuf,javax,org.javassist,org.python,javax,org.hibernate,org.codehaus.btm,com.h2database,org.apache,org.apache,org.jboss.logging,dom4j,antlr,org.slf4j,org.apache.jackrabbit,commons-io,concurrent,org.apache.derby,commons-dbcp,commons-pool,commons-lang,commons-beanutils,commons-collections,xalan,cglib,asm,org.jbpm,org.kie,org.drools,com.thoughtworks.xstream
 
 		</embeddedGroupIds>
 	</properties>
@@ -206,6 +206,12 @@
 			<groupId>xalan</groupId>
 			<artifactId>xalan</artifactId>
 			<version>2.5.1</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 </project>

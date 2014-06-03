@@ -54,6 +54,18 @@
 						<version>${tycho.version}</version>
 						<extensions>true</extensions>
 					</plugin>
+					<plugin>
+						<groupId>org.eclipse.tycho</groupId>
+						<artifactId>tycho-surefire-plugin</artifactId>
+						<version>${tycho.version}</version>
+						<configuration>
+							<useUIHarness>false</useUIHarness>
+							<providerHint>junit47</providerHint>
+							<includes>
+								<include>**/*Test.java</include>
+							</includes>
+						</configuration>
+					</plugin>
 				</plugins>
 			</build>
 		</profile>
@@ -63,13 +75,18 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.6.4.201312101107</version>
+				<version>0.7.1.201405082137</version>
 				<executions>
 					<execution>
 						<id>default-prepare-agent</id>
 						<goals>
 							<goal>prepare-agent</goal>
 						</goals>
+						<configuration>
+							<includes>
+								<include>org.pavanecce.**</include>
+							</includes>
+						</configuration>
 					</execution>
 					<execution>
 						<id>default-report</id>
@@ -96,6 +113,9 @@
 									</limits>
 								</rule>
 							</rules>
+							<includes>
+								<include>org.pavanecce.**</include>
+							</includes>
 						</configuration>
 					</execution>
 				</executions>

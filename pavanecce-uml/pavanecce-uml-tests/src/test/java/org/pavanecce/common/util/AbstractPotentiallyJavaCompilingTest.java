@@ -141,8 +141,8 @@ public abstract class AbstractPotentiallyJavaCompilingTest extends Assert {
 
 			options.add("-proc:none"); // don't process annotations (typical for
 										// jsps)
-			options.add("-verbose"); // Phidias adds to the default verbose
-										// output
+//			options.add("-verbose"); // Phidias adds to the default verbose
+//										// output
 			options.add("-d");
 			options.add(destination.getCanonicalPath());
 			JavaCompiler javaCompiler = ToolProvider.getSystemJavaCompiler();

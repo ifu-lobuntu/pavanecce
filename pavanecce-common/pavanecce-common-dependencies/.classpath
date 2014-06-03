@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="libs/junit.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/log4j.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/slf4j-log4j12.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">

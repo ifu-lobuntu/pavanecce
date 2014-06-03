@@ -10,7 +10,6 @@
 	<artifactId>pavanecce-uml</artifactId>
 	<packaging>pom</packaging>
 	<modules>
-		<module>pavanecce-uml-dependencies</module>
 		<module>pavanecce-uml-common</module>
 		<module>pavanecce-uml-jbpm</module>
 		<module>pavanecce-uml-uml2code</module>
@@ -19,5 +18,28 @@
 		<module>pavanecce-uml-reverse-owl</module>
 		<module>pavanecce-uml-tests</module>
 	</modules>
+	<profiles>
+		<profile>
+			<id>ocl-deps</id>
+			<activation>
+				<file>
+					<missing>pavanecce-uml-dependencies/target/pavanecce-uml-dependencies-0.0.1-SNAPSHOT.jar</missing>
+				</file>
+			</activation>
+			<modules>
+				<module>pavanecce-uml-dependencies</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>osgi</id>
+			<repositories>
+				<repository>
+					<id>kepler</id>
+					<layout>p2</layout>
+					<url>http://download.eclipse.org/releases/kepler</url>
+				</repository>
+			</repositories>
+		</profile>
+	</profiles>
 </project>
 

@@ -1,2 +1,0 @@
-This plugin can reverse engineer a database using the Eclipse Data Tools architecture into a UML model. It also 
-adds some additional stereotypes and properties to UML elements generated to facilitate later code generation

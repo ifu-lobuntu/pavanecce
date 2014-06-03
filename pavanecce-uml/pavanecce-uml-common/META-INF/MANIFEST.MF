@@ -5,8 +5,7 @@ Bundle-SymbolicName: org.pavanecce.uml.common
 Bundle-Version: 0.0.1.qualifier
 Bundle-ManifestVersion: 2
 Bundle-ClassPath: .
-Require-Bundle: org.junit;bundle-version="4.0.0",
- org.pavanecce.common.util
+Require-Bundle: org.pavanecce.common.util
 Export-Package: models.libraries,
  models.profiles,
  org.pavanecce.uml.common.ocl,

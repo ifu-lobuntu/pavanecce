@@ -1,6 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: org.pavanecce.eclipse.equinox.target
-Bundle-SymbolicName: org.pavanecce.eclipse.equinox.target
-Bundle-Version: 0.0.1.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7

@@ -5,8 +5,7 @@ Bundle-SymbolicName: pavanecce-uml-dependencies
 Bundle-Version: 0.0.1.qualifier
 Bundle-ManifestVersion: 2
 Bundle-ClassPath: .
-Require-Bundle: org.junit;bundle-version="4.0.0"
-Import-Package: lpg.runtime,
+Export-Package: lpg.runtime,
  org.eclipse.emf.common.notify,
  org.eclipse.emf.common.notify.impl,
  org.eclipse.emf.common.util,
@@ -36,3 +35,4 @@ Import-Package: lpg.runtime,
  org.eclipse.uml2.uml.resource,
  org.eclipse.uml2.uml.resources.util,
  org.eclipse.uml2.uml.util
+
