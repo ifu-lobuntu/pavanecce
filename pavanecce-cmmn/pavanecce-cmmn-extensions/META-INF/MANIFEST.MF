@@ -3,14 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: org.pavanecce.cmmn.extensions
 Bundle-SymbolicName: org.pavanecce.cmmn.extensions
 Bundle-Version: 0.0.1.qualifier
-Export-Package: org.pavanecce.cmmn.jbpm,
- org.pavanecce.cmmn.jbpm.flow,
- org.pavanecce.cmmn.jbpm.instance,
- org.pavanecce.cmmn.jbpm.jpa,
- org.pavanecce.cmmn.jbpm.ocm,
- org.pavanecce.cmmn.jbpm.test,
- org.pavanecce.cmmn.jbpm.xml.handler,
- test
+Export-Package: 
 Import-Package: bitronix.tm.resource.common,
  bitronix.tm.resource.jdbc,
  com.thoughtworks.xstream,

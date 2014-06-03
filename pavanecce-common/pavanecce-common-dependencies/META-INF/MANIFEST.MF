@@ -57,7 +57,8 @@ Bundle-ClassPath: .,
  libs/protobuf-java.jar,
  libs/joda-time.jar,
  libs/mvel2.jar,
- libs/slf4j-log4j12.jar
+ libs/slf4j-log4j12.jar,
+ libs/log4j.jar
 Export-Package: bitronix.tm,
  bitronix.tm.jndi,
  bitronix.tm.resource,

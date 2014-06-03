@@ -20,7 +20,7 @@
 			<dependencies>
 				<dependency>
 					<groupId>${project.parent.groupId}</groupId>
-					<artifactId>pavanecce-common-jbpm</artifactId>
+					<artifactId>pavanecce-common-util</artifactId>
 					<version>${project.parent.version}</version>
 				</dependency>
 			</dependencies>
