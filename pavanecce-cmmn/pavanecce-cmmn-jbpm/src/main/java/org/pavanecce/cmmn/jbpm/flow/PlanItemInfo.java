@@ -84,7 +84,8 @@ public class PlanItemInfo<T extends PlanItemDefinition> {
 		for (Entry<String, Sentry> entry : entrySet) {
 			entry.getValue().setPlanItemEntering(this.planItem);
 			if (planItem instanceof MultiInstancePlanItem) {
-				new ConnectionImpl(entry.getValue(), Node.CONNECTION_DEFAULT_TYPE, ((MultiInstancePlanItem) planItem).getFactoryNode(), Node.CONNECTION_DEFAULT_TYPE);
+				new ConnectionImpl(entry.getValue(), Node.CONNECTION_DEFAULT_TYPE, ((MultiInstancePlanItem) planItem).getFactoryNode(),
+						Node.CONNECTION_DEFAULT_TYPE);
 			} else {
 				new ConnectionImpl(entry.getValue(), Node.CONNECTION_DEFAULT_TYPE, planItem, Node.CONNECTION_DEFAULT_TYPE);
 			}

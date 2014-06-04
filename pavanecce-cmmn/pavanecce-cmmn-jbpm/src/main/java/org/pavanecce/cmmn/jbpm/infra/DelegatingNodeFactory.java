@@ -26,7 +26,8 @@ import org.pavanecce.cmmn.jbpm.lifecycle.impl.UserEventInstance;
 
 public final class DelegatingNodeFactory implements NodeInstanceFactory {
 	Map<Class<?>, NodeInstanceFactory> registry = new HashMap<Class<?>, NodeInstanceFactory>();
-	public DelegatingNodeFactory(){
+
+	public DelegatingNodeFactory() {
 		registry.put(UserEvent.class, new ReuseNodeFactory(UserEventInstance.class));
 		registry.put(TimerEvent.class, new ReuseNodeFactory(TimerEventInstance.class));
 		registry.put(Milestone.class, new CreateNewNodeFactory(MilestoneInstance.class));
@@ -36,11 +37,13 @@ public final class DelegatingNodeFactory implements NodeInstanceFactory {
 	}
 
 	@Override
-	public NodeInstance getNodeInstance(Node node, WorkflowProcessInstance processInstance, org.kie.api.runtime.process.NodeInstanceContainer nodeInstanceContainer) {
+	public NodeInstance getNodeInstance(Node node, WorkflowProcessInstance processInstance,
+			org.kie.api.runtime.process.NodeInstanceContainer nodeInstanceContainer) {
 		ItemWithDefinition<?> di = (ItemWithDefinition<?>) node;
 		return registry.get(di.getDefinition().getClass()).getNodeInstance(node, processInstance, nodeInstanceContainer);
 	}
-	public void addDelegate(Class<? extends PlanItemDefinition> d, NodeInstanceFactory f){
+
+	public void addDelegate(Class<? extends PlanItemDefinition> d, NodeInstanceFactory f) {
 		registry.put(d, f);
 	}
 }

@@ -27,8 +27,8 @@ public class ParameterTest extends AbstractConstructionTestCase {
 	public ParameterTest() {
 		super(true, true, "org.jbpm.persistence.jpa");
 	}
-	
-	//TODO testTaskOutputParameters -writing to caseFilteItem - not essential for a pass-by-reference world
+
+	// TODO testTaskOutputParameters -writing to caseFilteItem - not essential for a pass-by-reference world
 
 	@Test
 	public void testTaskInputParameters() throws Exception {
@@ -44,7 +44,8 @@ public class ParameterTest extends AbstractConstructionTestCase {
 		Content input = getRuntimeEngine().getTaskService().getContentById(task.getTaskData().getDocumentContentId());
 		getPersistence().start();
 		@SuppressWarnings("unchecked")
-		Map<String, Object> contentData = (Map<String, Object>) ContentMarshallerHelper.unmarshall(input.getContent(), getRuntimeEngine().getKieSession(). getEnvironment());
+		Map<String, Object> contentData = (Map<String, Object>) ContentMarshallerHelper.unmarshall(input.getContent(), getRuntimeEngine().getKieSession()
+				.getEnvironment());
 		assertEquals(housePlan.getWallPlans().iterator().next().getId(), ((WallPlan) contentData.get("wallPlan")).getId());
 		getPersistence().commit();
 	}
@@ -53,7 +54,7 @@ public class ParameterTest extends AbstractConstructionTestCase {
 		createRuntimeManager("test/ParameterTests.cmmn");
 		Map<String, Object> params = new HashMap<String, Object>();
 		getPersistence().start();
-		
+
 		ConstructionCase cc = new ConstructionCase("/cases/case1");
 		housePlan = new HousePlan(cc);
 		house = new House(cc);
@@ -79,6 +80,5 @@ public class ParameterTest extends AbstractConstructionTestCase {
 		getPersistence().update(housePlan);
 		getPersistence().commit();
 	}
-
 
 }

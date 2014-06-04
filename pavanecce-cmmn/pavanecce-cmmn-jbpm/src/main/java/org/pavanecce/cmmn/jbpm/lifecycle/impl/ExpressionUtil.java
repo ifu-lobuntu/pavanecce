@@ -98,8 +98,8 @@ public class ExpressionUtil {
 				}
 			} else {
 				CaseFileItem variable = cp.getBoundVariable();
-				VariableScopeInstance varContext = (VariableScopeInstance) ((org.jbpm.workflow.instance.NodeInstance) contextNodeInstance).resolveContextInstance(VariableScope.VARIABLE_SCOPE,
-						variable.getName());
+				VariableScopeInstance varContext = (VariableScopeInstance) ((org.jbpm.workflow.instance.NodeInstance) contextNodeInstance)
+						.resolveContextInstance(VariableScope.VARIABLE_SCOPE, variable.getName());
 				parameters.put(cp.getName(), varContext.getVariable(variable.getName()));
 			}
 		}
@@ -125,7 +125,7 @@ public class ExpressionUtil {
 		Object refinedTarget = readFromBindingRefinement(cp, tpi.getCaseInstance(), tpi);
 		if (refinedTarget instanceof Collection) {
 			if (val instanceof Collection) {
-				//With writing of collections, to be on the safe side, merge rather than replace
+				// With writing of collections, to be on the safe side, merge rather than replace
 				((Collection<Object>) refinedTarget).addAll((Collection<Object>) val);
 			} else {
 				((Collection<Object>) refinedTarget).add(val);
@@ -135,7 +135,7 @@ public class ExpressionUtil {
 			if (setterOnParent != null) {
 				try {
 					CustomContext pc = buildCustomContext(tpi);
-					pc.source=val;
+					pc.source = val;
 					setterOnParent.execute(pc);
 				} catch (Exception e) {
 					throw interpret(e);
@@ -221,7 +221,8 @@ public class ExpressionUtil {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static Map<String, Object> transformParameters(List<ParameterMapping> parameterMappings, Map<String, Object> fromParameters, CaseTaskInstance nodeInstance) {
+	public static Map<String, Object> transformParameters(List<ParameterMapping> parameterMappings, Map<String, Object> fromParameters,
+			CaseTaskInstance nodeInstance) {
 		Map<String, Object> inputParameters = new HashMap<String, Object>(fromParameters);
 		CustomContext ctx = buildCustomContext(nodeInstance);
 		for (ParameterMapping pm : parameterMappings) {
@@ -229,13 +230,13 @@ public class ExpressionUtil {
 			if (pm.getTransformer() != null) {
 				try {
 					if (sourceValue instanceof Collection) {
-						Collection<Object> sourceValues= (Collection<Object>) sourceValue;
-						Collection<Object> targetValues=newCollection(sourceValues);
+						Collection<Object> sourceValues = (Collection<Object>) sourceValue;
+						Collection<Object> targetValues = newCollection(sourceValues);
 						for (Object object : sourceValues) {
 							ctx.source = object;
 							targetValues.add(pm.getTransformer().evaluate(ctx));
 						}
-						sourceValue=targetValues;
+						sourceValue = targetValues;
 					} else {
 						ctx.source = sourceValue;
 						sourceValue = pm.getTransformer().evaluate(ctx);
@@ -249,7 +250,7 @@ public class ExpressionUtil {
 		return inputParameters;
 	}
 
-	private static CustomContext buildCustomContext(TaskPlanItemInstance<?,?> nodeInstance) {
+	private static CustomContext buildCustomContext(TaskPlanItemInstance<?, ?> nodeInstance) {
 		CustomContext ctx = new CustomContext(nodeInstance.getProcessInstance().getKnowledgeRuntime());
 		ctx.setNodeInstance(nodeInstance);
 		ctx.setProcessInstance(nodeInstance.getProcessInstance());
@@ -258,15 +259,15 @@ public class ExpressionUtil {
 
 	@SuppressWarnings("unchecked")
 	private static Collection<Object> newCollection(Collection<Object> sourceValues) throws InstantiationException, IllegalAccessException {
-		if(Set.class.isInstance(sourceValues)){
+		if (Set.class.isInstance(sourceValues)) {
 			return new HashSet<Object>();
-		}else if(List.class.isInstance(sourceValues)){
+		} else if (List.class.isInstance(sourceValues)) {
 			return new ArrayList<Object>();
-		}else if(Stack .class.isInstance(sourceValues)){
+		} else if (Stack.class.isInstance(sourceValues)) {
 			return new Stack<Object>();
-		}else if(Deque.class.isInstance(sourceValues)){
+		} else if (Deque.class.isInstance(sourceValues)) {
 			return new ArrayDeque<Object>();
-		}else if(List.class.isInstance(sourceValues)){
+		} else if (List.class.isInstance(sourceValues)) {
 			return new ArrayList<Object>();
 		}
 		return sourceValues.getClass().newInstance();

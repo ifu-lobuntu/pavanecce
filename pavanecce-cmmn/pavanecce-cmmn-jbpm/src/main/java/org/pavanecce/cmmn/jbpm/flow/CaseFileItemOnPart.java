@@ -71,5 +71,4 @@ public class CaseFileItemOnPart extends OnPart implements Serializable {
 		return new CaseFileItemEvent(sourceCaseFileItem.getName(), getStandardEvent(), null, peek);
 	}
 
-
 }

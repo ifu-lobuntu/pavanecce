@@ -42,7 +42,7 @@ public class CaseFileItemOnPartHandler extends BaseAbstractHandler implements Ha
 		if (parent instanceof Sentry) {
 			((Sentry) parent).addOnPart(part);
 		} else {
-			((TimerEvent) parent).setStartTrigger((CaseFileItemStartTrigger)part);
+			((TimerEvent) parent).setStartTrigger((CaseFileItemStartTrigger) part);
 		}
 		part.setSourceRef(attrs.getValue("sourceRef"));
 		part.setRelationRef(attrs.getValue("relationRef"));

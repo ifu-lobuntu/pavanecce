@@ -7,72 +7,72 @@ import java.io.ObjectOutput;
 import org.drools.core.process.core.datatype.DataType;
 
 import com.thoughtworks.xstream.XStream;
+
 public class CollectionDataType implements DataType {
 
-    private static final long serialVersionUID = 510l;
+	private static final long serialVersionUID = 510L;
 
-    private String className;
-    private String elementClassName;
-    
-    public CollectionDataType() {
-    	this("java.util.Collection");
-    }
+	private String className;
+	private String elementClassName;
 
-    public CollectionDataType(String className) {
-        setClassName(className);
-    }
+	public CollectionDataType() {
+		this("java.util.Collection");
+	}
 
-    public String getClassName() {
-        return className;
-    }
+	public CollectionDataType(String className) {
+		setClassName(className);
+	}
 
-    public void setClassName(String className) {
-        this.className = className;
-    }
+	public String getClassName() {
+		return className;
+	}
 
-    @Override
+	public void setClassName(String className) {
+		this.className = className;
+	}
+
+	@Override
 	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        className = (String) in.readObject();
-    }
+		className = (String) in.readObject();
+	}
 
-    @Override
+	@Override
 	public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeObject(className);
-    }
+		out.writeObject(className);
+	}
 
-    @Override
+	@Override
 	public boolean verifyDataType(final Object value) {
-        if (value == null) {
-            return true;
-        }
-        try {
-            Class<?> clazz = Class.forName(className);
-            if (clazz.isInstance(value)) {
-                return true;
-            }
-        } catch (ClassNotFoundException e) {
-            throw new IllegalArgumentException(
-                "Could not find data type " + className);
-        }
-        return false;
-    }
+		if (value == null) {
+			return true;
+		}
+		try {
+			Class<?> clazz = Class.forName(className);
+			if (clazz.isInstance(value)) {
+				return true;
+			}
+		} catch (ClassNotFoundException e) {
+			throw new IllegalArgumentException("Could not find data type " + className);
+		}
+		return false;
+	}
 
-    @Override
+	@Override
 	public Object readValue(String value) {
-        XStream xstream = new XStream();
-        return xstream.fromXML(value);
-    }
+		XStream xstream = new XStream();
+		return xstream.fromXML(value);
+	}
 
-    @Override
+	@Override
 	public String writeValue(Object value) {
-        XStream xstream = new XStream();
-        return xstream.toXML(value);
-    }
+		XStream xstream = new XStream();
+		return xstream.toXML(value);
+	}
 
-    @Override
+	@Override
 	public String getStringType() {
-        return className == null ? "java.lang.Object" : className;
-    }
+		return className == null ? "java.lang.Object" : className;
+	}
 
 	public String getElementClassName() {
 		return elementClassName;

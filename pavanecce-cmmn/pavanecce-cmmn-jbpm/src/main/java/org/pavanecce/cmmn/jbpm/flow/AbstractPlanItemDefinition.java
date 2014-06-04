@@ -9,6 +9,7 @@ public class AbstractPlanItemDefinition extends StateNode implements PlanItemDef
 	private String description;
 	private PlanItemControl defaultControl;
 	private Case theCase;
+
 	public AbstractPlanItemDefinition() {
 		super();
 	}

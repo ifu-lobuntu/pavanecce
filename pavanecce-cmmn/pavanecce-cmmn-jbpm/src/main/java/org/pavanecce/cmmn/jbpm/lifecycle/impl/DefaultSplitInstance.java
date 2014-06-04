@@ -15,7 +15,7 @@ public class DefaultSplitInstance extends SplitInstance {
 
 	@Override
 	public void internalTrigger(NodeInstance from, String type) {
-//		super.internalTrigger(from, type);
+		// super.internalTrigger(from, type);
 		Set<NodeInstance> toNodeInstances = new HashSet<NodeInstance>();
 		for (Connection connection : getNode().getOutgoingConnections(NodeImpl.CONNECTION_DEFAULT_TYPE)) {
 			toNodeInstances.add(((NodeInstanceContainer) getNodeInstanceContainer()).getNodeInstance(connection.getTo()));
@@ -34,7 +34,7 @@ public class DefaultSplitInstance extends SplitInstance {
 		}
 		for (NodeInstance nodeInstance : toNodeInstances) {
 			if (!isSentry(nodeInstance) && nodeInstance != defaultJoinInstance) {
-				if(nodeInstance instanceof Creatable){
+				if (nodeInstance instanceof Creatable) {
 					((Creatable) nodeInstance).ensureCreationIsTriggered();
 				}
 				triggerNodeInstance((org.jbpm.workflow.instance.NodeInstance) nodeInstance, NodeImpl.CONNECTION_DEFAULT_TYPE);
@@ -42,8 +42,7 @@ public class DefaultSplitInstance extends SplitInstance {
 		}
 		defaultJoinInstance.setInitializing(false);
 		triggerNodeInstance(defaultJoinInstance, NodeImpl.CONNECTION_DEFAULT_TYPE);
-	    ((org.jbpm.workflow.instance.NodeInstanceContainer) getNodeInstanceContainer())
-    	.removeNodeInstance(this);
+		((org.jbpm.workflow.instance.NodeInstanceContainer) getNodeInstanceContainer()).removeNodeInstance(this);
 	}
 
 	public boolean isSentry(NodeInstance nodeInstance) {

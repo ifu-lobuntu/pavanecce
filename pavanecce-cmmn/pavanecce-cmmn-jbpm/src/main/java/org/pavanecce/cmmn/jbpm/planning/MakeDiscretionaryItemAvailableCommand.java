@@ -17,11 +17,11 @@ public class MakeDiscretionaryItemAvailableCommand extends AbstractPlanningComma
 
 	private static final long serialVersionUID = -8445378L;
 
-	public MakeDiscretionaryItemAvailableCommand(RuntimeManager rm,JbpmServicesPersistenceManager pm, String discretionaryItemId, long parentTaskId) {
+	public MakeDiscretionaryItemAvailableCommand(RuntimeManager rm, JbpmServicesPersistenceManager pm, String discretionaryItemId, long parentTaskId) {
 		super(pm);
 		this.discretionaryItemId = discretionaryItemId;
 		this.parentTaskId = parentTaskId;
-		this.runtimeManager=rm;
+		this.runtimeManager = rm;
 	}
 
 	@Override
@@ -30,7 +30,7 @@ public class MakeDiscretionaryItemAvailableCommand extends AbstractPlanningComma
 		long processInstanceId = ts.getTaskById(parentTaskId).getTaskData().getProcessInstanceId();
 		RuntimeEngine runtime = runtimeManager.getRuntimeEngine(ProcessInstanceIdContext.get(processInstanceId));
 		CaseInstance ci = (CaseInstance) runtime.getKieSession().getProcessInstance(processInstanceId);
-		PlanningTableContainerInstance ptci = ci.findPlanningTableContainerInstance(parentTaskId);
+		PlanningTableContainerInstance ptci = ci.findPlanningTableContainerInstance(ts.getTaskById(parentTaskId).getTaskData().getWorkItemId());
 		ptci.makeDiscretionaryItemAvailable(discretionaryItemId);
 		return null;
 	}

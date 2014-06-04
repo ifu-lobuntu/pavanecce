@@ -16,7 +16,6 @@ import test.HousePlan;
 
 public class CompletionTest extends AbstractConstructionTestCase {
 
-
 	public CompletionTest() {
 		super(true, true, "org.jbpm.persistence.jpa");
 	}
@@ -29,7 +28,7 @@ public class CompletionTest extends AbstractConstructionTestCase {
 
 		triggerStartOfMilestone();
 		// *****THEN
-		
+
 		assertNodeTriggered(caseInstance.getId(), "TheMilestonePlanItem");
 		assertNodeTriggered(caseInstance.getId(), "TheTask");
 		getPersistence().start();
@@ -37,6 +36,7 @@ public class CompletionTest extends AbstractConstructionTestCase {
 		assertFalse(caseInstance.canComplete());
 		getPersistence().commit();
 	}
+
 	@Test
 	public void testAfterCompletionOfTask() throws Exception {
 		// *****GIVEN
@@ -46,13 +46,14 @@ public class CompletionTest extends AbstractConstructionTestCase {
 		assertEquals(1, tasks.size());
 		// *****WHEN
 		getRuntimeEngine().getTaskService().start(tasks.get(0).getId(), "Builder");
-		getRuntimeEngine().getTaskService().complete(tasks.get(0).getId(), "Builder", new HashMap<String,Object>());
+		getRuntimeEngine().getTaskService().complete(tasks.get(0).getId(), "Builder", new HashMap<String, Object>());
 		// *****THEN
 		getPersistence().start();
 		caseInstance = (CaseInstance) getRuntimeEngine().getKieSession().getProcessInstance(caseInstance.getId());
 		assertTrue(caseInstance.canComplete());
 		getPersistence().commit();
 	}
+
 	@Test
 	public void testAfterStartOfCaseInstance() throws Exception {
 		// *****GIVEN
@@ -64,7 +65,7 @@ public class CompletionTest extends AbstractConstructionTestCase {
 		assertFalse(caseInstance.canComplete());
 		getPersistence().commit();
 		// *****THEN
-		
+
 	}
 
 	protected void givenThatTheTestCaseIsStarted() {

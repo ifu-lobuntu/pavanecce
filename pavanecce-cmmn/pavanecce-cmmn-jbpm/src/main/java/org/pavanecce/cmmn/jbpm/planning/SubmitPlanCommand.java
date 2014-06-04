@@ -34,7 +34,8 @@ public class SubmitPlanCommand extends AbstractPlanningCommand<Void> {
 	private RuntimeManager runtimeManager;
 	private boolean resume;
 
-	public SubmitPlanCommand(RuntimeManager runtimeManager, JbpmServicesPersistenceManager pm, Collection<PlannedTask> plannedTasks, long parentTaskId, boolean resume) {
+	public SubmitPlanCommand(RuntimeManager runtimeManager, JbpmServicesPersistenceManager pm, Collection<PlannedTask> plannedTasks, long parentTaskId,
+			boolean resume) {
 		super(pm);
 		this.plannedTasks = plannedTasks;
 		this.parentTaskId = parentTaskId;
@@ -55,7 +56,7 @@ public class SubmitPlanCommand extends AbstractPlanningCommand<Void> {
 			Task currentTask = ts.getTaskById(plannedTask.getId());
 			InternalTaskData td = (InternalTaskData) currentTask.getTaskData();
 			td.setActualOwner(plannedTask.getTaskData().getActualOwner());
-			if(!currentTask.getPeopleAssignments().getPotentialOwners().contains(td.getActualOwner())){
+			if (!currentTask.getPeopleAssignments().getPotentialOwners().contains(td.getActualOwner())) {
 				currentTask.getPeopleAssignments().getPotentialOwners().add(td.getActualOwner());
 			}
 			WorkItemManager wim = (WorkItemManager) runtime.getKieSession().getWorkItemManager();
@@ -69,20 +70,20 @@ public class SubmitPlanCommand extends AbstractPlanningCommand<Void> {
 			pc.merge(wii);
 			ControllableItemInstance<?> pi = ci.ensurePlanItemCreated(workItemId, plannedTask.getDiscretionaryItemId(), wi);
 			if (td.getStatus() == Status.Created) {
-//				td.setStatus(Status.Ready);
+				// td.setStatus(Status.Ready);
 			}
 		}
 		if (resume) {
 			PlanningTableContainerInstance p = ci.findPlanningTableContainerInstance(workItemId);
-			NodeInstanceContainer nic=null;
-			if(p instanceof HumanTaskInstance){
-				 nic = ((HumanTaskInstance) p).getNodeInstanceContainer();
-			}else{
-				nic=(NodeInstanceContainer) p;
+			NodeInstanceContainer nic = null;
+			if (p instanceof HumanTaskInstance) {
+				nic = ((HumanTaskInstance) p).getNodeInstanceContainer();
+			} else {
+				nic = (NodeInstanceContainer) p;
 			}
-			if(nic instanceof CaseInstance){
+			if (nic instanceof CaseInstance) {
 				((CaseInstance) nic).reactivate();
-			}else{
+			} else {
 				((StageInstance) nic).resume();
 			}
 		}

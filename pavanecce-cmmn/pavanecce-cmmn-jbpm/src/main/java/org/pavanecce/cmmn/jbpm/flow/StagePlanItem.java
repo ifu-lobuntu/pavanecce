@@ -31,6 +31,7 @@ public class StagePlanItem extends AbstractPlanItem<Stage> implements MultiInsta
 		super(info);
 		this.factoryNode = planItemInstanceFactoryNode;
 	}
+
 	@Override
 	public Node superGetNode(long id) {
 		return super.getNode(id);

@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
+import java.sql.Connection;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -18,6 +20,8 @@ import javax.jcr.SimpleCredentials;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.transaction.UserTransaction;
 
 import org.apache.jackrabbit.commons.cnd.CndImporter;
@@ -46,6 +50,8 @@ import org.jbpm.workflow.instance.impl.NodeInstanceFactoryRegistry;
 import org.jbpm.workflow.instance.impl.factory.CreateNewNodeFactory;
 import org.jbpm.workflow.instance.impl.factory.ReuseNodeFactory;
 import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
 import org.kie.api.io.ResourceType;
 import org.kie.api.marshalling.ObjectMarshallingStrategy;
 import org.kie.api.runtime.Environment;
@@ -119,24 +125,56 @@ import org.pavanecce.common.util.FileUtil;
 //import test.Wall;
 //import test.WallPlan;
 import bitronix.tm.resource.jdbc.PoolingDataSource;
+import bitronix.tm.BitronixTransactionManager;
 
 public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 	ObjectPersistence persistence;
 	protected boolean isJpa = false;
-	private OcmFactory ocmFactory;
+	private static OcmFactory ocmFactory;
 	private RuntimeEngine runtimeEngine;
 	private UserTransaction transaction;
 	private RuntimeManager runtimeManager;
+	private long timer;
+	private static EntityManagerFactory emf;
+	private static PoolingDataSource ds;
+	private String persistenceUnitName;
+	protected EntityManagerFactory getEmf(){
+		return emf;
+	}
 	public AbstractCmmnCaseTestCase() {
 		super();
+	}
+
+	protected void startTimer() {
+		timer = System.currentTimeMillis();
+	}
+
+	protected void printTimer(String name) {
+		System.out.println(name + " took " + (System.currentTimeMillis() - timer));
+		startTimer();
 	}
 
 	public AbstractCmmnCaseTestCase(boolean setupDataSource, boolean sessionPersistence) {
 		super(setupDataSource, sessionPersistence);
 	}
 
+	@Before
+	public void setUp() throws Exception {
+		startTimer();
+
+		if (setupDataSource && (ds == null || emf == null)) {
+			ds = setupPoolingDataSource();
+			printTimer("setupPoolingDataSource");
+			emf = Persistence.createEntityManagerFactory(persistenceUnitName);
+			printTimer("createEntityManagerFactory");
+		}
+		cleanupSingletonSessionId();
+		printTimer("cleanupSingletonSessionId");
+	}
+
 	public AbstractCmmnCaseTestCase(boolean setupDataSource, boolean sessionPersistence, String persistenceUnitName) {
 		super(setupDataSource, sessionPersistence, persistenceUnitName);
+		this.persistenceUnitName = persistenceUnitName;
 	}
 
 	@Override
@@ -224,7 +262,8 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 				assertTrue(planItemName + " should be in state " + s.name() + " but was in " + sr.foundState, sr.count > 0);
 			}
 		} else {
-			assertEquals(planItemName + " should be in state " + s.name() + "  " + numberOfTimes[0] + " times, but was foudn in state " + sr.count + " times", numberOfTimes[0], sr.count);
+			assertEquals(planItemName + " should be in state " + s.name() + "  " + numberOfTimes[0] + " times, but was foudn in state " + sr.count + " times",
+					numberOfTimes[0], sr.count);
 		}
 	}
 
@@ -269,29 +308,57 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 		return transaction;
 	}
 
+	@AfterClass
+	public static void tearDownClass() throws Exception {
+		if (emf != null) {
+			emf.close();
+			emf = null;
+		}
+		if (ds != null) {
+			ds.close();
+			ds = null;
+		}
+	}
+
 	@After
 	public void tearDown() throws Exception {
+		startTimer();
 		try {
 			getTransaction().rollback();
+		} catch (Exception e) {
+		}
+		try (Connection c = ds.getConnection()) {
+			c.createStatement().execute("SET REFERENTIAL_INTEGRITY FALSE");
+			ResultSet rst = c.createStatement().executeQuery("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = SCHEMA()");
+			while (rst.next()) {
+				c.createStatement().execute("TRUNCATE TABLE " + rst.getString(1));
+			}
+			c.createStatement().execute("SET REFERENTIAL_INTEGRITY TRUE");
 		} catch (Exception e) {
 
 		}
 		transaction = null;
-		super.tearDown();
+		getPersistence().close();
+		clearHistory();
+		disposeRuntimeManager();
 		runtimeEngine = null;
 
-		getPersistence().close();
 		persistence = null;
 
 		Field fl = JbpmServicesPersistenceManagerImpl.class.getDeclaredField("noScopeEmLocal");
 		fl.setAccessible(true);
 		ThreadLocal<?> l = (ThreadLocal<?>) fl.get(null);
 		l.set(null);
-		FileUtil.deleteRoot(new File("jbpm-db.h2.db"));
-		FileUtil.deleteRoot(new File("jbpm-db.trace.db"));
-		// FileUtil.deleteRoot(new File("btm1.tlog"));
-		// FileUtil.deleteRoot(new File("btm2.tlog"));
-
+		// FileUtil.deleteRoot(new File("jbpm-db.h2.db"));
+		// FileUtil.deleteRoot(new File("jbpm-db.trace.db"));
+		// try {
+		// ((BitronixTransactionManager) getTransaction()).shutdown();
+		// } catch (Exception e) {
+		// System.out.println(e);
+		// }
+		// FileUtil. deleteRoot(new File("btm1.tlog"));
+		// FileUtil.write(new File("btm1.tlog"),"Btnx\n");
+		printTimer("tearDown");
 	}
 
 	protected void assertTaskTypeCreated(List<TaskSummary> list, String expected, int... numberOfTimes) {
@@ -312,9 +379,9 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 		try {
 			if (persistence == null) {
 				if (isJpa) {
-					persistence = new JpaCasePersistence(getEmf(),runtimeManager);
+					persistence = new JpaCasePersistence(emf, runtimeManager);
 				} else {
-					OcmObjectPersistence ocmObjectPersistence = new OcmCasePersistence(getOcmFactory(),runtimeManager);
+					OcmObjectPersistence ocmObjectPersistence = new OcmCasePersistence(getOcmFactory(), runtimeManager);
 					persistence = ocmObjectPersistence;
 				}
 			}
@@ -329,15 +396,27 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 	@Override
 	protected PoolingDataSource setupPoolingDataSource() {
 		PoolingDataSource pds = new PoolingDataSource();
-		pds.setClassName("org.h2.jdbcx.JdbcDataSource");
-		pds.setUniqueName("jdbc/jbpm-ds");
-		// pds.setClassName("bitronix.tm.resource.jdbc.lrc.LrcXADataSource");
-		pds.setMaxPoolSize(5);
-		pds.setAllowLocalTransactions(true);
-		pds.getDriverProperties().put("user", "sa");
-		pds.setApplyTransactionTimeout(false);
-		pds.getDriverProperties().put("password", "");
-		pds.getDriverProperties().put("URL", "jdbc:h2:mem:jbpm-db;MVCC=true");
+		if (isJpa) {
+			pds.setUniqueName("jdbc/jbpm-ds");
+			pds.setClassName("bitronix.tm.resource.jdbc.lrc.LrcXADataSource");
+			pds.setMaxPoolSize(5);
+			pds.setAllowLocalTransactions(true);
+			pds.setIgnoreRecoveryFailures(true);
+			pds.getDriverProperties().put("user", "sa");
+			pds.getDriverProperties().put("password", "");
+			pds.getDriverProperties().put("url", "jdbc:h2:mem:jbpm-db;MVCC=true");
+			pds.getDriverProperties().put("driverClassName", "org.h2.Driver");
+		} else {
+			pds.setClassName("org.h2.jdbcx.JdbcDataSource");
+			pds.setUniqueName("jdbc/jbpm-ds");
+			pds.setMaxPoolSize(5);
+			pds.setAllowLocalTransactions(true);
+			pds.getDriverProperties().put("user", "sa");
+			pds.setApplyTransactionTimeout(false);
+			pds.setIgnoreRecoveryFailures(true);
+			pds.getDriverProperties().put("password", "");
+			pds.getDriverProperties().put("URL", "jdbc:h2:mem:jbpm-db;MVCC=true");
+		}
 		pds.init();
 		return pds;
 	}
@@ -374,7 +453,8 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 					.addConfiguration("drools.processSignalManagerFactory", DefaultSignalManagerFactory.class.getName())
 					.addConfiguration("drools.processInstanceManagerFactory", DefaultProcessInstanceManagerFactory.class.getName());
 		} else if (sessionPersistence) {
-			builder = RuntimeEnvironmentBuilder.Factory.get().newDefaultBuilder().registerableItemsFactory(new CaseRegisterableItemsFactory()).entityManagerFactory(getEmf());
+			builder = RuntimeEnvironmentBuilder.Factory.get().newDefaultBuilder().registerableItemsFactory(new CaseRegisterableItemsFactory())
+					.entityManagerFactory(emf);
 		} else {
 			builder = RuntimeEnvironmentBuilder.Factory.get().newDefaultInMemoryBuilder();
 		}
@@ -401,7 +481,7 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 		CaseInstanceMarshaller m = new CaseInstanceMarshaller();
 		ProcessMarshallerRegistry.INSTANCE.register(RuleFlowProcess.RULEFLOW_TYPE, m);
 		RuntimeManager rm = super.createRuntimeManager(processFile);
-		this.runtimeManager=rm;
+		this.runtimeManager = rm;
 		RuntimeEngine runtimeEngine = getRuntimeEngine();
 		Environment env = runtimeEngine.getKieSession().getEnvironment();
 		env.set(OBJECT_MARSHALLING_STRATEGIES, getPlaceholdStrategies(env));
@@ -448,7 +528,7 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 		Properties props = buildUserGroupProperties();
 		for (Object userId : props.keySet()) {
 			getPersistence().start();
-			EntityManager em = getEmf().createEntityManager();
+			EntityManager em = emf.createEntityManager();
 			GroupImpl group = em.find(GroupImpl.class, userId);
 			if (group == null) {
 				UserImpl builder = em.find(UserImpl.class, userId);
@@ -480,11 +560,13 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 
 	protected ObjectMarshallingStrategy[] getPlaceholdStrategies(Environment env) {
 		if (isJpa) {
-			return new ObjectMarshallingStrategy[] { new ProcessInstanceResolverStrategy(), new JpaPlaceHolderResolverStrategy(env), new JpaCollectionPlaceHolderResolverStrategy(env),
+			return new ObjectMarshallingStrategy[] { new ProcessInstanceResolverStrategy(), new JpaPlaceHolderResolverStrategy(env),
+					new JpaCollectionPlaceHolderResolverStrategy(env),
 					new SerializablePlaceholderResolverStrategy(ClassObjectMarshallingStrategyAcceptor.DEFAULT) };
 		} else {
-			return new ObjectMarshallingStrategy[] { new ProcessInstanceResolverStrategy(), new OcmPlaceHolderResolveStrategy(env), new JpaPlaceHolderResolverStrategy(env),
-					new OcmCollectionPlaceHolderResolveStrategy(env),new JpaCollectionPlaceHolderResolverStrategy(env),
+			return new ObjectMarshallingStrategy[] { new ProcessInstanceResolverStrategy(), new OcmPlaceHolderResolveStrategy(env),
+					new JpaPlaceHolderResolverStrategy(env), new OcmCollectionPlaceHolderResolveStrategy(env),
+					new JpaCollectionPlaceHolderResolverStrategy(env),
 					new SerializablePlaceholderResolverStrategy(ClassObjectMarshallingStrategyAcceptor.DEFAULT) };
 
 		}
@@ -502,16 +584,25 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 	protected OcmFactory getOcmFactory() {
 		if (this.ocmFactory == null) {
 			try {
+				startTimer();
 				TransientRepository tr = new TransientRepository();
+				printTimer("new TransientRepository()");
 				Session session;
 				session = tr.login(new SimpleCredentials("admin", "admin".toCharArray()));
+				printTimer("login");
 				session.getRootNode().addNode("cases");
 				session.getRootNode().addNode("subscriptions");
+				printTimer("addNode");
 				CndImporter.registerNodeTypes(new InputStreamReader(AbstractCmmnCaseTestCase.class.getResourceAsStream("/META-INF/definitions.cnd")), session);
 				CndImporter.registerNodeTypes(new InputStreamReader(AbstractCmmnCaseTestCase.class.getResourceAsStream("/test.cnd")), session);
+				printTimer("registerNodeTypes");
 				session.save();
+				printTimer("save()");
 				session.logout();
-				ocmFactory = new OcmFactory(tr, "admin", "admin", new AnnotationMapperImpl(Arrays.<Class> asList(getClasses())), new OcmSubscriptionManager(runtimeManager));
+				printTimer("logout()");
+				ocmFactory = new OcmFactory(tr, "admin", "admin", new AnnotationMapperImpl(Arrays.<Class> asList(getClasses())), new OcmSubscriptionManager(
+						runtimeManager));
+				printTimer("new OcmFactory()");
 				OcmSubscriptionManager eventListener = (OcmSubscriptionManager) ocmFactory.getEventListener();
 				eventListener.setOcmFactory(ocmFactory);
 				return ocmFactory;

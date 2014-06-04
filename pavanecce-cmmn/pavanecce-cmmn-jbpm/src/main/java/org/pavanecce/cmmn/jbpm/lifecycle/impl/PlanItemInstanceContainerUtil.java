@@ -31,7 +31,8 @@ public class PlanItemInstanceContainerUtil {
 		}
 		Collection<? extends PlanItemInstance<?>> nodeInstances = container.getChildren();
 		for (PlanItemInstance<?> nodeInstance : nodeInstances) {
-			if (nodeInstance instanceof PlanItemInstanceFactoryNodeInstance && ((PlanItemInstanceFactoryNodeInstance<?>) nodeInstance).isPlanItemInstanceStillRequired()) {
+			if (nodeInstance instanceof PlanItemInstanceFactoryNodeInstance
+					&& ((PlanItemInstanceFactoryNodeInstance<?>) nodeInstance).isPlanItemInstanceStillRequired()) {
 				return false;
 			} else if (nodeInstance instanceof MilestoneInstance && ((MilestoneInstance) nodeInstance).isCompletionStillRequired()) {
 				return false;
@@ -78,7 +79,8 @@ public class PlanItemInstanceContainerUtil {
 		}
 	}
 
-	public static void addCaseFileItemOnPartsForParameters(Collection<CaseParameter> items, PlanItemInstanceContainer container, Map<OnPartInstance, OnPartInstanceSubscription> target) {
+	public static void addCaseFileItemOnPartsForParameters(Collection<CaseParameter> items, PlanItemInstanceContainer container,
+			Map<OnPartInstance, OnPartInstanceSubscription> target) {
 		for (CaseParameter parameter : items) {
 			for (NodeInstance node : container.getNodeInstances()) {
 				if (node instanceof OnPartInstance) {
@@ -118,7 +120,7 @@ public class PlanItemInstanceContainerUtil {
 	public static PlanningTableContainerInstance findPlanElementWithPlanningTable(PlanItemInstanceContainer container, long containerWorkItemId) {
 		PlanningTableContainerInstance pewpt = null;
 		if (containerWorkItemId == container.getWorkItemId()) {
-			//Coz we have to check for the current element first
+			// Coz we have to check for the current element first
 			pewpt = container;
 		} else {
 			for (NodeInstance ni : container.getNodeInstances()) {
@@ -135,7 +137,7 @@ public class PlanItemInstanceContainerUtil {
 
 	public static Collection<? extends PlanItemInstance<?>> getChildren(PlanItemInstanceContainer container) {
 		Set<PlanItemInstance<?>> result = new HashSet<PlanItemInstance<?>>();
-		for (NodeInstance nodeInstance :container.getNodeInstances()) {
+		for (NodeInstance nodeInstance : container.getNodeInstances()) {
 			if (nodeInstance instanceof PlanItemInstance) {
 				result.add((PlanItemInstance<?>) nodeInstance);
 			}

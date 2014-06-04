@@ -9,7 +9,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 public class PlanItemHandler extends AbstractCaseElementHandler implements Handler {
-	public PlanItemHandler(){
+	public PlanItemHandler() {
 		super();
 		super.validParents.add(Stage.class);
 	}
@@ -22,7 +22,7 @@ public class PlanItemHandler extends AbstractCaseElementHandler implements Handl
 		planItem.setContainer(((PlanItemContainer) parser.getParent()));
 		planItem.setName(attrs.getValue("name"));
 		planItem.setElementId(attrs.getValue("id"));
-		planItem.setId(IdGenerator.getIdAsUniqueAsUuid(parser,planItem));
+		planItem.setId(IdGenerator.getIdAsUniqueAsUuid(parser, planItem));
 		String entry = attrs.getValue("entryCriteriaRefs");
 		if (entry != null) {
 			for (String string : entry.split("\\ ")) {

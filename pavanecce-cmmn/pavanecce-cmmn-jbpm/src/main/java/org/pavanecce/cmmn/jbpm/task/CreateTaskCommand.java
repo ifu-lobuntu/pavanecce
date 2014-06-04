@@ -35,8 +35,8 @@ public class CreateTaskCommand extends AbstractTaskCommand<Long> {
 		ts.getTaskLifecycleEventListeners().select(new AnnotationLiteral<BeforeTaskAddedEvent>() {
 		}).fire(task);
 		((InternalTaskData) task.getTaskData()).setStatus(Status.Created);
-		((InternalTaskData)task.getTaskData()).setDocumentContentId(ensureContentPresent(task, -1, inputParameters, "Content"));
-		((InternalTaskData)task.getTaskData()).setOutputContentId(ensureContentPresent(task, -1, new HashMap<String,Object>(), "Outpupt"));
+		((InternalTaskData) task.getTaskData()).setDocumentContentId(ensureContentPresent(task, -1, inputParameters, "Content"));
+		((InternalTaskData) task.getTaskData()).setOutputContentId(ensureContentPresent(task, -1, new HashMap<String, Object>(), "Outpupt"));
 		pm.persist(task);
 		ts.getTaskLifecycleEventListeners().select(new AnnotationLiteral<AfterTaskAddedEvent>() {
 		}).fire(task);

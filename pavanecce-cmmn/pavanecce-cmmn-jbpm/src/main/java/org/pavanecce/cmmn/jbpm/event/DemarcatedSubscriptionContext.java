@@ -40,7 +40,7 @@ public class DemarcatedSubscriptionContext {
 	}
 
 	public static void deactiveSubscriptions() {
-		//TODO do by processInstance
+		// TODO do by processInstance
 		demarcatedSubscriptions.set(null);
 	}
 

@@ -22,7 +22,7 @@ import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TimerEventInstance extends OccurrablePlanItemInstanceImpl<TimerEvent,TimerEventPlanItem> implements Creatable {
+public class TimerEventInstance extends OccurrablePlanItemInstanceImpl<TimerEvent, TimerEventPlanItem> implements Creatable {
 
 	private static final long serialVersionUID = 3034509023L;
 

@@ -24,11 +24,11 @@ public class Case extends RuleFlowProcess implements PlanItemContainer {
 	private DefaultJoin defaultJoin;
 	private PlanningTable planningTable;
 
-
 	@Override
 	public StartNode getDefaultStart() {
 		return defaultStart;
 	}
+
 	@Override
 	public Node superGetNode(long id) {
 		return super.getNode(id);
@@ -83,19 +83,20 @@ public class Case extends RuleFlowProcess implements PlanItemContainer {
 	}
 
 	public void addOutputParameter(CaseParameter cp) {
-		outputParameters.put(cp.getElementId(),cp);
+		outputParameters.put(cp.getElementId(), cp);
 	}
 
 	public Collection<CaseParameter> getOutputParameters() {
 		return outputParameters.values();
 	}
-	public CaseParameter getInputParameter(String id){
+
+	public CaseParameter getInputParameter(String id) {
 		return inputParameters.get(id);
 	}
-	public CaseParameter getOutputParameter(String id){
+
+	public CaseParameter getOutputParameter(String id) {
 		return outputParameters.get(id);
 	}
-
 
 	@Override
 	public Node getNode(long id) {
@@ -107,7 +108,7 @@ public class Case extends RuleFlowProcess implements PlanItemContainer {
 	}
 
 	public void addPlanItemDefinition(PlanItemDefinition d) {
-		planItemDefinitions.put(d.getElementId(),d);
+		planItemDefinitions.put(d.getElementId(), d);
 		if (d instanceof Stage) {
 			((Stage) d).setCase(this);
 		}
@@ -117,9 +118,11 @@ public class Case extends RuleFlowProcess implements PlanItemContainer {
 	public void addPlanItemInfo(PlanItemInfo<?> d) {
 		planItemInfo.add(d);
 	}
-	public PlanItemDefinition getPlanItemDefinition(String elementId){
+
+	public PlanItemDefinition getPlanItemDefinition(String elementId) {
 		return planItemDefinitions.get(elementId);
 	}
+
 	public Collection<PlanItemDefinition> getPlanItemDefinitions() {
 		return planItemDefinitions.values();
 	}

@@ -164,7 +164,8 @@ public class CaseTaskInstance extends TaskPlanItemInstance<CaseTask, TaskItemWit
 
 	protected void setSubProcessState(int processState) {
 		if (getItem().getDefinition() != null && getItem().getDefinition().isBlocking()) {
-			ProcessInstance processInstance = (ProcessInstance) ((ProcessInstance) getProcessInstance()).getKnowledgeRuntime().getProcessInstance(processInstanceId);
+			ProcessInstance processInstance = (ProcessInstance) ((ProcessInstance) getProcessInstance()).getKnowledgeRuntime().getProcessInstance(
+					processInstanceId);
 			if (processInstance != null) {
 				processInstance.setState(processState);
 			}
@@ -259,7 +260,7 @@ public class CaseTaskInstance extends TaskPlanItemInstance<CaseTask, TaskItemWit
 			result.put(pm.getTargetParameterName(), value);
 		}
 		for (Entry<String, Object> entry : parametersRead.entrySet()) {
-			if(!sourceParameters.contains(entry.getKey())){
+			if (!sourceParameters.contains(entry.getKey())) {
 				result.put(entry.getKey(), entry.getValue());
 			}
 		}
@@ -277,7 +278,7 @@ public class CaseTaskInstance extends TaskPlanItemInstance<CaseTask, TaskItemWit
 	@Override
 	protected String getIdealRoles() {
 		String bas = getBusinessAdministrators();
-		if(bas.equals("Administrators") && getCaseInstance().getCaseOwner()!=null){
+		if (bas.equals("Administrators") && getCaseInstance().getCaseOwner() != null) {
 			return getCaseInstance().getCaseOwner();
 		}
 		return bas;

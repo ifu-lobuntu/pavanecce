@@ -17,10 +17,10 @@ public class CaseFileItem extends Variable implements CMMNElement {
 	private CaseFileItemDefinition definition;
 	private boolean isCollection;
 	private List<CaseFileItem> children = new ArrayList<CaseFileItem>();
-	private Map<String,CaseFileItem> targets = new HashMap<String,CaseFileItem>();
-	private boolean isUnique=true;
-	private boolean isOrdered=false;
-	
+	private Map<String, CaseFileItem> targets = new HashMap<String, CaseFileItem>();
+	private boolean isUnique = true;
+	private boolean isOrdered = false;
+
 	public boolean isUnique() {
 		return isUnique;
 	}
@@ -49,7 +49,8 @@ public class CaseFileItem extends Variable implements CMMNElement {
 	public Map<String, CaseFileItem> getTargets() {
 		return targets;
 	}
-	public void putTarget(String id, CaseFileItem t){
+
+	public void putTarget(String id, CaseFileItem t) {
 		targets.put(id, t);
 	}
 
@@ -84,6 +85,5 @@ public class CaseFileItem extends Variable implements CMMNElement {
 	public void setCollection(boolean isCollection) {
 		this.isCollection = isCollection;
 	}
-
 
 }

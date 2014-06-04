@@ -37,9 +37,12 @@ public abstract class AbstractPlanItemInstanceContainerLifecycleTest extends Abs
 		assertFalse(getPlanItemInstanceContainer().canComplete());
 		getPersistence().commit();
 		try {
-			getTaskService().complete(getTaskService().getTaskByWorkItemId(getWorkitemId()).getId(), "ConstructionProjectManager", new HashMap<String, Object>());
+			getTaskService().complete(getTaskService().getTaskByWorkItemId(getWorkitemId()).getId(), "ConstructionProjectManager",
+					new HashMap<String, Object>());
 			fail("The stage/case instance cannot be completed yet");
 		} catch (RuntimeException e) {
+			getPersistence().close();
+			int status = getTransaction().getStatus();
 			Status currentStatus = getTaskService().getTaskByWorkItemId(getWorkitemId()).getTaskData().getStatus();
 			assertEquals(org.kie.api.task.model.Status.InProgress, currentStatus);
 		}
@@ -92,7 +95,7 @@ public abstract class AbstractPlanItemInstanceContainerLifecycleTest extends Abs
 		givenThatTheTestCaseIsStarted();
 		CaseInstance subCase = triggerInitialActivity();
 		Task taskByWorkItemId = getTaskService().getTaskByWorkItemId(getWorkitemId());
-		List<TaskSummary> subTasksByParent = getTaskService().getSubTasksByParent(taskByWorkItemId.getTaskData().getWorkItemId());
+		List<TaskSummary> subTasksByParent = getTaskService().getSubTasksByParent(taskByWorkItemId.getId());
 		assertTaskInState(subTasksByParent, "TheHumanTaskPlanItem", Status.Ready);
 		assertTaskInState(subTasksByParent, "TheStagePlanItem", Status.InProgress);
 		assertTaskInState(subTasksByParent, "TheCaseTaskPlanItem", Status.InProgress);
@@ -101,7 +104,7 @@ public abstract class AbstractPlanItemInstanceContainerLifecycleTest extends Abs
 		getPersistence().start();
 		getTaskService().suspend(taskByWorkItemId.getId(), "ConstructionProjectManager");
 		getPersistence().commit();
-		
+
 		// *******THEN
 		getPersistence().start();
 		PlanItemInstanceContainer piic = getPlanItemInstanceContainer();
@@ -116,7 +119,7 @@ public abstract class AbstractPlanItemInstanceContainerLifecycleTest extends Abs
 		assertPlanItemInState(caseInstance.getId(), "StartUserEventPlanItem", PlanElementState.COMPLETED);
 		assertPlanItemInState(caseInstance.getId(), "TheStagePlanItem", PlanElementState.SUSPENDED);
 		assertPlanItemInState(caseInstance.getId(), "TheCaseTaskPlanItem", PlanElementState.SUSPENDED);
-		subTasksByParent = getTaskService().getSubTasksByParent(taskByWorkItemId.getTaskData().getWorkItemId());
+		subTasksByParent = getTaskService().getSubTasksByParent(taskByWorkItemId.getId());
 		assertTaskInState(subTasksByParent, "TheHumanTaskPlanItem", Status.Suspended);
 		assertTaskInState(subTasksByParent, "TheStagePlanItem", Status.Suspended);
 		assertTaskInState(subTasksByParent, "TheCaseTaskPlanItem", Status.Suspended);
@@ -134,7 +137,7 @@ public abstract class AbstractPlanItemInstanceContainerLifecycleTest extends Abs
 		assertPlanItemInState(caseInstance.getId(), "StartUserEventPlanItem", PlanElementState.COMPLETED);
 		assertPlanItemInState(caseInstance.getId(), "TheStagePlanItem", PlanElementState.AVAILABLE);
 		assertPlanItemInState(caseInstance.getId(), "TheCaseTaskPlanItem", PlanElementState.ACTIVE);
-		subTasksByParent = getTaskService().getSubTasksByParent(taskByWorkItemId.getTaskData().getWorkItemId());
+		subTasksByParent = getTaskService().getSubTasksByParent(taskByWorkItemId.getId());
 		assertTaskInState(subTasksByParent, "TheHumanTaskPlanItem", Status.Ready);
 		assertTaskInState(subTasksByParent, "TheStagePlanItem", Status.InProgress);
 		assertTaskInState(subTasksByParent, "TheCaseTaskPlanItem", Status.InProgress);
@@ -165,9 +168,9 @@ public abstract class AbstractPlanItemInstanceContainerLifecycleTest extends Abs
 		assertEquals(PlanElementState.ACTIVE, reloadCaseInstance(subCase).getPlanElementState());
 		Task taskByWorkItemId = getTaskService().getTaskByWorkItemId(getWorkitemId());
 		List<TaskSummary> subTasksByParent = getTaskService().getSubTasksByParent(taskByWorkItemId.getTaskData().getWorkItemId());
-//		assertTaskInState(subTasksByParent, "TheHumanTaskPlanItem", Status.Reserved);
-//		assertTaskInState(subTasksByParent, "TheStagePlanItem", Status.Reserved);
-//		assertTaskInState(subTasksByParent, "TheCaseTaskPlanItem", Status.InProgress);
+		// assertTaskInState(subTasksByParent, "TheHumanTaskPlanItem", Status.Reserved);
+		// assertTaskInState(subTasksByParent, "TheStagePlanItem", Status.Reserved);
+		// assertTaskInState(subTasksByParent, "TheCaseTaskPlanItem", Status.InProgress);
 		// // reactivate
 		// getTaskService().resume(taskByWorkItemId.getId(), "ConstructionProjectManager");
 		// assertEquals(PlanElementState.ACTIVE, reloadCaseInstance(subCase).getPlanElementState());
@@ -187,7 +190,7 @@ public abstract class AbstractPlanItemInstanceContainerLifecycleTest extends Abs
 		givenThatTheTestCaseIsStarted();
 		CaseInstance subCase = triggerInitialActivity();
 		Task taskByWorkItemId = getTaskService().getTaskByWorkItemId(getWorkitemId());
-		List<TaskSummary> subTasksByParent = getTaskService().getSubTasksByParent(taskByWorkItemId.getTaskData().getWorkItemId());
+		List<TaskSummary> subTasksByParent = getTaskService().getSubTasksByParent(taskByWorkItemId.getId());
 		assertTaskInState(subTasksByParent, "TheHumanTaskPlanItem", Status.Ready);
 		assertTaskInState(subTasksByParent, "TheStagePlanItem", Status.InProgress);
 		assertTaskInState(subTasksByParent, "TheCaseTaskPlanItem", Status.InProgress);
@@ -209,7 +212,7 @@ public abstract class AbstractPlanItemInstanceContainerLifecycleTest extends Abs
 		assertPlanItemInState(caseInstance.getId(), "TheCaseTaskPlanItem", PlanElementState.TERMINATED);
 		assertNull(reloadCaseInstance(subCase));
 		subTasksByParent = getTaskService().getSubTasksByParent(taskByWorkItemId.getTaskData().getWorkItemId());
-		assertEquals(0, subTasksByParent.size());//They have all been exited
+		assertEquals(0, subTasksByParent.size());// They have all been exited
 		// reactivate
 		// getTaskService().resume(taskByWorkItemId.getId(), "ConstructionProjectManager");
 		// assertEquals(PlanElementState.ACTIVE, reloadCaseInstance(subCase).getPlanElementState());

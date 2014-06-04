@@ -12,7 +12,7 @@ public interface PlanElementLifecycle {
 	void setPlanElementState(PlanElementState s);
 
 	PlanElementState getPlanElementState();
-	
+
 	CaseInstance getCaseInstance();
 
 }

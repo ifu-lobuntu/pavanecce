@@ -29,10 +29,10 @@ public class OcmCollectionPlaceHolderResolveStrategy extends JpaCollectionPlaceH
 
 	@Override
 	public boolean accept(Object object) {
-		if(object instanceof Collection){
+		if (object instanceof Collection) {
 			Collection<?> c = (Collection<?>) object;
-			if(c.size()>0){
-				if(OcmIdUtil.INSTANCE.isEntityObject(c.iterator().next())){
+			if (c.size() > 0) {
+				if (OcmIdUtil.INSTANCE.isEntityObject(c.iterator().next())) {
 					return true;
 				}
 			}
@@ -58,13 +58,13 @@ public class OcmCollectionPlaceHolderResolveStrategy extends JpaCollectionPlaceH
 				Member idMember = OcmIdUtil.INSTANCE.findIdMember(object2.getClass());
 				Object id = OcmIdUtil.INSTANCE.getId(idMember, object2);
 				if (id == null) {
-					throw new IllegalStateException("Id must be set before being stored in a process: " + object2.getClass().getName() + "." + idMember.getName());
+					throw new IllegalStateException("Id must be set before being stored in a process: " + object2.getClass().getName() + "."
+							+ idMember.getName());
 				}
-				os.writeUTF((String)id);
+				os.writeUTF((String) id);
 			}
 		}
 	}
-
 
 	@Override
 	@SuppressWarnings("unchecked")
@@ -87,7 +87,7 @@ public class OcmCollectionPlaceHolderResolveStrategy extends JpaCollectionPlaceH
 			OcmFactory emf = (OcmFactory) env.get(OcmFactory.OBJECT_CONTENT_MANAGER_FACTORY);
 			ObjectContentManager em = emf.getCurrentObjectContentManager();
 			for (String uuid : ids) {
-				coll.add(em.getObjectByUuid( uuid));
+				coll.add(em.getObjectByUuid(uuid));
 			}
 		}
 		return coll;

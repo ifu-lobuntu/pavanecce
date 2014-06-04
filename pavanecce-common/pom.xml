@@ -9,6 +9,7 @@
 	<artifactId>pavanecce-common-parent</artifactId>
 	<packaging>pom</packaging>
 	<modules>
+		<module>pavanecce-common-build</module>
 		<module>pavanecce-common-dependencies</module>
 		<module>pavanecce-common-util</module>
 		<module>pavanecce-common-text-workspace</module>

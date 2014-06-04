@@ -11,7 +11,7 @@ public abstract class OneToManyCollection<P, C> extends TwoWayCollection<C> impl
 		this.parent = parent;
 	}
 
-	protected abstract Collection<C> getDelegate() ;
+	protected abstract Collection<C> getDelegate();
 
 	protected abstract P getParent(C child);
 
@@ -55,6 +55,7 @@ public abstract class OneToManyCollection<P, C> extends TwoWayCollection<C> impl
 		final Iterator<C> delegate = getCurrent().iterator();
 		return new Iterator<C>() {
 			private C currentChild;
+
 			@Override
 			public boolean hasNext() {
 				return delegate.hasNext();
@@ -62,14 +63,14 @@ public abstract class OneToManyCollection<P, C> extends TwoWayCollection<C> impl
 
 			@Override
 			public C next() {
-				return currentChild=delegate.next();
+				return currentChild = delegate.next();
 			}
 
 			@Override
 			public void remove() {
 				delegate.remove();
 				setParent(currentChild, null);
-				currentChild=null;
+				currentChild = null;
 			}
 		};
 	}

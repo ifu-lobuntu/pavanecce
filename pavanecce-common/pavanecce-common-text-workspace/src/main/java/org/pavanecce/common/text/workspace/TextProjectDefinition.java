@@ -8,7 +8,7 @@ public class TextProjectDefinition {
 	private boolean appendVersionNumber;
 
 	public TextProjectDefinition(ProjectNameStrategy nameStrategy, String projectQualifier) {
-		this(nameStrategy, projectQualifier,false);
+		this(nameStrategy, projectQualifier, false);
 	}
 
 	public TextProjectDefinition(ProjectNameStrategy nameStrategy, String projectQualifier, boolean appendVersionNumber) {

@@ -11,7 +11,6 @@ public class BindingRefinement {
 	private Constraint expression;
 	private Constraint parentExpression;
 	private DroolsAction setterOnParent;
-	
 
 	public BindingRefinement(ConstraintImpl exp) {
 		this.expression = exp;
@@ -24,6 +23,7 @@ public class BindingRefinement {
 	public void setParentExpression(Constraint bindingRefinement) {
 		this.parentExpression = bindingRefinement;
 	}
+
 	public void setSetterOnParent(DroolsAction a) {
 		this.setterOnParent = a;
 	}
@@ -49,9 +49,10 @@ public class BindingRefinement {
 		}
 		return null;
 	}
+
 	public Action getSetterOnParent() {
-		if(setterOnParent!=null){
-		    return  (Action) setterOnParent.getMetaData("Action");
+		if (setterOnParent != null) {
+			return (Action) setterOnParent.getMetaData("Action");
 		}
 		return null;
 	}

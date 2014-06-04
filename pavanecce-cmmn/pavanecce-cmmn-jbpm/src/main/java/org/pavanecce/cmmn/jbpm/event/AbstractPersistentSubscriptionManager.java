@@ -29,8 +29,9 @@ import org.pavanecce.common.ObjectPersistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractPersistentSubscriptionManager<T extends CaseSubscriptionInfo<X>, X extends PersistedCaseFileItemSubscriptionInfo> implements SubscriptionManager {
-	static Logger logger=LoggerFactory.getLogger(AbstractPersistentSubscriptionManager.class);
+public abstract class AbstractPersistentSubscriptionManager<T extends CaseSubscriptionInfo<X>, X extends PersistedCaseFileItemSubscriptionInfo> implements
+		SubscriptionManager {
+	static Logger logger = LoggerFactory.getLogger(AbstractPersistentSubscriptionManager.class);
 	private boolean cascadeSubscription = false;
 	private static Map<Object, Map<CaseSubscriptionKey, CaseSubscriptionInfo<?>>> cachedSubscriptions = new HashMap<Object, Map<CaseSubscriptionKey, CaseSubscriptionInfo<?>>>();
 	private static ThreadLocal<Set<CaseFileItemEventWrapper>> eventQueue = new ThreadLocal<Set<CaseFileItemEventWrapper>>();
@@ -46,7 +47,8 @@ public abstract class AbstractPersistentSubscriptionManager<T extends CaseSubscr
 	}
 
 	@Override
-	public void updateSubscriptions(CaseInstance caseInstance, Collection<Object> targets, Map<CaseFileItem, Collection<Object>> parentSubscriptions, ObjectPersistence p) {
+	public void updateSubscriptions(CaseInstance caseInstance, Collection<Object> targets, Map<CaseFileItem, Collection<Object>> parentSubscriptions,
+			ObjectPersistence p) {
 		cacheSubscriptions(caseInstance, p);
 		Set<OnPartInstanceSubscription> findOnPartInstanceSubscriptions = caseInstance.findOnPartInstanceSubscriptions();
 		subscribeToUnknownNumberOfObjects(caseInstance, findOnPartInstanceSubscriptions, targets, p);
@@ -128,7 +130,8 @@ public abstract class AbstractPersistentSubscriptionManager<T extends CaseSubscr
 				// mmm.... desperate measures
 				Method m = JpaPersistenceContextManager.class.getDeclaredMethod("getInternalCommandScopedEntityManager");
 				m.setAccessible(true);
-				PersistenceContextManager pcm = (PersistenceContextManager) engine.getKieSession().getEnvironment().get(EnvironmentName.PERSISTENCE_CONTEXT_MANAGER);
+				PersistenceContextManager pcm = (PersistenceContextManager) engine.getKieSession().getEnvironment()
+						.get(EnvironmentName.PERSISTENCE_CONTEXT_MANAGER);
 				EntityManager em = (EntityManager) m.invoke(pcm);
 				em.joinTransaction();
 				pcm.beginCommandScopedEntityManager();
@@ -173,9 +176,11 @@ public abstract class AbstractPersistentSubscriptionManager<T extends CaseSubscr
 		}
 	}
 
-	private void registerChildCreateAndDeleteSubscriptions(CaseInstance caseInstance, Collection<OnPartInstanceSubscription> subs, T parentInfo, CaseFileItem childCaseFileItem) {
+	private void registerChildCreateAndDeleteSubscriptions(CaseInstance caseInstance, Collection<OnPartInstanceSubscription> subs, T parentInfo,
+			CaseFileItem childCaseFileItem) {
 		for (OnPartInstanceSubscription childSubscription : subs) {
-			if (childSubscription.getVariable().getElementId().equals(childCaseFileItem.getElementId()) && childSubscription.getTransition().requiresParentSubscription()) {
+			if (childSubscription.getVariable().getElementId().equals(childCaseFileItem.getElementId())
+					&& childSubscription.getTransition().requiresParentSubscription()) {
 				buildCaseFileItemSubscriptionInfo(caseInstance, parentInfo, childSubscription);
 			}
 		}
@@ -265,7 +270,8 @@ public abstract class AbstractPersistentSubscriptionManager<T extends CaseSubscr
 		}
 	}
 
-	private void cascadeSubscribe(CaseInstance process, Object target, Collection<CaseFileItem> related, ObjectPersistence em, Collection<OnPartInstanceSubscription> subs) {
+	private void cascadeSubscribe(CaseInstance process, Object target, Collection<CaseFileItem> related, ObjectPersistence em,
+			Collection<OnPartInstanceSubscription> subs) {
 		for (CaseFileItem caseFileItem : related) {
 			String propName = caseFileItem.getName();
 			try {
@@ -296,15 +302,16 @@ public abstract class AbstractPersistentSubscriptionManager<T extends CaseSubscr
 	protected boolean isMatchingAddOrRemove(CaseFileItemSubscriptionInfo is, String propertyName) {
 		return is.getRelatedItemName() != null
 				&& propertyName.equals(is.getRelatedItemName())
-				&& (is.getTransition() == CaseFileItemTransition.ADD_CHILD || is.getTransition() == CaseFileItemTransition.REMOVE_CHILD || is.getTransition() == CaseFileItemTransition.ADD_REFERENCE || is
-						.getTransition() == CaseFileItemTransition.REMOVE_REFERENCE);
+				&& (is.getTransition() == CaseFileItemTransition.ADD_CHILD || is.getTransition() == CaseFileItemTransition.REMOVE_CHILD
+						|| is.getTransition() == CaseFileItemTransition.ADD_REFERENCE || is.getTransition() == CaseFileItemTransition.REMOVE_REFERENCE);
 	}
 
 	protected boolean isMatchingCreateOrDelete(CaseFileItemSubscriptionInfo is, String propertyName) {
 		/*
 		 * In the case of CREATE and DELETE the itemName is actually the name of the property on the parent to the child
 		 */
-		return propertyName.equals(is.getItemName()) && (is.getTransition() == CaseFileItemTransition.CREATE || is.getTransition() == CaseFileItemTransition.DELETE);
+		return propertyName.equals(is.getItemName())
+				&& (is.getTransition() == CaseFileItemTransition.CREATE || is.getTransition() == CaseFileItemTransition.DELETE);
 	}
 
 	public static boolean commitSubscriptionsTo(ObjectPersistence op) {
@@ -336,7 +343,7 @@ public abstract class AbstractPersistentSubscriptionManager<T extends CaseSubscr
 				CaseInstance ci = (CaseInstance) re.getKieSession().getProcessInstance(workItem.getProcessInstanceId());
 				if (ci != null) {
 					ci.executeWorkItem(workItem);
-				}else{
+				} else {
 					logger.warn("ProcessInstance not found", workItem.getProcessInstanceId());
 				}
 			} catch (Exception e) {

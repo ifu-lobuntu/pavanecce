@@ -6,7 +6,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 
-
 public abstract class AbstractIdUtil<T> {
 
 	public AbstractIdUtil() {
@@ -34,10 +33,11 @@ public abstract class AbstractIdUtil<T> {
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
 		}
-		return (T)id;
+		return (T) id;
 	}
-	public boolean isEntityObject(Object o){
-		if(o ==null){
+
+	public boolean isEntityObject(Object o) {
+		if (o == null) {
 			return false;
 		}
 		if (isEntity(o.getClass())) {
@@ -49,6 +49,7 @@ public abstract class AbstractIdUtil<T> {
 		}
 
 	}
+
 	public Member findIdMember(Class<?> commonSuperclass) {
 		Field[] declaredFields = commonSuperclass.getDeclaredFields();
 		for (Field field : declaredFields) {
@@ -80,6 +81,6 @@ public abstract class AbstractIdUtil<T> {
 		}
 	}
 
-	protected abstract boolean isEntity(Class<?> commonSuperclass) ;
+	protected abstract boolean isEntity(Class<?> commonSuperclass);
 
 }

@@ -17,7 +17,7 @@ import org.pavanecce.cmmn.jbpm.task.CaseTaskWorkItemHandler;
 import org.pavanecce.cmmn.jbpm.task.UpdateTaskStatusWorkItemHandler;
 
 public class CaseRegisterableItemsFactory extends DefaultRegisterableItemsFactory {
-	@SuppressWarnings({"unchecked","rawtypes"})
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	protected WorkItemHandler getHTWorkItemHandler(RuntimeEngine runtime) {
 		ExternalTaskEventListener listener = new CaseTaskLifecycleListener();
@@ -43,14 +43,15 @@ public class CaseRegisterableItemsFactory extends DefaultRegisterableItemsFactor
 		}
 		return humanTaskHandler;
 	}
-    @Override
-    public Map<String, WorkItemHandler> getWorkItemHandlers(RuntimeEngine runtime) {
-        Map<String, WorkItemHandler> defaultHandlers = new HashMap<String, WorkItemHandler>();
-        defaultHandlers.putAll(super.getWorkItemHandlers(runtime));
-        UpdateTaskStatusWorkItemHandler stwih = new UpdateTaskStatusWorkItemHandler();
-        stwih.setRuntimeManager(((RuntimeEngineImpl)runtime).getManager());
+
+	@Override
+	public Map<String, WorkItemHandler> getWorkItemHandlers(RuntimeEngine runtime) {
+		Map<String, WorkItemHandler> defaultHandlers = new HashMap<String, WorkItemHandler>();
+		defaultHandlers.putAll(super.getWorkItemHandlers(runtime));
+		UpdateTaskStatusWorkItemHandler stwih = new UpdateTaskStatusWorkItemHandler();
+		stwih.setRuntimeManager(((RuntimeEngineImpl) runtime).getManager());
 		defaultHandlers.put(TaskParameters.UPDATE_TASK_STATUS, stwih);
-        return defaultHandlers;
-    }
+		return defaultHandlers;
+	}
 
 }

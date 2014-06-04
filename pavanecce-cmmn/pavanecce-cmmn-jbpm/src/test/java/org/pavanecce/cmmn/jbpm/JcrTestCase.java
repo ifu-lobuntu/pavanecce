@@ -59,7 +59,7 @@ public class JcrTestCase {
 		session.getRootNode().addNode("cases");
 		session.save();
 		OcmSubscriptionManager eventListener = new OcmSubscriptionManager(null);
-		OcmFactory factory = new OcmFactory(repository, "admin", "admin", getMapper(),eventListener );
+		OcmFactory factory = new OcmFactory(repository, "admin", "admin", getMapper(), eventListener);
 		eventListener.setOcmFactory(factory);
 		OcmObjectPersistence oop = new OcmObjectPersistence(factory);
 		logDuration("5");
@@ -74,7 +74,7 @@ public class JcrTestCase {
 		new WallPlan(housePlan);
 		new WallPlan(housePlan);
 		try {
-//			Node root = session.getRootNode();
+			// Node root = session.getRootNode();
 			// Node theCase = root.addNode("case1", "t:constructionCase");
 			// theCase.setProperty("t:name", "MyName");
 			// theCase.addNode("t:housePlans", "t:housePlan");
@@ -88,7 +88,7 @@ public class JcrTestCase {
 			assertNotNull(found.getHousePlan());
 			assertNotNull(found.getHousePlan().getRoofPlan());
 			assertEquals(3, found.getHousePlan().getWallPlans().size());
-//			String path=found.getHousePlan().getWallPlans().iterator().next().getPath();
+			// String path=found.getHousePlan().getWallPlans().iterator().next().getPath();
 			// Retrieve content
 			// Node node = root.getNode("myBuildingCase/housePlan");
 			// logger.info(node.getPath());
@@ -122,7 +122,6 @@ public class JcrTestCase {
 		File repo = new File("./repository");
 		FileUtil.deleteRoot(repo);
 	}
-
 
 	protected void asdf() throws IOException, SQLException {
 		URL ddl = JcrTestCase.class.getResource("/jackrabbit.ddl");

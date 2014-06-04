@@ -8,6 +8,7 @@ import org.pavanecce.cmmn.jbpm.event.AbstractCaseFileItemSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.event.CaseSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.event.PersistedCaseFileItemSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
+
 public class JcrCaseFileItemSubscriptionInfo extends AbstractCaseFileItemSubscriptionInfo implements PersistedCaseFileItemSubscriptionInfo, NodeAsObject {
 	private String id;
 	private JcrCaseSubscriptionInfo caseSubscription;
@@ -23,8 +24,8 @@ public class JcrCaseFileItemSubscriptionInfo extends AbstractCaseFileItemSubscri
 		super();
 		try {
 			this.caseSubscription = caseSubscription;
-			//TODO the info require is not there yet
-			this.node=caseSubscription.getNode().addNode(calculateRelativePath());
+			// TODO the info require is not there yet
+			this.node = caseSubscription.getNode().addNode(calculateRelativePath());
 		} catch (Exception e) {
 			throw convertException(e);
 		}

@@ -29,6 +29,7 @@ public abstract class CaseFileItemEventTest extends AbstractCaseFileItemEventTes
 		getPersistence().update(housePlan);
 		getPersistence().commit();
 	}
+
 	@Override
 	protected void updateDescriptionOnHouse() {
 		getPersistence().start();
@@ -48,7 +49,7 @@ public abstract class CaseFileItemEventTest extends AbstractCaseFileItemEventTes
 	}
 
 	@Override
-	protected void removeRoofPlanAsChildFromHousePlan(){
+	protected void removeRoofPlanAsChildFromHousePlan() {
 		getPersistence().start();
 		housePlan = getPersistence().find(HousePlan.class, housePlan.getId());
 		RoofPlan roofPlan = housePlan.getRoofPlan();

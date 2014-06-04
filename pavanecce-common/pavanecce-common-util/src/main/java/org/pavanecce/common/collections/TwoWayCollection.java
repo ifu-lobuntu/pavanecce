@@ -3,12 +3,12 @@ package org.pavanecce.common.collections;
 import java.util.Collection;
 import java.util.Iterator;
 
-public abstract class TwoWayCollection<C> implements Collection<C>{
-
+public abstract class TwoWayCollection<C> implements Collection<C> {
 
 	public TwoWayCollection() {
 		super();
 	}
+
 	protected abstract boolean isInstanceOfChild(Object o);
 
 	protected abstract Collection<C> newInstance();
@@ -17,7 +17,7 @@ public abstract class TwoWayCollection<C> implements Collection<C>{
 
 	protected abstract boolean removeImpl(C e);
 
-	protected abstract Collection<C> getCurrent() ;
+	protected abstract Collection<C> getCurrent();
 
 	@Override
 	public <T> T[] toArray(T[] a) {
@@ -26,9 +26,9 @@ public abstract class TwoWayCollection<C> implements Collection<C>{
 
 	@Override
 	public boolean containsAll(Collection<?> c) {
-		boolean containsAll=true;
+		boolean containsAll = true;
 		for (Object object : c) {
-			containsAll&=contains(object);
+			containsAll &= contains(object);
 		}
 		return containsAll;
 	}
@@ -55,6 +55,7 @@ public abstract class TwoWayCollection<C> implements Collection<C>{
 	public int size() {
 		return getCurrent().size();
 	}
+
 	@Override
 	public boolean isEmpty() {
 		return getCurrent().isEmpty();
@@ -76,12 +77,12 @@ public abstract class TwoWayCollection<C> implements Collection<C>{
 
 	@Override
 	public boolean retainAll(Collection<?> c) {
-		boolean changed=false;
+		boolean changed = false;
 		Iterator<C> iterator = iterator();
 		while (iterator.hasNext()) {
 			C c2 = iterator.next();
-			if(!c.contains(c2)){
-				changed=true;
+			if (!c.contains(c2)) {
+				changed = true;
 				iterator.remove();
 			}
 		}

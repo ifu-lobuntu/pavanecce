@@ -72,16 +72,18 @@ public class JpaCaseSubscriptionKey implements Serializable, CaseSubscriptionKey
 		}
 		return idAsString;
 	}
+
 	@Override
 	public int hashCode() {
 		return className.hashCode();
 	}
+
 	@Override
 	public boolean equals(Object obj) {
-		if(this==obj){
+		if (this == obj) {
 			return true;
-		}else if(obj instanceof JpaCaseSubscriptionKey){
-			JpaCaseSubscriptionKey other =(JpaCaseSubscriptionKey) obj;
+		} else if (obj instanceof JpaCaseSubscriptionKey) {
+			JpaCaseSubscriptionKey other = (JpaCaseSubscriptionKey) obj;
 			return other.className.equals(className) && other.id.equals(id);
 		}
 		return false;

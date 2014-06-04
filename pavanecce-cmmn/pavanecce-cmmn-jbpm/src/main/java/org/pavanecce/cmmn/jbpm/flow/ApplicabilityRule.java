@@ -8,30 +8,37 @@ public class ApplicabilityRule implements CMMNElement {
 	private String contextRef;
 	private CaseFileItem context;
 	private Constraint condition;
+
 	public String getElementId() {
 		return elementId;
 	}
+
 	public void setElementId(String elementId) {
 		this.elementId = elementId;
 	}
+
 	public String getContextRef() {
 		return contextRef;
 	}
+
 	public void setContextRef(String contextRef) {
 		this.contextRef = contextRef;
 	}
+
 	public CaseFileItem getContext() {
 		return context;
 	}
+
 	public void setContext(CaseFileItem context) {
 		this.context = context;
 	}
+
 	public Constraint getCondition() {
 		return condition;
 	}
+
 	public void setCondition(Constraint condition) {
 		this.condition = condition;
 	}
-	
 
 }

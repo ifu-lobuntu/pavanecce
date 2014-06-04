@@ -31,7 +31,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 public class CaseFileItemDefinitionHandler extends BaseAbstractHandler implements Handler {
-	
+
 	public CaseFileItemDefinitionHandler() {
 		if ((this.validParents == null) && (this.validPeers == null)) {
 			this.validParents = new HashSet<Class<?>>();
@@ -47,9 +47,7 @@ public class CaseFileItemDefinitionHandler extends BaseAbstractHandler implement
 
 	@Override
 	@SuppressWarnings("unchecked")
-    public Object start(final String uri, final String localName,
-			            final Attributes attrs, final ExtensibleXmlParser parser)
-			throws SAXException {
+	public Object start(final String uri, final String localName, final Attributes attrs, final ExtensibleXmlParser parser) throws SAXException {
 		parser.startElementBuilder(localName, attrs);
 		String id = attrs.getValue("id");
 		String type = attrs.getValue("structureRef");
@@ -58,18 +56,17 @@ public class CaseFileItemDefinitionHandler extends BaseAbstractHandler implement
 		}
 
 		ProcessBuildData buildData = (ProcessBuildData) parser.getData();
-		Map<String, CaseFileItemDefinition> itemDefinitions = (Map<String, CaseFileItemDefinition>)
-            buildData.getMetaData(DefinitionsHandler.CASE_FILE_ITEM_DEFINITIONS);
-        CaseFileItemDefinition caseFileItemDefinition = new CaseFileItemDefinition(id); 
-        caseFileItemDefinition.setDefinitionType(CaseFileItemDefinitionType.resolveByUri(attrs.getValue("definitionType")));
-        caseFileItemDefinition.setStructureRef(type);
-        itemDefinitions.put(id, caseFileItemDefinition);
+		Map<String, CaseFileItemDefinition> itemDefinitions = (Map<String, CaseFileItemDefinition>) buildData
+				.getMetaData(DefinitionsHandler.CASE_FILE_ITEM_DEFINITIONS);
+		CaseFileItemDefinition caseFileItemDefinition = new CaseFileItemDefinition(id);
+		caseFileItemDefinition.setDefinitionType(CaseFileItemDefinitionType.resolveByUri(attrs.getValue("definitionType")));
+		caseFileItemDefinition.setStructureRef(type);
+		itemDefinitions.put(id, caseFileItemDefinition);
 		return caseFileItemDefinition;
 	}
 
 	@Override
-	public Object end(final String uri, final String localName,
-			          final ExtensibleXmlParser parser) throws SAXException {
+	public Object end(final String uri, final String localName, final ExtensibleXmlParser parser) throws SAXException {
 		parser.endElementBuilder();
 		return parser.getCurrent();
 	}

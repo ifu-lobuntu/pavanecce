@@ -23,10 +23,10 @@ public class AutomaticallyStartTaskCommand extends TaskCommand<Void> {
 	private static final long serialVersionUID = -8257771889718694139L;
 	private Map<String, Object> updatedParameters;
 
-	public AutomaticallyStartTaskCommand(long taskId, String user,  Map<String, Object> map) {
+	public AutomaticallyStartTaskCommand(long taskId, String user, Map<String, Object> map) {
 		super.taskId = taskId;
-		this.updatedParameters=map;
-		this.userId=user;
+		this.updatedParameters = map;
+		this.userId = user;
 	}
 
 	@SuppressWarnings("serial")
@@ -34,8 +34,10 @@ public class AutomaticallyStartTaskCommand extends TaskCommand<Void> {
 		TaskServiceEntryPointImpl ts = ((TaskContext) cntxt).getTaskService();
 		Task task = ts.getTaskInstanceById(taskId);
 		InternalTaskData td = (InternalTaskData) task.getTaskData();
-		if (task.getTaskData().getStatus() != Status.Created && task.getTaskData().getStatus() != Status.Ready && task.getTaskData().getStatus() != Status.Reserved) {
-			String errorMessage = "Only tasks in the Created/Ready or Reserved status can be auomatically started. Task" + task.getId() + " is " + task.getTaskData().getStatus();
+		if (task.getTaskData().getStatus() != Status.Created && task.getTaskData().getStatus() != Status.Ready
+				&& task.getTaskData().getStatus() != Status.Reserved) {
+			String errorMessage = "Only tasks in the Created/Ready or Reserved status can be auomatically started. Task" + task.getId() + " is "
+					+ task.getTaskData().getStatus();
 			throw new PermissionDeniedException(errorMessage);
 		}
 		User user = new UserImpl(userId);
@@ -49,7 +51,6 @@ public class AutomaticallyStartTaskCommand extends TaskCommand<Void> {
 
 		return null;
 	}
-
 
 	public String toString() {
 		return "taskService.reenable(" + taskId + ", " + userId + ");";

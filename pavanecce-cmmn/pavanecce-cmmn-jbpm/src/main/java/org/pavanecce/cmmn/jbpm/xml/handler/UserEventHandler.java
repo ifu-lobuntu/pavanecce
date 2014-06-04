@@ -16,7 +16,7 @@ public class UserEventHandler extends AbstractCaseElementHandler {
 		node.setElementId(attrs.getValue("id"));
 		node.setName(attrs.getValue("name"));
 		node.setEventName(attrs.getValue("name"));
-		node.setId(IdGenerator.getIdAsUniqueAsUuid(parser,node));
+		node.setId(IdGenerator.getIdAsUniqueAsUuid(parser, node));
 		((Case) parser.getParent(Case.class)).addPlanItemDefinition(node);
 		return node;
 	}

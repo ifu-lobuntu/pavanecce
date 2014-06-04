@@ -14,8 +14,8 @@ import org.xml.sax.SAXException;
 public class ApplicabilityRuleHandler extends AbstractTableItemHandler implements Handler {
 	public ApplicabilityRuleHandler() {
 		super();
-		validParents=new HashSet<Class<?>>();
-		validPeers=new HashSet<Class<?>>();
+		validParents = new HashSet<Class<?>>();
+		validPeers = new HashSet<Class<?>>();
 		super.validParents.add(null);
 		super.validParents.add(PlanningTable.class);
 		super.validPeers.add(null);

@@ -13,17 +13,17 @@ public class SourceFolderDefinition {
 		super();
 		this.sourceFolderNameStrategy = sourceFolderNameStrategy;
 		this.sourceFolderQualifier = sourceFolderQualifier;
-		this.appendVersionNumber=appendVersionNumber;
+		this.appendVersionNumber = appendVersionNumber;
 	}
 
 	public SourceFolderDefinition(SourceFolderNameStrategy sourceFolderNameStrategy, String sourceFolderQualifier) {
-		this(sourceFolderNameStrategy,sourceFolderQualifier,false);
+		this(sourceFolderNameStrategy, sourceFolderQualifier, false);
 	}
 
 	public String generateSourceFolderName(String modelIdentifier, VersionNumber versionNumber) {
 		String result = sourceFolderNameStrategy.sourceFolderName(sourceFolderQualifier, modelIdentifier);
-		if(this.appendVersionNumber){
-			result=result+versionNumber.getSuffix();
+		if (this.appendVersionNumber) {
+			result = result + versionNumber.getSuffix();
 		}
 		return result;
 	}

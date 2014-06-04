@@ -11,6 +11,7 @@ import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceContainer;
 public class DefaultJoinInstance extends JoinInstance implements EventNodeInstanceInterface {
 	private static final long serialVersionUID = -8715207082336857538L;
 	private transient boolean isInitializing = false;
+
 	public DefaultJoinInstance() {
 	}
 

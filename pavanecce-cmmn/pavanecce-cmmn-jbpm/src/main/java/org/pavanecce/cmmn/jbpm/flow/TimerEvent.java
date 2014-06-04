@@ -17,8 +17,9 @@ public class TimerEvent extends AbstractPlanItemDefinition {
 	}
 
 	public void setStartTrigger(OnPart part) {
-		this.startTrigger=part;
+		this.startTrigger = part;
 	}
+
 	public OnPart getStartTrigger() {
 		return startTrigger;
 	}

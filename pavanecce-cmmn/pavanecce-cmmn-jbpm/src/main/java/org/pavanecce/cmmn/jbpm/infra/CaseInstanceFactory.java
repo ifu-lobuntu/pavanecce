@@ -41,7 +41,7 @@ import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 
 public class CaseInstanceFactory extends AbstractProcessInstanceFactory implements Externalizable {
-	private static final long serialVersionUID = 510l;
+	private static final long serialVersionUID = 510L;
 
 	@Override
 	public ProcessInstance createProcessInstance() {
@@ -57,7 +57,8 @@ public class CaseInstanceFactory extends AbstractProcessInstanceFactory implemen
 	}
 
 	@Override
-	public ProcessInstance createProcessInstance(Process process, CorrelationKey correlationKey, InternalKnowledgeRuntime kruntime, Map<String, Object> parameters) {
+	public ProcessInstance createProcessInstance(Process process, CorrelationKey correlationKey, InternalKnowledgeRuntime kruntime,
+			Map<String, Object> parameters) {
 		CaseInstance processInstance = (CaseInstance) createProcessInstance();
 		processInstance.setKnowledgeRuntime(kruntime);
 		processInstance.setProcess(process);

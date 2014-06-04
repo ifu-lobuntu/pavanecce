@@ -46,8 +46,6 @@ public class JcrCaseSubscriptionInfo extends AbstractCaseSubscriptionInfo<JcrCas
 		}
 	}
 
-
-
 	public void setPath(String path) {
 		this.path = path;
 	}

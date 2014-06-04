@@ -5,8 +5,9 @@ import java.util.Iterator;
 
 public abstract class ManyToManyCollection<P, C> extends TwoWayCollection<C> implements Collection<C> {
 	private P parent;
+
 	public ManyToManyCollection(P parent2) {
-		this.parent=parent2;
+		this.parent = parent2;
 	}
 
 	protected abstract ManyToManyCollection<C, P> getOtherEnd(C child);

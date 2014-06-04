@@ -14,7 +14,7 @@ public class TextWorkspace extends TextOutputNode {
 	public TextWorkspace(String qualifiedWorkspaceIdentifier) {
 		super(qualifiedWorkspaceIdentifier);
 		String[] split = qualifiedWorkspaceIdentifier.split("\\.");
-		this.workspaceIdentifier = split[split.length-1];
+		this.workspaceIdentifier = split[split.length - 1];
 		this.qualifiedWorkspaceIdentifier = qualifiedWorkspaceIdentifier;
 	}
 
@@ -54,7 +54,6 @@ public class TextWorkspace extends TextOutputNode {
 	public boolean hasContent() {
 		return projects.size() > 0;
 	}
-
 
 	public TextProject createExistingTextProject(String name) {
 		TextProject result = findOrCreateTextProject(name);

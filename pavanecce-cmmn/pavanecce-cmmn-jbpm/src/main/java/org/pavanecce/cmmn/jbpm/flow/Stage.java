@@ -26,7 +26,6 @@ public class Stage extends AbstractPlanItemDefinition implements PlanItemContain
 
 	private PlanningTable planningTable;
 
-
 	public Work getWork() {
 		Work work = new WorkImpl();
 		work.setName("Human Task");
@@ -39,6 +38,7 @@ public class Stage extends AbstractPlanItemDefinition implements PlanItemContain
 		parameterDefinitions.add(new ParameterDefinitionImpl("Content", new StringDataType()));
 		return work;
 	}
+
 	@Override
 	public Node superGetNode(long id) {
 		return super.getNode(id);
@@ -48,18 +48,19 @@ public class Stage extends AbstractPlanItemDefinition implements PlanItemContain
 	public StartNode getDefaultStart() {
 		return defaultStart;
 	}
+
 	@Override
 	public Node getNode(long id) {
 		Node node = super.getNode(id);
-		if(node==null && getPlanningTable()!=null){
+		if (node == null && getPlanningTable() != null) {
 			node = getPlanningTable().getNode(id);
-			if(node ==null){
+			if (node == null) {
 				for (PlanItemInfo<?> pii : getPlanItemInfo()) {
-					if(pii.getDefinition() instanceof HumanTask){
+					if (pii.getDefinition() instanceof HumanTask) {
 						HumanTask ht = (HumanTask) pii.getDefinition();
-						if(ht.getPlanningTable()!=null){
-							node=ht.getPlanningTable().getNode(id);
-							if(node !=null){
+						if (ht.getPlanningTable() != null) {
+							node = ht.getPlanningTable().getNode(id);
+							if (node != null) {
 								break;
 							}
 						}
@@ -69,6 +70,7 @@ public class Stage extends AbstractPlanItemDefinition implements PlanItemContain
 		}
 		return node;
 	}
+
 	@Override
 	public void setDefaultStart(StartNode defaultStart) {
 		this.defaultStart = defaultStart;
@@ -104,7 +106,6 @@ public class Stage extends AbstractPlanItemDefinition implements PlanItemContain
 		this.defaultJoin = defaultJoin;
 	}
 
-
 	@Override
 	public void addPlanItemInfo(PlanItemInfo<?> d) {
 		planItemInfo.add(d);
@@ -124,7 +125,7 @@ public class Stage extends AbstractPlanItemDefinition implements PlanItemContain
 	}
 
 	public void setPlanningTable(PlanningTable planningTable) {
-		this.planningTable=planningTable;
+		this.planningTable = planningTable;
 		planningTable.setPlanItemContainer(this);
 	}
 

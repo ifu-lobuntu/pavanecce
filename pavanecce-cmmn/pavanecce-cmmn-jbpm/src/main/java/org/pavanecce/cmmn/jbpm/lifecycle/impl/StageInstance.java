@@ -24,8 +24,8 @@ import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceContainer;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanningTableContainerInstance;
 
-public class StageInstance extends ControllableItemInstanceImpl<Stage, TaskItemWithDefinition<Stage>> implements PlanItemInstanceContainer, NodeInstanceContainer,
-		EventNodeInstanceInterface, EventBasedNodeInstanceInterface, ContextInstanceContainer {
+public class StageInstance extends ControllableItemInstanceImpl<Stage, TaskItemWithDefinition<Stage>> implements PlanItemInstanceContainer,
+		NodeInstanceContainer, EventNodeInstanceInterface, EventBasedNodeInstanceInterface, ContextInstanceContainer {
 
 	private static final long serialVersionUID = 112341234123L;
 
@@ -61,7 +61,7 @@ public class StageInstance extends ControllableItemInstanceImpl<Stage, TaskItemW
 	@Override
 	protected String getIdealRoles() {
 		String bas = getBusinessAdministrators();
-		if(bas.equals("Administrators") && getCaseInstance().getCaseOwner()!=null){
+		if (bas.equals("Administrators") && getCaseInstance().getCaseOwner() != null) {
 			return getCaseInstance().getCaseOwner();
 		}
 		return bas;
@@ -133,6 +133,7 @@ public class StageInstance extends ControllableItemInstanceImpl<Stage, TaskItemW
 	public PlanningTableContainerInstance findPlanningTableContainerInstance(long containerWorkItemId) {
 		return PlanItemInstanceContainerUtil.findPlanElementWithPlanningTable(this, containerWorkItemId);
 	}
+
 	@Override
 	public void makeDiscretionaryItemAvailable(String discretionaryItemId) {
 		PlanningTableContainerInstanceUtil.makeDiscretionaryItemAvailable(this, discretionaryItemId);

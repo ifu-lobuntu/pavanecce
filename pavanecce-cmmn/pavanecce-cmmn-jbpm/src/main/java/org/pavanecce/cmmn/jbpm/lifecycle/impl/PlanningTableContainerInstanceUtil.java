@@ -25,9 +25,11 @@ import org.pavanecce.cmmn.jbpm.lifecycle.PlanningTableContainerInstance;
 public class PlanningTableContainerInstanceUtil {
 	public static void makeDiscretionaryItemAvailable(PlanningTableContainerInstance ptc, String discretionaryItemId) {
 		DiscretionaryItem<?> di = ptc.getPlanningTable().getDiscretionaryItemById(discretionaryItemId);
-		PlanItemInstanceFactoryNodeInstance<?> ni = (PlanItemInstanceFactoryNodeInstance<?>) ptc.getPlanItemInstanceCreator().getFirstNodeInstance(di.getFactoryNode().getId());
+		PlanItemInstanceFactoryNodeInstance<?> ni = (PlanItemInstanceFactoryNodeInstance<?>) ptc.getPlanItemInstanceCreator().getFirstNodeInstance(
+				di.getFactoryNode().getId());
 		ni.setIncludedByDiscretion(true);
 	}
+
 	public static WorkItem createPlannedTask(PlanningTableContainerInstance ptc, String discretionaryItemId) {
 		if (ptc != null && ptc.getPlanningTable() != null) {
 			NodeInstance contextNodeInstance = ptc.getPlanningContextNodeInstance();
@@ -79,7 +81,8 @@ public class PlanningTableContainerInstanceUtil {
 		}
 	}
 
-	private static void addApplicableItems(PlanningTableContainerInstance container, Map<String, ApplicableDiscretionaryItem> target, Set<String> usersRoles, PlanningTable currentTable) {
+	private static void addApplicableItems(PlanningTableContainerInstance container, Map<String, ApplicableDiscretionaryItem> target, Set<String> usersRoles,
+			PlanningTable currentTable) {
 		for (TableItem ti : currentTable.getTableItems()) {
 			if (isAuthorized(usersRoles, ti.getAuthorizedRoles()) && ExpressionUtil.isApplicable(ti, container.getPlanningContextNodeInstance())) {
 				if (ti instanceof DiscretionaryItem<?>) {

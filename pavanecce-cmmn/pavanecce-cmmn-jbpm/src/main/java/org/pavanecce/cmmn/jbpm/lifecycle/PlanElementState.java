@@ -377,5 +377,4 @@ public enum PlanElementState {
 		return false;
 	}
 
-
 }

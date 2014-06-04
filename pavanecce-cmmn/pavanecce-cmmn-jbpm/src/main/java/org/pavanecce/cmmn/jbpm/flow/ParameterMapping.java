@@ -53,13 +53,15 @@ public class ParameterMapping implements Serializable, CMMNElement {
 	public Constraint getTransformation() {
 		return transformation;
 	}
-	public ReturnValueEvaluator getTransformer(){
-		if(transformation instanceof ReturnValueConstraintEvaluator){
+
+	public ReturnValueEvaluator getTransformer() {
+		if (transformation instanceof ReturnValueConstraintEvaluator) {
 			return ((ReturnValueConstraintEvaluator) transformation).getReturnValueEvaluator();
-		}else{
+		} else {
 			return null;
 		}
 	}
+
 	public void setTransformation(Constraint transformation) {
 		this.transformation = transformation;
 	}

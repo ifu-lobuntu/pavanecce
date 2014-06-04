@@ -1,4 +1,4 @@
 package org.pavanecce.common.text.workspace;
 
-public interface ISourceFolderIdentifier{
+public interface ISourceFolderIdentifier {
 }

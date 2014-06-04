@@ -1,6 +1,5 @@
 package org.pavanecce.cmmn.jbpm.flow;
 
-
 public class MilestonePlanItem extends AbstractPlanItem<Milestone> implements MultiInstancePlanItem {
 
 	private static final long serialVersionUID = -1183275791860455366L;

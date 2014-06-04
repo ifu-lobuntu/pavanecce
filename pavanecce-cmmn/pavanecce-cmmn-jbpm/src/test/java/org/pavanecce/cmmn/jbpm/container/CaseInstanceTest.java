@@ -59,6 +59,7 @@ public class CaseInstanceTest extends AbstractPlanItemInstanceContainerLifecycle
 		// assertPlanItemInState(caseInstance.getId(), "TheCaseTaskPlanItem", PlanElementState.ACTIVE);
 
 	}
+
 	protected void testCloseAndOutput(PlanItemInstanceContainer piic) {
 		// and close it
 		if (piic instanceof CaseInstance) {
@@ -67,10 +68,11 @@ public class CaseInstanceTest extends AbstractPlanItemInstanceContainerLifecycle
 			ci.signalEvent(DefaultJoin.CLOSE, new Object());
 			assertEquals(PlanElementState.CLOSED, ci.getPlanElementState());
 			assertNull(getRuntimeEngine().getKieSession().getProcessInstance(caseInstance.getId()));
-			Task task = getTaskService().getTaskByWorkItemId(caseInstance.getId());
+			Task task = getTaskService().getTaskByWorkItemId(caseInstance.getWorkItemId());
 			Content output = getTaskService().getContentById(task.getTaskData().getOutputContentId());
 			ContentMarshallerContext mc = getTaskService().getMarshallerContext(task);
-			Map<String,Object> result=(Map<String, Object>) ContentMarshallerHelper.unmarshall(output.getContent(), mc.getEnvironment(), mc.getClassloader());
+			Map<String, Object> result = (Map<String, Object>) ContentMarshallerHelper
+					.unmarshall(output.getContent(), mc.getEnvironment(), mc.getClassloader());
 			assertTrue(result.get("theResultingWallPlan") instanceof WallPlan);
 			getPersistence().commit();
 		}
@@ -81,7 +83,7 @@ public class CaseInstanceTest extends AbstractPlanItemInstanceContainerLifecycle
 	protected void ensurePlanItemContainerIsStarted() {
 
 	}
-	
+
 	@Override
 	public String getCaseName() {
 		return "CaseInstanceTests";

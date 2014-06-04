@@ -129,6 +129,7 @@ public class JpaObjectPersistence implements ObjectPersistence {
 		if (em.get() != null && em.get().isOpen()) {
 			em.get().close();
 		}
+		this.startedTransaction = false;
 	}
 
 	@Override

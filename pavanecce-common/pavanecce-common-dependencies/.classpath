@@ -57,7 +57,7 @@
 	<classpathentry exported="true" kind="lib" path="libs/kie-internal.jar" sourcepath="libs/kie-internal-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/xstream.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/hibernate-jpa-2.0-api.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/javaee-api.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/javaee-api.jar" sourcepath="libs/javaee-api-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/protobuf-java.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/joda-time.jar" sourcepath="libs/joda-time-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/mvel2.jar"/>

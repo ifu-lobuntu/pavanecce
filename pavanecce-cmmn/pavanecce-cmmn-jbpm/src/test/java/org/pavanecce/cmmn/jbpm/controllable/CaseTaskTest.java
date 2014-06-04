@@ -144,11 +144,12 @@ public class CaseTaskTest extends AbstractControllableLifecycleTest {
 		assertEquals(5, this.housePlan.getWallPlans().size());
 		assertEquals(newRoofPlan, this.housePlan.getRoofPlan());
 		getPersistence().commit();
-		//Check the task's result
+		// Check the task's result
 		Task task = getTaskService().getTaskById(taskId);
 		Content outputContent = getTaskService().getContentById(task.getTaskData().getOutputContentId());
 		getPersistence().start();
-		Map<String, Object> outputAsMap = (Map<String, Object>) ContentMarshallerHelper.unmarshall(outputContent.getContent(), getTaskService().getMarshallerContext(task).getEnvironment());
+		Map<String, Object> outputAsMap = (Map<String, Object>) ContentMarshallerHelper.unmarshall(outputContent.getContent(), getTaskService()
+				.getMarshallerContext(task).getEnvironment());
 		Collection<WallPlan> wallPlanTaskOutput = (Collection<WallPlan>) outputAsMap.get("wallPlanTaskOutput");
 		assertEquals(3, wallPlanTaskOutput.size());
 		for (WallPlan wallPlan : wallPlanTaskOutput) {

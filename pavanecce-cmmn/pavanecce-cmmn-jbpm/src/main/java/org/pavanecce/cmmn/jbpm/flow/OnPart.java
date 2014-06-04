@@ -14,6 +14,7 @@ import org.pavanecce.cmmn.jbpm.event.CaseEvent;
 
 public abstract class OnPart extends EventNode implements Serializable, CMMNElement {
 	private static final long serialVersionUID = 1403604027414552700L;
+
 	@Override
 	public abstract String getType();
 
@@ -24,6 +25,7 @@ public abstract class OnPart extends EventNode implements Serializable, CMMNElem
 		return Arrays.asList((EventFilter) f);
 
 	}
+
 	public abstract Enum<?> getStandardEvent();
 
 	@Override

@@ -18,23 +18,26 @@ import org.kie.internal.task.api.model.InternalTaskData;
 
 public class ReenableTaskCommand extends TaskCommand<Void> {
 	private static final long serialVersionUID = -8257771889718694139L;
-	public ReenableTaskCommand(long taskId, String userId){
-		super.taskId=taskId;
-		super.userId=userId;
+
+	public ReenableTaskCommand(long taskId, String userId) {
+		super.taskId = taskId;
+		super.userId = userId;
 	}
+
 	@SuppressWarnings("serial")
 	public Void execute(Context cntxt) {
 		TaskServiceEntryPointImpl ts = ((TaskContext) cntxt).getTaskService();
 		Task task = ts.getTaskInstanceById(taskId);
 		InternalTaskData td = (InternalTaskData) task.getTaskData();
-		if(task.getTaskData().getStatus()!=Status.Obsolete){
-			String errorMessage = "Only tasks in the Obselete/Disabled status can be reenabled. Task" + task.getId() + " is " +task.getTaskData().getStatus();
+		if (task.getTaskData().getStatus() != Status.Obsolete) {
+			String errorMessage = "Only tasks in the Obselete/Disabled status can be reenabled. Task" + task.getId() + " is " + task.getTaskData().getStatus();
 			throw new PermissionDeniedException(errorMessage);
 		}
 		User user = ts.getTaskIdentityService().getUserById(userId);
 		ts.getTaskLifecycleEventListeners().select(new AnnotationLiteral<BeforeTaskReenabledEvent>() {
 		}).fire(task);
-		boolean adminAllowed = CommandsUtil.isAllowed(user, getGroupsIds(), (List<OrganizationalEntity>) task.getPeopleAssignments().getBusinessAdministrators());
+		boolean adminAllowed = CommandsUtil.isAllowed(user, getGroupsIds(), (List<OrganizationalEntity>) task.getPeopleAssignments()
+				.getBusinessAdministrators());
 		boolean ownerAllowed = (task.getTaskData().getActualOwner() != null && task.getTaskData().getActualOwner().equals(user));
 		if (!adminAllowed && !ownerAllowed) {
 			String errorMessage = "The user" + user + "is not allowed to Reenable the task " + task.getId();

@@ -24,7 +24,8 @@ import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceLifecycleWithHistory;
  * This class represents the lifecycle of controllablePlanInstances prior to instantiation of the PlanItem in question
  * 
  */
-public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> extends StateNodeInstance implements PlanItemInstanceLifecycleWithHistory<T>, Creatable {
+public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> extends StateNodeInstance implements PlanItemInstanceLifecycleWithHistory<T>,
+		Creatable {
 
 	public static class EmulatedPlanItemInstanceFactoryNode extends PlanItemInstanceFactoryNode {
 		private static final long serialVersionUID = -7156500421241207274L;
@@ -33,13 +34,15 @@ public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> e
 		public EmulatedPlanItemInstanceFactoryNode(PlanItemInstanceFactoryNode node) {
 			this.node = node;
 		}
+
 		@Override
 		public List<Connection> getOutgoingConnections(String type) {
 			return getDefaultOutgoingConnections();
 		}
+
 		@Override
 		public List<Connection> getDefaultOutgoingConnections() {
-			Connection conn = new ConnectionImpl(node, CONNECTION_DEFAULT_TYPE, (Node) this.node.getItemToInstantiate(), CONNECTION_DEFAULT_TYPE){
+			Connection conn = new ConnectionImpl(node, CONNECTION_DEFAULT_TYPE, (Node) this.node.getItemToInstantiate(), CONNECTION_DEFAULT_TYPE) {
 				private static final long serialVersionUID = 1L;
 
 				@Override
@@ -48,7 +51,7 @@ public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> e
 			};
 			return Collections.singletonList(conn);
 		}
-		
+
 	}
 
 	private static final long serialVersionUID = -5291618101988431033L;
@@ -58,7 +61,7 @@ public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> e
 	private boolean isIncludedByDiscretion = false;
 	private PlanElementState planElementState = PlanElementState.INITIAL;
 	private PlanElementState lastBusyState = PlanElementState.NONE;
-	private transient boolean beingTriggered=false;
+	private transient boolean beingTriggered = false;
 
 	public PlanItemInstanceFactoryNodeInstance() {
 	}
@@ -92,8 +95,8 @@ public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> e
 	@Override
 	public PlanItemInstanceFactoryNode getNode() {
 		final PlanItemInstanceFactoryNode node = (PlanItemInstanceFactoryNode) super.getNode();
-		if(beingTriggered &&  node.getItemToInstantiate() instanceof DiscretionaryItem && isIncludedByDiscretion){
-			//Fake an outgoing connectiong
+		if (beingTriggered && node.getItemToInstantiate() instanceof DiscretionaryItem && isIncludedByDiscretion) {
+			// Fake an outgoing connectiong
 			return new EmulatedPlanItemInstanceFactoryNode(node);
 		}
 		return node;
@@ -104,9 +107,9 @@ public class PlanItemInstanceFactoryNodeInstance<T extends PlanItemDefinition> e
 		if (!isInactive() && !isExcludedByDiscretion() && (isRepeating() || !isHasPlanItemBeenInstantiatedYet())) {
 			super.internalTrigger(from, type);
 			hasPlanItemBeenInstantiated = true;
-			beingTriggered=true;
+			beingTriggered = true;
 			triggerCompleted(NodeImpl.CONNECTION_DEFAULT_TYPE, false);
-			beingTriggered=false;
+			beingTriggered = false;
 			setLastBusyState(getPlanElementState());
 		}
 	}

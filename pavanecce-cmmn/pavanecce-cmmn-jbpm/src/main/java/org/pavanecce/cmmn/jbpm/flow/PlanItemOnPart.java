@@ -14,25 +14,32 @@ public class PlanItemOnPart extends OnPart implements Serializable {
 	public PlanItemTransition getStandardEvent() {
 		return standardEvent;
 	}
+
 	public void setStandardEvent(PlanItemTransition transition) {
 		this.standardEvent = transition;
 	}
+
 	public PlanItem<?> getSourcePlanItem() {
 		return planSourceItem;
 	}
+
 	public void setSourcePlanItem(PlanItem<?> planItem) {
 		this.planSourceItem = planItem;
 	}
+
 	public void setSourceRef(String value) {
-		this.sourceRef=value;
+		this.sourceRef = value;
 	}
+
 	public String getSourceRef() {
 		return sourceRef;
 	}
+
 	@Override
 	public String getType() {
-		return getType(this.planSourceItem.getName(),standardEvent);
+		return getType(this.planSourceItem.getName(), standardEvent);
 	}
+
 	@Override
 	public CaseEvent createEvent(Object peek) {
 		return new PlanItemEvent(planSourceItem.getName(), getStandardEvent(), peek);

@@ -18,7 +18,7 @@ public class IdGenerator {
 	public static long next(ExtensibleXmlParser p) {
 		Long object = (Long) p.getMetaData().get("HighestId");
 		if (object == null) {
-			object = 20l;
+			object = 20L;
 		}
 		object++;
 		p.getMetaData().put("HighestId", object);
@@ -55,7 +55,7 @@ public class IdGenerator {
 		}
 		long abs = Math.abs(result);
 		if (ids.contains(abs)) {
-			logger.info("duplicate found:" +elementId);
+			logger.info("duplicate found:" + elementId);
 		}
 		ids.add(abs);
 		return abs;

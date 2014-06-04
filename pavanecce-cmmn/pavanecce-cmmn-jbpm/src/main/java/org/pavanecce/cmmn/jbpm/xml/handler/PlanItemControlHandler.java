@@ -56,16 +56,16 @@ public class PlanItemControlHandler extends AbstractCaseElementHandler implement
 	public Object end(String uri, String localName, ExtensibleXmlParser parser) throws SAXException {
 		Element el = parser.endElementBuilder();
 		PlanItemControl planItemControl = (PlanItemControl) parser.getCurrent();
-		planItemControl .setManualActivationRule(extractRule(el, "manualActivationRule"));
-		planItemControl .setRepetitionRule(extractRule(el, "repetitionRule"));
-		planItemControl .setRequiredRule(extractRule(el, "requiredRule"));
+		planItemControl.setManualActivationRule(extractRule(el, "manualActivationRule"));
+		planItemControl.setRepetitionRule(extractRule(el, "repetitionRule"));
+		planItemControl.setRequiredRule(extractRule(el, "requiredRule"));
 		return parser.getCurrent();
 	}
 
 	protected ConstraintImpl extractRule(Element el, String epxressionElementName3) {
 		NodeList elems = el.getElementsByTagName(epxressionElementName3);
-		if(elems.getLength()==1){
-			Element  rule=(Element) elems.item(0);
+		if (elems.getLength() == 1) {
+			Element rule = (Element) elems.item(0);
 			return ConstraintExtractor.extractExpression(rule, "condition");
 		}
 		return null;

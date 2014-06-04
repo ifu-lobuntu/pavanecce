@@ -12,7 +12,7 @@ import org.drools.core.process.core.impl.ParameterDefinitionImpl;
 import org.drools.core.process.core.impl.WorkImpl;
 import org.jbpm.services.task.wih.util.PeopleAssignmentHelper;
 
-public class HumanTask extends AbstractPlanItemDefinition implements TaskDefinition,PlanningTableContainer {
+public class HumanTask extends AbstractPlanItemDefinition implements TaskDefinition, PlanningTableContainer {
 	private String performerRef;
 	private Role performer;
 	private boolean isBlocking;

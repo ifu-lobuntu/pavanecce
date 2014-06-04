@@ -11,11 +11,12 @@ public class MilestoneTest extends AbstractOccurrableTestCase {
 	public MilestoneTest() {
 		super(true, true, "org.jbpm.persistence.jpa");
 	}
+
 	@Test
 	public void testRepeat() throws Exception {
-		// *****GIVEN 
+		// *****GIVEN
 		givenThatTheTestCaseIsStarted();
-		//WHEN
+		// WHEN
 		triggerOccurrence();
 		// *****THEN
 		assertPlanItemInState(caseInstance.getId(), "TheOccurrablePlanItem", PlanElementState.COMPLETED, 1);
@@ -31,6 +32,7 @@ public class MilestoneTest extends AbstractOccurrableTestCase {
 		assertNodeTriggered(caseInstance.getId(), "TaskEnteredOnOccurrenceOfOccurrablePlanItem");
 		assertPlanItemInState(caseInstance.getId(), "TaskEnteredOnOccurrenceOfOccurrablePlanItem", PlanElementState.ENABLED);
 	}
+
 	@Override
 	protected void triggerOccurrence() throws Exception {
 		getPersistence().start();
@@ -39,6 +41,7 @@ public class MilestoneTest extends AbstractOccurrableTestCase {
 		caseInstance.signalEvent("TheUserEvent", new Object());
 		getPersistence().commit();
 	}
+
 	@Override
 	public String getProcessFile() {
 		return "test/occurrable/MilestoneTests.cmmn";

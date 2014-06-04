@@ -26,8 +26,6 @@ public class CaseTaskPlanItem extends AbstractPlanItem<CaseTask> implements Mult
 		return factoryNode;
 	}
 
-
-
 	public Work getWork() {
 		if (work == null) {
 			work = new WorkImpl();

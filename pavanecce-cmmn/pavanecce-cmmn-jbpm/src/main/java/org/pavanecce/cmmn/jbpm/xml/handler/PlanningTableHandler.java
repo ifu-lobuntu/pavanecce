@@ -58,13 +58,13 @@ public class PlanningTableHandler extends AbstractTableItemHandler implements Ha
 		parser.startElementBuilder(localName, attrs);
 		PlanningTable table = new PlanningTable();
 		super.populateCommonItems(attrs, table);
-		table.setId(IdGenerator.getIdAsUniqueAsUuid(parser,table));
+		table.setId(IdGenerator.getIdAsUniqueAsUuid(parser, table));
 		Object parent = parser.getParent();
 		if (parent instanceof PlanningTable) {
 			((PlanningTable) parent).addTableItem(table);
-		}else if(parent instanceof PlanItemContainer){
+		} else if (parent instanceof PlanItemContainer) {
 			((PlanItemContainer) parent).setPlanningTable(table);
-		}else if(parent instanceof HumanTask){
+		} else if (parent instanceof HumanTask) {
 			((HumanTask) parent).setPlanningTable(table);
 		}
 		return table;
@@ -76,10 +76,10 @@ public class PlanningTableHandler extends AbstractTableItemHandler implements Ha
 		PlanningTable table = (PlanningTable) parser.getCurrent();
 		Collection<ApplicabilityRule> applicabilityRules = table.getOwnedApplicabilityRules();
 		for (TableItem ti : table.getTableItems()) {
-			//TODO recursively? Check with OMG
+			// TODO recursively? Check with OMG
 			for (Entry<String, ApplicabilityRule> entry : ti.getApplicabilityRules().entrySet()) {
 				for (ApplicabilityRule rule : applicabilityRules) {
-					if(entry.getValue()==null && entry.getKey().equals(rule.getElementId())){
+					if (entry.getValue() == null && entry.getKey().equals(rule.getElementId())) {
 						entry.setValue(rule);
 						break;
 					}

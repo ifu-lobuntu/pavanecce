@@ -8,16 +8,16 @@ import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
 import org.pavanecce.cmmn.jbpm.event.AbstractCaseSubscriptionInfo;
 
-@Node(discriminator=false,jcrType="i:caseSubscriptionInfo")
+@Node(discriminator = false, jcrType = "i:caseSubscriptionInfo")
 public class OcmCaseSubscriptionInfo extends AbstractCaseSubscriptionInfo<OcmCaseFileItemSubscriptionInfo> {
 	private OcmCaseSubscriptionKey id;
-	@Field(path=true)
+	@Field(path = true)
 	private String path;
-	@Collection(jcrName="i:caseFileItemSubscriptions",jcrElementName="i:caseFileItemSubscriptions")
+	@Collection(jcrName = "i:caseFileItemSubscriptions", jcrElementName = "i:caseFileItemSubscriptions")
 	private Set<OcmCaseFileItemSubscriptionInfo> caseFileItemSubscriptions = new HashSet<OcmCaseFileItemSubscriptionInfo>();
 
 	public OcmCaseSubscriptionKey getId() {
-		if(id==null && path!=null){
+		if (id == null && path != null) {
 			id = new OcmCaseSubscriptionKey(path);
 		}
 		return id;
@@ -28,7 +28,7 @@ public class OcmCaseSubscriptionInfo extends AbstractCaseSubscriptionInfo<OcmCas
 
 	public OcmCaseSubscriptionInfo(Object o) {
 		this.id = new OcmCaseSubscriptionKey(o);
-		path="/subscriptions/"+id.toString();
+		path = "/subscriptions/" + id.toString();
 	}
 
 	public String getPath() {

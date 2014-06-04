@@ -5,9 +5,8 @@ import org.pavanecce.cmmn.jbpm.lifecycle.impl.PlanItemInstanceFactoryNodeInstanc
 
 /**
  * An interface representing all node instances that could have a history state inside it, and reacts to parentResume
- * and parentSuspend to manipulate the history state. An obvious sub-interface is the
- * {@link ControllableItemInstance}, but the {@link PlanItemInstanceFactoryNodeInstance} is also required to
- * store the history state
+ * and parentSuspend to manipulate the history state. An obvious sub-interface is the {@link ControllableItemInstance},
+ * but the {@link PlanItemInstanceFactoryNodeInstance} is also required to store the history state
  */
 public interface PlanItemInstanceLifecycleWithHistory<T extends PlanItemDefinition> extends PlanItemInstance<T> {
 	/**

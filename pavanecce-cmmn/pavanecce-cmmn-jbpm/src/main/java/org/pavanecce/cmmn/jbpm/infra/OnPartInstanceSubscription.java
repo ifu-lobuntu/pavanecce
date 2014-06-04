@@ -27,7 +27,8 @@ public class OnPartInstanceSubscription extends AbstractCaseFileItemSubscription
 
 	public OnPartInstanceSubscription(OnPartInstance source, CaseParameter caseParameter) {
 		super();
-//		InternalRuntimeManager manager = (InternalRuntimeManager) source.getCaseInstance().getKnowledgeRuntime().getEnvironment().get("RuntimeManager");
+		// InternalRuntimeManager manager = (InternalRuntimeManager)
+		// source.getCaseInstance().getKnowledgeRuntime().getEnvironment().get("RuntimeManager");
 		this.subscribingParameters.add(caseParameter);
 		kr = source.getProcessInstance().getKnowledgeRuntime();
 		this.source = (CaseFileItemOnPart) source.getOnPart();

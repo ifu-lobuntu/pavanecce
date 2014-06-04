@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 public class TextFileGenerator extends DefaultTextFileVisitor {
 	Logger logger = LoggerFactory.getLogger(getClass());
-	private Set<File> newFiles=new HashSet<File>();
+	private Set<File> newFiles = new HashSet<File>();
 
 	public TextFileGenerator(File mappedRoot) {
 		initialize(mappedRoot);
@@ -70,7 +70,7 @@ public class TextFileGenerator extends DefaultTextFileVisitor {
 	@Override
 	public void visitSourceFolder(SourceFolder n) {
 		visitTextFileDirectory(n);
-		
+
 	}
 
 	public Set<File> getNewFiles() {

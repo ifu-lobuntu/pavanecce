@@ -15,6 +15,7 @@ public class Sentry extends Join implements CMMNElement {
 	private ItemWithDefinition<?> planItemExiting;
 	private ItemWithDefinition<?> planItemEntering;
 	private boolean exitsCase;
+
 	public Sentry() {
 		setType(TYPE_AND);
 	}
@@ -66,10 +67,10 @@ public class Sentry extends Join implements CMMNElement {
 	}
 
 	public PlanItemContainer getPlanItemContainer() {
-		if(planItemEntering!=null){
+		if (planItemEntering != null) {
 			return planItemEntering.getPlanItemContainer();
 		}
-		if(planItemExiting!=null){
+		if (planItemExiting != null) {
 			return planItemExiting.getPlanItemContainer();
 		}
 		return null;

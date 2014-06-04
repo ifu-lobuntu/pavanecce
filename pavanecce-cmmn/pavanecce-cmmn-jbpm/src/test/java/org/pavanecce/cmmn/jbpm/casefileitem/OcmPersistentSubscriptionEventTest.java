@@ -22,8 +22,9 @@ public class OcmPersistentSubscriptionEventTest extends CaseFileItemEventTest {
 	{
 		super.isJpa = false;
 	}
+
 	@Before
-	public void before() throws Exception{
+	public void before() throws Exception {
 		OcmObjectPersistence p = new OcmObjectPersistence(getOcmFactory());
 		removeChildren(p, "/cases");
 		removeChildren(p, "/subscriptions");
@@ -48,7 +49,7 @@ public class OcmPersistentSubscriptionEventTest extends CaseFileItemEventTest {
 	}
 
 	@Test
-	public void testModel() throws Exception{
+	public void testModel() throws Exception {
 		OcmObjectPersistence p = new OcmObjectPersistence(getOcmFactory());
 		ConstructionCase constructionCase = new ConstructionCase("/cases/case1");
 		constructionCase.setName("MyConstructionCase");
@@ -62,19 +63,19 @@ public class OcmPersistentSubscriptionEventTest extends CaseFileItemEventTest {
 		new Wall(house);
 		new RoofPlan(housePlan);
 		p.persist(constructionCase);
-		//TODO figure out why this is necessary
+		// TODO figure out why this is necessary
 		house.setRoofPlan(housePlan.getRoofPlan());
 		p.update(house);
 		p.commit();
-		constructionCase=p.find(ConstructionCase.class, constructionCase.getId());
+		constructionCase = p.find(ConstructionCase.class, constructionCase.getId());
 		assertEquals("MyConstructionCase", constructionCase.getName());
 		assertEquals("MyHouse", constructionCase.getHouse().getDescription());
 		assertNotNull(constructionCase.getHousePlan());
 		assertNotNull(constructionCase.getHousePlan().getRoofPlan());
 		assertNotNull(constructionCase.getHouse().getRoofPlan());
-		assertSame(constructionCase.getHousePlan().getRoofPlan(),constructionCase.getHouse().getRoofPlan());
+		assertSame(constructionCase.getHousePlan().getRoofPlan(), constructionCase.getHouse().getRoofPlan());
 		assertEquals(3, constructionCase.getHouse().getWalls().size());
 		assertEquals(2, constructionCase.getHousePlan().getWallPlans().size());
-		
+
 	}
 }

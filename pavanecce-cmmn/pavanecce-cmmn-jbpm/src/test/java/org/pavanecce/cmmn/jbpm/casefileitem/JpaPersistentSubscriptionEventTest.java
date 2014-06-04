@@ -14,6 +14,7 @@ public class JpaPersistentSubscriptionEventTest extends CaseFileItemEventTest {
 	{
 		super.isJpa = true;
 	}
+
 	@Test
 	public void testModel() throws Exception {
 		JpaObjectPersistence p = new JpaObjectPersistence(getEmf());

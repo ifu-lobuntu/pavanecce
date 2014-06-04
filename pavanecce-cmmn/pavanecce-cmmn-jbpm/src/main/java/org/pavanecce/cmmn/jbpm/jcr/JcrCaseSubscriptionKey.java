@@ -7,6 +7,7 @@ import java.io.Serializable;
 import javax.jcr.Node;
 
 import org.pavanecce.cmmn.jbpm.event.CaseSubscriptionKey;
+
 public class JcrCaseSubscriptionKey implements Serializable, CaseSubscriptionKey {
 	/**
 	 * 
@@ -27,7 +28,7 @@ public class JcrCaseSubscriptionKey implements Serializable, CaseSubscriptionKey
 
 	public JcrCaseSubscriptionKey(Object object) {
 		try {
-			Node node =(Node) object;
+			Node node = (Node) object;
 			this.id = node.getIdentifier();
 			this.nodeTypeName = node.getPrimaryNodeType().getName();
 		} catch (Exception e) {

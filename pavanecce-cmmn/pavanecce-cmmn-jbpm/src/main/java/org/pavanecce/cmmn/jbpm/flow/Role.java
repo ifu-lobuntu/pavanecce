@@ -2,7 +2,7 @@ package org.pavanecce.cmmn.jbpm.flow;
 
 import java.io.Serializable;
 
-public class Role implements Serializable ,CMMNElement{
+public class Role implements Serializable, CMMNElement {
 	/**
 	 * 
 	 */
@@ -19,9 +19,10 @@ public class Role implements Serializable ,CMMNElement{
 	}
 
 	public void setElementId(String value) {
-		this.elementId=value;
-		
+		this.elementId = value;
+
 	}
+
 	@Override
 	public String getElementId() {
 		return elementId;

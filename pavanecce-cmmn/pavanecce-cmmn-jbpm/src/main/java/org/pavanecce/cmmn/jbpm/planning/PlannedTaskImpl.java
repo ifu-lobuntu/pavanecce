@@ -218,8 +218,8 @@ public class PlannedTaskImpl implements InternalPlannedTask {
 
 	@Override
 	public Map<String, Object> getParameterOverrides() {
-		if(parameterOverrides==null){
-			parameterOverrides=new HashMap<String, Object>();
+		if (parameterOverrides == null) {
+			parameterOverrides = new HashMap<String, Object>();
 		}
 		return parameterOverrides;
 	}

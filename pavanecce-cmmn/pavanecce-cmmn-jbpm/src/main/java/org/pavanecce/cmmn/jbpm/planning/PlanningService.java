@@ -30,11 +30,12 @@ public class PlanningService {
 	}
 
 	public void submitPlan(final long parentTaskId, final Collection<PlannedTask> plannedTasks, boolean resume) {
-		taskService.execute(new SubmitPlanCommand(runtimeManager,pm, plannedTasks, parentTaskId, resume));
+		taskService.execute(new SubmitPlanCommand(runtimeManager, pm, plannedTasks, parentTaskId, resume));
 	}
 
 	public PlanningTableInstance startPlanning(final long parentTaskId, String user, boolean suspend) {
-		PlanningTableInstance result = new PlanningTableInstance(getPlannedItemsForParentTask(parentTaskId, true), getApplicableDiscretionaryItems(parentTaskId, user, suspend));
+		PlanningTableInstance result = new PlanningTableInstance(getPlannedItemsForParentTask(parentTaskId, true), getApplicableDiscretionaryItems(
+				parentTaskId, user, suspend));
 		return result;
 	}
 
@@ -50,6 +51,7 @@ public class PlanningService {
 	public PlannedTask preparePlannedTask(final long parentTaskId, final String discretionaryItemId) {
 		return taskService.execute(new PreparePlannedTaskCommand(runtimeManager, pm, discretionaryItemId, parentTaskId));
 	}
+
 	public void makeDiscretionaryItemAvailable(final long parentTaskId, final String discretionaryItemId) {
 		taskService.execute(new MakeDiscretionaryItemAvailableCommand(runtimeManager, pm, discretionaryItemId, parentTaskId));
 	}

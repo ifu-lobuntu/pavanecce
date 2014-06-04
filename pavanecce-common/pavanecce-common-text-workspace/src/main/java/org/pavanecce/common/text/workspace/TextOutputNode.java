@@ -18,11 +18,11 @@ public abstract class TextOutputNode {
 		counts.put(getClass(), getCount() - 1);
 	}
 
-	protected Long getCount(){
+	protected Long getCount() {
 		Long long1 = counts.get(getClass());
-		if(long1==null){
-			return 0l;
-		}else if(long1%100==0){
+		if (long1 == null) {
+			return 0L;
+		} else if (long1 % 100 == 0) {
 			logger.info(getClass().getName() + " count :" + long1);
 		}
 		return long1;

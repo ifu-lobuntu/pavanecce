@@ -8,18 +8,20 @@ import org.jbpm.process.instance.ContextInstanceContainer;
 import org.jbpm.process.instance.ContextableInstance;
 import org.jbpm.process.instance.ProcessInstance;
 import org.jbpm.process.instance.context.variable.VariableScopeInstance;
+
 /**
- * The purpose of this class is to make "special" variables available from the environment
- * TODO find a better way of doing this
+ * The purpose of this class is to make "special" variables available from the environment TODO find a better way of
+ * doing this
+ * 
  * @author ampie
- *
+ * 
  */
 public final class CustomVariableScopeInstance extends VariableScopeInstance {
 	private static final long serialVersionUID = 6026168560982471308L;
-	private ControllableItemInstanceImpl<?,?> node;
+	private ControllableItemInstanceImpl<?, ?> node;
 
-	public CustomVariableScopeInstance(ControllableItemInstanceImpl<?,?> nodeImpl) {
-		this.node=nodeImpl;
+	public CustomVariableScopeInstance(ControllableItemInstanceImpl<?, ?> nodeImpl) {
+		this.node = nodeImpl;
 	}
 
 	@Override
@@ -34,8 +36,8 @@ public final class CustomVariableScopeInstance extends VariableScopeInstance {
 
 	private VariableScopeInstance getDelegate() {
 		VariableScopeInstance result = (VariableScopeInstance) node.getContextInstance(VariableScope.VARIABLE_SCOPE);
-		if(result==null){
-			return (VariableScopeInstance) ((ContextableInstance)node.getNodeInstanceContainer()).getContextInstance(VariableScope.VARIABLE_SCOPE);
+		if (result == null) {
+			return (VariableScopeInstance) ((ContextableInstance) node.getNodeInstanceContainer()).getContextInstance(VariableScope.VARIABLE_SCOPE);
 		}
 		return result;
 	}
@@ -59,10 +61,10 @@ public final class CustomVariableScopeInstance extends VariableScopeInstance {
 			return SentryInstance.getCurrentEvents();
 		}
 		VariableScopeInstance delegate = getDelegate();
-		if(delegate!=null){
+		if (delegate != null) {
 			return delegate.getVariable(name);
-		}else{
-			//TODO find out when this happens
+		} else {
+			// TODO find out when this happens
 			return null;
 		}
 	}

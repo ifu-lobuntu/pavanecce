@@ -56,8 +56,8 @@ public class HumanTaskInstance extends TaskPlanItemInstance<HumanTask, TaskItemW
 			if (owner != null) {
 				getCaseInstance().addRoleAssignment(getItem().getDefinition().getPerformer().getName(), owner);
 			}
-			PlanItemTransition transition=(PlanItemTransition) wi.getResult(TaskParameters.TRANSITION);
-			if(isCompletionTransition(transition)){
+			PlanItemTransition transition = (PlanItemTransition) wi.getResult(TaskParameters.TRANSITION);
+			if (isCompletionTransition(transition)) {
 				for (CaseParameter cp : getItem().getDefinition().getOutputs()) {
 					Object val = wi.getResult(cp.getName());
 					if (val != null) {
@@ -71,7 +71,8 @@ public class HumanTaskInstance extends TaskPlanItemInstance<HumanTask, TaskItemW
 	}
 
 	private boolean isCompletionTransition(PlanItemTransition transition) {
-		boolean isCompletionTransition1=transition==PlanItemTransition.COMPLETE || transition==PlanItemTransition.EXIT || transition==PlanItemTransition.FAULT;
+		boolean isCompletionTransition1 = transition == PlanItemTransition.COMPLETE || transition == PlanItemTransition.EXIT
+				|| transition == PlanItemTransition.FAULT;
 		return isCompletionTransition1;
 	}
 
@@ -106,6 +107,7 @@ public class HumanTaskInstance extends TaskPlanItemInstance<HumanTask, TaskItemW
 	public WorkItem createPlannedItem(String tableItemId) {
 		return PlanningTableContainerInstanceUtil.createPlannedTask(this, tableItemId);
 	}
+
 	@Override
 	public void makeDiscretionaryItemAvailable(String discretionaryItemId) {
 		PlanningTableContainerInstanceUtil.makeDiscretionaryItemAvailable(this, discretionaryItemId);

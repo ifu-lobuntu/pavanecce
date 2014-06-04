@@ -63,9 +63,11 @@ public class CaseTaskLifecycleListener extends ExternalTaskEventListener {
 	public void afterTaskReenabledEvent(@Observes(notifyObserver = Reception.IF_EXISTS) @AfterTaskReenabledEvent Task task) {
 		signalEvent(task, PlanItemTransition.REENABLE);
 	}
+
 	public void afterTaskParentSuspended(@Observes(notifyObserver = Reception.IF_EXISTS) @AfterTaskSuspendedFromParentEvent Task task) {
 		signalEvent(task, PlanItemTransition.PARENT_SUSPEND);
 	}
+
 	public void afterTaskParentResumed(@Observes(notifyObserver = Reception.IF_EXISTS) @AfterTaskResumedFromParentEvent Task task) {
 		signalEvent(task, PlanItemTransition.PARENT_RESUME);
 	}
@@ -121,12 +123,14 @@ public class CaseTaskLifecycleListener extends ExternalTaskEventListener {
 				if (ci.canComplete()) {
 					// TODO read output from CaseInstance
 				} else {
-					throw new IllegalStateException("Task " + task + " represents Case Instance " + ci.getCase().getName() + "[" + ci.getId() + "] which cannot be completed yet");
+					throw new IllegalStateException("Task " + task + " represents Case Instance " + ci.getCase().getName() + "[" + ci.getId()
+							+ "] which cannot be completed yet");
 				}
 			} else {
 				ControllableItemInstance<?> node = ci.findNodeForWorkItem(task.getTaskData().getWorkItemId());
 				if (node instanceof StageInstance && !((StageInstance) node).canComplete()) {
-					throw new IllegalStateException("Task " + task + " represents Stage Instance " + node.getItem().getEffectiveName() + "[" + ci.getId() + "] which cannot be completed yet");
+					throw new IllegalStateException("Task " + task + " represents Stage Instance " + node.getItem().getEffectiveName() + "[" + ci.getId()
+							+ "] which cannot be completed yet");
 				}
 			}
 		}
@@ -186,7 +190,8 @@ public class CaseTaskLifecycleListener extends ExternalTaskEventListener {
 		return getManager(task).getRuntimeEngine(ProcessInstanceIdContext.get(task.getTaskData().getProcessInstanceId()));
 	}
 
-	protected Map<String, Object> buildWorkItemResults(Task task, PlanItemTransition standardEvent, RuntimeEngine runtime, KieSession session, RuntimeManager manager) {
+	protected Map<String, Object> buildWorkItemResults(Task task, PlanItemTransition standardEvent, RuntimeEngine runtime, KieSession session,
+			RuntimeManager manager) {
 		Map<String, Object> results = new HashMap<String, Object>();
 		if (task.getTaskData().getActualOwner() != null) {
 			String userId = task.getTaskData().getActualOwner().getId();

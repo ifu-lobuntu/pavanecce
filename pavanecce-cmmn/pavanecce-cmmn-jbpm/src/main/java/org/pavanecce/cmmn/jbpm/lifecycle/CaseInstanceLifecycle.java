@@ -1,6 +1,6 @@
 package org.pavanecce.cmmn.jbpm.lifecycle;
 
-public interface CaseInstanceLifecycle extends  PlanItemInstanceContainer{
+public interface CaseInstanceLifecycle extends PlanItemInstanceContainer {
 	void close();
 
 }

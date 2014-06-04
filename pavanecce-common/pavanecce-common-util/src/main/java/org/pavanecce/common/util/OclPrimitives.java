@@ -8,6 +8,7 @@ public class OclPrimitives {
 	public static String toUpper(String i) {
 		return i.toUpperCase();
 	}
+
 	public static String toLower(String i) {
 		return i.toLowerCase();
 	}

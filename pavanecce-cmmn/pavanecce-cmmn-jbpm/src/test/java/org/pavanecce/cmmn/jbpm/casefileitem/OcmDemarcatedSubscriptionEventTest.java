@@ -10,15 +10,18 @@ public class OcmDemarcatedSubscriptionEventTest extends OcmPersistentSubscriptio
 	protected AbstractPersistentSubscriptionManager<?, ?> getSubscriptionManager() {
 		return null;
 	}
+
 	@Override
 	protected void maybeStartSubscription() {
 		getPersistence().start();
 		DemarcatedSubscriptionContext.activateSubscriptionsFrom((CaseInstance) getRuntimeEngine().getKieSession().getProcessInstance(caseInstance.getId()));
 	}
+
 	@Override
 	protected void endSubscription() {
 		DemarcatedSubscriptionContext.deactiveSubscriptions();
 	}
+
 	@Test
 	public void testCreationOfObjectInCollectionFileItem() throws Exception {
 		super.testCreationOfObjectInCollectionFileItem();

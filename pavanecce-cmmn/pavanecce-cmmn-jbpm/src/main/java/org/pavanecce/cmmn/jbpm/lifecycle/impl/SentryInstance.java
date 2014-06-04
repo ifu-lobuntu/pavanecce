@@ -37,7 +37,7 @@ public class SentryInstance extends JoinInstance {
 	@Override
 	public void internalTrigger(NodeInstance from, String type) {
 		if (from instanceof DefaultSplitInstance) {
-			//TODO not pretty - dependency on a precending node's type
+			// TODO not pretty - dependency on a precending node's type
 			List<Connection> outgoingConnections = getNode().getOutgoingConnections(NodeImpl.CONNECTION_DEFAULT_TYPE);
 			if (outgoingConnections.isEmpty()) {
 				// an exit criterion
@@ -79,6 +79,9 @@ public class SentryInstance extends JoinInstance {
 				deque.push(getEvents());
 				try {
 					triggerCompleted(org.jbpm.workflow.core.Node.CONNECTION_DEFAULT_TYPE, false);
+				}catch(RuntimeException e){
+					e.printStackTrace();
+					throw e;
 				} finally {
 					deque.pop();
 				}

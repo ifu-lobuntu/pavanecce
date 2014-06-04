@@ -5,6 +5,7 @@ import javax.persistence.EntityManagerFactory;
 import org.kie.api.runtime.manager.RuntimeManager;
 import org.kie.internal.runtime.manager.context.EmptyContext;
 import org.pavanecce.cmmn.jbpm.event.AbstractPersistentSubscriptionManager;
+import org.pavanecce.common.Stopwatch;
 import org.pavanecce.common.jpa.JpaObjectPersistence;
 
 /**
@@ -25,14 +26,15 @@ public class JpaCasePersistence extends JpaObjectPersistence {
 	@Override
 	public void commit() {
 		try {
+			Stopwatch.start();
 			startOrJoinTransaction();
 			getEntityManager().flush();
 			doCaseFileItemEvents();
 			if (startedTransaction) {
 				getTransaction().commit();
-				this.startedTransaction = false;
 				boolean workItemsProcessed = false;
 				do {
+					this.startedTransaction = false;
 					startOrJoinTransaction();
 					workItemsProcessed = AbstractPersistentSubscriptionManager.dispatchWorkItemQueue(runtimeManager.getRuntimeEngine(EmptyContext.get()));
 					if (workItemsProcessed) {
@@ -40,6 +42,7 @@ public class JpaCasePersistence extends JpaObjectPersistence {
 					}
 					getTransaction().commit();
 				} while (workItemsProcessed);
+				this.startedTransaction = false;
 			}
 			close();
 		} catch (Exception e) {

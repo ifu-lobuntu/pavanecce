@@ -36,7 +36,8 @@ import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 import org.pavanecce.common.ObjectPersistence;
 
-public class JcrSubscriptionManager extends AbstractPersistentSubscriptionManager<JcrCaseSubscriptionInfo, JcrCaseFileItemSubscriptionInfo> implements SubscriptionManager, SynchronousEventListener {
+public class JcrSubscriptionManager extends AbstractPersistentSubscriptionManager<JcrCaseSubscriptionInfo, JcrCaseFileItemSubscriptionInfo> implements
+		SubscriptionManager, SynchronousEventListener {
 	private JcrCasePersistence persistence;
 	private JcrObjectPersistenceFactory factory;
 	private ThreadLocal<Set<Node>> updatedNodes = new ThreadLocal<Set<Node>>();
@@ -160,8 +161,8 @@ public class JcrSubscriptionManager extends AbstractPersistentSubscriptionManage
 		}
 	}
 
-	private PropertyNodeInfo determinePropertyNodeInfo(Event event) throws RepositoryException, ItemNotFoundException, AccessDeniedException, NoSuchFieldException, SecurityException,
-			ClassNotFoundException {
+	private PropertyNodeInfo determinePropertyNodeInfo(Event event) throws RepositoryException, ItemNotFoundException, AccessDeniedException,
+			NoSuchFieldException, SecurityException, ClassNotFoundException {
 		String parentPath = event.getPath().substring(0, event.getPath().lastIndexOf("/"));
 		String jcrPropertyName = event.getPath().substring(event.getPath().lastIndexOf("/"));
 		PropertyNodeInfo info = new PropertyNodeInfo();
@@ -319,7 +320,8 @@ public class JcrSubscriptionManager extends AbstractPersistentSubscriptionManage
 		String propertyName = getUnqualifiedPropertyName(jcrPropertyName);
 		for (CaseFileItemSubscriptionInfo si : caseFileItemSubscriptions) {
 			if (si.getTransition() == standardEvent && (si.getRelatedItemName() == null || si.getRelatedItemName().equals(propertyName))) {
-				if (currentNode.hasProperty(jcrPropertyName) && event.getType() == Event.PROPERTY_ADDED && standardEvent == CaseFileItemTransition.ADD_REFERENCE) {
+				if (currentNode.hasProperty(jcrPropertyName) && event.getType() == Event.PROPERTY_ADDED
+						&& standardEvent == CaseFileItemTransition.ADD_REFERENCE) {
 					fireReferenceAddedEvents(currentNode, jcrPropertyName, currentObject, si);
 				} else if (event.getType() == Event.PROPERTY_REMOVED && standardEvent == CaseFileItemTransition.REMOVE_REFERENCE) {
 					fireReferenceRemovedEvents(currentObject, si);
@@ -338,7 +340,8 @@ public class JcrSubscriptionManager extends AbstractPersistentSubscriptionManage
 		}
 	}
 
-	private void fireReferenceAddedEvents(Node currentNode, String jcrPropertyName, Object currentObject, CaseFileItemSubscriptionInfo si) throws RepositoryException, ValueFormatException {
+	private void fireReferenceAddedEvents(Node currentNode, String jcrPropertyName, Object currentObject, CaseFileItemSubscriptionInfo si)
+			throws RepositoryException, ValueFormatException {
 		Property prop = currentNode.getProperty(jcrPropertyName);
 		if (isPropertyMultiple(currentNode, jcrPropertyName)) {
 			Value[] values = prop.getValues();

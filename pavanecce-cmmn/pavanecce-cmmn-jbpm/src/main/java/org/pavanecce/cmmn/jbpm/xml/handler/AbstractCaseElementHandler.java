@@ -26,7 +26,7 @@ public abstract class AbstractCaseElementHandler extends BaseAbstractHandler imp
 		this.validParents = new HashSet<Class<?>>();
 		this.validParents.add(Case.class);
 		super.validParents.add(Stage.class);
-		
+
 		this.validPeers = new HashSet<Class<?>>();
 		this.validPeers.add(null);
 		this.validPeers.add(Sentry.class);

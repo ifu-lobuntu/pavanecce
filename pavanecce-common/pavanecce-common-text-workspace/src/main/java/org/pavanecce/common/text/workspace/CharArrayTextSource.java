@@ -2,26 +2,29 @@ package org.pavanecce.common.text.workspace;
 
 import java.io.CharArrayWriter;
 
-
-public class CharArrayTextSource implements TextSource{
+public class CharArrayTextSource implements TextSource {
 	CharArrayWriter writer;
 	private char[] charArray;
-	public CharArrayTextSource(CharArrayWriter contentWriter){
+
+	public CharArrayTextSource(CharArrayWriter contentWriter) {
 		this.writer = contentWriter;
 	}
-	public CharArrayTextSource(char[] charArray){
+
+	public CharArrayTextSource(char[] charArray) {
 		this.charArray = charArray;
 	}
+
 	@Override
-	public char[] toCharArray(){
-		if(charArray != null){
+	public char[] toCharArray() {
+		if (charArray != null) {
 			return charArray;
-		}else{
+		} else {
 			return writer.toCharArray();
 		}
 	}
+
 	@Override
-	public boolean hasContent(){
+	public boolean hasContent() {
 		return true;
 	}
 }

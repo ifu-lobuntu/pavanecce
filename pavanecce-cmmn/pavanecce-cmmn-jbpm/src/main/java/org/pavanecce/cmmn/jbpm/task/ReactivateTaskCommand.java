@@ -36,7 +36,8 @@ public class ReactivateTaskCommand extends TaskCommand<Void> {
 		User user = ts.getTaskIdentityService().getUserById(userId);
 		ts.getTaskLifecycleEventListeners().select(new AnnotationLiteral<BeforeTaskReactivatedEvent>() {
 		}).fire(task);
-		boolean adminAllowed = CommandsUtil.isAllowed(user, getGroupsIds(), (List<OrganizationalEntity>) task.getPeopleAssignments().getBusinessAdministrators());
+		boolean adminAllowed = CommandsUtil.isAllowed(user, getGroupsIds(), (List<OrganizationalEntity>) task.getPeopleAssignments()
+				.getBusinessAdministrators());
 		boolean ownerAllowed = (task.getTaskData().getActualOwner() != null && task.getTaskData().getActualOwner().equals(user));
 		if (!adminAllowed && !ownerAllowed) {
 			String errorMessage = "The user" + user + "is not allowed to Reenable the task " + task.getId();

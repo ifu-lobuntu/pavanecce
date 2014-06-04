@@ -26,6 +26,7 @@ public class DiscretionaryItem<T extends PlanItemDefinition> extends TableItem i
 	private Map<String, Sentry> entryCriteria = new HashMap<String, Sentry>();
 	private Map<String, Sentry> exitCriteria = new HashMap<String, Sentry>();
 	private PlanItemInstanceFactoryNode factoryNode;
+
 	public Map<String, Sentry> getEntryCriteria() {
 		return Collections.unmodifiableMap(entryCriteria);
 	}
@@ -41,6 +42,7 @@ public class DiscretionaryItem<T extends PlanItemDefinition> extends TableItem i
 		result.setItemToInstantiate(this);
 		return result;
 	}
+
 	public void putEntryCriterion(String s, Sentry c) {
 		entryCriteria.put(s, c);
 	}
@@ -113,13 +115,13 @@ public class DiscretionaryItem<T extends PlanItemDefinition> extends TableItem i
 	}
 
 	public void copyFromDefinition() {
-		long id=this.id;
+		long id = this.id;
 		HashMap<Object, Object> copiedState = new HashMap<Object, Object>();
 		T from = getDefinition();
 		this.setNodeContainer(getParentTable().getFirstPlanItemContainer());
 		copiedState.put(from, this);
 		copy(copiedState, from, this);
-		this.id=id;
+		this.id = id;
 	}
 
 	@Override
@@ -152,19 +154,19 @@ public class DiscretionaryItem<T extends PlanItemDefinition> extends TableItem i
 			entry.getValue().setPlanItemEntering(this);
 			new ConnectionImpl(entry.getValue(), Node.CONNECTION_DEFAULT_TYPE, getFactoryNode(), Node.CONNECTION_DEFAULT_TYPE);
 		}
-		if(!entrySet.isEmpty()){
+		if (!entrySet.isEmpty()) {
 			((NodeContainer) entrySet.iterator().next().getValue().getNodeContainer()).addNode(getFactoryNode());
 		}
 		Set<Entry<String, Sentry>> exitSet = exitCriteria.entrySet();
 		for (Entry<String, Sentry> entry : exitSet) {
 			entry.getValue().setPlanItemExiting(this);
 		}
-//		new ConnectionImpl(getFactoryNode(), Node.CONNECTION_DEFAULT_TYPE, this, Node.CONNECTION_DEFAULT_TYPE);
+		// new ConnectionImpl(getFactoryNode(), Node.CONNECTION_DEFAULT_TYPE, this, Node.CONNECTION_DEFAULT_TYPE);
 	}
 
 	public PlanItemInstanceFactoryNode getFactoryNode() {
-		if(factoryNode==null){
-			factoryNode=createFactoryNode();
+		if (factoryNode == null) {
+			factoryNode = createFactoryNode();
 		}
 		return factoryNode;
 	}

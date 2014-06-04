@@ -13,8 +13,6 @@ public class TableItem extends AbstractItem implements CMMNElement {
 	private String description;
 	private Map<String, ApplicabilityRule> applicabilityRules = new HashMap<String, ApplicabilityRule>();
 
-
-
 	public void putApplicabilityRule(String id, ApplicabilityRule r) {
 		this.applicabilityRules.put(id, r);
 	}
@@ -22,7 +20,6 @@ public class TableItem extends AbstractItem implements CMMNElement {
 	public Map<String, ApplicabilityRule> getApplicabilityRules() {
 		return applicabilityRules;
 	}
-
 
 	public void putAuthorizedRole(String id, Role role) {
 		authorizedRoles.put(id, role);
@@ -33,7 +30,7 @@ public class TableItem extends AbstractItem implements CMMNElement {
 	}
 
 	public static String getPlannerRoles(PlanItem<?> pi) {
-		if(pi.getDefinition() instanceof PlanningTableContainer){
+		if (pi.getDefinition() instanceof PlanningTableContainer) {
 			PlanningTableContainer ptc = (PlanningTableContainer) pi.getDefinition();
 			return getPlannerRoles(ptc.getPlanningTable(), pi.getPlanItemContainer().getPlanningTable());
 		}

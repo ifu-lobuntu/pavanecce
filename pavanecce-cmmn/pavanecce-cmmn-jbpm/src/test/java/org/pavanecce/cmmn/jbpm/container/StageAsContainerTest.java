@@ -39,7 +39,7 @@ public class StageAsContainerTest extends AbstractPlanItemInstanceContainerLifec
 	}
 
 	public StageInstance getStagePlanItemInstance() {
-		StageInstance spii=null;
+		StageInstance spii = null;
 		for (NodeInstance ni : reloadCaseInstance(caseInstance).getNodeInstances()) {
 			if (ni instanceof StageInstance) {
 				spii = (StageInstance) ni;

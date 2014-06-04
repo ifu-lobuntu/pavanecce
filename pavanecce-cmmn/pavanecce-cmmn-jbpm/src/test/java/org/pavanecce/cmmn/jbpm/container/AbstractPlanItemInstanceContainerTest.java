@@ -62,7 +62,7 @@ public abstract class AbstractPlanItemInstanceContainerTest extends AbstractCons
 		assertPlanItemInState(caseInstance.getId(), "StartUserEventPlanItem", PlanElementState.COMPLETED);
 		assertPlanItemInState(caseInstance.getId(), "TheStagePlanItem", PlanElementState.AVAILABLE);
 		assertPlanItemInState(caseInstance.getId(), "TheCaseTaskPlanItem", PlanElementState.ENABLED);
-		assertEquals(PlanElementState.ACTIVE, ci1.getPlanElementState());// Because autoComplete defaults to false
+		assertEquals(PlanElementState.ACTIVE, ci1.getPlanElementState()); // Because autoComplete defaults to false
 		List<TaskSummary> subTasksByParent = getTaskService().getSubTasksByParent(getTaskService().getTaskByWorkItemId(getWorkitemId()).getId());
 		assertEquals(3, subTasksByParent.size());
 		CaseInstance subCase = startSubCaseTask(subTasksByParent);
@@ -106,7 +106,8 @@ public abstract class AbstractPlanItemInstanceContainerTest extends AbstractCons
 				getRuntimeEngine().getKieSession().getProcessInstance(ctpi.getProcessInstanceId()).signalEvent("TheUserEvent", new Object());
 				printState(" ", ci3);
 				getPersistence().commit();
-				assertEquals(PlanElementState.COMPLETED, ((CaseInstance) getRuntimeEngine().getKieSession().getProcessInstance(ctpi.getProcessInstanceId())).getPlanElementState());
+				assertEquals(PlanElementState.COMPLETED,
+						((CaseInstance) getRuntimeEngine().getKieSession().getProcessInstance(ctpi.getProcessInstanceId())).getPlanElementState());
 				getPersistence().start();
 				getRuntimeEngine().getKieSession().getProcessInstance(ctpi.getProcessInstanceId()).signalEvent(DefaultJoin.CLOSE, new Object());
 				getPersistence().commit();

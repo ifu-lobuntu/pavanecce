@@ -36,7 +36,7 @@ public class StageAsPlanItemTest extends AbstractControllableLifecycleTest {
 	public void failTask(long taskId) {
 		getPersistence().start();
 		long wi = getTaskService().getTaskById(taskId).getTaskData().getWorkItemId();
-		StageInstance spi= (StageInstance) reloadCaseInstance(caseInstance).findNodeForWorkItem(wi);
+		StageInstance spi = (StageInstance) reloadCaseInstance(caseInstance).findNodeForWorkItem(wi);
 		spi.fault();
 		getPersistence().commit();
 	}

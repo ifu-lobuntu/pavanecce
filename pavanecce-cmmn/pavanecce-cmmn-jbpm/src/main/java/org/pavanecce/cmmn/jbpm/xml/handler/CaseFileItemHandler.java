@@ -48,10 +48,10 @@ public class CaseFileItemHandler extends BaseAbstractHandler implements Handler 
 		variable.setDefinitionRef(attrs.getValue("definitionRef"));
 		String targetRefs = attrs.getValue("targetRefs");
 		String multiplicity = attrs.getValue("multiplicity");
-		if(multiplicity!=null){
+		if (multiplicity != null) {
 			variable.setCollection(!multiplicity.endsWith("One"));
 		}
-		if(targetRefs!=null){
+		if (targetRefs != null) {
 			for (String string : targetRefs.split("\\ ")) {
 				variable.putTarget(string, null);
 			}
@@ -62,8 +62,8 @@ public class CaseFileItemHandler extends BaseAbstractHandler implements Handler 
 		VariableScope variableScope = (VariableScope) parent.getDefaultContext(VariableScope.VARIABLE_SCOPE);
 		List<Variable> variables = variableScope.getVariables();
 		variables.add(variable);
-		if(parser.getParent() instanceof CaseFileItem){
-			((CaseFileItem)parser.getParent()).addChild(variable);
+		if (parser.getParent() instanceof CaseFileItem) {
+			((CaseFileItem) parser.getParent()).addChild(variable);
 		}
 		return variable;
 	}

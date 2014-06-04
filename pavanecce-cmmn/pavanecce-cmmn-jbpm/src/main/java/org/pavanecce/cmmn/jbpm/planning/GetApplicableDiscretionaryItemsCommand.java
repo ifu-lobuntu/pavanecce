@@ -35,18 +35,18 @@ public class GetApplicableDiscretionaryItemsCommand extends TaskCommand<Collecti
 		TaskData td = ts.getTaskById(parentTaskId).getTaskData();
 		RuntimeEngine runtime = runtimeManager.getRuntimeEngine(ProcessInstanceIdContext.get(td.getProcessInstanceId()));
 		CaseInstance ci = (CaseInstance) runtime.getKieSession().getProcessInstance(td.getProcessInstanceId());
-		if(suspend){
+		if (suspend) {
 			ts.suspend(parentTaskId, userId);
 		}
 		Collection<Role> roles = ci.getCase().getRoles();
 		Set<String> usersRoles = new HashSet<String>();
 		for (Role role : roles) {
 			Collection<String> roleAssignments = ci.getRoleAssignments(role.getName());
-			if(roleAssignments.contains(userId)){
+			if (roleAssignments.contains(userId)) {
 				usersRoles.add(role.getName());
 			}
 		}
-		//TODO optionally lookup from some RoleService
+		// TODO optionally lookup from some RoleService
 		return ci.getApplicableDiscretionaryItems(td.getWorkItemId(), usersRoles);
 	}
 }

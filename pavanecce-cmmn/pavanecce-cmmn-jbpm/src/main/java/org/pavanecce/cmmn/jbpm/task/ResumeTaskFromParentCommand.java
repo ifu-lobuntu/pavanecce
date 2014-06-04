@@ -25,7 +25,8 @@ public class ResumeTaskFromParentCommand extends TaskCommand<Void> {
 		Task task = ts.getTaskInstanceById(taskId);
 		InternalTaskData td = (InternalTaskData) task.getTaskData();
 		if (task.getTaskData().getStatus() != Status.Suspended) {
-			String errorMessage = "Only tasks in the Suspeneded status can be suspended from parent. Task" + task.getId() + " is " + task.getTaskData().getStatus();
+			String errorMessage = "Only tasks in the Suspeneded status can be suspended from parent. Task" + task.getId() + " is "
+					+ task.getTaskData().getStatus();
 			throw new PermissionDeniedException(errorMessage);
 		}
 		ts.getTaskLifecycleEventListeners().select(new AnnotationLiteral<BeforeTaskResumedFromParentEvent>() {

@@ -60,7 +60,8 @@ public class HumanTaskTest extends AbstractControllableLifecycleTest {
 		Task task = getTaskService().getTaskById(taskId);
 		Content outputContent = getTaskService().getContentById(task.getTaskData().getOutputContentId());
 		getPersistence().start();
-		Map<String, Object> outputAsMap = (Map<String, Object>) ContentMarshallerHelper.unmarshall(outputContent.getContent(), getTaskService().getMarshallerContext(task).getEnvironment());
+		Map<String, Object> outputAsMap = (Map<String, Object>) ContentMarshallerHelper.unmarshall(outputContent.getContent(), getTaskService()
+				.getMarshallerContext(task).getEnvironment());
 		Collection<WallPlan> wallPlanTaskOutput = (Collection<WallPlan>) outputAsMap.get("wallPlanOutput");
 		assertEquals(3, wallPlanTaskOutput.size());
 		assertEquals(newRoofPlan, outputAsMap.get("roofPlanOutput"));

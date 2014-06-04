@@ -37,7 +37,6 @@ public class JcrObjectPersistenceFactory {
 		}
 	}
 
-
 	protected int getEventMask() {
 		return Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED | Event.PERSIST;
 	}
@@ -61,6 +60,5 @@ public class JcrObjectPersistenceFactory {
 	public EventListener getEventListener() {
 		return this.eventListener;
 	}
-
 
 }

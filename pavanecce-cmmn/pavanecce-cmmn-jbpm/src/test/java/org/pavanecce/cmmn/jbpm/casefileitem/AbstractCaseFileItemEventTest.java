@@ -35,7 +35,7 @@ public abstract class AbstractCaseFileItemEventTest extends AbstractConstruction
 
 	protected abstract void addWallPlanAsReferenceToHouse() throws Exception;
 
-	protected abstract void removeRoofPlanAsChildFromHousePlan() ;
+	protected abstract void removeRoofPlanAsChildFromHousePlan();
 
 	protected abstract void removeRoofPlanAsReferenceFromHouse();
 
@@ -44,11 +44,11 @@ public abstract class AbstractCaseFileItemEventTest extends AbstractConstruction
 	protected abstract void removeWallPlansFromHousePlan();
 
 	protected void maybeStartSubscription() {
-	
+
 	}
 
 	protected void endSubscription() {
-	
+
 	}
 
 	@Test
@@ -138,7 +138,7 @@ public abstract class AbstractCaseFileItemEventTest extends AbstractConstruction
 		givenThatTheTestCaseIsStarted();
 		addRoofPlanAsChildToHousePlan();
 		// *****WHEN
-	
+
 		maybeStartSubscription();
 		addRoofPlanAsReferenceToHouse();
 		endSubscription();
@@ -155,7 +155,7 @@ public abstract class AbstractCaseFileItemEventTest extends AbstractConstruction
 		// *****GIVEN
 		givenThatTheTestCaseIsStarted();
 		addWallPlanAsChildToHousePlan();
-	
+
 		// *****WHEN
 		maybeStartSubscription();
 		removeWallPlansFromHousePlan();
@@ -243,7 +243,7 @@ public abstract class AbstractCaseFileItemEventTest extends AbstractConstruction
 		givenThatTheTestCaseIsStarted();
 		addRoofPlanAsChildToHousePlan();
 		addRoofPlanAsReferenceToHouse();
-	
+
 		// *****WHEN
 		maybeStartSubscription();
 		removeRoofPlanAsReferenceFromHouse();

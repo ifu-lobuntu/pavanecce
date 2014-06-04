@@ -28,7 +28,8 @@ public class ExitCriteriaTaskCommand extends TaskCommand<Void> {
 		Task task = ts.getTaskInstanceById(taskId);
 		InternalTaskData td = (InternalTaskData) task.getTaskData();
 		if (task.getTaskData().getStatus() == Status.Exited || task.getTaskData().getStatus() == Status.Completed) {
-			String errorMessage = "Tasks in the Exited or Completed status can be exited started. Task" + task.getId() + " is " + task.getTaskData().getStatus();
+			String errorMessage = "Tasks in the Exited or Completed status can be exited started. Task" + task.getId() + " is "
+					+ task.getTaskData().getStatus();
 			throw new PermissionDeniedException(errorMessage);
 		}
 		ts.getTaskLifecycleEventListeners().select(new AnnotationLiteral<BeforeExitCriteriaEvent>() {

@@ -39,7 +39,7 @@ public enum SourceFolderNameStrategy {
 
 		@Override
 		public String sourceFolderName(String sourceFolderQualifier, String modelIdentifier) {
-			return sourceFolderQualifier  + modelIdentifier;
+			return sourceFolderQualifier + modelIdentifier;
 		}
 
 		@Override

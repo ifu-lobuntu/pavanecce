@@ -26,14 +26,15 @@ public class PlannedTaskSummaryImpl implements InternalPlannedTaskSummary {
 	}
 
 	public PlannedTaskSummaryImpl(PlannedTaskImpl pt) {
-		this.taskSummary = new TaskSummaryImpl(pt.getId(), pt.getTaskData().getProcessInstanceId(), pt.getNames().get(0).getText(), pt.getSubjects().get(0).getText(), pt.getDescriptions().get(0).getText(), pt.getTaskData().getStatus(),
-				pt.getPriority(), pt.getTaskData().isSkipable(), pt.getTaskData().getActualOwner(), pt.getTaskData().getCreatedBy(), pt.getTaskData().getCreatedOn(), pt.getTaskData()
-						.getActivationTime(), pt.getTaskData().getExpirationTime(), pt.getTaskData().getProcessId(), pt.getTaskData().getProcessSessionId(), pt.getSubTaskStrategy(), pt.getTaskData()
-						.getParentId());
+		this.taskSummary = new TaskSummaryImpl(pt.getId(), pt.getTaskData().getProcessInstanceId(), pt.getNames().get(0).getText(), pt.getSubjects().get(0)
+				.getText(), pt.getDescriptions().get(0).getText(), pt.getTaskData().getStatus(), pt.getPriority(), pt.getTaskData().isSkipable(), pt
+				.getTaskData().getActualOwner(), pt.getTaskData().getCreatedBy(), pt.getTaskData().getCreatedOn(), pt.getTaskData().getActivationTime(), pt
+				.getTaskData().getExpirationTime(), pt.getTaskData().getProcessId(), pt.getTaskData().getProcessSessionId(), pt.getSubTaskStrategy(), pt
+				.getTaskData().getParentId());
 		this.id = pt.getId();
-		this.discretionaryItemId=pt.getDiscretionaryItemId();
-		this.planItemName=pt.getPlanItemName();
-		this.planningStatus=pt.getPlanningStatus();
+		this.discretionaryItemId = pt.getDiscretionaryItemId();
+		this.planItemName = pt.getPlanItemName();
+		this.planningStatus = pt.getPlanningStatus();
 	}
 
 	public String getDiscretionaryItemId() {
@@ -135,11 +136,11 @@ public class PlannedTaskSummaryImpl implements InternalPlannedTaskSummary {
 	}
 
 	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-		id=in.readLong();
-		planningStatus=(PlanningStatus) in.readObject();
-		discretionaryItemId=in.readUTF();
-		planItemName=in.readUTF();
-		taskSummary=new TaskSummaryImpl();
+		id = in.readLong();
+		planningStatus = (PlanningStatus) in.readObject();
+		discretionaryItemId = in.readUTF();
+		planItemName = in.readUTF();
+		taskSummary = new TaskSummaryImpl();
 		taskSummary.readExternal(in);
 	}
 

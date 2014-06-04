@@ -12,29 +12,30 @@ import org.pavanecce.cmmn.jbpm.flow.CaseFileItemOnPart;
 import org.pavanecce.cmmn.jbpm.flow.OnPart;
 import org.pavanecce.cmmn.jbpm.flow.PlanItemOnPart;
 
-public class OnPartInstance extends EventNodeInstance  {
+public class OnPartInstance extends EventNodeInstance {
 
 	private static final long serialVersionUID = 377496036154216192L;
 
 	public OnPart getOnPart() {
 		return (OnPart) getEventNode();
 	}
-	
+
 	@Override
 	public void signalEvent(String type, Object event) {
 		if (event instanceof CaseFileItemEvent && getOnPart() instanceof CaseFileItemOnPart) {
 			CaseFileItemOnPart onPart = (CaseFileItemOnPart) getOnPart();
 			CaseFileItemEvent e = (CaseFileItemEvent) event;
-			if (onPart.getSourceCaseFileItem().getName().equals(e.getCaseFileItemName()) && e.getTransition()==onPart.getStandardEvent()) {
+			if (onPart.getSourceCaseFileItem().getName().equals(e.getCaseFileItemName()) && e.getTransition() == onPart.getStandardEvent()) {
 				getEventStack().push(((CaseFileItemEvent) event).getValue());
 				triggerCompleted();
 			}
-		}else if(event instanceof PlanItemEvent && getOnPart() instanceof PlanItemOnPart){
-			PlanItemOnPart onPart=(PlanItemOnPart) getOnPart();
+		} else if (event instanceof PlanItemEvent && getOnPart() instanceof PlanItemOnPart) {
+			PlanItemOnPart onPart = (PlanItemOnPart) getOnPart();
 			PlanItemEvent e = (PlanItemEvent) event;
-			if(e.getPlanItemName().equals(onPart.getSourcePlanItem().getName())&& e.getTransition()==onPart.getStandardEvent()){
+			if (e.getPlanItemName().equals(onPart.getSourcePlanItem().getName()) && e.getTransition() == onPart.getStandardEvent()) {
 				getEventStack().push(((PlanItemEvent) event).getValue());
 				triggerCompleted();
+				
 			}
 		}
 	}
@@ -67,7 +68,8 @@ public class OnPartInstance extends EventNodeInstance  {
 	public CaseEvent getCaseEvent() {
 		return getOnPart().createEvent(getEventStack().peek());
 	}
-	public CaseInstance getCaseInstance(){
+
+	public CaseInstance getCaseInstance() {
 		return (CaseInstance) getProcessInstance();
 	}
 

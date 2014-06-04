@@ -30,8 +30,8 @@ import org.pavanecce.cmmn.jbpm.lifecycle.ControllableItemInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementLifecycleWithTask;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
 
-public abstract class ControllableItemInstanceImpl<T extends PlanItemDefinition, X extends TaskItemWithDefinition<T>> extends CompositeContextNodeInstance implements
-		ControllableItemInstance<T> {
+public abstract class ControllableItemInstanceImpl<T extends PlanItemDefinition, X extends TaskItemWithDefinition<T>> extends CompositeContextNodeInstance
+		implements ControllableItemInstance<T> {
 
 	private static final long serialVersionUID = 3200294767777991641L;
 
@@ -179,7 +179,8 @@ public abstract class ControllableItemInstanceImpl<T extends PlanItemDefinition,
 
 	public WorkItem executeWorkItem(WorkItem wi) {
 		if (isInversionOfControl()) {
-			((ProcessInstance) getProcessInstance()).getKnowledgeRuntime().update(((ProcessInstance) getProcessInstance()).getKnowledgeRuntime().getFactHandle(this), this);
+			((ProcessInstance) getProcessInstance()).getKnowledgeRuntime().update(
+					((ProcessInstance) getProcessInstance()).getKnowledgeRuntime().getFactHandle(this), this);
 		} else {
 			try {
 				((WorkItemManager) ((ProcessInstance) getProcessInstance()).getKnowledgeRuntime().getWorkItemManager()).internalExecuteWorkItem(wi);
@@ -373,7 +374,8 @@ public abstract class ControllableItemInstanceImpl<T extends PlanItemDefinition,
 	}
 
 	public boolean isCompletionStillRequired() {
-		return isCompletionRequired && !planElementState.isTerminalState() && !planElementState.isSemiTerminalState(this) && !(getItem() instanceof TaskDefinition && !((TaskDefinition) getItem()).isBlocking());
+		return isCompletionRequired && !planElementState.isTerminalState() && !planElementState.isSemiTerminalState(this)
+				&& !(getItem() instanceof TaskDefinition && !((TaskDefinition) getItem()).isBlocking());
 	}
 
 	public void internalSetCompletionRequired(boolean b) {

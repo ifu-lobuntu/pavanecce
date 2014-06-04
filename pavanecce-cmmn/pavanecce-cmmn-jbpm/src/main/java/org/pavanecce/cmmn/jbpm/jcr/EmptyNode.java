@@ -230,7 +230,8 @@ public class EmptyNode implements Node {
 	}
 
 	@Override
-	public void restore(Version version, String relPath, boolean removeExisting) throws ConstraintViolationException, InvalidItemStateException, RepositoryException {
+	public void restore(Version version, String relPath, boolean removeExisting) throws ConstraintViolationException, InvalidItemStateException,
+			RepositoryException {
 
 	}
 
@@ -265,7 +266,8 @@ public class EmptyNode implements Node {
 	}
 
 	@Override
-	public NodeIterator merge(String srcWorkspace, boolean bestEffort) throws AccessDeniedException, MergeException, InvalidItemStateException, RepositoryException {
+	public NodeIterator merge(String srcWorkspace, boolean bestEffort) throws AccessDeniedException, MergeException, InvalidItemStateException,
+			RepositoryException {
 
 		return null;
 	}

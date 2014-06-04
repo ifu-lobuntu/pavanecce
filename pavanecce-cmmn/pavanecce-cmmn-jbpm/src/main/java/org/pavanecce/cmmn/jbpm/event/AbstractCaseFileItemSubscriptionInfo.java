@@ -1,6 +1,5 @@
 package org.pavanecce.cmmn.jbpm.event;
 
-
 public abstract class AbstractCaseFileItemSubscriptionInfo implements CaseFileItemSubscriptionInfo {
 	boolean active = true;
 
@@ -39,7 +38,8 @@ public abstract class AbstractCaseFileItemSubscriptionInfo implements CaseFileIt
 			return true;
 		} else if (obj instanceof CaseFileItemSubscriptionInfo) {
 			CaseFileItemSubscriptionInfo other = (CaseFileItemSubscriptionInfo) obj;
-			if (other.getProcessInstanceId()==getProcessInstanceId() && other.getCaseKey().equals(getCaseKey()) && other.getItemName().equals(getItemName()) && other.getTransition() == getTransition()) {
+			if (other.getProcessInstanceId() == getProcessInstanceId() && other.getCaseKey().equals(getCaseKey()) && other.getItemName().equals(getItemName())
+					&& other.getTransition() == getTransition()) {
 				if (other.getRelatedItemName() != null) {
 					return other.getRelatedItemName().equals(getRelatedItemName());
 				} else {
@@ -49,10 +49,9 @@ public abstract class AbstractCaseFileItemSubscriptionInfo implements CaseFileIt
 		}
 		return false;
 	}
-	
-	public String getIdentifier(){
-		return getProcessInstanceId() + getCaseKey() + getItemName() + getTransition()+getRelatedItemName();
-	}
 
+	public String getIdentifier() {
+		return getProcessInstanceId() + getCaseKey() + getItemName() + getTransition() + getRelatedItemName();
+	}
 
 }

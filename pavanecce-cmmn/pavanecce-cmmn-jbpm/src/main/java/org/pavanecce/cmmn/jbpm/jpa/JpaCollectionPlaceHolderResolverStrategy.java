@@ -133,6 +133,7 @@ public class JpaCollectionPlaceHolderResolverStrategy extends JPAPlaceholderReso
 		q.setParameter("ids", ids);
 		return q.getResultList();
 	}
+
 	private List<?> readCollection(ObjectInputStream is, int size) throws ClassNotFoundException, IOException {
 		Class<?> superClass = Class.forName(is.readUTF());
 		@SuppressWarnings("unused")

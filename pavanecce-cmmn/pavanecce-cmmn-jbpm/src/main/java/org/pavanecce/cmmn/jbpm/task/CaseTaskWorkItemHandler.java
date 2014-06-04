@@ -130,13 +130,13 @@ public class CaseTaskWorkItemHandler extends LocalHTWorkItemHandler {
 		KieSession ksessionById = runtime.getKieSession();
 
 		final Task task = createTaskBasedOnWorkItemParams(ksessionById, workItem);
-		final Map<String,Object> content = workItem.getParameters();
+		final Map<String, Object> content = workItem.getParameters();
 		try {
 			InternalTaskService its = (InternalTaskService) runtime.getTaskService();
 			if (Boolean.TRUE.equals(workItem.getParameter(TaskParameters.PLANNED))) {
 				// Bypass assignment/claim. Keep in created state
 				String discretionaryItemId = (String) workItem.getParameter(TaskParameters.DISCRETIONARY_ITEM_ID);
-				its.execute(new AddPlannedTaskCommand(null, content, task,discretionaryItemId));
+				its.execute(new AddPlannedTaskCommand(null, content, task, discretionaryItemId));
 			} else {
 				Boolean claimImmediately = (Boolean) workItem.getParameter(TaskParameters.CLAIM_IMMEDIATELY);
 				if (claimImmediately != null) {

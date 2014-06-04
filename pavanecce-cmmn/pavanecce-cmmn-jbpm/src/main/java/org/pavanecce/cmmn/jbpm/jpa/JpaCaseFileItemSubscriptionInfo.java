@@ -62,7 +62,6 @@ public class JpaCaseFileItemSubscriptionInfo extends AbstractCaseFileItemSubscri
 		this.transition = transition;
 	}
 
-
 	@Override
 	public void setCaseKey(String caseKey) {
 		this.caseKey = caseKey;
@@ -104,7 +103,8 @@ public class JpaCaseFileItemSubscriptionInfo extends AbstractCaseFileItemSubscri
 	public void setProcessInstanceId(long processInstanceId) {
 		this.processInstanceId = processInstanceId;
 	}
-	public String getIdentifier(){
-		return  caseSubscription.getId().getClassName() + caseSubscription.getId().getId()+super.getIdentifier();
+
+	public String getIdentifier() {
+		return caseSubscription.getId().getClassName() + caseSubscription.getId().getId() + super.getIdentifier();
 	}
 }

@@ -25,8 +25,9 @@ public class TimerEventTest extends AbstractOccurrableTestCase {
 	public String getProcessFile() {
 		return "test/occurrable/TimerEventListenerTests.cmmn";
 	}
+
 	@After
-	public void deleteTimers(){
+	public void deleteTimers() {
 		getPersistence().start();
 		Collection<TimerInstance> timers = getTimerManager().getTimers();
 		for (TimerInstance timerInstance : timers) {

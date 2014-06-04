@@ -11,7 +11,7 @@ import org.jbpm.shared.services.api.JbpmServicesPersistenceManager;
 import org.kie.api.task.model.TaskSummary;
 import org.kie.internal.command.Context;
 
-public class GetPlannedItemsForParentTaskCommand extends AbstractPlanningCommand<Collection<PlannedTaskSummary>>{
+public class GetPlannedItemsForParentTaskCommand extends AbstractPlanningCommand<Collection<PlannedTaskSummary>> {
 	private final long parentTaskId;
 	private final boolean createMissing;
 	private static final long serialVersionUID = -8445370954335088878L;

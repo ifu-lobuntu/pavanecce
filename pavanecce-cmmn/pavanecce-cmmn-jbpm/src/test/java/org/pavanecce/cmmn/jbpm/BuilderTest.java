@@ -42,7 +42,7 @@ public class BuilderTest extends AbstractConstructionTestCase {
 		getPersistence().start();
 		ConstructionCase cc = new ConstructionCase("/cases/case1");
 		HousePlan housePlan = new HousePlan(cc);
-		House house = new House (cc);
+		House house = new House(cc);
 		getPersistence().persist(cc);
 		getPersistence().commit();
 		params.put("housePlan", housePlan);

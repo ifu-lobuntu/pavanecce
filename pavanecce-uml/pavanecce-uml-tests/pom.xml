@@ -20,8 +20,19 @@
 			</properties>
 			<dependencies>
 				<dependency>
+					<groupId>org.osgi</groupId>
+					<artifactId>org.osgi.core</artifactId>
+					<version>5.0.0</version>
+				</dependency>
+				<dependency>
 					<groupId>${project.parent.groupId}</groupId>
 					<artifactId>pavanecce-uml-dependencies</artifactId>
+					<version>${project.parent.version}</version>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>${project.parent.groupId}</groupId>
+					<artifactId>pavanecce-common-dependencies</artifactId>
 					<version>${project.parent.version}</version>
 				</dependency>
 				<dependency>
@@ -48,20 +59,67 @@
 			<build>
 				<plugins>
 					<plugin>
-						<groupId>org.jacoco</groupId>
-						<artifactId>jacoco-maven-plugin</artifactId>
-						<version>0.6.4.201312101107</version>
-					</plugin>
-
-					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
+						<version>2.17</version>
 						<configuration>
-							<useManifestOnlyJar>false</useManifestOnlyJar>
-							<!-- <useSystemClassLoader>false</useSystemClassLoader> -->
 							<includes>
-								<include>**/*Tests.class</include>
+								<include>*/**/*Tests.java</include>
 							</includes>
 						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-report-plugin</artifactId>
+						<version>2.17</version>
+					</plugin>
+					<plugin>
+						<groupId>org.jacoco</groupId>
+						<artifactId>jacoco-maven-plugin</artifactId>
+						<version>0.7.1.201405082137</version>
+						<executions>
+							<execution>
+								<id>default-prepare-agent</id>
+								<goals>
+									<goal>prepare-agent</goal>
+								</goals>
+								<configuration>
+									<includes>
+										<include>org.pavanecce.**</include>
+									</includes>
+								</configuration>
+							</execution>
+							<execution>
+								<id>default-report</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>report</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>default-check</id>
+								<goals>
+									<goal>check</goal>
+								</goals>
+								<configuration>
+									<rules>
+										<rule>
+											<element>BUNDLE</element>
+											<limits>
+												<limit>
+													<counter>COMPLEXITY</counter>
+													<value>COVEREDRATIO</value>
+													<minimum>0.6</minimum>
+												</limit>
+											</limits>
+										</rule>
+									</rules>
+									<includes>
+										<include>org.pavanecce.**</include>
+									</includes>
+								</configuration>
+							</execution>
+						</executions>
 					</plugin>
 				</plugins>
 			</build>
@@ -105,7 +163,6 @@
 		</profile>
 	</profiles>
 	<dependencies>
-
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

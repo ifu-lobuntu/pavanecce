@@ -148,8 +148,7 @@ public class NameConverter {
 	}
 
 	/**
-	 * If underscoreName is one of the following "abcDfg", "abc_dfg",
-	 * "_abc_dfg", "AbcDfg" it will return "abcDfg"
+	 * If underscoreName is one of the following "abcDfg", "abc_dfg", "_abc_dfg", "AbcDfg" it will return "abcDfg"
 	 * 
 	 */
 	public static String underscoredToCamelCase(String name) {
@@ -209,11 +208,9 @@ public class NameConverter {
 	}
 
 	/**
-	 * A very crude, primitive translation to plural in English. Should only
-	 * have conversions that have an opposite conversion in toSingular. This is
-	 * not intended for User Interfaces Postcondition: if name is not null, will
-	 * always return a string with a different value than name. This guarrantee
-	 * is required for code generation
+	 * A very crude, primitive translation to plural in English. Should only have conversions that have an opposite
+	 * conversion in toSingular. This is not intended for User Interfaces Postcondition: if name is not null, will
+	 * always return a string with a different value than name. This guarrantee is required for code generation
 	 * 
 	 * @param name
 	 * @return
@@ -242,10 +239,9 @@ public class NameConverter {
 	}
 
 	/**
-	 * A very crude, primitve translation to singular in English. Must be
-	 * mirrored in toPlural(). Not intended for User interfaces. Postcondition:
-	 * if name is not null, will always return a string with a different value
-	 * than name. This guarrantee is required for code generation
+	 * A very crude, primitve translation to singular in English. Must be mirrored in toPlural(). Not intended for User
+	 * interfaces. Postcondition: if name is not null, will always return a string with a different value than name.
+	 * This guarrantee is required for code generation
 	 * 
 	 * @param name
 	 * @return
@@ -296,28 +292,28 @@ public class NameConverter {
 			return "_" + name;
 		} else {
 			char[] charArray = null;
-			if(name.length()>0 && Character.isDigit(name.charAt(0))){
-				charArray=("_"+name).toCharArray();
-			}else{
-				charArray=name.toCharArray();
+			if (name.length() > 0 && Character.isDigit(name.charAt(0))) {
+				charArray = ("_" + name).toCharArray();
+			} else {
+				charArray = name.toCharArray();
 			}
 			for (int i = 0; i < charArray.length; i++) {
-				if (!Character.isJavaIdentifierPart(charArray[i])){
-					charArray[i]='_';
+				if (!Character.isJavaIdentifierPart(charArray[i])) {
+					charArray[i] = '_';
 				}
-				
+
 			}
 			return new String(charArray);
 		}
 	}
 
 	public static String extractPropertyName(String name) {
-		if(name.startsWith("is")){
-			//This is a standard across the system - we consider boolean property names as starting with "is"
+		if (name.startsWith("is")) {
+			// This is a standard across the system - we consider boolean property names as starting with "is"
 			return decapitalize(name);
-		}else if(name.startsWith("get") || name.startsWith("set")){
+		} else if (name.startsWith("get") || name.startsWith("set")) {
 			return decapitalize(name.substring(3));
-		}else{
+		} else {
 			return "";
 		}
 	}

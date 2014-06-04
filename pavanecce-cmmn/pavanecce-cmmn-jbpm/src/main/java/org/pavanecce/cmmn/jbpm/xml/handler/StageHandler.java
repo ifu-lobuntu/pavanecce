@@ -61,10 +61,10 @@ public class StageHandler extends PlanItemContainerHandler implements Handler {
 		node.setElementId(attrs.getValue("id"));
 		node.setAutoComplete("true".equals(attrs.getValue("autoComplete")));
 		node.setName(attrs.getValue("name"));
-		node.setId(IdGenerator.getIdAsUniqueAsUuid(parser,node));
+		node.setId(IdGenerator.getIdAsUniqueAsUuid(parser, node));
 		Case theCase = (Case) parser.getParent(Case.class);
 		theCase.addPlanItemDefinition(node);
-		super.startNodeContainer(node,parser);
+		super.startNodeContainer(node, parser);
 		return node;
 	}
 

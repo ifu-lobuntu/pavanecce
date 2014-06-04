@@ -16,11 +16,11 @@ public class PreparePlannedTaskCommand extends AbstractPlanningCommand<PlannedTa
 
 	private static final long serialVersionUID = -8445378L;
 
-	public PreparePlannedTaskCommand(RuntimeManager rm,JbpmServicesPersistenceManager pm, String discretionaryItemId, long parentTaskId) {
+	public PreparePlannedTaskCommand(RuntimeManager rm, JbpmServicesPersistenceManager pm, String discretionaryItemId, long parentTaskId) {
 		super(pm);
 		this.discretionaryItemId = discretionaryItemId;
 		this.parentTaskId = parentTaskId;
-		this.runtimeManager=rm;
+		this.runtimeManager = rm;
 	}
 
 	@Override

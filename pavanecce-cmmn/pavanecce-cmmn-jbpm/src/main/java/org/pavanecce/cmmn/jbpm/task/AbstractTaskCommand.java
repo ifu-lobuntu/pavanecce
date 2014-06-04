@@ -66,19 +66,20 @@ public abstract class AbstractTaskCommand<T> extends TaskCommand<T> {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Object mergeContentObjectIfPossible(Map<String, Object> newContentAsMap, String contentNameInMap, ContentImpl existingContent, ContentMarshallerContext mc) {
+	private Object mergeContentObjectIfPossible(Map<String, Object> newContentAsMap, String contentNameInMap, ContentImpl existingContent,
+			ContentMarshallerContext mc) {
 		Object contentObjectToUpdateTaskWith = ContentMarshallerHelper.unmarshall(existingContent.getContent(), mc.getEnvironment());
 		if (contentObjectToUpdateTaskWith instanceof Map) {
 			Map<String, Object> existingOutputAsMap = (Map<String, Object>) contentObjectToUpdateTaskWith;
 			Object newContentObject = getCorrectContentObject(newContentAsMap, contentNameInMap);
 			if (newContentObject instanceof Map) {
-				//merge
-				existingOutputAsMap.putAll((Map<String,Object>) newContentObject);
+				// merge
+				existingOutputAsMap.putAll((Map<String, Object>) newContentObject);
 			} else if (newContentObject != null) {
-				//replace
+				// replace
 				contentObjectToUpdateTaskWith = newContentObject;
 			}
-		}else{
+		} else {
 			contentObjectToUpdateTaskWith = getCorrectContentObject(newContentAsMap, contentNameInMap);
 		}
 		return contentObjectToUpdateTaskWith;

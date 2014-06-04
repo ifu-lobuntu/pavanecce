@@ -8,7 +8,7 @@ import org.drools.core.process.core.impl.ParameterDefinitionImpl;
 import org.drools.core.process.core.impl.WorkImpl;
 import org.jbpm.services.task.wih.util.PeopleAssignmentHelper;
 
-public class HumanTaskPlanItem extends AbstractPlanItem<HumanTask> implements MultiInstancePlanItem,TaskItemWithDefinition<HumanTask> {
+public class HumanTaskPlanItem extends AbstractPlanItem<HumanTask> implements MultiInstancePlanItem, TaskItemWithDefinition<HumanTask> {
 
 	private static final long serialVersionUID = 7613141769339402877L;
 	private Work work;
@@ -21,7 +21,6 @@ public class HumanTaskPlanItem extends AbstractPlanItem<HumanTask> implements Mu
 		super(info);
 		this.factoryNode = factorNode;
 	}
-
 
 	@Override
 	public PlanItemInstanceFactoryNode getFactoryNode() {

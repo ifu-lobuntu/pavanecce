@@ -11,9 +11,10 @@ import org.pavanecce.common.ocm.OcmObjectPersistence;
 
 public class OcmCasePersistence extends OcmObjectPersistence {
 	RuntimeManager runtimeManager;
+
 	public OcmCasePersistence(OcmFactory factory, RuntimeManager runtimeManager) {
 		super(factory);
-		this.runtimeManager=runtimeManager;
+		this.runtimeManager = runtimeManager;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -45,7 +46,7 @@ public class OcmCasePersistence extends OcmObjectPersistence {
 			doCaseFileItemEvents();
 			if (startedTransaction) {
 				getTransaction().commit();
-				boolean workItemsProcessed=false;
+				boolean workItemsProcessed = false;
 				do {
 					getTransaction().begin();
 					workItemsProcessed = AbstractPersistentSubscriptionManager.dispatchWorkItemQueue(runtimeManager.getRuntimeEngine(EmptyContext.get()));
@@ -66,7 +67,7 @@ public class OcmCasePersistence extends OcmObjectPersistence {
 			AbstractPersistentSubscriptionManager.commitSubscriptionsTo(this);
 			getObjectContentManager().save();
 		}
-		if(AbstractPersistentSubscriptionManager.commitSubscriptionsTo(this)){
+		if (AbstractPersistentSubscriptionManager.commitSubscriptionsTo(this)) {
 			getObjectContentManager().save();
 		}
 	}

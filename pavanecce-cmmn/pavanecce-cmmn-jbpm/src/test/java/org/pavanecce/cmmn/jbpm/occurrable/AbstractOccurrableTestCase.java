@@ -19,10 +19,10 @@ import test.HousePlan;
 
 public abstract class AbstractOccurrableTestCase extends AbstractConstructionTestCase {
 
-
 	{
-		super.isJpa=true;
+		super.isJpa = true;
 	}
+
 	protected abstract void triggerOccurrence() throws Exception;
 
 	public AbstractOccurrableTestCase() {
@@ -189,6 +189,7 @@ public abstract class AbstractOccurrableTestCase extends AbstractConstructionTes
 	}
 
 	public abstract String getProcessFile();
+
 	public abstract String getCaseName();
 
 }

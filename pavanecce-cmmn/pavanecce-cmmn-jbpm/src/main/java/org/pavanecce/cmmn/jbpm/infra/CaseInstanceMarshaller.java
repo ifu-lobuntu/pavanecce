@@ -84,7 +84,7 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 	private void writePlanItemStates(PlanItemInstanceLifecycleWithHistory<?> pi, ObjectOutputStream stream) throws IOException {
 		stream.writeInt(pi.getPlanElementState().ordinal());
 		stream.writeInt(pi.getLastBusyState().ordinal());
-		if (pi instanceof ControllableItemInstance && pi.getPlanElementState()!=PlanElementState.INITIAL) {
+		if (pi instanceof ControllableItemInstance && pi.getPlanElementState() != PlanElementState.INITIAL) {
 			stream.writeBoolean(((ControllableItemInstance<?>) pi).isCompletionRequired());
 		}
 	}
@@ -92,19 +92,21 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 	private void readPlanItemStates(PlanItemInstanceLifecycleWithHistory<?> pi, ObjectInputStream stream) throws IOException {
 		pi.setPlanElementState(PlanElementState.values()[stream.readInt()]);
 		pi.setLastBusyState(PlanElementState.values()[stream.readInt()]);
-		if (pi instanceof ControllableItemInstance && pi.getPlanElementState()!=PlanElementState.INITIAL) {
+		if (pi instanceof ControllableItemInstance && pi.getPlanElementState() != PlanElementState.INITIAL) {
 			((ControllableItemInstance<?>) pi).internalSetCompletionRequired(stream.readBoolean());
 		}
 	}
 
 	@Override
-	public NodeInstance readNodeInstance(MarshallerReaderContext context, NodeInstanceContainer nodeInstanceContainer, WorkflowProcessInstance processInstance) throws IOException {
+	public NodeInstance readNodeInstance(MarshallerReaderContext context, NodeInstanceContainer nodeInstanceContainer, WorkflowProcessInstance processInstance)
+			throws IOException {
 		NodeInstance ni = super.readNodeInstance(context, nodeInstanceContainer, processInstance);
 		MarshallerReaderContext stream = context.stream;
 		if (ni instanceof StageInstance) {
 			int nbVariables = stream.readInt();
 			if (nbVariables > 0) {
-				Context variableScope = ((org.jbpm.process.core.Process) ((org.jbpm.process.instance.ProcessInstance) processInstance).getProcess()).getDefaultContext(VariableScope.VARIABLE_SCOPE);
+				Context variableScope = ((org.jbpm.process.core.Process) ((org.jbpm.process.instance.ProcessInstance) processInstance).getProcess())
+						.getDefaultContext(VariableScope.VARIABLE_SCOPE);
 				VariableScopeInstance variableScopeInstance = (VariableScopeInstance) ((CompositeContextNodeInstance) ni).getContextInstance(variableScope);
 				for (int i = 0; i < nbVariables; i++) {
 					String name = stream.readUTF();
@@ -125,7 +127,8 @@ public class CaseInstanceMarshaller extends AbstractProcessInstanceMarshaller {
 	}
 
 	@Override
-	protected NodeInstanceImpl readNodeInstanceContent(int nodeType, ObjectInputStream stream, MarshallerReaderContext context, WorkflowProcessInstance processInstance) throws IOException {
+	protected NodeInstanceImpl readNodeInstanceContent(int nodeType, ObjectInputStream stream, MarshallerReaderContext context,
+			WorkflowProcessInstance processInstance) throws IOException {
 		NodeInstanceImpl nodeInstance = null;
 		switch (nodeType) {
 		case PLAN_ITEM_INSTANCE_FACTORY_NODE_INSTANCE:

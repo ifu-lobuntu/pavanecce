@@ -25,7 +25,8 @@ public class SuspendTaskFromParentCommand extends TaskCommand<Void> {
 		Task task = ts.getTaskInstanceById(taskId);
 		InternalTaskData td = (InternalTaskData) task.getTaskData();
 		if (!(task.getTaskData().getStatus() == Status.Ready || task.getTaskData().getStatus() == Status.Reserved || task.getTaskData().getStatus() == Status.InProgress)) {
-			String errorMessage = "Only tasks in the Ready, Reserved or InProgress status can be suspended from parent. Task" + task.getId() + " is " + task.getTaskData().getStatus();
+			String errorMessage = "Only tasks in the Ready, Reserved or InProgress status can be suspended from parent. Task" + task.getId() + " is "
+					+ task.getTaskData().getStatus();
 			throw new PermissionDeniedException(errorMessage);
 		}
 		ts.getTaskLifecycleEventListeners().select(new AnnotationLiteral<BeforeTaskSuspendedFromParentEvent>() {

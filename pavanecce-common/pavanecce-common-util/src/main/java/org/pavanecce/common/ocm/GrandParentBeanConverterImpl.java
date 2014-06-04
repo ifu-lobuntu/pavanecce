@@ -22,21 +22,17 @@ public class GrandParentBeanConverterImpl extends ParentBeanConverterImpl {
 	@Override
 	@SuppressWarnings("rawtypes")
 	public Object getObject(Session session, Node parentNode, BeanDescriptor beanDescriptor, ClassDescriptor beanClassDescriptor, Class beanClass, Object parent)
-			throws ObjectContentManagerException, RepositoryException,JcrMappingException {
-        try
-        {			
+			throws ObjectContentManagerException, RepositoryException, JcrMappingException {
+		try {
 			Node grandParentNode = parentNode.getParent().getParent();
-			if (grandParentNode.getPath().equals("/"))
-			{
+			if (grandParentNode.getPath().equals("/")) {
 				return null;
 			}
 			return objectConverter.getObject(session, grandParentNode.getPath());
-			
-		}
-        catch (javax.jcr.RepositoryException e)
-		{
+
+		} catch (javax.jcr.RepositoryException e) {
 			throw new RepositoryException(e);
 		}
-		
+
 	}
 }

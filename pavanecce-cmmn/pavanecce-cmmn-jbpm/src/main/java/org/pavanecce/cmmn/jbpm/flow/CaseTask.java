@@ -127,6 +127,7 @@ public class CaseTask extends AbstractPlanItemDefinition implements TaskDefiniti
 		}
 		return inputMappings;
 	}
+
 	public List<ParameterMapping> prepareOutputMappings(Process process) {
 		if (process instanceof Case) {
 			for (ParameterMapping pm : outputMappings) {

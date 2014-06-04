@@ -15,24 +15,24 @@ import org.kie.api.task.model.User;
 import org.kie.internal.command.Context;
 import org.kie.internal.task.api.model.InternalTaskData;
 
-
 /**
  * 
  * Unlike the default implementation in jBPM, this one uses the Object strategies in the environment
- *
+ * 
  */
 public class CompleteTaskCommand extends SetTaskOutputCommand {
 
-
 	private static final long serialVersionUID = -1817334359933358605L;
+
 	public CompleteTaskCommand(JbpmServicesPersistenceManager pm, long taskId, String userId, Map<String, Object> data) {
 		super(pm, taskId, data);
 		this.taskId = taskId;
 		this.userId = userId;
 	}
+
 	@SuppressWarnings("serial")
 	public Long execute(Context cntxt) {
-		TaskContext c= (TaskContext) cntxt;
+		TaskContext c = (TaskContext) cntxt;
 		init(c.getTaskService());
 		Task task = ts.getTaskQueryService().getTaskInstanceById(taskId);
 		if (task == null) {

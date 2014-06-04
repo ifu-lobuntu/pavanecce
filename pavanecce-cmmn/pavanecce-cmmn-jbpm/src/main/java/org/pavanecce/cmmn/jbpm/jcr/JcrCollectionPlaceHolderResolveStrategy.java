@@ -30,10 +30,10 @@ public class JcrCollectionPlaceHolderResolveStrategy extends JpaCollectionPlaceH
 
 	@Override
 	public boolean accept(Object object) {
-		if(object instanceof Collection){
+		if (object instanceof Collection) {
 			Collection<?> c = (Collection<?>) object;
-			if(c.size()>0){
-				if(c.iterator().next() instanceof Node){
+			if (c.size() > 0) {
+				if (c.iterator().next() instanceof Node) {
 					return true;
 				}
 			}
@@ -57,14 +57,13 @@ public class JcrCollectionPlaceHolderResolveStrategy extends JpaCollectionPlaceH
 		if (coll.size() > 0) {
 			for (Object object2 : coll) {
 				try {
-					os.writeUTF(((Node)object2).getIdentifier());
+					os.writeUTF(((Node) object2).getIdentifier());
 				} catch (Exception e) {
 					throw convertException(e);
 				}
 			}
 		}
 	}
-
 
 	@Override
 	@SuppressWarnings("unchecked")

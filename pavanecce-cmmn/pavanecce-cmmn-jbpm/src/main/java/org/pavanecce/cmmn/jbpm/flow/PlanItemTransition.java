@@ -8,9 +8,9 @@ import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementLifecycle;
 import org.pavanecce.common.util.NameConverter;
 
 public enum PlanItemTransition {
-	CLOSE, COMPLETE, CREATE, DISABLE, ENABLE, EXIT, PARENT_TERMINATE, FAULT, MANUAL_START, OCCUR, PARENT_RESUME, PARENT_SUSPEND, REACTIVATE, REENABLE, RESUME, START, SUSPEND, TERMINATE;
+	CLOSE, COMPLETE, CREATE, DISABLE, ENABLE, EXIT, PARENT_TERMINATE, FAULT, MANUAL_START, OCCUR, PARENT_RESUME, PARENT_SUSPEND, REACTIVATE, REENABLE, RESUME,
+	START, SUSPEND, TERMINATE;
 	private static Map<String, PlanItemTransition> BY_NAME = new HashMap<String, PlanItemTransition>();
-
 
 	public static PlanItemTransition resolveByName(String name) {
 		if (BY_NAME.isEmpty()) {
