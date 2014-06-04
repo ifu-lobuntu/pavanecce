@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.jcr.Node;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.naming.InitialContext;
@@ -116,6 +117,7 @@ import org.pavanecce.common.jpa.JpaObjectPersistence;
 import org.pavanecce.common.ocm.OcmFactory;
 import org.pavanecce.common.ocm.OcmObjectPersistence;
 import org.pavanecce.common.util.FileUtil;
+
 
 //import test.ConstructionCase;
 //import test.House;
@@ -338,7 +340,9 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 
 		}
 		transaction = null;
-		getPersistence().close();
+		if(isJpa){
+			getPersistence().close();
+		}
 		clearHistory();
 		disposeRuntimeManager();
 		runtimeEngine = null;
@@ -349,15 +353,6 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 		fl.setAccessible(true);
 		ThreadLocal<?> l = (ThreadLocal<?>) fl.get(null);
 		l.set(null);
-		// FileUtil.deleteRoot(new File("jbpm-db.h2.db"));
-		// FileUtil.deleteRoot(new File("jbpm-db.trace.db"));
-		// try {
-		// ((BitronixTransactionManager) getTransaction()).shutdown();
-		// } catch (Exception e) {
-		// System.out.println(e);
-		// }
-		// FileUtil. deleteRoot(new File("btm1.tlog"));
-		// FileUtil.write(new File("btm1.tlog"),"Btnx\n");
 		printTimer("tearDown");
 	}
 
@@ -582,13 +577,13 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 
 	@SuppressWarnings("rawtypes")
 	protected OcmFactory getOcmFactory() {
-		if (this.ocmFactory == null) {
+		if (ocmFactory == null) {
 			try {
 				startTimer();
-				TransientRepository tr = new TransientRepository();
+				TransientRepository jcrRepo = new TransientRepository();
 				printTimer("new TransientRepository()");
 				Session session;
-				session = tr.login(new SimpleCredentials("admin", "admin".toCharArray()));
+				session = jcrRepo.login(new SimpleCredentials("admin", "admin".toCharArray()));
 				printTimer("login");
 				session.getRootNode().addNode("cases");
 				session.getRootNode().addNode("subscriptions");
@@ -598,9 +593,12 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 				printTimer("registerNodeTypes");
 				session.save();
 				printTimer("save()");
-				session.logout();
-				printTimer("logout()");
-				ocmFactory = new OcmFactory(tr, "admin", "admin", new AnnotationMapperImpl(Arrays.<Class> asList(getClasses())), new OcmSubscriptionManager(
+				//We have to keep one session open or the TransientRepository resets
+//				session.logout();
+//				session = jcrRepo.login(new SimpleCredentials("admin", "admin".toCharArray()));
+//				Node node = session.getNode("/cases");
+//				printTimer("logout()");
+				ocmFactory = new OcmFactory(jcrRepo, "admin", "admin", new AnnotationMapperImpl(Arrays.<Class> asList(getClasses())), new OcmSubscriptionManager(
 						runtimeManager));
 				printTimer("new OcmFactory()");
 				OcmSubscriptionManager eventListener = (OcmSubscriptionManager) ocmFactory.getEventListener();

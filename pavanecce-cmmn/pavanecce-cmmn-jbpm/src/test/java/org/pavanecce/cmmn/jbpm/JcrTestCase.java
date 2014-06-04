@@ -24,6 +24,7 @@ import org.apache.jackrabbit.ocm.mapper.impl.annotation.AnnotationMapperImpl;
 import org.pavanecce.cmmn.jbpm.ocm.OcmCaseFileItemSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.ocm.OcmCaseSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.ocm.OcmSubscriptionManager;
+import org.pavanecce.cmmn.jbpm.test.AbstractCmmnCaseTestCase;
 import org.pavanecce.common.ocm.OcmFactory;
 import org.pavanecce.common.ocm.OcmObjectPersistence;
 import org.pavanecce.common.util.FileUtil;
@@ -37,7 +38,7 @@ import test.RoofPlan;
 import test.Wall;
 import test.WallPlan;
 
-public class JcrTestCase {
+public class JcrTestCase extends AbstractCmmnCaseTestCase{
 	static Logger logger = LoggerFactory.getLogger(JcrTestCase.class);
 	long time = System.currentTimeMillis();
 
@@ -119,29 +120,14 @@ public class JcrTestCase {
 	}
 
 	public static void deleteTempRepo() throws IOException {
-		File repo = new File("./repository");
-		FileUtil.deleteRoot(repo);
+//		File repo = new File("./repository");
+//		FileUtil.deleteRoot(repo);
 	}
 
-	protected void asdf() throws IOException, SQLException {
-		URL ddl = JcrTestCase.class.getResource("/jackrabbit.ddl");
-		BufferedReader br = new BufferedReader(new InputStreamReader(ddl.openStream()));
-		String line = null;
-		org.apache.derby.jdbc.Driver40.class.getName();
-		Connection conn = DriverManager.getConnection("jdbc:derby:memory:myDB;create=true");
-		while ((line = br.readLine()) != null) {
-			line = line.trim();
-			if (line.length() > 5 && !line.startsWith("--")) {
-				if (line.endsWith(";")) {
-					line = line.substring(0, line.length() - 1);
-				}
-				logger.info(line);
-				conn.createStatement().execute(line);
-			}
-		}
-		URL resource = JcrTestCase.class.getResource("/repository.xml");
-		File file = new File(resource.getPath());
-		logger.info(file.toString());
+
+	@Override
+	protected Class[] getClasses() {
+		return new Class[0];
 	}
 
 }

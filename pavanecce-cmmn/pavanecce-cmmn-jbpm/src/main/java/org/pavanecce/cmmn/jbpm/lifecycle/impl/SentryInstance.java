@@ -79,7 +79,7 @@ public class SentryInstance extends JoinInstance {
 				deque.push(getEvents());
 				try {
 					triggerCompleted(org.jbpm.workflow.core.Node.CONNECTION_DEFAULT_TYPE, false);
-				}catch(RuntimeException e){
+				} catch (RuntimeException e) {
 					e.printStackTrace();
 					throw e;
 				} finally {

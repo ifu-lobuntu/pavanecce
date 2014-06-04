@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.jcr.Node;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -106,6 +108,7 @@ public class BuilderTest extends AbstractConstructionTestCase {
 		TaskService taskService = runtimeEngine.getTaskService();
 		Map<String, Object> params = new HashMap<String, Object>();
 		getPersistence().start();
+		Node node = getOcmFactory().getCurrentObjectContentManager().getSession().getNode("/cases");
 
 		ConstructionCase cc = new ConstructionCase("/cases/case1");
 		HousePlan housePlan = new HousePlan(cc);
