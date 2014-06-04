@@ -24,7 +24,7 @@ import org.pavanecce.uml.uml2code.ocm.OcmTests;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CmmnTestArtifactGenerator extends OcmTests {
+public abstract class CmmnTestArtifactGenerator extends OcmTests {
 	static Logger logger=LoggerFactory.getLogger(CmmnTestArtifactGenerator.class);
 	public static void main(String[] args) throws Exception {
 		final File outputRoot = new File("/home/ampie/Code/pavanecce/pavanecce-cmmn/");

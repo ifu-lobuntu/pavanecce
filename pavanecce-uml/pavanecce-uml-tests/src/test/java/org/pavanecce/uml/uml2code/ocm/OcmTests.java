@@ -43,7 +43,7 @@ public class OcmTests extends AbstractPersistenceTest {
 		CndImporter.registerNodeTypes(new FileReader(testCndFile), session);
 		session.getRootNode().addNode("ConstructionCaseCollection");
 		session.save();
-		session.logout();
+//		session.logout();
 		ReflectionUtils.setClassLoader(example.getClassLoader());
 		OcmFactory ocmFactory = new OcmFactory(tr, "admin", "admin", new AnnotationMapperImpl(classes), null);
 		OcmObjectPersistence hibernatePersistence = new OcmObjectPersistence(ocmFactory);

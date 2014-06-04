@@ -48,7 +48,6 @@ public class JcrTestCase extends AbstractCmmnCaseTestCase{
 	}
 
 	public void testit() throws Exception {
-		deleteTempRepo();
 		logDuration("1");
 		Repository repository = new TransientRepository();
 		logDuration("2");
@@ -118,12 +117,6 @@ public class JcrTestCase extends AbstractCmmnCaseTestCase{
 		return new AnnotationMapperImpl(Arrays.<Class> asList(ConstructionCase.class, HousePlan.class, RoofPlan.class, WallPlan.class, Wall.class, House.class,
 				OcmCaseSubscriptionInfo.class, OcmCaseFileItemSubscriptionInfo.class));
 	}
-
-	public static void deleteTempRepo() throws IOException {
-//		File repo = new File("./repository");
-//		FileUtil.deleteRoot(repo);
-	}
-
 
 	@Override
 	protected Class[] getClasses() {

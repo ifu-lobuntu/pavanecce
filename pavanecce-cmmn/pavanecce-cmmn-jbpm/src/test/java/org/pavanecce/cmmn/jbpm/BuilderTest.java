@@ -28,12 +28,6 @@ public class BuilderTest extends AbstractConstructionTestCase {
 		super(true, true, "org.jbpm.persistence.jpa");
 	}
 
-	@AfterClass
-	@BeforeClass
-	public static void deleteJcrRepo() throws IOException {
-		JcrTestCase.deleteTempRepo();
-	}
-
 	@Test
 	public void testSimpleEntryCriteria() throws Exception {
 		createRuntimeManager("test/hello.cmmn");

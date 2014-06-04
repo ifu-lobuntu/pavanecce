@@ -57,7 +57,7 @@ public abstract class AbstractPersistenceTest extends Assert {
 		eval("house.setRoofPlan(roofPlan);");
 		eval("p.update(constructionCase);");
 		eval("p.commit();");
-		eval("p.close();");
+		//eval("p.close();");
 		eval("p.start();");
 		eval("constructionCase=p.find(ConstructionCase,constructionCase.getId());");
 		eval("house=constructionCase.getHouse();");
@@ -78,7 +78,7 @@ public abstract class AbstractPersistenceTest extends Assert {
 		eval("p.update(housePlan);");
 		eval("p.update(house);");
 		eval("p.commit();");
-		eval("p.close();");
+		//eval("p.close();");
 		eval("p.start();");
 		eval("constructionCase=p.find(ConstructionCase,constructionCase.getId());");
 		assertNull(eval("constructionCase.getHousePlan().getRoofPlan();"));
@@ -91,7 +91,7 @@ public abstract class AbstractPersistenceTest extends Assert {
 		} catch (Exception e) {
 		}
 		try {
-			eval("p.close();");
+			//eval("p.close();");
 		} catch (Exception e) {
 		}
 
@@ -120,7 +120,7 @@ public abstract class AbstractPersistenceTest extends Assert {
 		eval("p.start();");
 		eval("p.persist(constructionCase);");
 		eval("p.commit();");
-		eval("p.close();");
+		//eval("p.close();");
 		eval("p.start();");
 		eval("constructionCase=p.find(ConstructionCase,constructionCase.getId());");
 		date = (Date) eval("constructionCase.getStartDate()");
@@ -153,7 +153,7 @@ public abstract class AbstractPersistenceTest extends Assert {
 		eval("p.start();");
 		eval("p.persist(constructionCase);");
 		eval("p.commit();");
-		eval("p.close();");
+		//eval("p.close();");
 		eval("p.start();");
 		eval("house=p.find(House,house.getId());");
 		assertEquals(1, eval("house.getWalls().size()"));
@@ -191,7 +191,7 @@ public abstract class AbstractPersistenceTest extends Assert {
 		assertEquals(1, eval("wallPlan1.getRoomPlans().size()"));
 		eval("p.update(constructionCase);");
 		eval("p.commit();");
-		eval("p.close();");
+		//eval("p.close();");
 		eval("p.start();");
 		eval("roomPlan1=p.find(RoomPlan,roomPlan1.getId());");
 		assertEquals(2, eval("roomPlan1.getWallPlans().size()"));

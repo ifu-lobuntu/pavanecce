@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.jcr.Node;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.naming.InitialContext;
@@ -92,9 +91,9 @@ import org.pavanecce.cmmn.jbpm.infra.CaseRegisterableItemsFactory;
 import org.pavanecce.cmmn.jbpm.infra.DelegatingNodeFactory;
 import org.pavanecce.cmmn.jbpm.infra.PlanItemBuilder;
 import org.pavanecce.cmmn.jbpm.infra.SentryBuilder;
-import org.pavanecce.cmmn.jbpm.jpa.JpaCollectionPlaceHolderResolverStrategy;
 import org.pavanecce.cmmn.jbpm.jpa.HibernateSubscriptionManager;
 import org.pavanecce.cmmn.jbpm.jpa.JpaCasePersistence;
+import org.pavanecce.cmmn.jbpm.jpa.JpaCollectionPlaceHolderResolverStrategy;
 import org.pavanecce.cmmn.jbpm.jpa.JpaPlaceHolderResolverStrategy;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstance;
@@ -118,7 +117,6 @@ import org.pavanecce.common.ocm.OcmFactory;
 import org.pavanecce.common.ocm.OcmObjectPersistence;
 import org.pavanecce.common.util.FileUtil;
 
-
 //import test.ConstructionCase;
 //import test.House;
 //import test.HousePlan;
@@ -127,7 +125,6 @@ import org.pavanecce.common.util.FileUtil;
 //import test.Wall;
 //import test.WallPlan;
 import bitronix.tm.resource.jdbc.PoolingDataSource;
-import bitronix.tm.BitronixTransactionManager;
 
 public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 	ObjectPersistence persistence;
@@ -152,7 +149,7 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 	}
 
 	protected void printTimer(String name) {
-		System.out.println(name + " took " + (System.currentTimeMillis() - timer));
+//		System.out.println(name + " took " + (System.currentTimeMillis() - timer));
 		startTimer();
 	}
 
@@ -580,6 +577,7 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 		if (ocmFactory == null) {
 			try {
 				startTimer();
+				FileUtil.deleteRoot(new File("./repository"));
 				TransientRepository jcrRepo = new TransientRepository();
 				printTimer("new TransientRepository()");
 				Session session;

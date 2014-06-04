@@ -43,10 +43,6 @@ public class OcmPersistentSubscriptionEventTest extends CaseFileItemEventTest {
 		}
 	}
 
-	@BeforeClass
-	public static void deleteJcrRepo() throws IOException {
-		JcrTestCase.deleteTempRepo();
-	}
 
 	@Test
 	public void testModel() throws Exception {

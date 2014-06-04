@@ -23,7 +23,7 @@ public abstract class TextOutputNode {
 		if (long1 == null) {
 			return 0L;
 		} else if (long1 % 100 == 0) {
-			logger.info(getClass().getName() + " count :" + long1);
+			logger.debug(getClass().getName() + " count :" + long1);
 		}
 		return long1;
 	}
