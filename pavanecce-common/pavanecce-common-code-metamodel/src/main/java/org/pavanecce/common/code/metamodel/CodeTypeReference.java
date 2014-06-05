@@ -20,6 +20,7 @@ public class CodeTypeReference implements Comparable<CodeTypeReference> {
 		this.lastName = lastName;
 		this.mappings = new CodeMappedType(mappings);
 	}
+
 	public CodeTypeReference(boolean isPeer, String... qualifiedName) {
 		this(isPeer, packageReference(qualifiedName), qualifiedName[qualifiedName.length - 1], Collections.<String, String> emptyMap());
 	}
@@ -27,12 +28,10 @@ public class CodeTypeReference implements Comparable<CodeTypeReference> {
 	private static CodePackageReference packageReference(String[] qualifiedName) {
 		CodePackageReference result = null;
 		for (int i = 0; i < qualifiedName.length - 1; i++) {
-			result=new CodePackageReference(result,qualifiedName[i], Collections.<String,String>emptyMap());
+			result = new CodePackageReference(result, qualifiedName[i], Collections.<String, String> emptyMap());
 		}
 		return result;
 	}
-
-
 
 	public boolean isMapped() {
 		return !isPeer;
@@ -48,7 +47,7 @@ public class CodeTypeReference implements Comparable<CodeTypeReference> {
 
 	private Map<String, String> getMappings() {
 		if (mappings == null) {
-			mappings = new CodeMappedType(new HashMap<String,String>()); 
+			mappings = new CodeMappedType(new HashMap<String, String>());
 		}
 		return mappings.getMappings();
 	}
@@ -83,17 +82,18 @@ public class CodeTypeReference implements Comparable<CodeTypeReference> {
 			return lastName.compareTo(o.lastName);
 		}
 	}
+
 	protected int packageComparison(CodeTypeReference o) {
-		if(packageReference==null){
-			if(o.packageReference!=null){
+		if (packageReference == null) {
+			if (o.packageReference != null) {
 				return -1;
-			}else{
+			} else {
 				return 0;
 			}
-		}else{
-			if(o.packageReference!=null){
+		} else {
+			if (o.packageReference != null) {
 				return packageReference.compareTo(o.packageReference);
-			}else{
+			} else {
 				return 1;
 			}
 		}
@@ -102,6 +102,7 @@ public class CodeTypeReference implements Comparable<CodeTypeReference> {
 	public void addToElementTypes(CodeTypeReference sourceType) {
 		this.elementTypes.add(new CodeElementType(sourceType));
 	}
+
 	public List<CodeElementType> getElementTypes() {
 		return elementTypes;
 	}
@@ -109,16 +110,18 @@ public class CodeTypeReference implements Comparable<CodeTypeReference> {
 	public boolean isPeer() {
 		return isPeer;
 	}
+
 	public CodeTypeReference getCopy() {
 		return new CodeTypeReference(isPeer, packageReference, lastName, mappings.getMappings());
 	}
+
 	public List<String> getQualifiedNameInLanguage(String language) {
 		String mappedType = getMappedType(language);
-		if(mappedType==null){
+		if (mappedType == null) {
 			List<String> result = packageReference.getQualifiedNameInLanguage(language);
 			result.add(getLastName());
 			return result;
-		}else{
+		} else {
 			return Arrays.asList(mappedType.split("\\."));
 		}
 	}

@@ -8,11 +8,12 @@ import javax.persistence.OneToMany;
 
 @Entity
 public class OneEntity {
-	@OneToMany(mappedBy = "one",cascade=CascadeType.ALL)
+	@OneToMany(mappedBy = "one", cascade = CascadeType.ALL)
 	private Set<ManyEntity> many;
 	private String name;
 	private Integer age;
 	private AnEnum anEnum;
+
 	public Set<ManyEntity> getMany() {
 		return many;
 	}
@@ -44,5 +45,5 @@ public class OneEntity {
 	public void setMany(Set<ManyEntity> many) {
 		this.many = many;
 	}
-	
+
 }

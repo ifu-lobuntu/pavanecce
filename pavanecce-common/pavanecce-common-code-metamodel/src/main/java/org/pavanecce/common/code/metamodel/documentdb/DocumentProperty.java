@@ -14,13 +14,15 @@ public class DocumentProperty implements IDocumentElement, IDocumentProperty {
 		this.name = name;
 		this.namespace = namespace;
 		this.required = required;
-		this.multiple=isMany;
-		this.propertyType=type;
+		this.multiple = isMany;
+		this.propertyType = type;
 	}
+
 	@Override
 	public boolean isMultiple() {
 		return multiple;
 	}
+
 	@Override
 	public boolean isMandatory() {
 		return required;
@@ -43,17 +45,20 @@ public class DocumentProperty implements IDocumentElement, IDocumentProperty {
 	public PropertyType getPropertyType() {
 		return propertyType;
 	}
+
 	public void setPath(boolean b) {
-		this.isPath=b;
+		this.isPath = b;
 	}
+
 	public boolean isPath() {
 		return isPath;
 	}
+
 	public boolean isUuid() {
 		return isUuid;
 	}
+
 	public void setUuid(boolean isUuid) {
 		this.isUuid = isUuid;
 	}
 }
-

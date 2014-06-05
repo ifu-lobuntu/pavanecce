@@ -30,11 +30,11 @@ public class AbstractSourceTests {
 	protected CodeEnumeration simpleEnumeration;
 
 	@Before
-	public void setup(){
+	public void setup() {
 		this.codeModel = new CodeModel();
 		CodePackage pkg1 = codeModel.findOrCreatePackage("model").findOrCreatePackage("pkg1");
-		Map<String, String> em=Collections.emptyMap();
-		pkg1.setPackageReference(new CodePackageReference(new CodePackageReference(null, "model",em),"pkg1",em));
+		Map<String, String> em = Collections.emptyMap();
+		pkg1.setPackageReference(new CodePackageReference(new CodePackageReference(null, "model", em), "pkg1", em));
 		populateSimpleClass(pkg1);
 		populateSimpleInterface(pkg1);
 		populateSimpleEnumeration(pkg1);
@@ -45,7 +45,7 @@ public class AbstractSourceTests {
 		this.simpleClass = new CodeClass("EmptyClass", pkg1);
 		PrimitiveTypeReference string = new PrimitiveTypeReference(CodePrimitiveTypeKind.STRING);
 		new CodeField(simpleClass, "name", string);
-		CodeTypeReference theClass = new CodeTypeReference(true,"model", "pkg2", "TheClass");
+		CodeTypeReference theClass = new CodeTypeReference(true, "model", "pkg2", "TheClass");
 		new CodeField(simpleClass, "theClass", theClass);
 		CodeMethod getName = new CodeMethod(simpleClass, "getName", string);
 		getName.setResultInitialValue("${self}.name");
@@ -69,6 +69,7 @@ public class AbstractSourceTests {
 		manyParameters.setResultInitialValue(new NewInstanceExpression(setOfTheClass));
 		manyParameters.setDeclaringClass(simpleClass);
 	}
+
 	protected void populateSimpleInterface(CodePackage pkg1) {
 		this.simpleInterface = new CodeInterface("SimpleInterface", pkg1);
 		PrimitiveTypeReference string = new PrimitiveTypeReference(CodePrimitiveTypeKind.STRING);
@@ -76,7 +77,7 @@ public class AbstractSourceTests {
 		nameField.setStatic(true);
 		nameField.setConstant(true);
 		nameField.setVisibility(CodeVisibilityKind.PUBLIC);
-		CodeTypeReference theClass = new CodeTypeReference(true,"model", "pkg2", "TheClass");
+		CodeTypeReference theClass = new CodeTypeReference(true, "model", "pkg2", "TheClass");
 		CodeField codeField = new CodeField(simpleInterface, "THE_CLASS", theClass);
 		codeField.setStatic(true);
 		codeField.setConstant(true);
@@ -92,13 +93,14 @@ public class AbstractSourceTests {
 		doSomethingInteresting.setReturnType(setOfTheClass);
 		doSomethingInteresting.setDeclaringClass(simpleInterface);
 	}
+
 	protected void populateSimpleEnumeration(CodePackage pkg1) {
-		this.simpleEnumeration= new CodeEnumeration("SimpleEnumeration", pkg1);
+		this.simpleEnumeration = new CodeEnumeration("SimpleEnumeration", pkg1);
 		new CodeEnumerationLiteral(simpleEnumeration, "CONST1");
 		new CodeEnumerationLiteral(simpleEnumeration, "CONST2");
 		PrimitiveTypeReference string = new PrimitiveTypeReference(CodePrimitiveTypeKind.STRING);
 		new CodeField(simpleEnumeration, "name", string);
-		CodeTypeReference theClass = new CodeTypeReference(true,"model", "pkg2", "TheClass");
+		CodeTypeReference theClass = new CodeTypeReference(true, "model", "pkg2", "TheClass");
 		CodeMethod doSomethingInteresting = new CodeMethod("doSomethingInteresting");
 		CollectionTypeReference setOfTheClass = new CollectionTypeReference(CodeCollectionKind.SET);
 		setOfTheClass.addToElementTypes(theClass);

@@ -41,8 +41,8 @@ public class OclProcessDialectTests extends AbstractCmmnCaseTestCase {
 
 	@Override
 	protected Class<?>[] getClasses() {
-		return new Class<?>[] { ConstructionCase.class, HousePlan.class, House.class, Wall.class, WallPlan.class, RoofPlan.class, OcmCaseSubscriptionInfo.class, OcmCaseFileItemSubscriptionInfo.class,
-				RoomPlan.class };
+		return new Class<?>[] { ConstructionCase.class, HousePlan.class, House.class, Wall.class, WallPlan.class, RoofPlan.class,
+				OcmCaseSubscriptionInfo.class, OcmCaseFileItemSubscriptionInfo.class, RoomPlan.class };
 	}
 
 	@Test
@@ -58,7 +58,8 @@ public class OclProcessDialectTests extends AbstractCmmnCaseTestCase {
 		Task task = getRuntimeEngine().getTaskService().getTaskById(list.get(0).getId());
 		Content input = getRuntimeEngine().getTaskService().getContentById(task.getTaskData().getDocumentContentId());
 		@SuppressWarnings("unchecked")
-		Map<String, Object> contentData = (Map<String, Object>) ContentMarshallerHelper.unmarshall(input.getContent(), getRuntimeEngine().getKieSession().getEnvironment());
+		Map<String, Object> contentData = (Map<String, Object>) ContentMarshallerHelper.unmarshall(input.getContent(), getRuntimeEngine().getKieSession()
+				.getEnvironment());
 		assertEquals(housePlan.getWallPlans().iterator().next().getId(), ((WallPlan) contentData.get("wallPlan")).getId());
 	}
 

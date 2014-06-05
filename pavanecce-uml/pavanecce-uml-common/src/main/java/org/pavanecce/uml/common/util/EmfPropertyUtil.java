@@ -161,8 +161,8 @@ public class EmfPropertyUtil {
 		}
 		for (Association a : c.getAssociations()) {
 			for (Property end : a.getMemberEnds()) {
-				if (end.getOtherEnd() != null && end.getOtherEnd().getType() != null && EmfClassifierUtil.conformsTo(c, (Classifier) end.getOtherEnd().getType())
-						&& end.isNavigable() && end.getOwner() == a) {
+				if (end.getOtherEnd() != null && end.getOtherEnd().getType() != null
+						&& EmfClassifierUtil.conformsTo(c, (Classifier) end.getOtherEnd().getType()) && end.isNavigable() && end.getOwner() == a) {
 					maybeAddProperty(c, nameMap, result, end);
 				}
 			}
@@ -247,22 +247,24 @@ public class EmfPropertyUtil {
 		}
 		return null;
 	}
-	public static boolean isRequired(MultiplicityElement otherEnd){
-		if(otherEnd.getLower() == 1){
+
+	public static boolean isRequired(MultiplicityElement otherEnd) {
+		if (otherEnd.getLower() == 1) {
 			return true;
-		}else if(otherEnd instanceof Property){
+		} else if (otherEnd instanceof Property) {
 			Property p = (Property) otherEnd;
 			return isQualifier(p) || (p.getOtherEnd() != null && p.getOtherEnd().getQualifiers().size() > 0);
 		}
 		return false;
 	}
-	public static boolean isQualifier(Property p){
+
+	public static boolean isQualifier(Property p) {
 		Classifier c = (Classifier) EmfElementFinder.getContainer(p);
 		List<Property> propertiesInScope = EmfPropertyUtil.getEffectiveProperties(c);
-		for(Property property:propertiesInScope){
-			if(property.getOtherEnd() != null){
-				for(Property q:property.getOtherEnd().getQualifiers()){
-					if(p.getName().equals(q.getName())){
+		for (Property property : propertiesInScope) {
+			if (property.getOtherEnd() != null) {
+				for (Property q : property.getOtherEnd().getQualifiers()) {
+					if (p.getName().equals(q.getName())) {
 						return true;
 					}
 				}
@@ -270,43 +272,45 @@ public class EmfPropertyUtil {
 		}
 		return false;
 	}
-	public static boolean isInverse(Property f){
-		if(f.getOtherEnd() == null || !f.getOtherEnd().isNavigable()){
+
+	public static boolean isInverse(Property f) {
+		if (f.getOtherEnd() == null || !f.getOtherEnd().isNavigable()) {
 			return false;
-		}else{
-			if(f instanceof EndToAssociationClass){
+		} else {
+			if (f instanceof EndToAssociationClass) {
 				return true;
-			}else if(f instanceof AssociationClassToEnd){
+			} else if (f instanceof AssociationClassToEnd) {
 				return false;
-			}else if(f instanceof NonInverseArtificialProperty){
+			} else if (f instanceof NonInverseArtificialProperty) {
 				return false;
-			}else if(f instanceof InverseArtificialProperty){
+			} else if (f instanceof InverseArtificialProperty) {
 				return true;
-			}else if(isMany(f)){
-				if(isMany(f.getOtherEnd())){
+			} else if (isMany(f)) {
+				if (isMany(f.getOtherEnd())) {
 					return f.getAssociation().getMemberEnds().indexOf(f) == 1;
-				}else{
+				} else {
 					return true;
 				}
-			}else{
-				if(isMany(f.getOtherEnd())){
+			} else {
+				if (isMany(f.getOtherEnd())) {
 					return false;
-				}else{
-					if(f.isComposite()){
+				} else {
+					if (f.isComposite()) {
 						return true;
-					}else if(f.getOtherEnd().isComposite()){
+					} else if (f.getOtherEnd().isComposite()) {
 						return false;
-					}else{
+					} else {
 						return f.getAssociation().getMemberEnds().indexOf(f) == 1;
 					}
 				}
 			}
 		}
 	}
-	public static Property getBackingPropertyForQualifier(Property q){
+
+	public static Property getBackingPropertyForQualifier(Property q) {
 		Classifier type = (Classifier) q.getAssociationEnd().getType();
-		for(Property property:getEffectiveProperties(type)){
-			if(property.getName().equals(q.getName())){
+		for (Property property : getEffectiveProperties(type)) {
+			if (property.getName().equals(q.getName())) {
 				return property;
 			}
 		}
@@ -319,7 +323,7 @@ public class EmfPropertyUtil {
 			String persistentName = getPersistentName(primaryKey);
 			if (persistentName.equals(referencedColumnName)) {
 				return primaryKey;
-			} else if(primaryKey.getType() instanceof DataType){
+			} else if (primaryKey.getType() instanceof DataType) {
 				List<Property> pkProperties = getEffectiveProperties((Classifier) primaryKey.getType());
 				for (Property pkProperty : pkProperties) {
 					if (getPersistentName(pkProperty).equals(referencedColumnName)) {
@@ -340,7 +344,7 @@ public class EmfPropertyUtil {
 						}
 					}
 				}
-	
+
 			}
 		}
 		return null;
@@ -358,9 +362,11 @@ public class EmfPropertyUtil {
 	public static boolean isOneToMany(Property p) {
 		return !isMany(p) && isMany(p.getOtherEnd());
 	}
+
 	public static boolean isOneToOne(Property p) {
 		return !isMany(p) && !isMany(p.getOtherEnd());
 	}
+
 	public static boolean isManyToOne(Property p) {
 		return isMany(p) && !isMany(p.getOtherEnd());
 	}

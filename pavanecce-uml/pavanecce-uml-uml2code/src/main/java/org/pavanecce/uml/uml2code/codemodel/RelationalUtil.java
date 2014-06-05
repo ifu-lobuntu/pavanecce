@@ -51,7 +51,7 @@ public class RelationalUtil {
 					}
 					LinkedHashMap<String, String> map = buildColumnMap(p);
 					if (p.getOtherEnd() != null && !EmfPropertyUtil.isMany(p.getOtherEnd())) {
-						result = new RelationalLink(linkName, map,true);
+						result = new RelationalLink(linkName, map, true);
 					} else {
 						result = new RelationalLink(linkName, map);
 					}

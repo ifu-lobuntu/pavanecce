@@ -166,10 +166,12 @@ public class OcmCodeDecorator extends AbstractJavaCodeDecorator {
 			sb.append("  @Bean(jcrName = \"").append(ref.getFullName()).append("\", converter = ReferenceBeanConverterImpl.class)\n");
 		} else if (element instanceof ChildDocumentCollection) {
 			ChildDocumentCollection children = (ChildDocumentCollection) element;
-			sb.append("  @Collection(jcrName = \"").append(children.getFullName()).append("\", jcrElementName = \"").append(children.getType().getFullName()).append("\")\n");
+			sb.append("  @Collection(jcrName = \"").append(children.getFullName()).append("\", jcrElementName = \"").append(children.getType().getFullName())
+					.append("\")\n");
 		} else if (element instanceof ReferencedDocumentCollection) {
 			ReferencedDocumentCollection refs = (ReferencedDocumentCollection) element;
-			sb.append("  @Collection(jcrName = \"").append(refs.getFullName()).append("\", collectionConverter =  BeanReferenceCollectionConverterImpl.class)\n");
+			sb.append("  @Collection(jcrName = \"").append(refs.getFullName())
+					.append("\", collectionConverter =  BeanReferenceCollectionConverterImpl.class)\n");
 		} else if (element instanceof DocumentEnumProperty) {
 			DocumentEnumProperty prop = (DocumentEnumProperty) element;
 			sb.append("  @Field(jcrName = \"").append(prop.getFullName()).append("\", converter = EnumTypeConverter.class)\n");

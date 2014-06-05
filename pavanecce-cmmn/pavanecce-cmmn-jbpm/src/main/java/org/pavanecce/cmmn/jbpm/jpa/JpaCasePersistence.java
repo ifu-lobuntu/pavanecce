@@ -5,7 +5,6 @@ import javax.persistence.EntityManagerFactory;
 import org.kie.api.runtime.manager.RuntimeManager;
 import org.kie.internal.runtime.manager.context.EmptyContext;
 import org.pavanecce.cmmn.jbpm.event.AbstractPersistentSubscriptionManager;
-import org.pavanecce.common.Stopwatch;
 import org.pavanecce.common.jpa.JpaObjectPersistence;
 
 /**
@@ -26,7 +25,6 @@ public class JpaCasePersistence extends JpaObjectPersistence {
 	@Override
 	public void commit() {
 		try {
-			Stopwatch.start();
 			startOrJoinTransaction();
 			getEntityManager().flush();
 			doCaseFileItemEvents();

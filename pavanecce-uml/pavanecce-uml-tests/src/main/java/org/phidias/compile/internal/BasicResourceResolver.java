@@ -33,9 +33,7 @@ public class BasicResourceResolver implements ResourceResolver {
 	}
 
 	@Override
-	public Collection<String> resolveResources(
-		BundleWiring bundleWiring, String path, String filePattern,
-		int options) {
+	public Collection<String> resolveResources(BundleWiring bundleWiring, String path, String filePattern, int options) {
 
 		return bundleWiring.listResources(path, filePattern, options);
 	}

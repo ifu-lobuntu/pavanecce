@@ -1,6 +1,5 @@
 package org.pavanecce.common.code.metamodel;
 
-
 public class CollectionTypeReference extends CodeTypeReference {
 
 	private CodeCollectionKind kind;
@@ -24,7 +23,7 @@ public class CollectionTypeReference extends CodeTypeReference {
 
 	@Override
 	public CollectionTypeReference getCopy() {
-		return new CollectionTypeReference(kind,isImplementation);
+		return new CollectionTypeReference(kind, isImplementation);
 	}
 
 	@Override
@@ -41,7 +40,7 @@ public class CollectionTypeReference extends CodeTypeReference {
 				}
 			}
 			return result;
-		}else{
+		} else {
 			return super.compareTo(o);
 		}
 	}

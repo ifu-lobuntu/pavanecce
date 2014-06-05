@@ -12,16 +12,17 @@ import org.eclipse.uml2.uml.Interface;
 import org.eclipse.uml2.uml.Operation;
 
 public class EmfOperationUtil {
-	public static boolean isPrefix(Operation o){
+	public static boolean isPrefix(Operation o) {
 		return o.getName().equals("++") || o.getName().equals("--");
 	}
-	public static Collection<Operation> getDirectlyImplementedOperations(Classifier bc){
+
+	public static Collection<Operation> getDirectlyImplementedOperations(Classifier bc) {
 		Set<String> inheritedConcreteOperationNames = new TreeSet<String>();
-		for(Generalization g:bc.getGeneralizations()){
-			if(g.getGeneral() instanceof BehavioredClassifier){
-				for(Operation o:getEffectiveOperations(g.getGeneral())){
+		for (Generalization g : bc.getGeneralizations()) {
+			if (g.getGeneral() instanceof BehavioredClassifier) {
+				for (Operation o : getEffectiveOperations(g.getGeneral())) {
 					boolean mustImplement = o.isAbstract() && g.getGeneral().isAbstract() && !bc.isAbstract();
-					if(!mustImplement){
+					if (!mustImplement) {
 						// Remember, an interface may be implemented both by the superclass as well as 'bc'
 						inheritedConcreteOperationNames.add(EmfParameterUtil.toIdentifyingString(o));
 					}
@@ -29,34 +30,37 @@ public class EmfOperationUtil {
 			}
 		}
 		Set<Operation> results = new TreeSet<Operation>(new DefaultElementComparator());
-		for(Operation o:getEffectiveOperations(bc)){
-			if(o.getOwner() == bc || !inheritedConcreteOperationNames.contains(EmfParameterUtil.toIdentifyingString(o))){
+		for (Operation o : getEffectiveOperations(bc)) {
+			if (o.getOwner() == bc || !inheritedConcreteOperationNames.contains(EmfParameterUtil.toIdentifyingString(o))) {
 				results.add(o);
 			}
 		}
 		return results;
 	}
-	public static Set<Operation> getEffectiveOperations(Classifier bc){
+
+	public static Set<Operation> getEffectiveOperations(Classifier bc) {
 		Set<Operation> result = new TreeSet<Operation>(new DefaultElementComparator());
 		addOperations(result, bc);
-		if(bc instanceof BehavioredClassifier){
-			for(Interface i:((BehavioredClassifier) bc).getImplementedInterfaces()){
+		if (bc instanceof BehavioredClassifier) {
+			for (Interface i : ((BehavioredClassifier) bc).getImplementedInterfaces()) {
 				addOperations(result, i);
 			}
 		}
 		return result;
 	}
-	private static void addOperations(Set<Operation> result,Classifier from){
+
+	private static void addOperations(Set<Operation> result, Classifier from) {
 		result.addAll(from.getOperations());
-		for(Classifier c:from.getGenerals()){
+		for (Classifier c : from.getGenerals()) {
 			addOperations(result, c);
 		}
 	}
-	private static void addOperations(Set<Operation> result,Interface i){
+
+	private static void addOperations(Set<Operation> result, Interface i) {
 		result.addAll(i.getOwnedOperations());
 		EList<Classifier> generals = i.getGenerals();
-		for(Classifier classifier:generals){
-			if(classifier instanceof Interface){
+		for (Classifier classifier : generals) {
+			if (classifier instanceof Interface) {
 				addOperations(result, (Interface) classifier);
 			}
 		}

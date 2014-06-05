@@ -10,6 +10,7 @@ public class NewInstanceExpression extends CodeExpression {
 		super();
 		this.type = type;
 	}
+
 	public CodeTypeReference getType() {
 		return type;
 	}

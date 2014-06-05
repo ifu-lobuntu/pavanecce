@@ -13,13 +13,13 @@ public class StaticMethodCallExpression extends CodeExpression {
 	private CodeTypeReference type;
 
 	public StaticMethodCallExpression(CodeTypeReference type, String methodName, CodeExpression... argument) {
-		this.type=type;
+		this.type = type;
 		this.methodName = methodName;
 		this.arguments.addAll(Arrays.asList(argument));
 	}
 
 	public StaticMethodCallExpression(CodeTypeReference type, String methodName, List<CodeExpression> args) {
-		this.type=type;
+		this.type = type;
 		this.methodName = methodName;
 		this.arguments.addAll(args);
 	}

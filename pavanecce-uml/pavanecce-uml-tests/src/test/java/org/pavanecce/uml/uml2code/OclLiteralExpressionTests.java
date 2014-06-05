@@ -1,6 +1,5 @@
 package org.pavanecce.uml.uml2code;
 
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -25,15 +24,16 @@ import org.pavanecce.common.code.metamodel.expressions.PortableExpression;
 import org.pavanecce.uml.uml2code.java.JavaCodeGenerator;
 
 public class OclLiteralExpressionTests extends AbstractOcl2CodeModelTest {
-	AbstractCodeGenerator jcg=new JavaCodeGenerator();
+	AbstractCodeGenerator jcg = new JavaCodeGenerator();
+
 	@Test
 	public void testPrimitiveLiterals() throws IOException {
 		super.adaptor.startVisiting(builder, model);
 		super.adaptor.startVisiting(oclCodeBuilder, model);
-		CodeClass theClass = super.adaptor.getCodeModel().getDescendent("model","pkg2","TheClass");
+		CodeClass theClass = super.adaptor.getCodeModel().getDescendent("model", "pkg2", "TheClass");
 		assertGetDefaultInteger(theClass);
 		assertGetDefaultIntegers(theClass);
-		
+
 		assertGetDefaultString(theClass);
 	}
 
@@ -41,7 +41,7 @@ public class OclLiteralExpressionTests extends AbstractOcl2CodeModelTest {
 		CodeMethod getDefaultString = theClass.getMethod("getDefaultString", Collections.emptyList());
 		CodeExpression stringResult = getDefaultString.getResult();
 		assertTrue(stringResult instanceof MethodCallExpression);
-		MethodCallExpression concat=(MethodCallExpression) stringResult;
+		MethodCallExpression concat = (MethodCallExpression) stringResult;
 		assertEquals("OclPrimitives.concat", concat.getMethodName());
 		assertEquals("\"asdf\"", ((PortableExpression) concat.getArguments().get(0)).getExpression());
 		BufferedReader getDefaultStringBody = new BufferedReader(new StringReader(jcg.toMethodBody(getDefaultString)));
@@ -52,14 +52,15 @@ public class OclLiteralExpressionTests extends AbstractOcl2CodeModelTest {
 		CodeMethod getDefaultInteger = theClass.getMethod("getDefaultInteger", Collections.emptyList());
 		CodeExpression integerResult = getDefaultInteger.getResult();
 		assertTrue(integerResult instanceof BinaryOperatorExpression);
-		BinaryOperatorExpression boe=(BinaryOperatorExpression) integerResult;
+		BinaryOperatorExpression boe = (BinaryOperatorExpression) integerResult;
 		assertTrue(boe.getArg1() instanceof BinaryOperatorExpression);
 		assertTrue(boe.getArg2() instanceof PortableExpression);
-		PortableExpression arg2=(PortableExpression) boe.getArg2();
+		PortableExpression arg2 = (PortableExpression) boe.getArg2();
 		assertEquals("2", arg2.getExpression());
 		BufferedReader getDefaultIntegerBody = new BufferedReader(new StringReader(jcg.toMethodBody(getDefaultInteger)));
 		assertEquals("    Integer result = ( ( 2 + 3 ) / 2 );", getDefaultIntegerBody.readLine());
 	}
+
 	protected void assertGetDefaultIntegers(CodeClass theClass) throws IOException {
 		CodeMethod getDefaultInteger = theClass.getMethod("getDefaultIntegers", Collections.emptyList());
 		CodeExpression integerResult = getDefaultInteger.getResult();

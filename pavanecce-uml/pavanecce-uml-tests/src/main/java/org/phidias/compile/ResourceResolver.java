@@ -28,8 +28,6 @@ public interface ResourceResolver {
 
 	public URL getResource(BundleWiring bundleWiring, String name);
 
-	public Collection<String> resolveResources(
-		BundleWiring bundleWiring, String path, String filePattern,
-		int options);
+	public Collection<String> resolveResources(BundleWiring bundleWiring, String path, String filePattern, int options);
 
 }

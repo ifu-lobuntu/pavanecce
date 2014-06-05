@@ -16,17 +16,16 @@ public abstract class AbstractCollectionOperationsTests extends AbstractOclTest 
 		buildBooleanOperation("includes", "housePlan.wallPlans->includes(house.wallPlans->any(true))");
 	}
 
-
 	protected static void buildBooleanOperation(String name, String oclString) {
 		Operation find = example.getConstructionCase().createOwnedOperation(name, emptyList(String.class), emptyList(Type.class));
 		Parameter result = find.createOwnedParameter("result", example.getType("Boolean"));
 		result.setDirection(ParameterDirectionKind.RETURN_LITERAL);
 		result.setUpper(1);
-		OpaqueExpression ocl = (OpaqueExpression) find.createBodyCondition("body").createSpecification("spec", example.getRoomPlans(), UMLPackage.eINSTANCE.getOpaqueExpression());
+		OpaqueExpression ocl = (OpaqueExpression) find.createBodyCondition("body").createSpecification("spec", example.getRoomPlans(),
+				UMLPackage.eINSTANCE.getOpaqueExpression());
 		ocl.getLanguages().add("ocl");
 		ocl.getBodies().add(oclString);
 	}
-
 
 	@Test
 	public void testIt() throws Exception {

@@ -19,6 +19,7 @@ public abstract class AbstractPersistenceTest extends Assert {
 	public AbstractPersistenceTest() {
 		super();
 	}
+
 	public void assertEquals(int i, Object val) {
 		if (val instanceof Number) {
 			assertEquals(i, ((Number) val).intValue());
@@ -26,6 +27,7 @@ public abstract class AbstractPersistenceTest extends Assert {
 			super.assertEquals(i, val);
 		}
 	}
+
 	@AfterClass
 	public static void after() {
 		example.after();
@@ -52,12 +54,12 @@ public abstract class AbstractPersistenceTest extends Assert {
 		eval("constructionCase.setHousePlan(housePlan);");
 		eval("housePlan.setRoofPlan(roofPlan);");
 		eval("p.start();");
-		//Generate UUIDs
+		// Generate UUIDs
 		eval("p.persist(constructionCase);");
 		eval("house.setRoofPlan(roofPlan);");
 		eval("p.update(constructionCase);");
 		eval("p.commit();");
-		//eval("p.close();");
+		// eval("p.close();");
 		eval("p.start();");
 		eval("constructionCase=p.find(ConstructionCase,constructionCase.getId());");
 		eval("house=constructionCase.getHouse();");
@@ -68,34 +70,36 @@ public abstract class AbstractPersistenceTest extends Assert {
 		assertNotNull(eval("housePlan.getRoofPlan();"));
 		assertNotNull(eval("roofPlan.getHouse();"));
 		assertNotNull(eval("roofPlan.getHousePlan();"));
-		assertEquals(eval("constructionCase.getId();"),eval("house.getConstructionCase().getId();"));
+		assertEquals(eval("constructionCase.getId();"), eval("house.getConstructionCase().getId();"));
 		assertEquals(eval("housePlan.getRoofPlan().getId();"), eval("house.getRoofPlan().getId();"));
 		eval("constructionCase=p.find(ConstructionCase,constructionCase.getId());");
 		eval("housePlan.setRoofPlan(null);");
 		eval("house.setRoofPlan(null);");
-//		eval("p.update(constructionCase);");
-		//sadly, OCM requires this
+		// eval("p.update(constructionCase);");
+		// sadly, OCM requires this
 		eval("p.update(housePlan);");
 		eval("p.update(house);");
 		eval("p.commit();");
-		//eval("p.close();");
+		// eval("p.close();");
 		eval("p.start();");
 		eval("constructionCase=p.find(ConstructionCase,constructionCase.getId());");
 		assertNull(eval("constructionCase.getHousePlan().getRoofPlan();"));
 		assertNull(eval("constructionCase.getHouse().getRoofPlan();"));
 	}
+
 	@After
-	public void cleanup(){
+	public void cleanup() {
 		try {
 			eval("p.commit();");
 		} catch (Exception e) {
 		}
 		try {
-			//eval("p.close();");
+			// eval("p.close();");
 		} catch (Exception e) {
 		}
 
 	}
+
 	@Test
 	public void testSimpleTypes() throws Exception {
 		// GIVEN UML model built, CodeModel generated, JPA Code Generated,
@@ -107,7 +111,7 @@ public abstract class AbstractPersistenceTest extends Assert {
 		String dateString = "2013-12-31 23:13:56";
 		Date date = parser.parse(dateString);
 		example.getJavaScriptContext().setAttribute("date", date, ScriptContext.ENGINE_SCOPE);
-		example.getJavaScriptContext().setAttribute("picture", new byte[]{1,2,3,4,5,6}, ScriptContext.ENGINE_SCOPE);
+		example.getJavaScriptContext().setAttribute("picture", new byte[] { 1, 2, 3, 4, 5, 6 }, ScriptContext.ENGINE_SCOPE);
 		eval("ConstructionCase=Packages.test.ConstructionCase;");
 		eval("Date=Packages.java.util.Date;");
 		eval("var constructionCase = new ConstructionCase();");
@@ -120,7 +124,7 @@ public abstract class AbstractPersistenceTest extends Assert {
 		eval("p.start();");
 		eval("p.persist(constructionCase);");
 		eval("p.commit();");
-		//eval("p.close();");
+		// eval("p.close();");
 		eval("p.start();");
 		eval("constructionCase=p.find(ConstructionCase,constructionCase.getId());");
 		date = (Date) eval("constructionCase.getStartDate()");
@@ -130,7 +134,7 @@ public abstract class AbstractPersistenceTest extends Assert {
 		assertEquals(1240.45, eval("constructionCase.getPricePerSquareMetre()"));
 		assertEquals(1, eval("constructionCase.getPicture()[0]"));
 		assertEquals(6, eval("constructionCase.getPicture()[5]"));
-		
+
 	}
 
 	@Test
@@ -153,7 +157,7 @@ public abstract class AbstractPersistenceTest extends Assert {
 		eval("p.start();");
 		eval("p.persist(constructionCase);");
 		eval("p.commit();");
-		//eval("p.close();");
+		// eval("p.close();");
 		eval("p.start();");
 		eval("house=p.find(House,house.getId());");
 		assertEquals(1, eval("house.getWalls().size()"));
@@ -191,7 +195,7 @@ public abstract class AbstractPersistenceTest extends Assert {
 		assertEquals(1, eval("wallPlan1.getRoomPlans().size()"));
 		eval("p.update(constructionCase);");
 		eval("p.commit();");
-		//eval("p.close();");
+		// eval("p.close();");
 		eval("p.start();");
 		eval("roomPlan1=p.find(RoomPlan,roomPlan1.getId());");
 		assertEquals(2, eval("roomPlan1.getWallPlans().size()"));

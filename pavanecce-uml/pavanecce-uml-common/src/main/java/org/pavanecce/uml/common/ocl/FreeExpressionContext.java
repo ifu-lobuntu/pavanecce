@@ -12,7 +12,7 @@ public class FreeExpressionContext extends AbstractOclContext {
 
 	public FreeExpressionContext(String ocl, OCLHelper<Classifier, Operation, Property, Constraint> helper) {
 		super(null, helper);
-		this.ocl=ocl;
+		this.ocl = ocl;
 	}
 
 	@Override

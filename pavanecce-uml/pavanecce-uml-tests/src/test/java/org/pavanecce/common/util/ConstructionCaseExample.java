@@ -48,18 +48,21 @@ public class ConstructionCaseExample extends AbstractPotentiallyJavaCompilingTes
 	private Model primitiveTypes;
 	private Model simpleTypes;
 	private Class roofPlan;
-	public static enum Multiplicity{
-		ZERO_OR_ONE(0,1),ONE(1,1), ZERO_OR_MANY(0,-1);
+
+	public static enum Multiplicity {
+		ZERO_OR_ONE(0, 1), ONE(1, 1), ZERO_OR_MANY(0, -1);
 		int lower;
 		int upper;
-		private Multiplicity(int lower, int upper){
-			this.lower=lower;
-			this.upper=upper;
+
+		private Multiplicity(int lower, int upper) {
+			this.lower = lower;
+			this.upper = upper;
 		}
 	}
-	public static final Multiplicity ZERO_OR_ONE=Multiplicity.ZERO_OR_ONE;
-	public static final Multiplicity ZERO_OR_MANY=Multiplicity.ZERO_OR_MANY;
-	public static final Multiplicity ONE=Multiplicity.ONE;
+
+	public static final Multiplicity ZERO_OR_ONE = Multiplicity.ZERO_OR_ONE;
+	public static final Multiplicity ZERO_OR_MANY = Multiplicity.ZERO_OR_MANY;
+	public static final Multiplicity ONE = Multiplicity.ONE;
 
 	public ConstructionCaseExample(String name) {
 		this.testName = name;
@@ -72,19 +75,19 @@ public class ConstructionCaseExample extends AbstractPotentiallyJavaCompilingTes
 		simpleTypes = LibraryImporter.importLibraryIfNecessary(model, StereotypeNames.STANDARD_SIMPLE_TYPES);
 		createConstructionCase();
 		house = (Class) getModel().createOwnedType("House", UMLPackage.eINSTANCE.getClass_());
-		createOneToOne(constructionCase, house, AggregationKind.COMPOSITE_LITERAL,true);
+		createOneToOne(constructionCase, house, AggregationKind.COMPOSITE_LITERAL, true);
 		housePlan = (Class) getModel().createOwnedType("HousePlan", UMLPackage.eINSTANCE.getClass_());
 		house.createOwnedAttribute("description", primitiveTypes.getOwnedType("String"));
 		roofPlan = (Class) getModel().createOwnedType("RoofPlan", UMLPackage.eINSTANCE.getClass_());
-		createOneToOne(constructionCase, housePlan, AggregationKind.COMPOSITE_LITERAL,true);
-		createOneToOne(housePlan, roofPlan, AggregationKind.COMPOSITE_LITERAL,false);
-		createOneToOne(house, roofPlan, AggregationKind.NONE_LITERAL,false);
+		createOneToOne(constructionCase, housePlan, AggregationKind.COMPOSITE_LITERAL, true);
+		createOneToOne(housePlan, roofPlan, AggregationKind.COMPOSITE_LITERAL, false);
+		createOneToOne(house, roofPlan, AggregationKind.NONE_LITERAL, false);
 		wall = (Class) getModel().createOwnedType("Wall", UMLPackage.eINSTANCE.getClass_());
 		createOneToMany(house, wall, CollectionKind.SET_LITERAL, AggregationKind.COMPOSITE_LITERAL);
 		wallPlan = (Class) getModel().createOwnedType("WallPlan", UMLPackage.eINSTANCE.getClass_());
-		wallPlan.createOwnedAttribute("shortDescription",  primitiveTypes.getOwnedType("String"));
-		roofPlan.createOwnedAttribute("shortDescription",  primitiveTypes.getOwnedType("String"));
-		createOneToOne(wallPlan, wall, AggregationKind.NONE_LITERAL,false);
+		wallPlan.createOwnedAttribute("shortDescription", primitiveTypes.getOwnedType("String"));
+		roofPlan.createOwnedAttribute("shortDescription", primitiveTypes.getOwnedType("String"));
+		createOneToOne(wallPlan, wall, AggregationKind.NONE_LITERAL, false);
 		createOneToMany(housePlan, wallPlan, CollectionKind.SET_LITERAL, AggregationKind.COMPOSITE_LITERAL);
 		createOneToMany(house, wallPlan, CollectionKind.SET_LITERAL, AggregationKind.NONE_LITERAL);
 		roomPlan = (Class) getModel().createOwnedType("RoomPlan", UMLPackage.eINSTANCE.getClass_());
@@ -102,10 +105,12 @@ public class ConstructionCaseExample extends AbstractPotentiallyJavaCompilingTes
 	protected void createConstructionCase() {
 		constructionCase = (Class) getModel().createOwnedType("ConstructionCase", UMLPackage.eINSTANCE.getClass_());
 		constructionCase.createOwnedAttribute("name", primitiveTypes.getOwnedType("String"));
-		Property startDate = constructionCase.createOwnedAttribute("startDate", simpleTypes .getOwnedType("DateTime"));
-		startDate.setLower(0);;
+		Property startDate = constructionCase.createOwnedAttribute("startDate", simpleTypes.getOwnedType("DateTime"));
+		startDate.setLower(0);
+		;
 		Property isActive = constructionCase.createOwnedAttribute("active", primitiveTypes.getOwnedType("Boolean"));
-		isActive.setLower(0);;
+		isActive.setLower(0);
+		;
 		Property numberOfWalls = constructionCase.createOwnedAttribute("numberOfWalls", primitiveTypes.getOwnedType("Integer"));
 		numberOfWalls.setLower(0);
 		Property pricePerSquareMetre = constructionCase.createOwnedAttribute("pricePerSquareMetre", primitiveTypes.getOwnedType("Real"));
@@ -119,7 +124,7 @@ public class ConstructionCaseExample extends AbstractPotentiallyJavaCompilingTes
 	}
 
 	private void createOneToMany(Class from, Class to, CollectionKind collectionKind, AggregationKind aggregationKind) {
-		createAssociation(from, to, collectionKind, aggregationKind, aggregationKind==AggregationKind.COMPOSITE_LITERAL? ONE:ZERO_OR_ONE, ZERO_OR_MANY);
+		createAssociation(from, to, collectionKind, aggregationKind, aggregationKind == AggregationKind.COMPOSITE_LITERAL ? ONE : ZERO_OR_ONE, ZERO_OR_MANY);
 	}
 
 	private void createManyToMany(Class from, Class to, CollectionKind collectionKind) {
@@ -127,11 +132,13 @@ public class ConstructionCaseExample extends AbstractPotentiallyJavaCompilingTes
 	}
 
 	private void createOneToOne(Class from, Class to, AggregationKind aggregationKind, boolean required) {
-		createAssociation(from, to, CollectionKind.SET_LITERAL, aggregationKind, aggregationKind==AggregationKind.COMPOSITE_LITERAL? ONE:ZERO_OR_ONE, required?ONE:ZERO_OR_ONE);
-		
+		createAssociation(from, to, CollectionKind.SET_LITERAL, aggregationKind, aggregationKind == AggregationKind.COMPOSITE_LITERAL ? ONE : ZERO_OR_ONE,
+				required ? ONE : ZERO_OR_ONE);
+
 	}
 
-	protected void createAssociation(Class from, Class to, CollectionKind collectionKind, AggregationKind aggregationKind, Multiplicity fromMultiplicity, Multiplicity toMultiplicity) {
+	protected void createAssociation(Class from, Class to, CollectionKind collectionKind, AggregationKind aggregationKind, Multiplicity fromMultiplicity,
+			Multiplicity toMultiplicity) {
 		Association ass = (Association) from.getPackage().createOwnedType(from.getName() + to.getName(), UMLPackage.eINSTANCE.getAssociation());
 		Property toEnd = ass.createNavigableOwnedEnd(calcName(to, toMultiplicity), to);
 		toEnd.setUpper(toMultiplicity.upper);
@@ -139,15 +146,15 @@ public class ConstructionCaseExample extends AbstractPotentiallyJavaCompilingTes
 		toEnd.setAggregation(aggregationKind);
 		toEnd.setIsUnique(collectionKind == CollectionKind.SET_LITERAL || collectionKind == CollectionKind.ORDERED_SET_LITERAL);
 		toEnd.setIsOrdered(collectionKind == CollectionKind.SEQUENCE_LITERAL || collectionKind == CollectionKind.ORDERED_SET_LITERAL);
-		Property fromEnd = ass.createNavigableOwnedEnd(calcName(from,fromMultiplicity), from);
+		Property fromEnd = ass.createNavigableOwnedEnd(calcName(from, fromMultiplicity), from);
 		fromEnd.setUpper(fromMultiplicity.upper);
 		fromEnd.setLower(fromMultiplicity.lower);
 	}
 
 	protected String calcName(Class to, Multiplicity toMultiplicity) {
 		String name = NameConverter.decapitalize(to.getName());
-		if(toMultiplicity==ZERO_OR_MANY){
-			name=name+"s";
+		if (toMultiplicity == ZERO_OR_MANY) {
+			name = name + "s";
 		}
 		return name;
 	}

@@ -67,6 +67,7 @@ public abstract class AbstractCodeGenerator extends AbstractTextGenerator {
 	protected abstract String defaultValue(CollectionTypeReference kind);
 
 	protected abstract String getMappedName(CodeTypeReference type);
+
 	public String toMethodBody(CodeMethod m) {
 		pushNewStringBuilder();
 		appendMethodBody(m);
@@ -379,6 +380,5 @@ public abstract class AbstractCodeGenerator extends AbstractTextGenerator {
 	protected AbstractCodeGenerator openFor(CodeTypeReference elemType, String elemName, String collectionExpression) {
 		throw new RuntimeException();
 	}
-
 
 }

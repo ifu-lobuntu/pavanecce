@@ -56,12 +56,10 @@ public class CaseHandler extends PlanItemContainerHandler implements Handler {
 		if ((this.validParents == null) && (this.validPeers == null)) {
 			this.validParents = new HashSet<Class<?>>();
 			this.validParents.add(Definitions.class);
-
 			this.validPeers = new HashSet<Class<?>>();
 			this.validPeers.add(null);
 			this.validPeers.add(CaseFileItemDefinition.class);
 			this.validPeers.add(RuleFlowProcess.class);
-
 		}
 	}
 
@@ -72,11 +70,6 @@ public class CaseHandler extends PlanItemContainerHandler implements Handler {
 		String id = attrs.getValue("id");
 		String name = attrs.getValue("name");
 		String packageName = attrs.getValue("http://www.jboss.org/drools", "packageName");
-		// String dynamic = attrs.getValue("http://www.jboss.org/drools",
-		// "adHoc");
-		// String version = attrs.getValue("http://www.jboss.org/drools",
-		// "version");
-
 		Case process = new Case();
 		process.setId(id);
 		if (name == null) {
@@ -89,16 +82,7 @@ public class CaseHandler extends PlanItemContainerHandler implements Handler {
 		}
 		process.setPackageName(packageName);
 		process.setDynamic(true);
-		// if (version != null) {
-		// process.setVersion(version);
-		// }
-
 		((ProcessBuildData) parser.getData()).addProcess(process);
-		// register the definitions object as metadata of process.
-		// process.setMetaData("Definitions", parser.getParent());
-		// register bpmn2 imports as meta data of process
-		// for unique id's of nodes, start with one to avoid returning wrong
-		// nodes for dynamic nodes
 		super.startNodeContainer(process, parser);
 		VariableScope variableScope = (VariableScope) process.getDefaultContext(VariableScope.VARIABLE_SCOPE);
 		List<Variable> variables = variableScope.getVariables();

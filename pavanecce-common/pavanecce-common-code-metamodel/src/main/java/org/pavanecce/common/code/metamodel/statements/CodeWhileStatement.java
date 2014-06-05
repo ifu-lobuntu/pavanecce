@@ -12,7 +12,6 @@ public class CodeWhileStatement extends CodeStatement {
 		block.getStatements().add(this);
 		this.condition = condition;
 	}
-	
 
 	public CodeExpression getCondition() {
 		return condition;

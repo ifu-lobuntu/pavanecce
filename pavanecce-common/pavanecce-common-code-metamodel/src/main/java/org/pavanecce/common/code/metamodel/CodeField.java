@@ -9,6 +9,7 @@ public class CodeField extends CodeElement {
 	private boolean isTransient;
 	private boolean isStatic;
 	private boolean isConstant;
+
 	public CodeField(CodeClassifier cls, String name) {
 		super(name);
 		cls.getFields().put(name, this);
@@ -80,8 +81,9 @@ public class CodeField extends CodeElement {
 	}
 
 	public void setStatic(boolean b) {
-		this.isStatic=b;
+		this.isStatic = b;
 	}
+
 	public boolean isStatic() {
 		return isStatic;
 	}

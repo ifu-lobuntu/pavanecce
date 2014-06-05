@@ -16,64 +16,72 @@ import org.eclipse.uml2.uml.Parameter;
 import org.eclipse.uml2.uml.Property;
 import org.pavanecce.uml.common.util.EmfClassifierUtil;
 
-public final class CustomTypeChecker extends AbstractTypeChecker<Classifier,Operation,Property,Parameter>{
-	TypeResolver<Classifier,Operation,Property> typeResolver = null;
-	
-	CustomTypeChecker(Environment<?,Classifier,Operation,Property,?,Parameter,?,?,?,?,?,?> env){
+public final class CustomTypeChecker extends AbstractTypeChecker<Classifier, Operation, Property, Parameter> {
+	TypeResolver<Classifier, Operation, Property> typeResolver = null;
+
+	CustomTypeChecker(Environment<?, Classifier, Operation, Property, ?, Parameter, ?, ?, ?, ?, ?, ?> env) {
 		super(env);
-		typeResolver=env.getTypeResolver();
+		typeResolver = env.getTypeResolver();
 	}
-	public TypeResolver<Classifier,Operation,Property> getTypeResolver(){
+
+	public TypeResolver<Classifier, Operation, Property> getTypeResolver() {
 		return typeResolver;
 	}
+
 	@Override
-	protected Classifier resolve(Classifier type){
-		TypeResolver<Classifier,Operation,Property> typeResolver = getTypeResolver();
+	protected Classifier resolve(Classifier type) {
+		TypeResolver<Classifier, Operation, Property> typeResolver = getTypeResolver();
 		return typeResolver.resolve(type);
 	}
+
 	@Override
-	protected CollectionType<Classifier,Operation> resolveCollectionType(CollectionKind kind,Classifier elementType){
+	protected CollectionType<Classifier, Operation> resolveCollectionType(CollectionKind kind, Classifier elementType) {
 		return getTypeResolver().resolveCollectionType(kind, elementType);
 	}
+
 	@Override
-	protected TupleType<Operation,Property> resolveTupleType(EList<? extends org.eclipse.ocl.utilities.TypedElement<Classifier>> parts){
+	protected TupleType<Operation, Property> resolveTupleType(EList<? extends org.eclipse.ocl.utilities.TypedElement<Classifier>> parts) {
 		return getTypeResolver().resolveTupleType(parts);
 	}
+
 	@Override
-	public Classifier commonSuperType(Object problemObject,Classifier type1,Classifier type2){
-		if(type1 == null || type2 == null){
+	public Classifier commonSuperType(Object problemObject, Classifier type1, Classifier type2) {
+		if (type1 == null || type2 == null) {
 			return null;
 		}
 		Classifier commonSuperType = super.commonSuperType(problemObject, type1, type2);
-		if(commonSuperType.equals(getEnvironment().getOCLStandardLibrary().getOclAny())){
+		if (commonSuperType.equals(getEnvironment().getOCLStandardLibrary().getOclAny())) {
 			Classifier c = EmfClassifierUtil.findCommonSuperType(type1, type2);
-			if(c != null){
+			if (c != null) {
 				commonSuperType = c;
 			}
 		}
 		return commonSuperType;
 	}
+
 	@Override
-	public boolean isStandardLibraryFeature(Classifier owner,Object feature){
-		if(feature instanceof Operation && ((Operation) feature).getName().equals("toString")){
+	public boolean isStandardLibraryFeature(Classifier owner, Object feature) {
+		if (feature instanceof Operation && ((Operation) feature).getName().equals("toString")) {
 			return false;
 		}
 		return super.isStandardLibraryFeature(owner, feature);
 	}
+
 	@Override
-	public Classifier getPropertyType(Classifier owner,Property property){
+	public Classifier getPropertyType(Classifier owner, Property property) {
 		return super.getPropertyType(owner, property);
 	}
+
 	@Override
-	public Classifier getResultType(Object problemObject,Classifier owner,Operation operation,
-			List<? extends org.eclipse.ocl.utilities.TypedElement<Classifier>> args){
+	public Classifier getResultType(Object problemObject, Classifier owner, Operation operation,
+			List<? extends org.eclipse.ocl.utilities.TypedElement<Classifier>> args) {
 		Classifier actualOwner = getUMLReflection().getOwningClassifier(operation);
-		if(isStandardLibraryFeature(actualOwner, operation)){
+		if (isStandardLibraryFeature(actualOwner, operation)) {
 			int opcode = OCLStandardLibraryUtil.getOperationCode(getUMLReflection().getName(operation));
-			if(opcode > 0){
+			if (opcode > 0) {
 				// OCL Standard Library operation. Not customizable
 				Classifier result = OCLStandardLibraryUtil.getResultTypeOf(problemObject, getEnvironment(), owner, opcode, args);
-				if((result == null) && (owner != actualOwner)){
+				if ((result == null) && (owner != actualOwner)) {
 					// the actual owner s different from the declared owner.
 					// This happens when we re-interpret user-defined types as
 					// corresponding OCL-defined types

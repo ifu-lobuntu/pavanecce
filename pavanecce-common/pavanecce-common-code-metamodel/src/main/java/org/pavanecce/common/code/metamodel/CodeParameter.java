@@ -20,10 +20,12 @@ public class CodeParameter extends CodeElement {
 		super(name);
 		type = paramType;
 	}
-/**
- * For dummy parameters representing local variables
- * @param javaFieldName
- */
+
+	/**
+	 * For dummy parameters representing local variables
+	 * 
+	 * @param javaFieldName
+	 */
 	public CodeParameter(String javaFieldName) {
 		super(javaFieldName);
 	}

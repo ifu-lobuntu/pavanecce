@@ -44,8 +44,7 @@ public class BundleJavaFileObject extends SimpleJavaFileObject {
 
 	@Override
 	public String toString() {
-		return getClass().getSimpleName().concat("[").concat(
-			toUri().toString()).concat("]");
+		return getClass().getSimpleName().concat("[").concat(toUri().toString()).concat("]");
 	}
 
 	private String _className;

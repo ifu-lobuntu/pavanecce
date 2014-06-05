@@ -14,12 +14,11 @@ public abstract class AbstractExistsTests extends AbstractOclTest {
 		Parameter result = find.createOwnedParameter("result", example.getType("Boolean"));
 		result.setDirection(ParameterDirectionKind.RETURN_LITERAL);
 		result.setUpper(1);
-		OpaqueExpression ocl = (OpaqueExpression) find.createBodyCondition("body").createSpecification("spec", example.getRoomPlans(), UMLPackage.eINSTANCE.getOpaqueExpression());
+		OpaqueExpression ocl = (OpaqueExpression) find.createBodyCondition("body").createSpecification("spec", example.getRoomPlans(),
+				UMLPackage.eINSTANCE.getOpaqueExpression());
 		ocl.getLanguages().add("ocl");
 		ocl.getBodies().add("housePlan.roomPlans->exists(rp|rp.name=nameToFind)");
 	}
-
-
 
 	@Test
 	public void testIt() throws Exception {

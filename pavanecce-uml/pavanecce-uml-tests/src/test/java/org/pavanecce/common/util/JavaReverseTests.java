@@ -57,9 +57,10 @@ public class JavaReverseTests {
 	private static File profileFile;
 	private static File simpleFile;
 	private static File jpaFile;
-	private UmlResourceSetFactory resourceSetFactory=new UmlResourceSetFactory(new AdaptableFileLocator()); 
+	private UmlResourceSetFactory resourceSetFactory = new UmlResourceSetFactory(new AdaptableFileLocator());
+
 	@BeforeClass
-	public static void classSetup(){
+	public static void classSetup() {
 		profileFile = new File(System.getProperty("user.home") + "/tmp/profile.uml");
 		if (profileFile.exists()) {
 			profileFile.delete();
@@ -73,8 +74,8 @@ public class JavaReverseTests {
 			jpaFile.delete();
 		}
 
-		
 	}
+
 	@Test
 	public void testProfile() throws Exception {
 		Set<SourceClass> types = new HashSet<SourceClass>();
@@ -101,7 +102,7 @@ public class JavaReverseTests {
 		assertEquals("UniqueConstraint", uc.getType().getName());
 	}
 
-	private Map.Entry<Profile,ProfileGenerator> generateJavaxPersistenceProfile(Set<SourceClass> types) throws IOException, Exception {
+	private Map.Entry<Profile, ProfileGenerator> generateJavaxPersistenceProfile(Set<SourceClass> types) throws IOException, Exception {
 		ResourceSet rst = resourceSetFactory.prepareResourceSet();
 		ProfileGenerator sug = new ProfileGenerator();
 		Profile library = UMLFactory.eINSTANCE.createProfile();
@@ -128,21 +129,22 @@ public class JavaReverseTests {
 		types.add(jdf.getClassDescriptor(ParameterableElement.class));
 		sug.generateUml(types, library, new DummyProgressMonitor());
 		Package uml = library.getNestedPackage("org").getNestedPackage("eclipse").getNestedPackage("uml2").getNestedPackage("uml");
-		Interface classInterface= (Interface) uml.getOwnedType("StructuredClassifier");
-		Interface propertyInterface= (Interface) uml.getOwnedType("Property");
-		Property oa = classInterface.getAttribute("ownedAttributes",null);
+		Interface classInterface = (Interface) uml.getOwnedType("StructuredClassifier");
+		Interface propertyInterface = (Interface) uml.getOwnedType("Property");
+		Property oa = classInterface.getAttribute("ownedAttributes", null);
 		assertEquals(propertyInterface, oa.getType());
 		assertTrue(oa.isMultivalued());
 		assertTrue(oa.isOrdered());
 		assertNull(classInterface.getOwnedOperation("getAllUsedInterfaces", this.asList("result"), this.asList(uml.getOwnedType("Interface"))));
 		assertNull(classInterface.getOwnedOperation("getAllUsedInterfaces", this.asList("result"), this.asList(uml.getOwnedType("Interface"))));
-		Interface namespaceInterface= (Interface) uml.getOwnedType("Namespace");
-		Operation excludes = namespaceInterface.getOperation("excludeCollisions", asList("param0","result") , asList(uml.getOwnedType("PackageableElement"),uml.getOwnedType("PackageableElement")));
+		Interface namespaceInterface = (Interface) uml.getOwnedType("Namespace");
+		Operation excludes = namespaceInterface.getOperation("excludeCollisions", asList("param0", "result"),
+				asList(uml.getOwnedType("PackageableElement"), uml.getOwnedType("PackageableElement")));
 		Parameter param0 = excludes.getOwnedParameter("param0", null);
 		Interface parameterable = (Interface) uml.getOwnedType("ParameterableElement");
 		EList<Operation> ownedOperations = parameterable.getOwnedOperations();
 		for (Operation operation : ownedOperations) {
-			if(operation.getName().equals("getTemplateParameter")){
+			if (operation.getName().equals("getTemplateParameter")) {
 				fail();
 			}
 		}
@@ -151,13 +153,14 @@ public class JavaReverseTests {
 		rs.save(null);
 	}
 
-	private   <T> EList<T> asList(@SuppressWarnings("unchecked") T...e){
+	private <T> EList<T> asList(@SuppressWarnings("unchecked") T... e) {
 		BasicEList<T> result = new BasicEList<T>();
 		for (T t : e) {
 			result.add(t);
 		}
 		return result;
 	}
+
 	@Test
 	public void testJpa() throws Exception {
 		ResourceSet rst = resourceSetFactory.prepareResourceSet();
@@ -176,14 +179,14 @@ public class JavaReverseTests {
 		library.applyProfile(profile);
 		jpaGenerator.getClassMap().putAll(pgen.getValue().getClassMap());
 		jpaGenerator.generateUml(types, library, new DummyProgressMonitor());
-		//do it twice to check if duplicates are generated
+		// do it twice to check if duplicates are generated
 		jpaGenerator.generateUml(types, library, new DummyProgressMonitor());
 		jpaGenerator.generateUml(types, library, new DummyProgressMonitor());
 		Package uml = library.getNestedPackage("org").getNestedPackage("pavanecce").getNestedPackage("uml").getNestedPackage("test").getNestedPackage("domain");
-		
-		Class oneEntity= (Class) uml.getOwnedType("OneEntity");
-		Class manyEntity= (Class) uml.getOwnedType("ManyEntity");
-		assertEquals("String", oneEntity.getOwnedAttribute("name", null).getType(). getName());
+
+		Class oneEntity = (Class) uml.getOwnedType("OneEntity");
+		Class manyEntity = (Class) uml.getOwnedType("ManyEntity");
+		assertEquals("String", oneEntity.getOwnedAttribute("name", null).getType().getName());
 		assertEquals("Integer", oneEntity.getOwnedAttribute("age", null).getType().getName());
 		assertEquals("AnEnum", oneEntity.getOwnedAttribute("anEnum", null).getType().getName());
 		assertEquals(1, oneEntity.getAssociations().size());

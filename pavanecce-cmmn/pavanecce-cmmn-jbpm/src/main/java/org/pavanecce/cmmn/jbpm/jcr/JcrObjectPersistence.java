@@ -12,27 +12,26 @@ import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
 import org.pavanecce.common.ObjectPersistence;
+import org.pavanecce.common.jcr.JcrSessionFactory;
 
 public class JcrObjectPersistence implements ObjectPersistence {
 	private UserTransaction transaction;
-	private JcrObjectPersistenceFactory factory;
+	protected JcrSessionFactory factory;
 	protected boolean startedTransaction = false;
 
-	public JcrObjectPersistence(JcrObjectPersistenceFactory factory) {
+	public JcrObjectPersistence(JcrSessionFactory factory) {
 		this.factory = factory;
 	}
 
 	@Override
 	public Object getDelegate() {
-		return getObjectContentManager();
+		return getCurrentSession();
 	}
 
 	@Override
 	public void start() {
 		try {
-
 			startTransaction();
-
 		} catch (Exception e) {
 			throw convertException(e);
 		}
@@ -49,7 +48,7 @@ public class JcrObjectPersistence implements ObjectPersistence {
 	public void commit() {
 		try {
 			startTransaction();
-			getObjectContentManager().save();
+			getCurrentSession().save();
 			if (startedTransaction) {
 				getTransaction().commit();
 			}
@@ -75,9 +74,11 @@ public class JcrObjectPersistence implements ObjectPersistence {
 	public void persist(Object o) {
 		try {
 			if (o instanceof Node) {
-				getObjectContentManager().getRootNode().addNode(((Node) o).getPath());
-			} else {
-
+				getCurrentSession().getRootNode().addNode(((Node) o).getPath());
+			} else if (o instanceof JcrCaseSubscriptionInfo) {
+				JcrCaseSubscriptionInfo si = (JcrCaseSubscriptionInfo) o;
+				Node subs = getCurrentSession().getNode("/subscriptions").addNode(si.getId().toString());
+				si.setSubscriptionNode(subs);
 			}
 		} catch (Exception e) {
 			throw convertException(e);
@@ -86,10 +87,13 @@ public class JcrObjectPersistence implements ObjectPersistence {
 
 	@Override
 	public void update(Object o) {
+		if (o instanceof JcrCaseSubscriptionInfo) {
+			((JcrCaseSubscriptionInfo) o).flush();
+		}
 	}
 
-	public Session getObjectContentManager() {
-		return factory.getCurrentObjectContentManager();
+	public Session getCurrentSession() {
+		return factory.getCurrentSession();
 	}
 
 	protected UserTransaction getTransaction() throws NamingException {
@@ -107,7 +111,7 @@ public class JcrObjectPersistence implements ObjectPersistence {
 	@Override
 	public <T> T find(Class<T> class1, Object id) {
 		try {
-			return (T) getObjectContentManager().getNodeByIdentifier((String) id);
+			return (T) getCurrentSession().getNodeByIdentifier((String) id);
 		} catch (Exception e) {
 			throw convertException(e);
 		}
@@ -117,9 +121,10 @@ public class JcrObjectPersistence implements ObjectPersistence {
 	public void remove(Object s) {
 		try {
 			if (s instanceof Node) {
-				getObjectContentManager().removeItem(((Node) s).getPath());
+				getCurrentSession().removeItem(((Node) s).getPath());
 			} else if (s instanceof JcrCaseFileItemSubscriptionInfo) {
-
+				JcrCaseFileItemSubscriptionInfo si = (JcrCaseFileItemSubscriptionInfo) s;
+				si.getNode().remove();
 			}
 		} catch (Exception e) {
 			throw convertException(e);
@@ -128,7 +133,7 @@ public class JcrObjectPersistence implements ObjectPersistence {
 
 	public Object find(String identifier) {
 		try {
-			return getObjectContentManager().getNodeByIdentifier(identifier);
+			return getCurrentSession().getNodeByIdentifier(identifier);
 		} catch (Exception e) {
 			throw convertException(e);
 		}
@@ -136,7 +141,7 @@ public class JcrObjectPersistence implements ObjectPersistence {
 
 	public Node findNode(String identifier) {
 		try {
-			return getObjectContentManager().getNodeByIdentifier(identifier);
+			return getCurrentSession().getNodeByIdentifier(identifier);
 		} catch (ItemNotFoundException e) {
 			e.printStackTrace();
 		} catch (RepositoryException e) {
@@ -147,7 +152,7 @@ public class JcrObjectPersistence implements ObjectPersistence {
 
 	@Override
 	public void close() {
-		factory.close(getObjectContentManager());
+		factory.close(getCurrentSession());
 	}
 
 }

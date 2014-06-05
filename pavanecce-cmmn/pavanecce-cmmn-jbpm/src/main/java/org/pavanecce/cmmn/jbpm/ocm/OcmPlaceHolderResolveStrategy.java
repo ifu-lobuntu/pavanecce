@@ -11,7 +11,7 @@ import org.apache.jackrabbit.ocm.manager.ObjectContentManager;
 import org.drools.core.common.DroolsObjectInputStream;
 import org.drools.persistence.jpa.marshaller.JPAPlaceholderResolverStrategy;
 import org.kie.api.runtime.Environment;
-import org.pavanecce.common.ocm.OcmFactory;
+import org.pavanecce.common.ocm.ObjectContentManagerFactory;
 
 public class OcmPlaceHolderResolveStrategy extends JPAPlaceholderResolverStrategy {
 	private Environment env;
@@ -39,7 +39,7 @@ public class OcmPlaceHolderResolveStrategy extends JPAPlaceholderResolverStrateg
 	@Override
 	public Object read(ObjectInputStream is) throws IOException, ClassNotFoundException {
 		String uuid = is.readUTF();
-		OcmFactory emf = (OcmFactory) env.get(OcmFactory.OBJECT_CONTENT_MANAGER_FACTORY);
+		ObjectContentManagerFactory emf = (ObjectContentManagerFactory) env.get(ObjectContentManagerFactory.OBJECT_CONTENT_MANAGER_FACTORY);
 		ObjectContentManager em = emf.getCurrentObjectContentManager();
 		return em.getObjectByUuid(uuid);
 	}

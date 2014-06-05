@@ -12,9 +12,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import org.junit.Test;
+
 public class OneToManyCollectionTests {
 	@Test
-	public void testAdd(){
+	public void testAdd() {
 		Parent parent1 = new Parent();
 		Child child1 = new Child();
 		Parent parent2 = new Parent();
@@ -31,8 +32,9 @@ public class OneToManyCollectionTests {
 		assertFalse(parent1.children.contains(child2));
 		assertSame(parent2, child2.parent);
 	}
+
 	@Test
-	public void testAddAll(){
+	public void testAddAll() {
 		Parent parent1 = new Parent();
 		Child child1 = new Child();
 		Parent parent2 = new Parent();
@@ -41,17 +43,18 @@ public class OneToManyCollectionTests {
 		parent1.children.add(child1);
 		parent1.children.add(child2);
 		parent2.children.add(child3);
-		Collection<Child> toAdd=new HashSet<Child>(Arrays.asList(child2,child3));
+		Collection<Child> toAdd = new HashSet<Child>(Arrays.asList(child2, child3));
 		assertEquals(2, parent1.children.size());
 		assertEquals(1, parent2.children.size());
-		assertSame(parent2,child3.parent);
+		assertSame(parent2, child3.parent);
 		parent1.children.addAll(toAdd);
 		assertEquals(3, parent1.children.size());
 		assertEquals(0, parent2.children.size());
-		assertSame(parent1,child3.parent);
+		assertSame(parent1, child3.parent);
 	}
+
 	@Test
-	public void testContainsAll(){
+	public void testContainsAll() {
 		Parent parent1 = new Parent();
 		Child child1 = new Child();
 		Parent parent2 = new Parent();
@@ -60,16 +63,17 @@ public class OneToManyCollectionTests {
 		parent1.children.add(child1);
 		parent1.children.add(child2);
 		parent2.children.add(child3);
-		Collection<Child> falseTest=new HashSet<Child>(Arrays.asList(child2,child3));
+		Collection<Child> falseTest = new HashSet<Child>(Arrays.asList(child2, child3));
 		assertFalse(parent1.children.containsAll(falseTest));
 		assertFalse(parent2.children.containsAll(falseTest));
-		Collection<Child> trueTest1=new HashSet<Child>(Arrays.asList(child1,child2));
+		Collection<Child> trueTest1 = new HashSet<Child>(Arrays.asList(child1, child2));
 		assertTrue(parent1.children.containsAll(trueTest1));
-		Collection<Child> trueTest2=new HashSet<Child>(Arrays.asList(child3));
+		Collection<Child> trueTest2 = new HashSet<Child>(Arrays.asList(child3));
 		assertTrue(parent2.children.containsAll(trueTest2));
 	}
+
 	@Test
-	public void testRemoveAll(){
+	public void testRemoveAll() {
 		Parent parent1 = new Parent();
 		Child child1 = new Child();
 		Parent parent2 = new Parent();
@@ -78,10 +82,10 @@ public class OneToManyCollectionTests {
 		parent1.children.add(child1);
 		parent1.children.add(child2);
 		parent2.children.add(child3);
-		Collection<Child> toRemove=new HashSet<Child>(Arrays.asList(child2,child3));
+		Collection<Child> toRemove = new HashSet<Child>(Arrays.asList(child2, child3));
 		assertEquals(2, parent1.children.size());
 		assertEquals(1, parent2.children.size());
-		assertSame(parent2,child3.parent);
+		assertSame(parent2, child3.parent);
 		parent1.children.removeAll(toRemove);
 		assertSame(parent2, child3.parent);
 		assertEquals(1, parent1.children.size());
@@ -91,8 +95,9 @@ public class OneToManyCollectionTests {
 		assertEquals(0, parent2.children.size());
 		assertNull(child3.parent);
 	}
+
 	@Test
-	public void testRemove(){
+	public void testRemove() {
 		Parent parent1 = new Parent();
 		Child child1 = new Child();
 		Child child2 = new Child();
@@ -108,8 +113,9 @@ public class OneToManyCollectionTests {
 		assertTrue(parent1.children.contains(child1));
 		assertFalse(parent1.children.contains(child2));
 	}
+
 	@Test
-	public void testClear(){
+	public void testClear() {
 		Parent parent1 = new Parent();
 		Child child1 = new Child();
 		parent1.children.add(child1);
@@ -117,8 +123,9 @@ public class OneToManyCollectionTests {
 		assertNull(child1.parent);
 		assertEquals(0, parent1.children.size());
 	}
+
 	@Test
-	public void testRetainAll(){
+	public void testRetainAll() {
 		Parent parent1 = new Parent();
 		Child child1 = new Child();
 		Child child2 = new Child();
@@ -128,29 +135,31 @@ public class OneToManyCollectionTests {
 		assertNull(child2.parent);
 		assertEquals(1, parent1.children.size());
 	}
+
 	@Test
-	public void testRest(){
+	public void testRest() {
 		Parent parent1 = new Parent();
 		Child child1 = new Child();
 		parent1.children.add(child1);
 		assertFalse(parent1.children.isEmpty());
-		assertSame(child1,parent1.children.toArray()[0]);
-		assertSame(child1,parent1.children.toArray(new Child[1])[0]);
+		assertSame(child1, parent1.children.toArray()[0]);
+		assertSame(child1, parent1.children.toArray(new Child[1])[0]);
 		Iterator<Child> iterator = parent1.children.iterator();
 		assertTrue(iterator.hasNext());
 		assertSame(child1, iterator.next());
 		iterator.remove();
 		assertNull(child1.parent);
-		assertEquals(0,parent1.children.size());
+		assertEquals(0, parent1.children.size());
 	}
+
 	@Test
-	public void testLazyConsolidation(){
+	public void testLazyConsolidation() {
 		Parent parent1 = new Parent();
 		Child child1 = new Child();
 		Child child2 = new Child();
-		assertFalse(parent1.children.remove(child2));//because child2.parent!=parent1
-		child2.parent=parent1;
-		assertTrue(parent1.children.remove(child2));//because child2.parent==parent1
+		assertFalse(parent1.children.remove(child2));// because child2.parent!=parent1
+		child2.parent = parent1;
+		assertTrue(parent1.children.remove(child2));// because child2.parent==parent1
 		assertFalse(parent1.children.contains(child2));
 		assertFalse(parent1.children.isConsolidated());
 		parent1.children.add(child1);

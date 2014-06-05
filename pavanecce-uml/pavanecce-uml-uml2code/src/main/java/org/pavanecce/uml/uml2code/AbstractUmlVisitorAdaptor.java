@@ -105,7 +105,7 @@ public abstract class AbstractUmlVisitorAdaptor<PACKAGE, CLASS, BUILDER extends 
 							builder.visitProperty(property, codeClass);
 						}
 					}
-					doArtificialInterfaceImplementation(codeClass, toImplement,builder);
+					doArtificialInterfaceImplementation(codeClass, toImplement, builder);
 				}
 				Set<String> implementedOperations = new HashSet<String>();
 				for (Operation operation : EmfOperationUtil.getDirectlyImplementedOperations(cls)) {

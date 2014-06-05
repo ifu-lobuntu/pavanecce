@@ -16,13 +16,15 @@ import org.pavanecce.common.code.metamodel.CodePackageReference;
 import org.pavanecce.common.code.metamodel.CodeTypeReference;
 import org.pavanecce.uml.uml2code.AbstractBuilder;
 import org.pavanecce.uml.uml2code.UmlToCodeReferenceMap;
+
 /**
- * A default implementation of the callbacks that are invoked from the UmlCodeModelVisitor. To be subclassed 
- * by CodeModelBuilders that add CodeModel elements to the resultingCodeModel
+ * A default implementation of the callbacks that are invoked from the UmlCodeModelVisitor. To be subclassed by
+ * CodeModelBuilders that add CodeModel elements to the resultingCodeModel
+ * 
  * @author ampie
- *
+ * 
  */
-public class DefaultCodeModelBuilder extends AbstractBuilder<CodePackage, CodeClass>{
+public class DefaultCodeModelBuilder extends AbstractBuilder<CodePackage, CodeClass> {
 	protected CodeModel codeModel;
 	private UmlToCodeReferenceMap umlToCodeReferenceMap = new UmlToCodeReferenceMap();
 
@@ -67,6 +69,5 @@ public class DefaultCodeModelBuilder extends AbstractBuilder<CodePackage, CodeCl
 	public void visitOperation(Operation operation, CodeClass codeClass) {
 
 	}
-
 
 }

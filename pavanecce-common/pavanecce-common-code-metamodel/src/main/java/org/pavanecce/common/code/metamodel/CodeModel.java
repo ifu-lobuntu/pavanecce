@@ -7,6 +7,7 @@ public class CodeModel extends CodePackage {
 	public CodeModel() {
 		super("Root");
 	}
+
 	@Override
 	public void appendPath(List<String> path) {
 	}
@@ -17,18 +18,19 @@ public class CodeModel extends CodePackage {
 		for (String string : names) {
 			CodePackage codePackage = cur.getChildren().get(string);
 			if (codePackage == null) {
-				return (T)cur.getClassifiers().get(string);
+				return (T) cur.getClassifiers().get(string);
 			} else {
 				cur = codePackage;
 			}
 		}
-		return (T)cur;
+		return (T) cur;
 	}
+
 	public CodePackage findOrCreatePackage(CodePackageReference path) {
 		List<String> qualifiedName = path.getQualifiedName();
 		CodePackage cur = this;
 		for (String string : qualifiedName) {
-			cur=findOrCreatePackage(string);
+			cur = findOrCreatePackage(string);
 		}
 		return cur;
 	}

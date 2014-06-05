@@ -13,7 +13,7 @@ public class TaskParameters {
 	public static final String UPDATE_TASK_STATUS = "UpdateTaskStatusHandler";
 	public static final String ACTUAL_OWNER = "ActualOwner";
 	public static final String USERS_IN_ROLE = "UsersInRole";
-	public static final String CLAIM_IMMEDIATELY = "ClaimImmediately";// Should be true only from standalone
+	public static final String CLAIM_IMMEDIATELY = "ClaimImmediately"; // Should be true only from standalone
 																		// caseInstances
 	public static final String PLANNED = "Planned";
 	public static final String DISCRETIONARY_ITEM_ID = "DiscretionaryItemId";

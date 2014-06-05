@@ -40,13 +40,13 @@ import org.pavanecce.cmmn.jbpm.event.SubscriptionManager;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 import org.pavanecce.common.ObjectPersistence;
-import org.pavanecce.common.ocm.OcmFactory;
+import org.pavanecce.common.ocm.ObjectContentManagerFactory;
 import org.pavanecce.common.ocm.OcmObjectPersistence;
 
 public class OcmSubscriptionManager extends AbstractPersistentSubscriptionManager<OcmCaseSubscriptionInfo, OcmCaseFileItemSubscriptionInfo> implements
 		SubscriptionManager, SynchronousEventListener {
 	private OcmCasePersistence persistence;
-	private OcmFactory factory;
+	private ObjectContentManagerFactory factory;
 	private ThreadLocal<Set<Node>> updatedNodes = new ThreadLocal<Set<Node>>();
 	private RuntimeManager runtimeManager;
 
@@ -55,7 +55,7 @@ public class OcmSubscriptionManager extends AbstractPersistentSubscriptionManage
 		this.runtimeManager = runtimeManager;
 	}
 
-	public void setOcmFactory(OcmFactory factory) {
+	public void setOcmFactory(ObjectContentManagerFactory factory) {
 		this.factory = factory;
 	}
 

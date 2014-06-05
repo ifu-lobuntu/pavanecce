@@ -1,6 +1,5 @@
 package org.pavanecce.cmmn.jbpm.planning;
 
-import org.drools.core.process.instance.WorkItem;
 import org.jbpm.services.task.commands.TaskContext;
 import org.jbpm.shared.services.api.JbpmServicesPersistenceManager;
 import org.kie.api.runtime.manager.RuntimeEngine;

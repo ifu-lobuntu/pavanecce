@@ -19,6 +19,7 @@ import javax.jcr.Node;
 import org.drools.core.common.DroolsObjectInputStream;
 import org.kie.api.runtime.Environment;
 import org.pavanecce.cmmn.jbpm.jpa.JpaCollectionPlaceHolderResolverStrategy;
+import org.pavanecce.common.jcr.JcrSessionFactory;
 
 public class JcrCollectionPlaceHolderResolveStrategy extends JpaCollectionPlaceHolderResolverStrategy {
 	private Environment env;
@@ -83,10 +84,10 @@ public class JcrCollectionPlaceHolderResolveStrategy extends JpaCollectionPlaceH
 			for (int i = 0; i < size; i++) {
 				ids.add(is.readUTF());
 			}
-			JcrObjectPersistenceFactory f = (JcrObjectPersistenceFactory) env.get(JcrObjectPersistenceFactory.OBJECT_CONTENT_MANAGER_FACTORY);
+			JcrSessionFactory f = (JcrSessionFactory) env.get(JcrSessionFactory.JCR_SESSION_FACTORY);
 			for (String uuid : ids) {
 				try {
-					coll.add(f.getCurrentObjectContentManager().getNodeByIdentifier(uuid));
+					coll.add(f.getCurrentSession().getNodeByIdentifier(uuid));
 				} catch (Exception e) {
 					throw convertException(e);
 				}

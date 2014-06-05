@@ -183,7 +183,8 @@ public class UmlGeneratorFromJpa extends AbstractUmlGenerator {
 					lp.eSet(lpType.getEStructuralFeature("sourcePersistentName"), joinColumn.getAnnotationAttribute("name"));
 					String referencedColumnName = (String) joinColumn.getAnnotationAttribute("referencedColumnName");
 					if (referencedColumnName != null) {
-						lp.eSet(lpType.getEStructuralFeature("targetProperty"), EmfPropertyUtil.findTargetPropertyByReferencedColumnName(umlEnd, referencedColumnName));
+						lp.eSet(lpType.getEStructuralFeature("targetProperty"),
+								EmfPropertyUtil.findTargetPropertyByReferencedColumnName(umlEnd, referencedColumnName));
 					}
 					linkedProperties.add(lp);
 				}

@@ -53,9 +53,9 @@ import org.pavanecce.uml.uml2code.UmlToCodeReferenceMap;
 
 public class UmlToCodeMaps extends UmlToCodeReferenceMap {
 	public static int instanceCount;
-	//CLean this duplication up
+	// CLean this duplication up
 	private OclRuntimeLibrary library;
-	
+
 	private Map<NamedElement, StateMap> stateMaps = new HashMap<NamedElement, StateMap>();
 	private Map<NamedElement, OperationMap> operationMaps = new HashMap<NamedElement, OperationMap>();
 	private Map<NamedElement, PropertyMap> structuralFeatureMaps = new HashMap<NamedElement, PropertyMap>();
@@ -63,16 +63,15 @@ public class UmlToCodeMaps extends UmlToCodeReferenceMap {
 	private Map<Namespace, CodeTypeReference> statePathnames = new HashMap<Namespace, CodeTypeReference>();
 	private CodeTypeReference environmentPathname;
 	private boolean regenMappedTypes;
-	private ArtificialElementFactory artificialElementFactory=null;
+	private ArtificialElementFactory artificialElementFactory = null;
 	TypeResolver<Classifier, Operation, Property> typeResolver;
 
-	public UmlToCodeMaps(OclRuntimeLibrary library,TypeResolver<Classifier, Operation, Property> typeResolver ) {
+	public UmlToCodeMaps(OclRuntimeLibrary library, TypeResolver<Classifier, Operation, Property> typeResolver) {
 		super();
 		this.library = library;
-		this.typeResolver=typeResolver;
+		this.typeResolver = typeResolver;
 		instanceCount++;
 	}
-
 
 	public CodeTypeReference environmentPathname() {
 		return environmentPathname;
@@ -105,12 +104,12 @@ public class UmlToCodeMaps extends UmlToCodeReferenceMap {
 	}
 
 	public CodePackageReference utilPackagePath(Element e) {
-		Map<String,String> emptyMap = Collections.emptyMap();
+		Map<String, String> emptyMap = Collections.emptyMap();
 		if (e instanceof Namespace) {
-			return new CodePackageReference(packagePathname((Namespace) e).getCopy(), "util",emptyMap);
+			return new CodePackageReference(packagePathname((Namespace) e).getCopy(), "util", emptyMap);
 		} else {
-			//TODO
-			return new CodePackageReference(null,"util", emptyMap);
+			// TODO
+			return new CodePackageReference(null, "util", emptyMap);
 		}
 	}
 
@@ -133,13 +132,13 @@ public class UmlToCodeMaps extends UmlToCodeReferenceMap {
 		return map;
 	}
 
-
 	public CodeTypeReference getOldClassifierPathname(NamedElement c) {
 		if (oldClassifierPaths != null) {
 			return oldClassifierPaths.get(c);
 		}
 		return null;
 	}
+
 	public String delegateQualifierArguments(List<Property> qualifiers) {
 		StringBuilder sb = new StringBuilder();
 		// Assume qualifiers are available as parameters in the calling
@@ -205,7 +204,8 @@ public class UmlToCodeMaps extends UmlToCodeReferenceMap {
 		CodeTypeReference result = statePathnames.get(activity);
 		if (result == null) {
 			Namespace namespace = (Namespace) EmfElementFinder.getContainer(activity);
-			statePathnames.put(activity, result = new CodeTypeReference(true,packagePathname(namespace), classifierPathname(activity).getLastName() + "State",Collections.<String,String>emptyMap()));
+			statePathnames.put(activity, result = new CodeTypeReference(true, packagePathname(namespace), classifierPathname(activity).getLastName() + "State",
+					Collections.<String, String> emptyMap()));
 		}
 		return result;
 	}
@@ -223,7 +223,8 @@ public class UmlToCodeMaps extends UmlToCodeReferenceMap {
 	}
 
 	public boolean requiresJavaRename(NamedElement a) {
-		return oldClassifierPaths != null && oldClassifierPaths.containsKey(a) && classifierPaths.containsKey(a) && !oldClassifierPaths.get(a).equals(classifierPaths.get(a));
+		return oldClassifierPaths != null && oldClassifierPaths.containsKey(a) && classifierPaths.containsKey(a)
+				&& !oldClassifierPaths.get(a).equals(classifierPaths.get(a));
 	}
 
 	public CodePackageReference getOldPackagePathname(Namespace c) {
@@ -252,11 +253,12 @@ public class UmlToCodeMaps extends UmlToCodeReferenceMap {
 	public CodeTypeReference utilClass(Element e, String suffix) {
 		if (e instanceof EmfWorkspace) {
 			CodePackageReference utilPackagePath = utilPackagePath(e);
-			return new CodeTypeReference(true,utilPackagePath, NameConverter.capitalize(((EmfWorkspace) e).getIdentifier()) + suffix,Collections.<String,String>emptyMap());
+			return new CodeTypeReference(true, utilPackagePath, NameConverter.capitalize(((EmfWorkspace) e).getIdentifier()) + suffix,
+					Collections.<String, String> emptyMap());
 		} else {
 			Package owner = EmfPackageUtil.getRootObject(e);
 			CodePackageReference result = utilPackagePath(owner).getCopy();
-			return new CodeTypeReference(true,result, NameConverter.capitalize(((Namespace) e).getName()) + suffix,Collections.<String,String>emptyMap());
+			return new CodeTypeReference(true, result, NameConverter.capitalize(((Namespace) e).getName()) + suffix, Collections.<String, String> emptyMap());
 		}
 	}
 
@@ -266,18 +268,15 @@ public class UmlToCodeMaps extends UmlToCodeReferenceMap {
 		instanceCount--;
 	}
 
-
-
 	public CodeTypeReference tokenPathName(Namespace b) {
 		CodeTypeReference tr = classifierPathname(b);
 		CodePackageReference copy2 = tr.getCodePackageReference().getCopy();
-		return new CodeTypeReference(true, copy2, tr.getLastName() + "Token",Collections.<String,String>emptyMap());
+		return new CodeTypeReference(true, copy2, tr.getLastName() + "Token", Collections.<String, String> emptyMap());
 	}
 
 	/**
-	 * Some classifiers in UML would not necessarily be generated as Java
-	 * classes. Returns false for NakedBehaviors that have one or less resulting
-	 * parameters
+	 * Some classifiers in UML would not necessarily be generated as Java classes. Returns false for NakedBehaviors that
+	 * have one or less resulting parameters
 	 * 
 	 */
 	public boolean hasCodeClass(Classifier c) {
@@ -295,7 +294,7 @@ public class UmlToCodeMaps extends UmlToCodeReferenceMap {
 	}
 
 	private boolean isMarkedForDeletion(Classifier c) {
-		return c.eContainer()==null;
+		return c.eContainer() == null;
 	}
 
 	public CodeGenerationStrategy getCodeGenerationStrategy(NamedElement c) {
@@ -327,7 +326,6 @@ public class UmlToCodeMaps extends UmlToCodeReferenceMap {
 	public String toCodeLiteral(EnumerationLiteral lit) {
 		return NameConverter.toUnderscoreStyle(lit.getName()).toString();
 	}
-
 
 	public EmulatedPropertyHolderForAssociation getEmulatedPropertyHolder(Association association) {
 		return (EmulatedPropertyHolderForAssociation) artificialElementFactory.getEmulatedPropertyHolder(association);

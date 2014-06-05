@@ -39,7 +39,8 @@ public class JpaCodeDecorator extends AbstractJavaCodeDecorator {
 		dataTypeStrategies.put(new CodeTypeReference(false, "StandardSimpleTypes", "LargeText"), JpaRelationalDataType.TEXT);
 		dataTypeStrategies.put(new CodeTypeReference(false, "StandardSimpleTypes", "BinaryLargeObject"), JpaRelationalDataType.BINARY);
 	}
-	private boolean softDelete=true;
+	private boolean softDelete = true;
+
 	@Override
 	public void appendAdditionalFields(JavaCodeGenerator sb, CodeClassifier cc) {
 		IRelationalElement element = cc.getData(IRelationalElement.class);
@@ -208,7 +209,7 @@ public class JpaCodeDecorator extends AbstractJavaCodeDecorator {
 			sb.append("\"");
 			if (relationalInverseLink.isChild()) {
 				sb.append(",cascade=CascadeType.ALL");
-				if(softDelete==false){
+				if (softDelete == false) {
 					sb.append(",orphanRemoval=true");
 				}
 			}

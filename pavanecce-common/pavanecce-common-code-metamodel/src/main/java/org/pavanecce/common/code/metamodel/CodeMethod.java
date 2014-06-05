@@ -9,6 +9,7 @@ public class CodeMethod extends CodeBehaviour {
 	private boolean isStatic;
 	private CodeTypeReference type;
 	private CodeExpression result;
+
 	/**
 	 * For no-parameter methods
 	 */
@@ -26,7 +27,7 @@ public class CodeMethod extends CodeBehaviour {
 	}
 
 	public CodeMethod(CodeClassifier clss, String name) {
-		super(clss,name);
+		super(clss, name);
 	}
 
 	public CodeMethod(String operName, CodeTypeReference type) {
@@ -77,6 +78,7 @@ public class CodeMethod extends CodeBehaviour {
 	public boolean returnsResult() {
 		return getReturnType() != null;
 	}
+
 	@Override
 	public void setDeclaringClass(CodeClassifier declaringClass) {
 		super.setDeclaringClass(declaringClass);
@@ -86,7 +88,7 @@ public class CodeMethod extends CodeBehaviour {
 	@Override
 	public String toString() {
 		if (getDeclaringClass() != null) {
-			return getDeclaringClass().getName() +  "." + generateIdentifier(getName(), getParameters());
+			return getDeclaringClass().getName() + "." + generateIdentifier(getName(), getParameters());
 		} else {
 			return generateIdentifier(getName(), getParameters());
 		}

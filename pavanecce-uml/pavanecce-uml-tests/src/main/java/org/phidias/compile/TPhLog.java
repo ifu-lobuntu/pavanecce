@@ -34,8 +34,7 @@ public class TPhLog {
 			return;
 		}
 
-		StackTraceElement stackTraceElement =
-			Thread.currentThread().getStackTrace()[2];
+		StackTraceElement stackTraceElement = Thread.currentThread().getStackTrace()[2];
 
 		StringWriter sw1 = new StringWriter();
 		PrintWriter pw1 = new PrintWriter(sw1);
@@ -47,17 +46,14 @@ public class TPhLog {
 			if (element instanceof Throwable) {
 				pw2.println();
 
-				((Throwable)element).printStackTrace(pw2);
-			}
-			else {
+				((Throwable) element).printStackTrace(pw2);
+			} else {
 				pw1.print(' ');
 				pw1.print(element);
 			}
 		}
 
-		out.printf(
-			pattern, new Date(), stackTraceElement.getClassName(),
-			stackTraceElement.getLineNumber(), sw1.toString(), sw2.toString());
+		out.printf(pattern, new Date(), stackTraceElement.getClassName(), stackTraceElement.getLineNumber(), sw1.toString(), sw2.toString());
 	}
 
 }

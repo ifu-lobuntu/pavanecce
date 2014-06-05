@@ -31,7 +31,7 @@ public interface SourceClass {
 	boolean isEntity();
 
 	boolean isDataType();
-	
+
 	boolean isHelper();
 
 	SourceClass[] getInterfaces();
@@ -43,8 +43,9 @@ public interface SourceClass {
 	SourceMethod[] getDeclaredMethods();
 
 	SourceVariable[] getDeclaredFields();
-	
+
 	boolean isUniqueCollectionType();
+
 	boolean isOrderedCollectionType();
-	
+
 }

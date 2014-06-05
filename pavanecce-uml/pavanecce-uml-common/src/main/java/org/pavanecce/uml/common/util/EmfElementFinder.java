@@ -34,114 +34,118 @@ import org.eclipse.uml2.uml.util.UMLUtil;
 import org.pavanecce.uml.common.util.emulated.IEmulatedElement;
 
 public class EmfElementFinder {
-	public static Namespace getNearestNamespace(Element ns){
+	public static Namespace getNearestNamespace(Element ns) {
 		Element parent = (Element) getContainer(ns);
-		while(!(parent instanceof Namespace || parent == null)){
+		while (!(parent instanceof Namespace || parent == null)) {
 			parent = (Element) getContainer(parent);
 		}
 		return (Namespace) parent;
 	}
-	public static Classifier getNearestClassifier(Element e){
-		if(e instanceof Classifier){
+
+	public static Classifier getNearestClassifier(Element e) {
+		if (e instanceof Classifier) {
 			return (Classifier) e;
-		}else if(e == null){
+		} else if (e == null) {
 			return null;
-		}else{
+		} else {
 			return getNearestClassifier((Element) getContainer(e));
 		}
 	}
-	public static EObject getContainer(EObject s){
-		if(s == null){
+
+	public static EObject getContainer(EObject s) {
+		if (s == null) {
 			return null;
-		}else if(s instanceof IEmulatedElement){
-				return getContainer(((IEmulatedElement) s).getOriginalElement());
-		}else if(s instanceof DynamicEObjectImpl){
+		} else if (s instanceof IEmulatedElement) {
+			return getContainer(((IEmulatedElement) s).getOriginalElement());
+		} else if (s instanceof DynamicEObjectImpl) {
 			return UMLUtil.getBaseElement(s);
-		}else if(s.eContainer() instanceof DynamicEObjectImpl){
+		} else if (s.eContainer() instanceof DynamicEObjectImpl) {
 			return UMLUtil.getBaseElement(s.eContainer());
-		}else if(s.eContainer() instanceof EAnnotation){
+		} else if (s.eContainer() instanceof EAnnotation) {
 			return ((EAnnotation) s.eContainer()).getEModelElement();
-		}else if(s instanceof Property && s.eContainer() instanceof Association){
+		} else if (s instanceof Property && s.eContainer() instanceof Association) {
 			Property p = (Property) s;
-			if(p.getOtherEnd() != null && p.isNavigable()){
+			if (p.getOtherEnd() != null && p.isNavigable()) {
 				return p.getOtherEnd().getType();
-			}else{
+			} else {
 				return s.eContainer();
 			}
-		}else if(s instanceof InterfaceRealization){
+		} else if (s instanceof InterfaceRealization) {
 			return ((InterfaceRealization) s).getImplementingClassifier();
-		}else if(s instanceof Generalization){
+		} else if (s instanceof Generalization) {
 			return ((Generalization) s).getSpecific();
 		}
 		return s.eContainer();
 	}
-	public static List<TypedElement> getTypedElementsInScope(Element behavioralElement){
+
+	public static List<TypedElement> getTypedElementsInScope(Element behavioralElement) {
 		List<TypedElement> result = new ArrayList<TypedElement>();
-		if(behavioralElement != null){
+		if (behavioralElement != null) {
 			Element a = behavioralElement;
-			if(a instanceof Constraint){
-				if(a.getOwner() instanceof Action){
+			if (a instanceof Constraint) {
+				if (a.getOwner() instanceof Action) {
 					Action act = (Action) a.getOwner();
 					result.addAll(act.getInputs());
-					if(act.getLocalPostconditions().contains(a)){
+					if (act.getLocalPostconditions().contains(a)) {
 						result.addAll(act.getOutputs());
 					}
 					return result;
-				}else if(a.getOwner() instanceof Operation){
+				} else if (a.getOwner() instanceof Operation) {
 					Operation oper = (Operation) a.getOwner();
-					for(Parameter parameter:oper.getOwnedParameters()){
-						if(parameter.getDirection() == ParameterDirectionKind.IN_LITERAL || parameter.getDirection() == ParameterDirectionKind.INOUT_LITERAL){
+					for (Parameter parameter : oper.getOwnedParameters()) {
+						if (parameter.getDirection() == ParameterDirectionKind.IN_LITERAL || parameter.getDirection() == ParameterDirectionKind.INOUT_LITERAL) {
 							result.add(parameter);
-						}else if(oper.getPostconditions().contains(a)){
+						} else if (oper.getPostconditions().contains(a)) {
 							result.add(parameter);
 						}
 					}
 				}
-			}else if(a instanceof Operation){
+			} else if (a instanceof Operation) {
 				Operation oper = (Operation) a;
-				for(Parameter parameter:oper.getOwnedParameters()){
-					if(parameter.getDirection() == ParameterDirectionKind.IN_LITERAL || parameter.getDirection() == ParameterDirectionKind.INOUT_LITERAL){
+				for (Parameter parameter : oper.getOwnedParameters()) {
+					if (parameter.getDirection() == ParameterDirectionKind.IN_LITERAL || parameter.getDirection() == ParameterDirectionKind.INOUT_LITERAL) {
 						result.add(parameter);
 					}
 				}
 			}
-			do{
-				if(a instanceof StructuredActivityNode){
+			do {
+				if (a instanceof StructuredActivityNode) {
 					result.addAll(((StructuredActivityNode) a).getVariables());
 				}
-				if(a instanceof Transition){
+				if (a instanceof Transition) {
 					addTransitionParameters(result, (Transition) a);
 				}
-				if(a instanceof Behavior){
+				if (a instanceof Behavior) {
 					result.addAll(((Behavior) a).getOwnedParameters());
-					if(a instanceof Activity){
+					if (a instanceof Activity) {
 						Activity activity = (Activity) a;
 						result.addAll(activity.getVariables());
 					}
-					if(a.getOwner() instanceof Transition){
+					if (a.getOwner() instanceof Transition) {
 						Transition owner = (Transition) a.getOwner();
 						addTransitionParameters(result, owner);
 						a = EmfStateMachineUtil.getNearestApplicableStateMachine(a.getOwner());
-					}else if(a.getOwner() instanceof State){
+					} else if (a.getOwner() instanceof State) {
 						a = EmfStateMachineUtil.getNearestApplicableStateMachine(a.getOwner());
 					}
 				}
 				a = (Element) EmfElementFinder.getContainer(a);
-			}while(!(a == null || a instanceof Classifier || a instanceof Operation));
-			if(a != null){
+			} while (!(a == null || a instanceof Classifier || a instanceof Operation));
+			if (a != null) {
 				result.addAll(getTypedElementsInScope(a));
 			}
 		}
 		return result;
 	}
-	protected static void addTransitionParameters(List<TypedElement> result,Transition a){
+
+	protected static void addTransitionParameters(List<TypedElement> result, Transition a) {
 		EList<Trigger> triggers = a.getTriggers();
-		if(triggers.size() > 0){
+		if (triggers.size() > 0) {
 			Event event = triggers.get(0).getEvent();
-			if(event instanceof CallEvent){
+			if (event instanceof CallEvent) {
 				result.addAll(((CallEvent) event).getOperation().getOwnedParameters());
-			}else if(event instanceof SignalEvent){
-				for(Property p:((SignalEvent) event).getSignal().getAllAttributes()){
+			} else if (event instanceof SignalEvent) {
+				for (Property p : ((SignalEvent) event).getSignal().getAllAttributes()) {
 					// Create parameter to emulate parameter behavior in ocl, "self" would be invalid
 					Parameter param = UMLFactory.eINSTANCE.createParameter();
 					param.setType(p.getType());

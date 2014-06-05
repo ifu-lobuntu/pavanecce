@@ -159,8 +159,9 @@ public class IterationExpressionCreator {
 
 	private CodeExpression createSortedBy(IteratorExp exp, CodeExpression source, boolean isStatic, List<CodeParameter> params) {
 		String iterVarName = iterVarNames[0];
-		String identifier=NameConverter.toValidVariableName(exp.toString());
-		CodeTypeReference comparatorClassName = new ComparatorCreator(codeMaps).makeComparator(elementType, exp.getBody().getType(), expStr, iterVarName,identifier);
+		String identifier = NameConverter.toValidVariableName(exp.toString());
+		CodeTypeReference comparatorClassName = new ComparatorCreator(codeMaps).makeComparator(elementType, exp.getBody().getType(), expStr, iterVarName,
+				identifier);
 
 		CodeMethod oper = buildOperation(exp, isStatic, params);
 		new CodeField(oper.getBody(), "comp", comparatorClassName).setInitialization(new NewInstanceExpression(comparatorClassName));
@@ -180,7 +181,7 @@ public class IterationExpressionCreator {
 	}
 
 	private CodeExpression callMethod(CodeMethod oper) {
-		return new PortableExpression("${self}."+ oper.getName() + "(" + CodeBehaviour.paramsToActuals(oper) + ")");
+		return new PortableExpression("${self}." + oper.getName() + "(" + CodeBehaviour.paramsToActuals(oper) + ")");
 	}
 
 	private CodeExpression createReject(IteratorExp exp, CodeExpression source, boolean isStatic, List<CodeParameter> params) {
@@ -230,7 +231,7 @@ public class IterationExpressionCreator {
 		CodeIfStatement ifMatch = new CodeIfStatement(forEach.getBody(), expStr);
 		new PortableStatement(ifMatch.getThenBlock(), "count = count + 1");
 		CodeIfStatement ifNotOne = new CodeIfStatement(ifMatch.getThenBlock(), new PortableExpression("count > 1"));
-		new SetResultStatement(ifNotOne.getThenBlock(),new PortableExpression("false"));
+		new SetResultStatement(ifNotOne.getThenBlock(), new PortableExpression("false"));
 		new SetResultStatement(oper.getBody(), new PortableExpression("count == 1"));
 		return callMethod(oper);
 	}
@@ -314,10 +315,9 @@ public class IterationExpressionCreator {
 	}
 
 	/**
-	 * The iterator variable(s) needs to be added to any generated operation
-	 * implementing the body expression. This CodeMethod add the iterator
-	 * variable(s) and replaces any variables that will be eclipsed by another
-	 * name in the scope of the body expression.
+	 * The iterator variable(s) needs to be added to any generated operation implementing the body expression. This
+	 * CodeMethod add the iterator variable(s) and replaces any variables that will be eclipsed by another name in the
+	 * scope of the body expression.
 	 * 
 	 */
 	private List<CodeParameter> addItersToParams(EList<org.eclipse.ocl.expressions.Variable<Classifier, Parameter>> eList, List<CodeParameter> params) {

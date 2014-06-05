@@ -13,11 +13,12 @@ import org.pavanecce.uml.uml2code.AbstractUmlVisitorAdaptor;
  */
 public class UmlDocumentModelFileVisitorAdaptor extends AbstractUmlVisitorAdaptor<DocumentNamespace, DocumentNodeType, DocumentModelBuilder> {
 
-	protected DocumentNamespace codeModel = new DocumentNamespace("root","root");
+	protected DocumentNamespace codeModel = new DocumentNamespace("root", "root");
 
 	public UmlDocumentModelFileVisitorAdaptor() {
 		super();
 	}
+
 	@Override
 	public void startVisiting(DocumentModelBuilder builder, Model model) {
 		super.startVisiting(builder, model);

@@ -35,11 +35,12 @@ import org.pavanecce.cmmn.jbpm.event.SubscriptionManager;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 import org.pavanecce.common.ObjectPersistence;
+import org.pavanecce.common.jcr.JcrSessionFactory;
 
 public class JcrSubscriptionManager extends AbstractPersistentSubscriptionManager<JcrCaseSubscriptionInfo, JcrCaseFileItemSubscriptionInfo> implements
 		SubscriptionManager, SynchronousEventListener {
 	private JcrCasePersistence persistence;
-	private JcrObjectPersistenceFactory factory;
+	private JcrSessionFactory factory;
 	private ThreadLocal<Set<Node>> updatedNodes = new ThreadLocal<Set<Node>>();
 	private RuntimeManager runtimeManager;
 
@@ -48,7 +49,7 @@ public class JcrSubscriptionManager extends AbstractPersistentSubscriptionManage
 		this.runtimeManager = runtimeManager;
 	}
 
-	public void setJcrObjectPersistenceFactory(JcrObjectPersistenceFactory factory) {
+	public void setJcrObjectPersistenceFactory(JcrSessionFactory factory) {
 		this.factory = factory;
 	}
 
@@ -59,12 +60,13 @@ public class JcrSubscriptionManager extends AbstractPersistentSubscriptionManage
 
 	@Override
 	protected JcrCaseSubscriptionInfo createCaseSubscriptionInfo(Object currentInstance) {
-		return new JcrCaseSubscriptionInfo(currentInstance);
+		JcrCaseSubscriptionKey sk = createCaseSubscriptionKey(currentInstance);
+		return new JcrCaseSubscriptionInfo(sk);
 	}
 
 	@Override
-	protected CaseSubscriptionKey createCaseSubscriptionKey(Object currentInstance) {
-		return new JcrCaseSubscriptionKey(currentInstance);
+	protected JcrCaseSubscriptionKey createCaseSubscriptionKey(Object currentInstance) {
+		return new JcrCaseSubscriptionKey((Node) currentInstance);
 	}
 
 	@Override
@@ -167,7 +169,7 @@ public class JcrSubscriptionManager extends AbstractPersistentSubscriptionManage
 		String jcrPropertyName = event.getPath().substring(event.getPath().lastIndexOf("/"));
 		PropertyNodeInfo info = new PropertyNodeInfo();
 		try {
-			info.parentNode = getPersistence().getObjectContentManager().getNode(parentPath);
+			info.parentNode = getPersistence().getCurrentSession().getNode(parentPath);
 		} catch (Exception e) {
 			return null;
 		}
@@ -244,7 +246,7 @@ public class JcrSubscriptionManager extends AbstractPersistentSubscriptionManage
 			String path = event.getPath();
 			String[] split = path.split("\\/");
 			String jcrPropertyName = split[split.length - 1];
-			Node currentNode = getPersistence().getObjectContentManager().getNodeByIdentifier(event.getIdentifier());
+			Node currentNode = getPersistence().getCurrentSession().getNodeByIdentifier(event.getIdentifier());
 			int propertyType = getPropertyType(jcrPropertyName, currentNode);
 			if (propertyType == PropertyType.REFERENCE) {
 				switch (event.getType()) {
@@ -347,11 +349,11 @@ public class JcrSubscriptionManager extends AbstractPersistentSubscriptionManage
 			Value[] values = prop.getValues();
 			for (Value value : values) {
 				if (value.getType() == PropertyType.REFERENCE) {
-					queueEvent(si, currentObject, getPersistence().getObjectContentManager().getNodeByIdentifier(value.getString()));
+					queueEvent(si, currentObject, getPersistence().getCurrentSession().getNodeByIdentifier(value.getString()));
 				}
 			}
 		} else {
-			queueEvent(si, currentObject, getPersistence().getObjectContentManager().getNodeByIdentifier(prop.getString()));
+			queueEvent(si, currentObject, getPersistence().getCurrentSession().getNodeByIdentifier(prop.getString()));
 		}
 	}
 
@@ -412,7 +414,8 @@ public class JcrSubscriptionManager extends AbstractPersistentSubscriptionManage
 	protected Collection<JcrCaseSubscriptionInfo> getAllSubscriptionsAgainst(CaseInstance caseInstance, ObjectPersistence em) {
 		try {
 			JcrObjectPersistence oop = (JcrObjectPersistence) em;
-			QueryManager qm = oop.getObjectContentManager().getWorkspace().getQueryManager();
+			QueryManager qm = oop.getCurrentSession().getWorkspace().getQueryManager();
+			@SuppressWarnings("deprecation")
 			Query q = qm.createQuery("//element(*, i:caseFileItemSubscription)[@JcrCaseSubscriptionInfo=" + caseInstance.getId() + "]", Query.XPATH);
 			Collection<JcrCaseSubscriptionInfo> result = new HashSet<JcrCaseSubscriptionInfo>();
 			Set<Node> parentNodes = new HashSet<Node>();

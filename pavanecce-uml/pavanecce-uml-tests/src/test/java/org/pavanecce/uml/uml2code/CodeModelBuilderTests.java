@@ -16,7 +16,7 @@ import org.pavanecce.common.code.metamodel.CodeTypeReference;
 
 public class CodeModelBuilderTests extends AbstractModelBuilderTest {
 	@Test
-	public void testPackagesAndClasses(){
+	public void testPackagesAndClasses() {
 		adaptor.startVisiting(builder, model);
 		CodeModel codeModel = adaptor.getCodeModel();
 		CodePackage modelPackage = codeModel.getChildren().get("model");
@@ -27,16 +27,16 @@ public class CodeModelBuilderTests extends AbstractModelBuilderTest {
 		assertEquals("pkg1", pkg1.getName());
 		CodeClass emptyClass = (CodeClass) pkg1.getClassifiers().get("EmptyClass");
 		assertNotNull(emptyClass);
-		assertEquals("EmptyClass",emptyClass.getName());
+		assertEquals("EmptyClass", emptyClass.getName());
 		assertNotNull(emptyClass.getFields().get("name"));
 		CodePackage pkg2 = modelPackage.getChildren().get("pkg2");
 		assertNotNull(pkg2);
 		assertEquals("pkg2", pkg2.getName());
 		CodeClass theClass = (CodeClass) pkg2.getClassifiers().get("TheClass");
 		assertNotNull(theClass);
-		assertEquals("TheClass",theClass.getName());
+		assertEquals("TheClass", theClass.getName());
 		assertNotNull(theClass.getFields().get("simpleClass"));
-		assertNotNull(theClass.getMethods().get(CodeBehaviour.generateIdentifier("getSimpleClass",new ArrayList<CodeTypeReference>())));
+		assertNotNull(theClass.getMethods().get(CodeBehaviour.generateIdentifier("getSimpleClass", new ArrayList<CodeTypeReference>())));
 		assertNotNull(theClass.getMethods().get(CodeBehaviour.generateIdentifier("setSimpleClass", Arrays.asList(emptyClass.getPathName()))));
 		CodeMethod myOper = emptyClass.getMethods().get(CodeBehaviour.generateIdentifier("myOper", Arrays.asList(emptyClass.getPathName())));
 		assertEquals(emptyClass.getPathName(), myOper.getReturnType());

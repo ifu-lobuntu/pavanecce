@@ -13,7 +13,7 @@ import java.util.TreeSet;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class OclCollections {
-	static final public Timestamp FUTURE = new Timestamp(1000L * 60 * 60 * 24 * 365 * 1000);
+	public static final Timestamp FUTURE = new Timestamp(1000L * 60 * 60 * 24 * 365 * 1000);
 
 	public static <T> Set<T> makeCopy(Set<T> source) {
 		return new HashSet<T>(source);

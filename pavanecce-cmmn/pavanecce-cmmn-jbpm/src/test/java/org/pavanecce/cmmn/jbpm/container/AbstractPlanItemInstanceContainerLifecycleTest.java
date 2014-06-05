@@ -152,7 +152,7 @@ public abstract class AbstractPlanItemInstanceContainerLifecycleTest extends Abs
 		// *****WHEN
 		getPersistence().start();
 		CaseInstance ci5 = reloadCaseInstance();
-		ci5.fault();// TODO do from a task rather
+		ci5.fault(); // TODO do from a task rather
 		// *******THEN
 		assertEquals(PlanElementState.FAILED, ci5.getPlanElementState());
 		printState(" ", ci5);
@@ -212,7 +212,7 @@ public abstract class AbstractPlanItemInstanceContainerLifecycleTest extends Abs
 		assertPlanItemInState(caseInstance.getId(), "TheCaseTaskPlanItem", PlanElementState.TERMINATED);
 		assertNull(reloadCaseInstance(subCase));
 		subTasksByParent = getTaskService().getSubTasksByParent(taskByWorkItemId.getTaskData().getWorkItemId());
-		assertEquals(0, subTasksByParent.size());// They have all been exited
+		assertEquals(0, subTasksByParent.size()); // They have all been exited
 		// reactivate
 		// getTaskService().resume(taskByWorkItemId.getId(), "ConstructionProjectManager");
 		// assertEquals(PlanElementState.ACTIVE, reloadCaseInstance(subCase).getPlanElementState());

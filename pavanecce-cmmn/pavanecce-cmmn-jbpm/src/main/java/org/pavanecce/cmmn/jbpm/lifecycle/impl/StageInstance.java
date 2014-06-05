@@ -20,8 +20,8 @@ import org.pavanecce.cmmn.jbpm.flow.Stage;
 import org.pavanecce.cmmn.jbpm.flow.TaskItemWithDefinition;
 import org.pavanecce.cmmn.jbpm.infra.OnPartInstanceSubscription;
 import org.pavanecce.cmmn.jbpm.lifecycle.ControllableItemInstance;
-import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceContainer;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstance;
+import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceContainer;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanningTableContainerInstance;
 
 public class StageInstance extends ControllableItemInstanceImpl<Stage, TaskItemWithDefinition<Stage>> implements PlanItemInstanceContainer,

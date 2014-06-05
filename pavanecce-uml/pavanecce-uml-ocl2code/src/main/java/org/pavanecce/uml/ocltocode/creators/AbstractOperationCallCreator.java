@@ -13,7 +13,7 @@ public class AbstractOperationCallCreator {
 
 	public AbstractOperationCallCreator(CodeClass myClass) {
 		super();
-		this.myClass=myClass;
+		this.myClass = myClass;
 	}
 
 	protected CodeExpression commonOperations(CodeExpression source, Operation referedOp) {

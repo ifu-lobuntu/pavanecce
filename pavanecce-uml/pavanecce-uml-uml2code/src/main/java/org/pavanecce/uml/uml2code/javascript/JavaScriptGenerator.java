@@ -41,7 +41,7 @@ import org.pavanecce.common.code.metamodel.statements.SetResultStatement;
 import org.pavanecce.uml.uml2code.AbstractCodeGenerator;
 
 public class JavaScriptGenerator extends AbstractCodeGenerator {
-	Deque<Object>  isInFor =new ArrayDeque<Object>();
+	Deque<Object> isInFor = new ArrayDeque<Object>();
 	private Map<CodeTypeReference, String> mappedJavaScriptTypes = new HashMap<CodeTypeReference, String>();
 	{
 
@@ -85,8 +85,8 @@ public class JavaScriptGenerator extends AbstractCodeGenerator {
 			sb.append(statement2.getVariableName());
 			sb.append(" = ");
 			interpretExpression(statement2.getValue());
-			
-			if(statement2 instanceof SetResultStatement && this.isInFor.size()>0){
+
+			if (statement2 instanceof SetResultStatement && this.isInFor.size() > 0) {
 				sb.append(";return false");
 			}
 		}
@@ -317,7 +317,7 @@ public class JavaScriptGenerator extends AbstractCodeGenerator {
 
 	@Override
 	public String getSelf() {
-		return isInFor.isEmpty()?"this":"self";
+		return isInFor.isEmpty() ? "this" : "self";
 	}
 
 	@Override

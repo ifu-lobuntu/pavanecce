@@ -54,7 +54,8 @@ public class RoomPlan {
 		}
 	};
 	@ManyToMany()
-	@JoinTable(name = "room_plan_wall_plan", joinColumns = { @JoinColumn(name = "wall_plans_id", referencedColumnName = "id") }, inverseJoinColumns = { @JoinColumn(name = "room_plans_id", referencedColumnName = "id") })
+	@JoinTable(name = "room_plan_wall_plan", joinColumns = { @JoinColumn(name = "wall_plans_id", referencedColumnName = "id") },
+			inverseJoinColumns = { @JoinColumn(name = "room_plans_id", referencedColumnName = "id") })
 	private Set<WallPlan> wallPlans = new HashSet<WallPlan>();
 
 	public RoomPlan() {

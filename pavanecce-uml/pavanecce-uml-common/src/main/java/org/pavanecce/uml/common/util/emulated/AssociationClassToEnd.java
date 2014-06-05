@@ -6,64 +6,78 @@ import org.eclipse.uml2.uml.Type;
 import org.pavanecce.uml.common.util.EmfAssociationUtil;
 import org.pavanecce.uml.common.util.EmfWorkspace;
 
-public class AssociationClassToEnd extends AbstractEmulatedProperty{
+public class AssociationClassToEnd extends AbstractEmulatedProperty {
 	private Property property;
 	private EndToAssociationClass otherEnd;
-	public AssociationClassToEnd(Property property){
+
+	public AssociationClassToEnd(Property property) {
 		super(property.getAssociation(), property);
 		this.property = property;
 	}
+
 	@Override
-	public boolean isComposite(){
+	public boolean isComposite() {
 		return property.isComposite();
 	}
+
 	@Override
-	public boolean isNavigable(){
+	public boolean isNavigable() {
 		return true;
 	}
+
 	@Override
-	public int getUpper(){
+	public int getUpper() {
 		return 1;
 	}
+
 	@Override
-	public int getLower(){
+	public int getLower() {
 		return 1;
 	}
+
 	@Override
-	public String getName(){
-		if(property.getAssociation().getMemberEnds().indexOf(property)==1 && property.getName().equals(property.getOtherEnd().getName())){
-			return property.getName()+"1";
+	public String getName() {
+		if (property.getAssociation().getMemberEnds().indexOf(property) == 1 && property.getName().equals(property.getOtherEnd().getName())) {
+			return property.getName() + "1";
 		}
 		return property.getName();
 	}
+
 	@Override
-	public boolean isOrdered(){
+	public boolean isOrdered() {
 		return false;
 	}
+
 	@Override
-	public boolean isUnique(){
+	public boolean isUnique() {
 		return true;
 	}
+
 	@Override
-	public Type getType(){
+	public Type getType() {
 		return property.getType();
 	}
+
 	@Override
-	public String getId(){
+	public String getId() {
 		return EmfWorkspace.getId(property.getAssociation()) + "@" + EmfWorkspace.getId(property);
 	}
+
 	@Override
-	public boolean shouldEmulate(){
+	public boolean shouldEmulate() {
 		return EmfAssociationUtil.isClass(property.getAssociation());
 	}
-	public void setOtherEnd(EndToAssociationClass otherEnd){
-		this.otherEnd=otherEnd;
+
+	public void setOtherEnd(EndToAssociationClass otherEnd) {
+		this.otherEnd = otherEnd;
 	}
+
 	@Override
-	public EndToAssociationClass getOtherEnd(){
+	public EndToAssociationClass getOtherEnd() {
 		return otherEnd;
 	}
-	public Property getOriginalProperty(){
+
+	public Property getOriginalProperty() {
 		return property;
 	}
 

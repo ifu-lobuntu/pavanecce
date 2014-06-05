@@ -284,7 +284,7 @@ public class JavaReflectionProperty extends JavaAnnotated implements SourcePrope
 			try {
 				return method.getDeclaringClass().getDeclaredMethod("setIs" + propName, method.getReturnType());
 			} catch (Exception e1) {
-				if(propName.startsWith("Is")){
+				if (propName.startsWith("Is")) {
 					try {
 						return method.getDeclaringClass().getDeclaredMethod("set" + propName.substring(2), method.getReturnType());
 					} catch (Exception e3) {
@@ -321,8 +321,9 @@ public class JavaReflectionProperty extends JavaAnnotated implements SourcePrope
 
 	@Override
 	public boolean isDerived() {
-		return field==null && getter!=null && setter==null;
+		return field == null && getter != null && setter == null;
 	}
+
 	@Override
 	public Object getInitialValue() {
 		return null;

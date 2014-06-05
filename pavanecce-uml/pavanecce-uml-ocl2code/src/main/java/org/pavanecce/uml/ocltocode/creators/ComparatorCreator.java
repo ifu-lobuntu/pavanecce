@@ -97,7 +97,7 @@ public class ComparatorCreator {
 				new CodeIfStatement(noNullsBlock, new PortableExpression("value0 > value1"), new PortableStatement("return 1"));
 				new CodeIfStatement(noNullsBlock, new PortableExpression("value1 < value1"), new PortableStatement("return -1"));
 			}
-		}else{
+		} else {
 			MethodCallExpression value0GreaterThanValue1 = new MethodCallExpression("value0." + moreOperName, new PortableExpression("value1"));
 			new CodeIfStatement(noNullsBlock, value0GreaterThanValue1, new PortableStatement("return 0"));
 			MethodCallExpression value1GreaterThanValue0 = new MethodCallExpression("value1." + moreOperName, new PortableExpression("value0"));

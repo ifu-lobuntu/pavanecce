@@ -41,10 +41,12 @@ import org.pavanecce.uml.ocltocode.creators.ExpressionCreator;
 import org.pavanecce.uml.uml2code.java.JavaCodeGenerator;
 
 public class OclReturnValueEvaluatorBuilder implements ReturnValueEvaluatorBuilder {
-	private static final CodeTypeReference OBJECT = new CodeTypeReference(false, new CodePackageReference(null, "java", null), "Object", Collections.singletonMap("java", "java.lang.Object"));
+	private static final CodeTypeReference OBJECT = new CodeTypeReference(false, new CodePackageReference(null, "java", null), "Object",
+			Collections.singletonMap("java", "java.lang.Object"));
 
 	@Override
-	public void build(PackageBuildContext context, ReturnValueConstraintEvaluator returnValueConstraintEvaluator, ReturnValueDescr returnValueDescr, ContextResolver contextResolver) {
+	public void build(PackageBuildContext context, ReturnValueConstraintEvaluator returnValueConstraintEvaluator, ReturnValueDescr returnValueDescr,
+			ContextResolver contextResolver) {
 		ProcessBuildContext ctx = (ProcessBuildContext) context;
 		ResourceSet rst = (ResourceSet) ctx.getProcess().getMetaData().get(UmlBuilder.UML_RESOURCE_SET);
 		Collection<Package> rootObjects = EmfPackageUtil.getRootObjects(rst);
@@ -84,10 +86,12 @@ public class OclReturnValueEvaluatorBuilder implements ReturnValueEvaluatorBuild
 		}
 		sb.append(");");
 		returnValueDescr.setText(sb.toString());
-		ProcessDialectRegistry.getDialect("java").getReturnValueEvaluatorBuilder().build(context, returnValueConstraintEvaluator, returnValueDescr, contextResolver);
+		ProcessDialectRegistry.getDialect("java").getReturnValueEvaluatorBuilder()
+				.build(context, returnValueConstraintEvaluator, returnValueDescr, contextResolver);
 	}
 
-	protected Map<String, Classifier> findVariabes(ReturnValueDescr returnValueDescr, ProcessBuildContext ctx, Collection<Package> rootObjects, OclContextFactory f) {
+	protected Map<String, Classifier> findVariabes(ReturnValueDescr returnValueDescr, ProcessBuildContext ctx, Collection<Package> rootObjects,
+			OclContextFactory f) {
 		Map<String, Classifier> vars = new HashMap<String, Classifier>();
 		VariableScope variables = (VariableScope) ((Process) ctx.getProcess()).getDefaultContext(VariableScope.VARIABLE_SCOPE);
 		for (Variable variable : variables.getVariables()) {
@@ -114,15 +118,15 @@ public class OclReturnValueEvaluatorBuilder implements ReturnValueEvaluatorBuild
 		int fromIndex = 0;
 
 		int i = -1;
-		while(0 <= (i = returnValueDescr.getText().indexOf(cfi.getName(), fromIndex))) {
-			if (i == 0 || (returnValueDescr.getText().charAt(i-1) != '.' && !Character.isAlphabetic(returnValueDescr.getText().charAt(i-1)))) {
+		while (0 <= (i = returnValueDescr.getText().indexOf(cfi.getName(), fromIndex))) {
+			if (i == 0 || (returnValueDescr.getText().charAt(i - 1) != '.' && !Character.isAlphabetic(returnValueDescr.getText().charAt(i - 1)))) {
 				char charAt = returnValueDescr.getText().charAt(i + cfi.getName().length());
 				boolean isPartOfOtherName = Character.isAlphabetic(charAt);
 				if (!isPartOfOtherName) {
 					return true;
 				}
 			}
-			fromIndex=i+1;
+			fromIndex = i + 1;
 		}
 		return false;
 	}

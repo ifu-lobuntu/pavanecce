@@ -6,14 +6,15 @@ import org.slf4j.LoggerFactory;
 
 public class DummyProgressMonitor implements IProgressMonitor {
 	Logger logger = LoggerFactory.getLogger(getClass());
+
 	@Override
 	public void beginTask(String string, int size) {
-		logger.info("DummyProgressMonitor.beginTask("+string+","+size +" )");
+		logger.info("DummyProgressMonitor.beginTask(" + string + "," + size + " )");
 	}
 
 	@Override
 	public void worked(int i) {
-//		logger.info(("DummyProgressMonitor.worked("+i+")");
+		// logger.info(("DummyProgressMonitor.worked("+i+")");
 	}
 
 	@Override

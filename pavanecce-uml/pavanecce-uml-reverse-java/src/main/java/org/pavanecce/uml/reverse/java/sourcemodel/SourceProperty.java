@@ -3,7 +3,7 @@ package org.pavanecce.uml.reverse.java.sourcemodel;
 import org.eclipse.uml2.uml.VisibilityKind;
 
 public interface SourceProperty {
-	
+
 	Object getInitialValue();
 
 	SourceClass getDeclaringType();

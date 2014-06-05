@@ -21,39 +21,44 @@ public class EmfParameterUtil {
 		}
 		return result;
 	}
-	public static String toIdentifyingString(Operation o){
+
+	public static String toIdentifyingString(Operation o) {
 		return o.getName() + "(" + collectionToString(getArgumentParameters(o), ", ") + ")";
 	}
-	private static String collectionToString(List<? extends NamedElement> argumentParameters,String seperator){
-		if(argumentParameters.isEmpty()){
+
+	private static String collectionToString(List<? extends NamedElement> argumentParameters, String seperator) {
+		if (argumentParameters.isEmpty()) {
 			return "";
-		}else{
+		} else {
 			StringBuilder sb = new StringBuilder();
-			for(NamedElement namedElement:argumentParameters){
+			for (NamedElement namedElement : argumentParameters) {
 				sb.append(namedElement.getQualifiedName());
 				sb.append(seperator);
 			}
 			return sb.substring(0, sb.length() - 1);
 		}
 	}
-	public static List<Parameter> getResultParameters(NamedElement operation){
+
+	public static List<Parameter> getResultParameters(NamedElement operation) {
 		List<Parameter> result = new ArrayList<Parameter>();
-		for(Parameter parameter:getParameters(operation)){
-			if((parameter.getDirection() == ParameterDirectionKind.OUT_LITERAL
-					|| parameter.getDirection() == ParameterDirectionKind.INOUT_LITERAL || parameter.getDirection() == ParameterDirectionKind.RETURN_LITERAL)){
+		for (Parameter parameter : getParameters(operation)) {
+			if ((parameter.getDirection() == ParameterDirectionKind.OUT_LITERAL || parameter.getDirection() == ParameterDirectionKind.INOUT_LITERAL || parameter
+					.getDirection() == ParameterDirectionKind.RETURN_LITERAL)) {
 				result.add(parameter);
 			}
 		}
 		return result;
 	}
-	public static Parameter getReturnParameter(NamedElement operation){
-		for(Parameter parameter:getParameters(operation)){
-			if(parameter.getDirection() == ParameterDirectionKind.RETURN_LITERAL){
+
+	public static Parameter getReturnParameter(NamedElement operation) {
+		for (Parameter parameter : getParameters(operation)) {
+			if (parameter.getDirection() == ParameterDirectionKind.RETURN_LITERAL) {
 				return parameter;
 			}
 		}
 		return null;
 	}
+
 	private static List<Parameter> getParameters(NamedElement parameterOwner) {
 		if (parameterOwner instanceof Behavior) {
 			return ((Behavior) parameterOwner).getOwnedParameters();

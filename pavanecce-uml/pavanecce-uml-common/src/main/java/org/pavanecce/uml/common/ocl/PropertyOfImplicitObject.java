@@ -3,15 +3,16 @@ package org.pavanecce.uml.common.ocl;
 import org.eclipse.ocl.uml.Variable;
 import org.eclipse.uml2.uml.Property;
 
-public class PropertyOfImplicitObject extends EmulatedVariable{
+public class PropertyOfImplicitObject extends EmulatedVariable {
 
 	private Variable implicitVar;
 
-	public PropertyOfImplicitObject(Variable implicitVar, Property originalElement){
+	public PropertyOfImplicitObject(Variable implicitVar, Property originalElement) {
 		super(originalElement);
-		this.implicitVar=implicitVar;
+		this.implicitVar = implicitVar;
 	}
-	public Variable getImplicitVar(){
+
+	public Variable getImplicitVar() {
 		return implicitVar;
 	}
 }

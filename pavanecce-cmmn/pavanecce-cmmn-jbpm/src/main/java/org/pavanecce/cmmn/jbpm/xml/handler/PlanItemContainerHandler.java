@@ -117,7 +117,7 @@ public abstract class PlanItemContainerHandler extends BaseAbstractHandler {
 					new ConnectionImpl(process.getDefaultSplit(), DEFAULT, node, DEFAULT);
 				}
 			} else {
-				new ConnectionImpl(process.getDefaultSplit(), DEFAULT, node, DEFAULT);// necessary at all?
+				new ConnectionImpl(process.getDefaultSplit(), DEFAULT, node, DEFAULT); // necessary at all?
 			}
 		}
 	}

@@ -10,6 +10,16 @@ JCR/OCM demarcated subscriptions
 
 - throwing CREATE,DELETE,ADD_CHILD,REMOVE_CHILD,ADD_REFERENCE,REMOVE_REFERENCE and UPDATE events
 
+Pure JCR persistent subscriptions
+
+- scope of subscriptions
+- bindingRefined
+- throwing CREATE,DELETE,ADD_CHILD,REMOVE_CHILD,ADD_REFERENCE,REMOVE_REFERENCE and UPDATE events
+
+Pure JCR demarcated subscriptions
+
+- throwing CREATE,DELETE,ADD_CHILD,REMOVE_CHILD,ADD_REFERENCE,REMOVE_REFERENCE and UPDATE events
+
 JPA/Hibernate persistent subscriptions
 
 - scope of subscriptions 
@@ -115,16 +125,6 @@ Recursive subscriptions, parameterizable
 
 XPath processDialect on JCR
 
-Pure JCR persistent subscriptions
-
-- scope of subscriptions
-- bindingRefined
-- throwing CREATE,DELETE,ADD_CHILD,REMOVE_CHILD,ADD_REFERENCE,REMOVE_REFERENCE and UPDATE events
-
-Pure JCR demarcated subscriptions
-
-- throwing CREATE,DELETE,ADD_CHILD,REMOVE_CHILD,ADD_REFERENCE,REMOVE_REFERENCE and UPDATE events
-
 # 4. To implement
 
 Planning Service - HumanTask, Stage AND CasePlanModel
@@ -186,6 +186,4 @@ Internationalization
 
 CaseModel:
 
-- REACTIVATE (from Failed,Terminated, Completed? need input from OMG)
-
- 
+- REACTIVATE (from Failed,Terminated, Completed? need input from OMG) 

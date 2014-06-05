@@ -47,7 +47,7 @@ public class XMLHelper
 			StringWriter writer = new StringWriter();
 			transformer.transform(new DOMSource(node), new StreamResult(writer));
 			String output = writer.getBuffer().toString();
-			output = removeEmptyLines(output);// .replaceAll("\n|\r", "");
+			output = removeEmptyLines(output); // .replaceAll("\n|\r", "");
 			return output;
 		}
 		catch (TransformerException te)

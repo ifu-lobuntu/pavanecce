@@ -18,18 +18,18 @@ public class CodeBehaviour extends CodeElement {
 		Iterator<?> iterator = parameters.iterator();
 		sb.append("(");
 		while (iterator.hasNext()) {
-			Object p =  iterator.next();
+			Object p = iterator.next();
 			CodeTypeReference type = null;
-			if(p instanceof CodeParameter){
-				type=((CodeParameter) p).getType();
-			}else if(p instanceof CodeTypeReference){
-				type=(CodeTypeReference) p;
+			if (p instanceof CodeParameter) {
+				type = ((CodeParameter) p).getType();
+			} else if (p instanceof CodeTypeReference) {
+				type = (CodeTypeReference) p;
 			}
 			sb.append(type.getLastName());
-			if(iterator.hasNext()){
+			if (iterator.hasNext()) {
 				sb.append(",");
 			}
-			
+
 		}
 		sb.append(")");
 		String string = sb.toString();
@@ -43,7 +43,7 @@ public class CodeBehaviour extends CodeElement {
 	public void setDeclaringClass(CodeClassifier declaringClass) {
 		this.declaringClass = declaringClass;
 	}
-	
+
 	protected String generateIdentifier() {
 		if (this.identifier == null) {
 			identifier = generateIdentifier(this.getName(), this.getParameters());
@@ -88,7 +88,7 @@ public class CodeBehaviour extends CodeElement {
 
 	public void setVisibility(CodeVisibilityKind v) {
 		this.visibility = v;
-	
+
 	}
 
 	public CodeBehaviour(String name2) {

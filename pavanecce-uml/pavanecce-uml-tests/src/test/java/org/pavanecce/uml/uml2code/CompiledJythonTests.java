@@ -24,9 +24,8 @@ public class CompiledJythonTests extends AbstractModelBuilderTest {
 
 	@Before
 	public void before() {
-//		PythonInterpreter.initialize(System.getProperties(), new Properties(), new String[] { "" });
+		// PythonInterpreter.initialize(System.getProperties(), new Properties(), new String[] { "" });
 	}
-
 
 	@Test
 	public void testIt() throws Exception {
@@ -42,9 +41,9 @@ public class CompiledJythonTests extends AbstractModelBuilderTest {
 		writeModule("model", "pkg1");
 		writeModule("model", "pkg2");
 		PythonInterpreter pi = new PythonInterpreter(null, new PySystemState());
-//		pi.getSystemState().dont_write_bytecode=true;
+		// pi.getSystemState().dont_write_bytecode=true;
 		pi.exec("import sys");
-		pi.exec("sys.path.append('"+root.getAbsolutePath()+"')");
+		pi.exec("sys.path.append('" + root.getAbsolutePath() + "')");
 		pi.exec("from model.pkg1 import *");
 		pi.exec("from model.pkg2 import *");
 		pi.exec("obj2=TheClass()");
@@ -75,7 +74,6 @@ public class CompiledJythonTests extends AbstractModelBuilderTest {
 		fw.write(classDeclaration);
 		fw.flush();
 		fw.close();
-		
 
 	}
 }

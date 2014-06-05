@@ -1,6 +1,6 @@
 package org.pavanecce.common.code.metamodel.documentdb;
 
-public class ReferencedDocument extends DocumentAssociation implements IDocumentProperty,IReferencedDocumentProperty {
+public class ReferencedDocument extends DocumentAssociation implements IDocumentProperty, IReferencedDocumentProperty {
 
 	private boolean mandatory;
 

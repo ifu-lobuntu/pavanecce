@@ -19,7 +19,7 @@ import org.junit.BeforeClass;
 import org.pavanecce.common.code.metamodel.CodeClassifier;
 import org.pavanecce.common.code.metamodel.CodePackage;
 import org.pavanecce.common.code.metamodel.documentdb.DocumentNamespace;
-import org.pavanecce.common.ocm.OcmFactory;
+import org.pavanecce.common.ocm.ObjectContentManagerFactory;
 import org.pavanecce.common.ocm.OcmObjectPersistence;
 import org.pavanecce.common.util.ConstructionCaseExample;
 import org.pavanecce.common.util.FileUtil;
@@ -37,26 +37,27 @@ public class OcmTests extends AbstractPersistenceTest {
 		example.generateCode(new JavaCodeGenerator(), new OcmCodeDecorator());
 		List<Class> classes = getClasses();
 		File outputRoot = example.calculateBinaryOutputRoot();
-		File testCndFile = generateCndFile(outputRoot,new CndTextGenerator());
+		File testCndFile = generateCndFile(outputRoot, new CndTextGenerator());
 		Repository tr = new TransientRepository();
 		Session session = tr.login(new SimpleCredentials("admin", "admin".toCharArray()));
 		CndImporter.registerNodeTypes(new FileReader(testCndFile), session);
 		session.getRootNode().addNode("ConstructionCaseCollection");
 		session.save();
-//		session.logout();
+		// session.logout();
 		ReflectionUtils.setClassLoader(example.getClassLoader());
-		OcmFactory ocmFactory = new OcmFactory(tr, "admin", "admin", new AnnotationMapperImpl(classes), null);
-		OcmObjectPersistence hibernatePersistence = new OcmObjectPersistence(ocmFactory);
+		ObjectContentManagerFactory objectContentManagerFactory = new ObjectContentManagerFactory(tr, "admin", "admin", new AnnotationMapperImpl(classes), null);
+		OcmObjectPersistence hibernatePersistence = new OcmObjectPersistence(objectContentManagerFactory);
 		example.initScriptingEngine();
 		example.getJavaScriptContext().setAttribute("p", hibernatePersistence, ScriptContext.ENGINE_SCOPE);
 	}
+
 	protected static File generateCndFile(File outputRoot, CndTextGenerator cndTextGenerator) {
 		UmlDocumentModelFileVisitorAdaptor a = new UmlDocumentModelFileVisitorAdaptor();
 		DocumentModelBuilder docBuilder = new DocumentModelBuilder();
 		a.startVisiting(docBuilder, example.getModel());
-		
+
 		DocumentNamespace documentModel = docBuilder.getDocumentModel();
-		File testCndFile = new File(outputRoot,"test.cnd");
+		File testCndFile = new File(outputRoot, "test.cnd");
 		FileUtil.write(testCndFile, cndTextGenerator.generate(documentModel));
 		return testCndFile;
 	}

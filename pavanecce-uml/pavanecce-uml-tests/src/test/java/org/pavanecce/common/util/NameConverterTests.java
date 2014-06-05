@@ -1,10 +1,10 @@
 package org.pavanecce.common.util;
 
-
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-public class NameConverterTests{
+
+public class NameConverterTests {
 	@Test
 	public void testIt() throws Exception {
 		assertEquals("___231", NameConverter.toValidVariableName(".;-231"));

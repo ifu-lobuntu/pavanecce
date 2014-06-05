@@ -7,24 +7,25 @@ import org.eclipse.uml2.uml.BehavioredClassifier;
 import org.eclipse.uml2.uml.Classifier;
 import org.eclipse.uml2.uml.TypedElement;
 
-public class EmulatedPropertyHolderForBehavioredClassifier extends EmulatedPropertyHolder{
+public class EmulatedPropertyHolderForBehavioredClassifier extends EmulatedPropertyHolder {
 	@SafeVarargs
-	protected EmulatedPropertyHolderForBehavioredClassifier(BehavioredClassifier owner,IPropertyEmulation e,
-			EList<? extends TypedElement>...typedElements){
+	protected EmulatedPropertyHolderForBehavioredClassifier(BehavioredClassifier owner, IPropertyEmulation e, EList<? extends TypedElement>... typedElements) {
 		super(owner, e, typedElements);
 	}
-	public EmulatedPropertyHolderForBehavioredClassifier(BehavioredClassifier owner,IPropertyEmulation e){
+
+	public EmulatedPropertyHolderForBehavioredClassifier(BehavioredClassifier owner, IPropertyEmulation e) {
 		super(owner, e);
 		EList<Behavior> ownedBehaviors = owner.getOwnedBehaviors();
-		for(Behavior behavior:ownedBehaviors){
+		for (Behavior behavior : ownedBehaviors) {
 			addEmulatedBehaviorProperty(behavior);
 		}
 	}
-	private void addEmulatedBehaviorProperty(Behavior newValue){
+
+	private void addEmulatedBehaviorProperty(Behavior newValue) {
 		InverseArtificialProperty iap = new InverseArtificialProperty((BehavioredClassifier) owner, newValue);
 		iap.initialiseOtherEnd();
 		Classifier otherType = iap.getOtherEnd().getOwner();
-		if(!(otherType instanceof MessageType)){
+		if (!(otherType instanceof MessageType)) {
 			emulation.getEmulatedPropertyHolder(otherType).addEmulatedAttribute(iap.getOtherEnd());
 		}
 		getEmulatedAttributes().add(iap);

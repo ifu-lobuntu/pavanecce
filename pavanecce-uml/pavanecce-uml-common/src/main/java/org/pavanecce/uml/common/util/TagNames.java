@@ -15,7 +15,7 @@ public class TagNames {
 	public static final String PERSISTENT_NAME = "persistentName";
 	public static final String INDICES = "indices";
 	public static final String IS_ASCENDING = "isAscending";
-	public static final String IS_UNIQUE= "isUnique";
+	public static final String IS_UNIQUE = "isUnique";
 	public static final String PROPERTIES = "properties";
 	public static final String NAME = "name";
 }

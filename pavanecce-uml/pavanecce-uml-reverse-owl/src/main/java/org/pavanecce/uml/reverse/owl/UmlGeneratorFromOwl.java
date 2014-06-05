@@ -53,20 +53,20 @@ public class UmlGeneratorFromOwl extends AbstractUmlGenerator {
 		Classifier baseType = factory.getClassifierFor(pd.getBaseType());
 		Association assoc = null;
 		String assocName = null;
-		if(pd.getOtherEnd() == null){
+		if (pd.getOtherEnd() == null) {
 			assocName = cls.getName() + "References" + NameConverter.capitalize(pd.getName());
-		}else if(pd.getOtherEnd().isComposite()) {
+		} else if (pd.getOtherEnd().isComposite()) {
 			assocName = baseType.getName() + "Has" + NameConverter.capitalize(pd.getOtherEnd().getName());
-		}else if(pd.isComposite()){
+		} else if (pd.isComposite()) {
 			assocName = cls.getName() + "Has" + NameConverter.capitalize(pd.getName());
-		}else if(pd.isMany() && !pd.getOtherEnd().isMany()){
+		} else if (pd.isMany() && !pd.getOtherEnd().isMany()) {
 			assocName = cls.getName() + "Has" + NameConverter.capitalize(pd.getName());
-		}else if(pd.getOtherEnd().isMany() && !pd.isMany()){
+		} else if (pd.getOtherEnd().isMany() && !pd.isMany()) {
 			assocName = baseType.getName() + "Has" + NameConverter.capitalize(pd.getOtherEnd().getName());
-		}else{
-			if(cls.getName().compareTo(baseType.getName())>0){
+		} else {
+			if (cls.getName().compareTo(baseType.getName()) > 0) {
 				assocName = baseType.getName() + "Has" + NameConverter.capitalize(pd.getOtherEnd().getName());
-			}else{
+			} else {
 				assocName = cls.getName() + "Has" + NameConverter.capitalize(pd.getName());
 			}
 		}

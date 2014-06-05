@@ -25,7 +25,7 @@ public class CodeElement implements Comparable<CodeElement> {
 		if (data == null) {
 			return null;
 		} else {
-			return (T)data.get(c);
+			return (T) data.get(c);
 		}
 
 	}

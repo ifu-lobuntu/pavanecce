@@ -6,13 +6,13 @@ import org.apache.jackrabbit.ocm.mapper.model.ClassDescriptor;
 import org.kie.api.runtime.manager.RuntimeManager;
 import org.kie.internal.runtime.manager.context.EmptyContext;
 import org.pavanecce.cmmn.jbpm.event.AbstractPersistentSubscriptionManager;
-import org.pavanecce.common.ocm.OcmFactory;
+import org.pavanecce.common.ocm.ObjectContentManagerFactory;
 import org.pavanecce.common.ocm.OcmObjectPersistence;
 
 public class OcmCasePersistence extends OcmObjectPersistence {
 	RuntimeManager runtimeManager;
 
-	public OcmCasePersistence(OcmFactory factory, RuntimeManager runtimeManager) {
+	public OcmCasePersistence(ObjectContentManagerFactory factory, RuntimeManager runtimeManager) {
 		super(factory);
 		this.runtimeManager = runtimeManager;
 	}
@@ -37,7 +37,11 @@ public class OcmCasePersistence extends OcmObjectPersistence {
 			return null;
 		}
 	}
-
+	@Override
+	public void start() {
+		super.start();
+		super.factory.updateEventListener();
+	}
 	@Override
 	public void commit() {
 		try {

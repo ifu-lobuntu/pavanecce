@@ -23,6 +23,7 @@ public class Case extends RuleFlowProcess implements PlanItemContainer {
 	private EndNode defaultEnd;
 	private DefaultJoin defaultJoin;
 	private PlanningTable planningTable;
+	private boolean isBuilt;
 
 	@Override
 	public StartNode getDefaultStart() {
@@ -149,5 +150,13 @@ public class Case extends RuleFlowProcess implements PlanItemContainer {
 	public void setPlanningTable(PlanningTable planningTable) {
 		this.planningTable = planningTable;
 		planningTable.setPlanItemContainer(this);
+	}
+
+	public boolean isBuilt() {
+		return isBuilt;
+	}
+
+	public void setBuilt(boolean isBuilt) {
+		this.isBuilt = isBuilt;
 	}
 }

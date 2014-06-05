@@ -66,7 +66,7 @@ public class PlanItemInfo<T extends PlanItemDefinition> {
 		} else if (definition instanceof CaseTask) {
 			planItem = (PlanItem<T>) new CaseTaskPlanItem((PlanItemInfo<CaseTask>) this, createFactoryNode());
 		}
-		planItem.setPlanItemContainer(nodeContainer);// possible duplication here of setNodeContainer
+		planItem.setPlanItemContainer(nodeContainer); // possible duplication here of setNodeContainer
 		planItem.setElementId(getElementId());
 		planItem.setName(getName());
 		planItem.setId(id);

@@ -12,22 +12,27 @@ import org.pavanecce.uml.ocltocode.common.UmlToCodeMaps;
 public class PackageableElementMap {
 	protected NamedElement e = null;
 	protected UmlToCodeMaps codeUtil;
+
 	public PackageableElementMap(UmlToCodeMaps CodeUtil, NamedElement e) {
 		super();
-		this.codeUtil=CodeUtil;
+		this.codeUtil = CodeUtil;
 		this.e = e;
 	}
 
 	public CodeVisibilityKind javaVisibility() {
-		if (e.getVisibility() == VisibilityKind.PUBLIC_LITERAL) return CodeVisibilityKind.PUBLIC;
-		if (e.getVisibility() == VisibilityKind.PRIVATE_LITERAL) return CodeVisibilityKind.PRIVATE;
-		if (e.getVisibility() == VisibilityKind.PROTECTED_LITERAL) return CodeVisibilityKind.PROTECTED;
+		if (e.getVisibility() == VisibilityKind.PUBLIC_LITERAL)
+			return CodeVisibilityKind.PUBLIC;
+		if (e.getVisibility() == VisibilityKind.PRIVATE_LITERAL)
+			return CodeVisibilityKind.PRIVATE;
+		if (e.getVisibility() == VisibilityKind.PROTECTED_LITERAL)
+			return CodeVisibilityKind.PROTECTED;
 		return CodeVisibilityKind.PUBLIC;
-	}	
+	}
+
 	public static CollectionKind getCollectionKind(MultiplicityElement exp) {
-		boolean multiValued=exp.isMultivalued();
-		if(exp instanceof Property){
-			multiValued=EmfPropertyUtil.isMany((Property) exp);
+		boolean multiValued = exp.isMultivalued();
+		if (exp instanceof Property) {
+			multiValued = EmfPropertyUtil.isMany((Property) exp);
 		}
 		if (multiValued) {
 			if (exp.isOrdered()) {

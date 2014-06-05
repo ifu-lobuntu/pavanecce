@@ -48,7 +48,7 @@ public class TextMetamodelVersionTests {
 	public void testSourceFolderWithVersion() {
 		TextProjectDefinition tpd = new TextProjectDefinition(ProjectNameStrategy.WORKSPACE_NAME_AND_SUFFIX, "-suffix");
 		TextProject tp = tw.findOrCreateTextProject(tpd, "", vn);
-		SourceFolderDefinition sfd = new SourceFolderDefinition(SourceFolderNameStrategy.MODEL_NAME_AND_PREFIX, "src/main/java/",true);
+		SourceFolderDefinition sfd = new SourceFolderDefinition(SourceFolderNameStrategy.MODEL_NAME_AND_PREFIX, "src/main/java/", true);
 		SourceFolder sf = tp.findOrCreateSourceFolder(sfd, "model1", vn);
 		List<String> textPath = Arrays.asList("org", "vdfp", "metamodels", "vdml");
 		TextFile tf = sf.findOrCreateTextFile(textPath);

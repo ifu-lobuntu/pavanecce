@@ -44,10 +44,10 @@ public class CmmnTextGenerator extends AbstractTextGenerator {
 				closeElement();
 			}
 		}
-		for (Package child	 : pkg.getNestedPackages()) {
+		for (Package child : pkg.getNestedPackages()) {
 			generateCaseFileItemDefinitions(child);
-		} 
-		
+		}
+
 		return popStringBuilder().toString();
 	}
 
@@ -61,7 +61,8 @@ public class CmmnTextGenerator extends AbstractTextGenerator {
 				if (property.getType() instanceof Classifier) {
 					StringBuilder targetRefs = new StringBuilder();
 					for (Property child : EmfPropertyUtil.getEffectiveProperties((Classifier) property.getType())) {
-						if (!child.isComposite() && EmfClassifierUtil.isPersistent(child.getType()) && (child.getOtherEnd() == null || !child.getOtherEnd().isComposite())) {
+						if (!child.isComposite() && EmfClassifierUtil.isPersistent(child.getType())
+								&& (child.getOtherEnd() == null || !child.getOtherEnd().isComposite())) {
 							targetRefs.append(NameConverter.decapitalize(child.getType().getName()) + "FileItemId");
 							targetRefs.append(" ");
 						}

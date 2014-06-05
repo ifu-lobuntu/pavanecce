@@ -85,7 +85,7 @@ public class LiteralExpCreator {
 		CodeMethod oper = new CodeMethod(myClass, "newTuble" + myClass.getUniqueNumber(), tupleMap.javaTypePath());
 		oper.cloneToParameters(params);
 		for (TupleLiteralPart<Classifier, Property> part : in.getPart()) {
-			ExpressionCreator myExpMaker=new ExpressionCreator(codeMaps, myClass,this.context);
+			ExpressionCreator myExpMaker = new ExpressionCreator(codeMaps, myClass, this.context);
 			CodeExpression arg = myExpMaker.makeExpression((OCLExpression) part.getValue(), isStatic, params);
 			PropertyMap map = codeMaps.buildStructuralFeatureMap(part.getAttribute());
 			new MethodCallStatement(oper.getBody(), map.setter(), arg);
@@ -156,7 +156,8 @@ public class LiteralExpCreator {
 				myClass.addStdLibToImports(OclStandardLibrary.COLLECTIONS);
 				CodeExpression first = myExpMaker.makeExpression((OCLExpression) ((CollectionRange) part).getFirst(), isStatic, params);
 				CodeExpression last = myExpMaker.makeExpression((OCLExpression) ((CollectionRange) part).getLast(), isStatic, params);
-				new MethodCallStatement(body, OclStandardLibrary.COLLECTIONS.getPhysicalName() + ".rangeOf", new PortableExpression(collectionVarName), first, last);
+				new MethodCallStatement(body, OclStandardLibrary.COLLECTIONS.getPhysicalName() + ".rangeOf", new PortableExpression(collectionVarName), first,
+						last);
 			}
 			i++;
 		}

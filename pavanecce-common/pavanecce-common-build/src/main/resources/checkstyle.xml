@@ -17,7 +17,7 @@
     <module name="ImportOrder">
       <property name="severity" value="warning"/>
       <property name="option" value="top"/>
-      <property name="groups" value="com,junit,net,org,java,javax"/>
+      <property name="groups" value="java,javax,org,net,com,junit"/>
     </module>
     <module name="PackageName">
       <property name="severity" value="warning"/>
@@ -115,7 +115,8 @@
     <property name="message" value="All TODOs should be named.  e.g. &quot;TODO(johndoe): Refactor when v2 is released.&quot;"/>
   </module>
   <module name="FileLength">
-    <property name="max" value="800"/>
+    <property name="severity" value="warning"/>
+    <property name="max" value="500"/>
     <property name="fileExtensions" value="*.java"/>
   </module>
 </module>

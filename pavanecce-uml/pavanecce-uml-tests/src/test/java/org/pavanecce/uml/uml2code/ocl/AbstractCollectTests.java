@@ -15,7 +15,8 @@ public abstract class AbstractCollectTests extends AbstractOclTest {
 		result.setDirection(ParameterDirectionKind.RETURN_LITERAL);
 		result.setUpper(-1);
 		result.setIsUnique(false);
-		OpaqueExpression ocl = (OpaqueExpression) find.createBodyCondition("body").createSpecification("spec", example.getRoomPlans(), UMLPackage.eINSTANCE.getOpaqueExpression());
+		OpaqueExpression ocl = (OpaqueExpression) find.createBodyCondition("body").createSpecification("spec", example.getRoomPlans(),
+				UMLPackage.eINSTANCE.getOpaqueExpression());
 		ocl.getLanguages().add("ocl");
 		ocl.getBodies().add("housePlan.wallPlans->collect(roomPlans->any(rp|rp.name=nameToFind))");
 	}

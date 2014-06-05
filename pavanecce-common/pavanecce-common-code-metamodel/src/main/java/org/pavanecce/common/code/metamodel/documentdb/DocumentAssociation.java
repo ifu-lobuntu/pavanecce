@@ -3,12 +3,12 @@ package org.pavanecce.common.code.metamodel.documentdb;
 public class DocumentAssociation implements IDocumentElement {
 	private DocumentNamespace namespace;
 	private String name;
-	private  DocumentNodeType type;
+	private DocumentNodeType type;
 
 	public DocumentAssociation(DocumentNamespace namespace, String name, DocumentNodeType type) {
-		this.namespace=namespace;
-		this.name=name;
-		this.type=type;
+		this.namespace = namespace;
+		this.name = name;
+		this.type = type;
 	}
 
 	public DocumentNamespace getNamespace() {
@@ -22,9 +22,9 @@ public class DocumentAssociation implements IDocumentElement {
 	public DocumentNodeType getType() {
 		return type;
 	}
-	public String getFullName(){
+
+	public String getFullName() {
 		return namespace.getPrefix() + ":" + getName();
 	}
-	
 
 }

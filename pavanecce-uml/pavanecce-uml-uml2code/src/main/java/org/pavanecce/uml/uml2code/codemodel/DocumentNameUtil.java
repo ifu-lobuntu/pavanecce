@@ -8,10 +8,10 @@ import org.pavanecce.uml.common.util.EmfPropertyUtil;
 public class DocumentNameUtil {
 
 	public static String name(Property p) {
-		if(EmfPropertyUtil.isMany(p) && p.getType().getName().equalsIgnoreCase(p.getName())){
-			return NameConverter.decapitalize(NameConverter.toValidVariableName(p.getName()))+"Collection";
-			
-		}else{
+		if (EmfPropertyUtil.isMany(p) && p.getType().getName().equalsIgnoreCase(p.getName())) {
+			return NameConverter.decapitalize(NameConverter.toValidVariableName(p.getName())) + "Collection";
+
+		} else {
 			return NameConverter.decapitalize(NameConverter.toValidVariableName(p.getName()));
 		}
 	}

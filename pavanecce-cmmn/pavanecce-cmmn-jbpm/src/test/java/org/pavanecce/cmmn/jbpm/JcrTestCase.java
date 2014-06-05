@@ -1,15 +1,6 @@
 package org.pavanecce.cmmn.jbpm;
 
-import static org.junit.Assert.*;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URL;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.Arrays;
 
 import javax.jcr.Node;
@@ -25,9 +16,8 @@ import org.pavanecce.cmmn.jbpm.ocm.OcmCaseFileItemSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.ocm.OcmCaseSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.ocm.OcmSubscriptionManager;
 import org.pavanecce.cmmn.jbpm.test.AbstractCmmnCaseTestCase;
-import org.pavanecce.common.ocm.OcmFactory;
+import org.pavanecce.common.ocm.ObjectContentManagerFactory;
 import org.pavanecce.common.ocm.OcmObjectPersistence;
-import org.pavanecce.common.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +28,7 @@ import test.RoofPlan;
 import test.Wall;
 import test.WallPlan;
 
-public class JcrTestCase extends AbstractCmmnCaseTestCase{
+public class JcrTestCase extends AbstractCmmnCaseTestCase {
 	static Logger logger = LoggerFactory.getLogger(JcrTestCase.class);
 	long time = System.currentTimeMillis();
 
@@ -59,7 +49,7 @@ public class JcrTestCase extends AbstractCmmnCaseTestCase{
 		session.getRootNode().addNode("cases");
 		session.save();
 		OcmSubscriptionManager eventListener = new OcmSubscriptionManager(null);
-		OcmFactory factory = new OcmFactory(repository, "admin", "admin", getMapper(), eventListener);
+		ObjectContentManagerFactory factory = new ObjectContentManagerFactory(repository, "admin", "admin", getMapper(), eventListener);
 		eventListener.setOcmFactory(factory);
 		OcmObjectPersistence oop = new OcmObjectPersistence(factory);
 		logDuration("5");

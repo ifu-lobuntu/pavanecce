@@ -313,7 +313,7 @@ public abstract class AbstractUmlGenerator {
 		if (type instanceof PrimitiveType && type.getGenerals().size() == 1 && type.getGenerals().get(0) instanceof PrimitiveType) {
 			type = type.getGenerals().get(0);
 			return getStandardPrimitiveType(type);
-		}else{
+		} else {
 			return type;
 		}
 	}
@@ -352,7 +352,8 @@ public abstract class AbstractUmlGenerator {
 		if (cls instanceof Interface) {
 			attr = ((Interface) cls).getOwnedAttribute(pd.getName(), getClassifierFor(pd.getBaseType()), false, UMLPackage.eINSTANCE.getProperty(), true);
 		} else if (cls instanceof org.eclipse.uml2.uml.Class) {
-			attr = ((org.eclipse.uml2.uml.Class) cls).getOwnedAttribute(pd.getName(), getClassifierFor(pd.getBaseType()), false, UMLPackage.eINSTANCE.getProperty(), true);
+			attr = ((org.eclipse.uml2.uml.Class) cls).getOwnedAttribute(pd.getName(), getClassifierFor(pd.getBaseType()), false,
+					UMLPackage.eINSTANCE.getProperty(), true);
 		} else if (cls instanceof DataType) {
 			attr = ((DataType) cls).getOwnedAttribute(pd.getName(), getClassifierFor(pd.getBaseType()), false, UMLPackage.eINSTANCE.getProperty(), true);
 		}

@@ -10,12 +10,13 @@ public class CodePackage extends CodeElement {
 	private SortedMap<String, CodePackage> children = new TreeMap<String, CodePackage>();
 	private SortedMap<String, CodeClassifier> classifiers = new TreeMap<String, CodeClassifier>();
 	private CodePackageReference packageReference;
+
 	public CodePackage(String name, CodePackage parent) {
 		super(name);
 		this.parent = parent;
 		parent.getChildren().put(name, this);
 	}
-	
+
 	protected CodePackage(String name) {
 		super(name);
 	}
@@ -46,15 +47,16 @@ public class CodePackage extends CodeElement {
 	}
 
 	public List<String> getPath() {
-		
-		List<String> result=new ArrayList<String>();
+
+		List<String> result = new ArrayList<String>();
 		appendPath(result);
 		return result;
 	}
+
 	@Override
-	public String toString(){
-		if(this.parent!=null){
-			return this.parent.toString()+"."+getName();
+	public String toString() {
+		if (this.parent != null) {
+			return this.parent.toString() + "." + getName();
 		}
 		return getName();
 	}

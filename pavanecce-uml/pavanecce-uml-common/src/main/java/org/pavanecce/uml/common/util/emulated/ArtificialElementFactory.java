@@ -228,8 +228,8 @@ public class ArtificialElementFactory implements IPropertyEmulation {
 				}
 			} catch (IOException e) {
 				logger.info(e.toString());
-			}finally{
-				if(zipFile!=null){
+			} finally {
+				if (zipFile != null) {
 					try {
 						zipFile.close();
 					} catch (IOException e) {

@@ -25,7 +25,8 @@ public class HashcodeDecorator extends AbstractJavaCodeDecorator {
 		sb.append("    return getUuid().hashCode()").appendLineEnd();
 		sb.append("  }\n");
 		sb.append("  public boolean equals(Object o){\n");
-		sb.append("    return o instanceof ").append(cc.getName()).append(" && ((").append(cc.getName()).append(")o).getUuid().equals(getUuid())").appendLineEnd();
+		sb.append("    return o instanceof ").append(cc.getName()).append(" && ((").append(cc.getName()).append(")o).getUuid().equals(getUuid())")
+				.appendLineEnd();
 		sb.append("  }\n");
 		sb.append("  public String getUuid(){\n");
 		sb.append("    if(uuid==null){\n");

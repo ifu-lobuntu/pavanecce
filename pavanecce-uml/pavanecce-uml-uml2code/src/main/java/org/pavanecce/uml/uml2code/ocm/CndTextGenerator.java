@@ -71,7 +71,7 @@ public class CndTextGenerator extends AbstractTextGenerator {
 	}
 
 	public void appendExtraFields() {
-		
+
 	}
 
 	private void appendCollectionHolderType(ChildDocumentCollection p) {

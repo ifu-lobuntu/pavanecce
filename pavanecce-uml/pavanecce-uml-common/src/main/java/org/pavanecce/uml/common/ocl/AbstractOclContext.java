@@ -112,7 +112,7 @@ public abstract class AbstractOclContext extends AdapterImpl {
 		Environment environment = helper.getEnvironment();
 		ToStringVisitor instance = ToStringVisitor.getInstance(environment);
 		OCLExpression expression2 = this.getExpression();
-		String accept = (String)expression2.accept(instance);
+		String accept = (String) expression2.accept(instance);
 		return accept;
 	}
 

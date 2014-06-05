@@ -58,8 +58,8 @@ public class OnPartInstanceSubscription extends AbstractCaseFileItemSubscription
 	public boolean meetsBindingRefinementCriteria(Object o, CaseInstance caseInstance) {
 		Set<CaseParameter> subscribingParameters2 = this.subscribingParameters;
 		if (getSource().getStandardEvent() == CREATE || getSource().getStandardEvent() == DELETE) {
-			return true;// TODO Can't make assumptions about whether the process state contains the new/old
-						// object
+			return true; // TODO Can't make assumptions about whether the process state contains the new/old
+							// object
 		}
 		for (CaseParameter caseParameter : subscribingParameters2) {
 			if (caseParameter.getBindingRefinement() == null || !caseParameter.getBindingRefinement().isValid()) {

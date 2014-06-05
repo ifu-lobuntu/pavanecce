@@ -10,10 +10,8 @@ import org.pavanecce.common.code.metamodel.CodeTypeReference;
 import org.pavanecce.uml.uml2code.AbstractUmlVisitorAdaptor;
 
 /**
- * This class implements the visiting logic required to traverse a UML model.
- * When arriving at significant UML elements, it invokes callbacks on the
- * CodeModelBuilder provided as input for startVisiting(DefaultCodeModelBuilder,
- * Model)
+ * This class implements the visiting logic required to traverse a UML model. When arriving at significant UML elements,
+ * it invokes callbacks on the CodeModelBuilder provided as input for startVisiting(DefaultCodeModelBuilder, Model)
  * 
  * @author ampie
  * 

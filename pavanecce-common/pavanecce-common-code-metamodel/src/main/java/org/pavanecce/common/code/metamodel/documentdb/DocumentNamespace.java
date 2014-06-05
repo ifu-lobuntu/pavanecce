@@ -26,12 +26,15 @@ public class DocumentNamespace implements IDocumentElement {
 	public void addChild(DocumentNamespace ns) {
 		(children == null ? children = new HashSet<DocumentNamespace>() : children).add(ns);
 	}
+
 	public Set<DocumentNamespace> getChildren() {
 		return children;
 	}
+
 	public void addNodeType(DocumentNodeType ns) {
 		(nodeTypes == null ? nodeTypes = new HashSet<DocumentNodeType>() : nodeTypes).add(ns);
 	}
+
 	public Set<DocumentNodeType> getNodeTypes() {
 		return nodeTypes;
 	}

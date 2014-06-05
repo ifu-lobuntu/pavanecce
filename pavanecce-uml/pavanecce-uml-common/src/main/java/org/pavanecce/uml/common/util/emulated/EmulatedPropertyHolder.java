@@ -31,9 +31,11 @@ public class EmulatedPropertyHolder implements IEmulatedPropertyHolder {
 			}
 		}
 	}
-	protected void addTypedElementBridge(TypedElement te){
-		emulatedAttributes.add(new TypedElementPropertyBridge(owner, te,this.emulation));
+
+	protected void addTypedElementBridge(TypedElement te) {
+		emulatedAttributes.add(new TypedElementPropertyBridge(owner, te, this.emulation));
 	}
+
 	public EmulatedPropertyHolder(Classifier owner2, IPropertyEmulation e) {
 		this(owner2);
 		this.emulation = e;

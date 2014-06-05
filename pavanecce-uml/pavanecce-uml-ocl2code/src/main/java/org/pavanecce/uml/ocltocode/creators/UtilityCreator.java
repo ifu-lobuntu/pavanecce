@@ -1,9 +1,7 @@
-
 package org.pavanecce.uml.ocltocode.creators;
 
 import org.pavanecce.common.code.metamodel.CodePackage;
 import org.pavanecce.common.code.metamodel.CodePackageReference;
-
 
 public class UtilityCreator {
 	static private final ThreadLocal<CodePackageReference> utilPath = new ThreadLocal<CodePackageReference>();

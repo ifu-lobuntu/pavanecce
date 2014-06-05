@@ -11,7 +11,7 @@ public class RelationalLink implements IRelationalElement {
 
 	public RelationalLink(String linkName, LinkedHashMap<String, String> columnMap, boolean isOneToOne) {
 		this(linkName, columnMap);
-		this.isOneToOne=isOneToOne;
+		this.isOneToOne = isOneToOne;
 	}
 
 	public RelationalLink(String linkName, LinkedHashMap<String, String> columnMap) {

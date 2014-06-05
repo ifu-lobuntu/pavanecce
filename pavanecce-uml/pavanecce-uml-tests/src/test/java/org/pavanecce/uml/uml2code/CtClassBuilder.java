@@ -82,19 +82,19 @@ public class CtClassBuilder {
 	public void addMethodSources(CodeClass codeClass) throws CannotCompileException, NotFoundException {
 		CtClass ctClass = findOrCreateCtClass(jg.toQualifiedName(codeClass));
 		for (CodeMethod method : codeClass.getMethods().values()) {
-			String signatureAsString = toSignatureString(method,false);
+			String signatureAsString = toSignatureString(method, false);
 			CtMethod ctMethod = ctClass.getMethod(method.getName(), signatureAsString);
 			if (ctMethod != null) {
 				ctClass.removeMethod(ctMethod);
 				ctClass.addMethod(CtNewMethod.make(jg.toMethodDeclaration(method).replaceAll("\\<\\w*\\>", ""), ctClass));
-//				String bodyString = javaCodeGenerator.toMethodBody(method);
-//				List<CodeParameter> parameters = method.getParameters();
-//				for (int i = 0; i < parameters.size(); i++) {
-//					CodeParameter codeParameter = parameters.get(i);
-//					bodyString = bodyString.replaceAll("\\b" + codeParameter.getName() + "\\b", "\\$" + i);
-//				}
-//				logger.info((bodyString);
-//				ctMethod.setBody("{" + bodyString + "}");
+				// String bodyString = javaCodeGenerator.toMethodBody(method);
+				// List<CodeParameter> parameters = method.getParameters();
+				// for (int i = 0; i < parameters.size(); i++) {
+				// CodeParameter codeParameter = parameters.get(i);
+				// bodyString = bodyString.replaceAll("\\b" + codeParameter.getName() + "\\b", "\\$" + i);
+				// }
+				// logger.info((bodyString);
+				// ctMethod.setBody("{" + bodyString + "}");
 			}
 		}
 	}
@@ -102,14 +102,14 @@ public class CtClassBuilder {
 	private String toSignatureString(CodeMethod method, boolean withGenerics) {
 		StringBuilder signature = new StringBuilder("(");
 		for (CodeParameter p : method.getParameters()) {
-			appendType(signature, p.getType(),withGenerics);
+			appendType(signature, p.getType(), withGenerics);
 		}
 		signature.append(")");
 		if (!method.returnsResult()) {
 			signature.append("V");
 		} else {
 			CodeTypeReference returnType = method.getReturnType();
-			appendType(signature, returnType,withGenerics);
+			appendType(signature, returnType, withGenerics);
 		}
 
 		String signatureAsString = signature.toString();
@@ -127,12 +127,12 @@ public class CtClassBuilder {
 			} else {
 				signature.append("L");
 				signature.append(qn);
-				if(returnType.getElementTypes().size()>0 && withGenerics){
+				if (returnType.getElementTypes().size() > 0 && withGenerics) {
 					signature.append("<");
 					Iterator<CodeElementType> iterator = returnType.getElementTypes().iterator();
 					while (iterator.hasNext()) {
-						CodeTypeReference et =  iterator.next().getType();
-						appendType(signature, et,withGenerics);
+						CodeTypeReference et = iterator.next().getType();
+						appendType(signature, et, withGenerics);
 					}
 					signature.append(">");
 				}
@@ -162,7 +162,7 @@ public class CtClassBuilder {
 		}
 		CtMethod method = CtNewMethod.make(result, value.getName(), getCtParameters(value.getParameters()), new CtClass[0], emptyBody, ctClass);
 		MethodInfo methodInfo = method.getMethodInfo();
-		SignatureAttribute signatureAttribute = new SignatureAttribute(methodInfo.getConstPool(), toSignatureString(value,true));
+		SignatureAttribute signatureAttribute = new SignatureAttribute(methodInfo.getConstPool(), toSignatureString(value, true));
 		methodInfo.addAttribute(signatureAttribute);
 		ctClass.addMethod(method);
 	}

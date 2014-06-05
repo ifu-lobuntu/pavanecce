@@ -95,14 +95,16 @@ public class TupleTypeCreator {
 		oper.addParam("tuple", StdlibMap.Object);
 		oper.setDeclaringClass(currentClass);
 		oper.setReturnType(StdlibMap.Bool);
-		CodeIfStatement ifIsInstance = new CodeIfStatement(oper.getBody(), new TypeExpression(map.javaTypePath(), TypeExpressionKind.IS_KIND, new PortableExpression("tuple")));
-		new PortableStatement(ifIsInstance.getElseBlock(), "return false");
-		new CodeField(ifIsInstance.getThenBlock(), "other", map.javaTypePath()).setInitialization(new TypeExpression(map.javaDefaultTypePath(), TypeExpressionKind.AS_TYPE,
+		CodeIfStatement ifIsInstance = new CodeIfStatement(oper.getBody(), new TypeExpression(map.javaTypePath(), TypeExpressionKind.IS_KIND,
 				new PortableExpression("tuple")));
+		new PortableStatement(ifIsInstance.getElseBlock(), "return false");
+		new CodeField(ifIsInstance.getThenBlock(), "other", map.javaTypePath()).setInitialization(new TypeExpression(map.javaDefaultTypePath(),
+				TypeExpressionKind.AS_TYPE, new PortableExpression("tuple")));
 		EList<Property> oclProperties = ((TupleType) in).oclProperties();
 		for (Property property : oclProperties) {
 			String name = getGetterName(property) + "()";
-			CodeIfStatement ifNotEquals = new CodeIfStatement(ifIsInstance.getThenBlock(), new BinaryOperatorExpression(new PortableExpression(name), "${notEquals}", new PortableExpression("other." +name)));
+			CodeIfStatement ifNotEquals = new CodeIfStatement(ifIsInstance.getThenBlock(), new BinaryOperatorExpression(new PortableExpression(name),
+					"${notEquals}", new PortableExpression("other." + name)));
 			new PortableStatement(ifNotEquals.getElseBlock(), "return false");
 		}
 		new PortableStatement(oper.getBody(), "return true");

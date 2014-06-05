@@ -37,7 +37,8 @@ public class PrimitiveTypeOperCallCreator extends AbstractOperationCallCreator {
 		return null;
 	}
 
-	private CodeExpression integerOperCall(OperationCallExp exp, CodeExpression source, List<CodeExpression> args, Operation referedOp, List<CodeParameter> params) {
+	private CodeExpression integerOperCall(OperationCallExp exp, CodeExpression source, List<CodeExpression> args, Operation referedOp,
+			List<CodeParameter> params) {
 		if (referedOp != null) {
 			if (referedOp.getName().equals("toString")) {
 				return new MethodCallExpression(OclStandardLibrary.FORMATTER.getPhysicalName() + ".getInstance().formatInteger", source);
@@ -59,7 +60,8 @@ public class PrimitiveTypeOperCallCreator extends AbstractOperationCallCreator {
 		return null;
 	}
 
-	private CodeExpression booleanOperCall(OperationCallExp exp, CodeExpression source, List<CodeExpression> args, Operation referedOp, List<CodeParameter> params) {
+	private CodeExpression booleanOperCall(OperationCallExp exp, CodeExpression source, List<CodeExpression> args, Operation referedOp,
+			List<CodeParameter> params) {
 		CodeExpression result = null;
 		if (referedOp != null) {
 			if (referedOp.getName().equals("not")) {
@@ -86,7 +88,8 @@ public class PrimitiveTypeOperCallCreator extends AbstractOperationCallCreator {
 		return result;
 	}
 
-	private CodeExpression numericOperCall(OperationCallExp exp, CodeExpression source, List<CodeExpression> args, Operation referedOp, List<CodeParameter> params) {
+	private CodeExpression numericOperCall(OperationCallExp exp, CodeExpression source, List<CodeExpression> args, Operation referedOp,
+			List<CodeParameter> params) {
 		if (referedOp != null) {
 			if (referedOp.getName().equals("div")) {
 				return new BinaryOperatorExpression(source, "/", args.get(0));
@@ -136,7 +139,8 @@ public class PrimitiveTypeOperCallCreator extends AbstractOperationCallCreator {
 		return null;
 	}
 
-	private CodeExpression stringOperCall(OperationCallExp exp, CodeExpression source, List<CodeExpression> args, Operation referedOp, List<CodeParameter> params) {
+	private CodeExpression stringOperCall(OperationCallExp exp, CodeExpression source, List<CodeExpression> args, Operation referedOp,
+			List<CodeParameter> params) {
 		if (referedOp != null) {
 			if (referedOp.getName().equals("size")) {
 				myClass.addStdLibToImports(OclStandardLibrary.PRIMITIVES);

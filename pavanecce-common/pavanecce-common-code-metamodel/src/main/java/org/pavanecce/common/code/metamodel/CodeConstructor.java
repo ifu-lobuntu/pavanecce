@@ -20,7 +20,7 @@ public class CodeConstructor extends CodeBehaviour {
 		super.setDeclaringClass(declaringClass);
 		if (clss instanceof CodeEnumeration) {
 			((CodeEnumeration) clss).getConstructors().put(generateIdentifier(), this);
-		}else if(clss instanceof CodeClass){
+		} else if (clss instanceof CodeClass) {
 			((CodeClass) clss).getConstructors().put(generateIdentifier(), this);
 		}
 	}

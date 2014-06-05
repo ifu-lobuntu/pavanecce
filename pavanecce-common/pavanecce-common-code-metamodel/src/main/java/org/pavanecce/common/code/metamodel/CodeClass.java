@@ -54,8 +54,6 @@ public class CodeClass extends CodeClassifier {
 		return uniqueNumber++;
 	}
 
-
-
 	public CodeConstructor findOrCreateConstructor(List<CodeParameter> parameters) {
 		CodeConstructor result = constructors.get(CodeBehaviour.generateIdentifier("", parameters));
 		if (result == null) {

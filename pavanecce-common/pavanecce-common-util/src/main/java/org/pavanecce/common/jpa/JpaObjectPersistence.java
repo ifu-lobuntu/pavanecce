@@ -10,6 +10,7 @@ import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
 import org.pavanecce.common.ObjectPersistence;
+import org.pavanecce.common.Stopwatch;
 
 /**
  * This is a simple wrapper around JPA and JTA to allow demarcation of entityManagers and Transactions. It stores the
@@ -21,10 +22,11 @@ import org.pavanecce.common.ObjectPersistence;
  */
 public class JpaObjectPersistence implements ObjectPersistence {
 	public static final String ENV_NAME = JpaObjectPersistence.class.getName() + "VAR";
-	private UserTransaction transaction;
 	static ThreadLocal<EntityManager> em = new ThreadLocal<EntityManager>();
-	EntityManagerFactory emf;
+	protected EntityManagerFactory emf;
 	protected boolean startedTransaction = false;
+	protected Stopwatch stopwatch = new Stopwatch(getClass());
+	private UserTransaction transaction;
 
 	public JpaObjectPersistence(EntityManagerFactory emf2) {
 		this.emf = emf2;

@@ -9,6 +9,7 @@ public class PortableExpression extends CodeExpression {
 		super();
 		this.expression = expression;
 	}
+
 	public String getExpression() {
 		return expression;
 	}

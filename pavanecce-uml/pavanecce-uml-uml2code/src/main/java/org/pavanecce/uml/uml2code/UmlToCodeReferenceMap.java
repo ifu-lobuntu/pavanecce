@@ -46,13 +46,14 @@ public class UmlToCodeReferenceMap {
 					for (Entry<Object, Object> entry : entrySet) {
 						map.put((String) entry.getKey(), new CodeMappedType((String) entry.getValue()));
 					}
-//					Ocl2CodePlugin.logInfo("Loaded mappings: " + mappedTypesUri);
+					// Ocl2CodePlugin.logInfo("Loaded mappings: " + mappedTypesUri);
 				} catch (IOException e1) {
 				}
 			}
 		}
 		return map;
 	}
+
 	public CodeTypeReference classifierPathname(NamedElement classifier) {
 		CodeTypeReference result = classifierPaths.get(classifier);
 		if (result == null) {
@@ -85,13 +86,14 @@ public class UmlToCodeReferenceMap {
 			} else {
 				CodePackageReference pr = packagePathname(classifier.getNamespace());
 				Map<String, String> mappings = EmfClassifierUtil.getMappings(classifier);
-				CodeTypeReference ctr = new CodeTypeReference(mappings.isEmpty(), pr, classifier.getName(),mappings);
+				CodeTypeReference ctr = new CodeTypeReference(mappings.isEmpty(), pr, classifier.getName(), mappings);
 				classifierPaths.put(classifier, result = ctr);
 				return ctr;
 			}
 		}
 		return result;
 	}
+
 	public CodePackageReference packagePathname(Namespace p) {
 		// TODO populate mappings
 		CodePackageReference result = packagePaths.get(p);
@@ -99,14 +101,13 @@ public class UmlToCodeReferenceMap {
 			Namespace parent = p.getNamespace();
 			Map<String, String> packageMappings = EmfClassifierUtil.getMappings(p);
 			if (parent == null) {
-				packagePaths.put(p, result = new CodePackageReference(null, p.getName(),packageMappings));
+				packagePaths.put(p, result = new CodePackageReference(null, p.getName(), packageMappings));
 			} else {
-				packagePaths.put(p, result = new CodePackageReference(packagePathname(parent), p.getName(),packageMappings));
+				packagePaths.put(p, result = new CodePackageReference(packagePathname(parent), p.getName(), packageMappings));
 			}
-			
+
 		}
 		return result;
 	}
-
 
 }

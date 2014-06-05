@@ -23,6 +23,7 @@ import org.kie.api.definition.process.Process;
 import org.pavanecce.cmmn.jbpm.flow.ApplicabilityRule;
 import org.pavanecce.cmmn.jbpm.flow.Case;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItem;
+import org.pavanecce.cmmn.jbpm.flow.CaseFileItemDefinitionType;
 import org.pavanecce.cmmn.jbpm.flow.CaseParameter;
 import org.pavanecce.cmmn.jbpm.flow.CaseTask;
 import org.pavanecce.cmmn.jbpm.flow.DiscretionaryItem;
@@ -37,19 +38,27 @@ import org.pavanecce.cmmn.jbpm.flow.TableItem;
 import org.pavanecce.cmmn.jbpm.flow.TaskDefinition;
 import org.pavanecce.common.util.NameConverter;
 
-//TODO this class hacks around to get to items not in the processTree. 
+//TODO(ampie): PlanItemBuilder is a hack to get to items not in the processTree. 
 public class PlanItemBuilder implements ProcessNodeBuilder {
 
 	@Override
 	public void build(Process process, ProcessDescr processDescr, ProcessBuildContext context, Node node) {
-		processCaseInputParameters(process, context); // TODO find a better place to do this?
-		if (((Case) process).getPlanningTable() != null) {
-			processPlanningTable(processDescr, context, node, ((Case) process).getPlanningTable());
-		}
-		buildImpl(process, processDescr, context, node);
+		processCaseOnce(process, processDescr, context, node);
+		processPlanItem(process, processDescr, context, node);
 	}
 
-	private void buildImpl(Process process, ProcessDescr processDescr, ProcessBuildContext context, Node node) {
+	protected void processCaseOnce(Process process, ProcessDescr processDescr, ProcessBuildContext context, Node node) {
+		Case theCase = (Case) process;
+		if (!theCase.isBuilt()) {
+			processCaseInputParameters(process, context);
+			if (((Case) process).getPlanningTable() != null) {
+				processPlanningTable(processDescr, context, node, ((Case) process).getPlanningTable());
+			}
+			theCase.setBuilt(true);
+		}
+	}
+
+	private void processPlanItem(Process process, ProcessDescr processDescr, ProcessBuildContext context, Node node) {
 		ItemWithDefinition<?> item = (ItemWithDefinition<?>) node;
 		if (item.getDefinition() instanceof PlanningTableContainer) {
 			PlanningTableContainer ptc = (PlanningTableContainer) item.getDefinition();
@@ -72,7 +81,7 @@ public class PlanItemBuilder implements ProcessNodeBuilder {
 				processItemWithDefinition(context, node, di);
 				for (Node child : di.getNodes()) {
 					if (child instanceof PlanItem) {
-						buildImpl(planningTable.getFirstPlanItemContainer().getCase(), processDescr, context, child);
+						processPlanItem(planningTable.getFirstPlanItemContainer().getCase(), processDescr, context, child);
 					}
 				}
 			} else {
@@ -145,8 +154,6 @@ public class PlanItemBuilder implements ProcessNodeBuilder {
 						parentConstraint.setType(constraint.getType());
 						parentConstraint.setDialect(constraint.getDialect());
 						cp.getBindingRefinement().setParentExpression(build(context, node, parentConstraint));
-						// TODO calculate setter code. For Java,OCl and MVEL it will be a method, for XPAth/JCR it will
-						// be Node.setValue or something
 						ActionBuilder builder = ProcessDialectRegistry.getDialect("java").getActionBuilder();
 						DroolsAction action = new DroolsAction();
 						ActionDescr actionDescr = new ActionDescr(buildSetter(cp, parentExpression));
@@ -175,7 +182,25 @@ public class PlanItemBuilder implements ProcessNodeBuilder {
 		for (String string : split) {
 			if (string.trim().startsWith("return")) {
 				string = string.trim().substring(6);
-				sb.append(string).append(".set").append(NameConverter.capitalize(cp.getBoundVariable().getName())).append("(source);");
+				CaseFileItemDefinitionType defType = cp.getBoundVariable().getDefinition().getDefinitionType();
+				if (defType == CaseFileItemDefinitionType.CMIS_DOCUMENT || defType == CaseFileItemDefinitionType.CMIS_RELATIONSHIP
+						|| defType == CaseFileItemDefinitionType.CMIS_FOLDER) {
+					if (cp.getBoundVariable().isCollection()) {
+						sb.append("try{\n");
+						sb.append("  javax.jcr.Value[] values = new javax.jcr.Value[source.size()];\n");
+						sb.append("  int i = 0;\n");
+						sb.append("  for(Object object:source){\n");
+						sb.append("    javax.jcr.Node node=(javax.jcr.Node)object;\n");
+						sb.append("    values[i++]=node.getSession().getValueFactory().createValue(node);\n");
+						sb.append("  }\n");
+						sb.append(string).append(".setProperty(\"").append(cp.getBoundVariable().getName()).append("\", values);");
+						sb.append(" }catch(Exception e){throw new RuntimeException(e);}");
+					} else {
+						sb.append(string).append(".setProperty(\"").append(cp.getBoundVariable().getName()).append("\", source);");
+					}
+				} else {
+					sb.append(string).append(".set").append(NameConverter.capitalize(cp.getBoundVariable().getName())).append("(source);");
+				}
 			} else {
 				sb.append(string);
 				sb.append(";");
@@ -185,7 +210,6 @@ public class PlanItemBuilder implements ProcessNodeBuilder {
 	}
 
 	public static String getParentExpression(CaseParameter cp, Constraint constraint) {
-		// TODO make this strategy configurable by dialect - support XPath with JCR code
 		return getParentExpression(constraint.getConstraint(), cp.getBoundVariable().getName());
 	}
 
@@ -198,6 +222,21 @@ public class PlanItemBuilder implements ProcessNodeBuilder {
 			boolean isExpressedOnParentInJava = constraintText.endsWith(getter);
 			if (isExpressedOnParentInJava) {
 				return constraintText.substring(0, constraintText.length() - getter.length() - 1) + ";";
+			} else {
+				int getNodePosition = constraintText.lastIndexOf(".getNode");
+				if (getNodePosition > 0) {
+					String getNode = constraintText.substring(getNodePosition);
+					String[] split = getNode.split("\\\"");
+					if (split.length == 3) {
+						String[] path = split[1].split("[\\:\\/]");
+						for (String string : path) {
+							if (string.equals(varName)) {
+								// TODO(ampie): Calculating parentExpression in JCR can have complex path expressions
+								return constraintText.substring(0, getNodePosition) + ";";
+							}
+						}
+					}
+				}
 			}
 		}
 		return null;

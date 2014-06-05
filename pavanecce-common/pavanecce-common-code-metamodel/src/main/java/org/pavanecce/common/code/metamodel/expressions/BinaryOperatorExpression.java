@@ -25,5 +25,5 @@ public class BinaryOperatorExpression extends CodeExpression {
 	public String getOperator() {
 		return operator;
 	};
-	
+
 }

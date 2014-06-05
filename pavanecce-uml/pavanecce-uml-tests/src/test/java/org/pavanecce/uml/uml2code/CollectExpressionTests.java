@@ -1,6 +1,5 @@
 package org.pavanecce.uml.uml2code;
 
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -23,12 +22,13 @@ import org.pavanecce.common.code.metamodel.statements.CodeForStatement;
 import org.pavanecce.uml.uml2code.java.JavaCodeGenerator;
 
 public class CollectExpressionTests extends AbstractOcl2CodeModelTest {
-	AbstractCodeGenerator jcg=new JavaCodeGenerator();
+	AbstractCodeGenerator jcg = new JavaCodeGenerator();
+
 	@Test
 	public void testPrimitiveLiterals() throws IOException {
 		super.adaptor.startVisiting(builder, model);
 		super.adaptor.startVisiting(oclCodeBuilder, model);
-		CodeClass theClass = super.adaptor.getCodeModel().getDescendent("model","pkg2","TheClass");
+		CodeClass theClass = super.adaptor.getCodeModel().getDescendent("model", "pkg2", "TheClass");
 		assertGetDefaultInteger(theClass);
 	}
 

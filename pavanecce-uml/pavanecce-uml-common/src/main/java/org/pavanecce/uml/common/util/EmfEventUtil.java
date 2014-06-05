@@ -65,7 +65,7 @@ public class EmfEventUtil {
 	}
 
 	public static Collection<Event> getEventsInScopeForClassAsContext(BehavioredClassifier bc) {
-		Set<Behavior> effectiveBehaviors = EmfBehaviorUtil. getEffectiveBehaviors(bc);
+		Set<Behavior> effectiveBehaviors = EmfBehaviorUtil.getEffectiveBehaviors(bc);
 		Collection<Event> allEvents = new TreeSet<Event>(new DefaultElementComparator());
 		for (Behavior behavior : effectiveBehaviors) {
 			if (behavior instanceof StateMachine) {

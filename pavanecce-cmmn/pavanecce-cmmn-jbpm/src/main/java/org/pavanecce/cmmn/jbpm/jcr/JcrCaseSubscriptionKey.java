@@ -26,9 +26,8 @@ public class JcrCaseSubscriptionKey implements Serializable, CaseSubscriptionKey
 
 	}
 
-	public JcrCaseSubscriptionKey(Object object) {
+	public JcrCaseSubscriptionKey(Node node) {
 		try {
-			Node node = (Node) object;
 			this.id = node.getIdentifier();
 			this.nodeTypeName = node.getPrimaryNodeType().getName();
 		} catch (Exception e) {

@@ -29,6 +29,7 @@ public class JavaReflectionClass extends JavaAnnotated implements SourceClass {
 		super(factory);
 		this.typeBinding = typeBinding;
 	}
+
 	@Override
 	public String toString() {
 		return getQualifiedName();
@@ -139,7 +140,7 @@ public class JavaReflectionClass extends JavaAnnotated implements SourceClass {
 	@Override
 	public boolean isInterface() {
 		if (isCollectionType()) {
-			//Collections are treated as manyTypes
+			// Collections are treated as manyTypes
 			return false;
 		} else {
 			Class<?> clss = implicatedClass(typeBinding);
@@ -176,8 +177,8 @@ public class JavaReflectionClass extends JavaAnnotated implements SourceClass {
 	public String getPackageName() {
 		final Class<?> clss = implicatedClass(typeBinding);
 		if (clss != null) {
-			if(clss.getPackage()==null){
-				//Primitive types
+			if (clss.getPackage() == null) {
+				// Primitive types
 				return "java.lang";
 			}
 			return clss.getPackage().getName();
@@ -236,18 +237,22 @@ public class JavaReflectionClass extends JavaAnnotated implements SourceClass {
 	public boolean isHelper() {
 		return false;
 	}
+
 	@Override
 	public boolean isUniqueCollectionType() {
 		return isCollectionType() && isUnique();
 	}
+
 	private boolean isUnique() {
 		final ParameterizedType pt = (ParameterizedType) typeBinding;
 		return Set.class.isAssignableFrom((Class<?>) pt.getRawType());
 	}
+
 	@Override
 	public boolean isOrderedCollectionType() {
 		return isCollectionType() && isOrdered();
 	}
+
 	private boolean isOrdered() {
 		final ParameterizedType pt = (ParameterizedType) typeBinding;
 		return List.class.isAssignableFrom((Class<?>) pt.getRawType());

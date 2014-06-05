@@ -291,7 +291,8 @@ public class CollectionOperCallCreator {
 		return new MethodCallExpression(OclStandardLibrary.COLLECTIONS.getPhysicalName() + ".insertAt", source, index, insertedElem);
 	}
 
-	private CodeExpression buildIntersection(OperationCallExp exp, CodeExpression source, List<CodeExpression> args, boolean isStatic, List<CodeParameter> params) {
+	private CodeExpression buildIntersection(OperationCallExp exp, CodeExpression source, List<CodeExpression> args, boolean isStatic,
+			List<CodeParameter> params) {
 		Classifier elementType = (Classifier) exp.getReferredOperation().getType();
 		ClassifierMap sourceMap = codeMaps.buildClassifierMap(exp.getType());
 		CodeTypeReference returnTypePath = sourceMap.javaTypePath();
@@ -333,7 +334,8 @@ public class CollectionOperCallCreator {
 		return result;
 	}
 
-	private CodeExpression buildSymmetricDifference(OperationCallExp exp, CodeExpression source, List<CodeExpression> args, boolean isStatic, List<CodeParameter> params) {
+	private CodeExpression buildSymmetricDifference(OperationCallExp exp, CodeExpression source, List<CodeExpression> args, boolean isStatic,
+			List<CodeParameter> params) {
 		ClassifierMap sourceMap = codeMaps.buildClassifierMap(exp.getType());
 		Classifier elementType = (Classifier) exp.getReferredOperation().getType();
 		CodeTypeReference returnTypePath = sourceMap.javaTypePath();
@@ -348,7 +350,8 @@ public class CollectionOperCallCreator {
 		oper.setComment("implements " + exp.toString() + " on " + exp.getSource().toString());
 		new MethodCallStatement(oper.getBody(), "result.removeAll", args.get(0));
 		CodeForStatement forEach = new CodeForStatement(oper.getBody(), "elem", myListType, args.get(0));
-		CodeIfStatement ifNotContains = new CodeIfStatement(forEach.getBody(), new NotExpression(new MethodCallExpression(source, "contains", new PortableExpression("elem"))));
+		CodeIfStatement ifNotContains = new CodeIfStatement(forEach.getBody(), new NotExpression(new MethodCallExpression(source, "contains",
+				new PortableExpression("elem"))));
 		new PortableStatement(ifNotContains.getThenBlock(), "result.add(elem)");
 		return callMethod(oper);
 	}
@@ -383,6 +386,7 @@ public class CollectionOperCallCreator {
 		myClass.addStdLibToImports(OclStandardLibrary.COLLECTIONS);
 		return new MethodCallExpression(OclStandardLibrary.COLLECTIONS.getPhysicalName() + string, source, args.get(0));
 	}
+
 	protected CodeExpression buildLibMethodCall(CodeExpression source, String string) {
 		myClass.addStdLibToImports(OclStandardLibrary.COLLECTIONS);
 		return new MethodCallExpression(OclStandardLibrary.COLLECTIONS.getPhysicalName() + string, source);

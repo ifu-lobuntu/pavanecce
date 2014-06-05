@@ -7,12 +7,12 @@ import java.util.List;
 import org.pavanecce.common.code.metamodel.CodeBlock;
 import org.pavanecce.common.code.metamodel.CodeExpression;
 
-public class MethodCallStatement extends CodeSimpleStatement{
+public class MethodCallStatement extends CodeSimpleStatement {
 	private String methodName;
-	private List<CodeExpression> arguments=new ArrayList<CodeExpression>();
+	private List<CodeExpression> arguments = new ArrayList<CodeExpression>();
 
-	public MethodCallStatement(CodeBlock block, String methodName, CodeExpression ... value) {
-		super("",block);
+	public MethodCallStatement(CodeBlock block, String methodName, CodeExpression... value) {
+		super("", block);
 		this.methodName = methodName;
 		arguments.addAll(Arrays.asList(value));
 	}

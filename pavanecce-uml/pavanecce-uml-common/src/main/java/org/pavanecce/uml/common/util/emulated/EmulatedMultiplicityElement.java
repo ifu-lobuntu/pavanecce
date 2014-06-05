@@ -19,185 +19,233 @@ import org.eclipse.uml2.uml.VisibilityKind;
 import org.eclipse.uml2.uml.internal.impl.MultiplicityElementImpl;
 
 @SuppressWarnings("restriction")
-public class EmulatedMultiplicityElement extends MultiplicityElementImpl{
+public class EmulatedMultiplicityElement extends MultiplicityElementImpl {
 	private NamedElement originalElement;
-	public EmulatedMultiplicityElement(NamedElement originalElement, int lower, int upper){
-		this.originalElement=originalElement;
+
+	public EmulatedMultiplicityElement(NamedElement originalElement, int lower, int upper) {
+		this.originalElement = originalElement;
 		setLower(lower);
 		setUpper(upper);
 	}
+
 	@Override
-	public EList<EAnnotation> getEAnnotations(){
+	public EList<EAnnotation> getEAnnotations() {
 		return originalElement.getEAnnotations();
 	}
+
 	@Override
-	public EList<Element> getOwnedElements(){
+	public EList<Element> getOwnedElements() {
 		return originalElement.getOwnedElements();
 	}
+
 	@Override
-	public EAnnotation getEAnnotation(String source){
+	public EAnnotation getEAnnotation(String source) {
 		return originalElement.getEAnnotation(source);
 	}
-	public String getName(){
+
+	public String getName() {
 		return originalElement.getName();
 	}
+
 	@Override
-	public Element getOwner(){
+	public Element getOwner() {
 		return originalElement.getOwner();
 	}
+
 	@Override
-	public EList<Comment> getOwnedComments(){
+	public EList<Comment> getOwnedComments() {
 		return originalElement.getOwnedComments();
 	}
-	public boolean isSetName(){
+
+	public boolean isSetName() {
 		return originalElement.isSetName();
 	}
-	public VisibilityKind getVisibility(){
+
+	public VisibilityKind getVisibility() {
 		return originalElement.getVisibility();
 	}
-	public boolean isSetVisibility(){
+
+	public boolean isSetVisibility() {
 		return originalElement.isSetVisibility();
 	}
+
 	@Override
-	public EList<EObject> getStereotypeApplications(){
+	public EList<EObject> getStereotypeApplications() {
 		return originalElement.getStereotypeApplications();
 	}
-	public String getQualifiedName(){
+
+	public String getQualifiedName() {
 		return originalElement.getQualifiedName();
 	}
+
 	@Override
-	public EObject getStereotypeApplication(Stereotype stereotype){
+	public EObject getStereotypeApplication(Stereotype stereotype) {
 		return originalElement.getStereotypeApplication(stereotype);
 	}
+
 	@Override
-	public EList<Stereotype> getRequiredStereotypes(){
+	public EList<Stereotype> getRequiredStereotypes() {
 		return originalElement.getRequiredStereotypes();
 	}
-	public EList<Dependency> getClientDependencies(){
+
+	public EList<Dependency> getClientDependencies() {
 		return originalElement.getClientDependencies();
 	}
+
 	@Override
-	public Stereotype getRequiredStereotype(String qualifiedName){
+	public Stereotype getRequiredStereotype(String qualifiedName) {
 		return originalElement.getRequiredStereotype(qualifiedName);
 	}
+
 	@Override
-	public EList<Stereotype> getAppliedStereotypes(){
+	public EList<Stereotype> getAppliedStereotypes() {
 		return originalElement.getAppliedStereotypes();
 	}
-	public Dependency getClientDependency(String name){
+
+	public Dependency getClientDependency(String name) {
 		return originalElement.getClientDependency(name);
 	}
+
 	@Override
-	public Stereotype getAppliedStereotype(String qualifiedName){
+	public Stereotype getAppliedStereotype(String qualifiedName) {
 		return originalElement.getAppliedStereotype(qualifiedName);
 	}
-	public Dependency getClientDependency(String name,boolean ignoreCase,EClass eClass){
+
+	public Dependency getClientDependency(String name, boolean ignoreCase, EClass eClass) {
 		return originalElement.getClientDependency(name, ignoreCase, eClass);
 	}
+
 	@Override
-	public EList<Stereotype> getAppliedSubstereotypes(Stereotype stereotype){
+	public EList<Stereotype> getAppliedSubstereotypes(Stereotype stereotype) {
 		return originalElement.getAppliedSubstereotypes(stereotype);
 	}
+
 	@Override
-	public Stereotype getAppliedSubstereotype(Stereotype stereotype,String qualifiedName){
+	public Stereotype getAppliedSubstereotype(Stereotype stereotype, String qualifiedName) {
 		return originalElement.getAppliedSubstereotype(stereotype, qualifiedName);
 	}
-	public Namespace getNamespace(){
+
+	public Namespace getNamespace() {
 		return originalElement.getNamespace();
 	}
+
 	@Override
-	public boolean hasValue(Stereotype stereotype,String propertyName){
+	public boolean hasValue(Stereotype stereotype, String propertyName) {
 		return originalElement.hasValue(stereotype, propertyName);
 	}
-	public StringExpression getNameExpression(){
+
+	public StringExpression getNameExpression() {
 		return originalElement.getNameExpression();
 	}
+
 	@Override
-	public Object getValue(Stereotype stereotype,String propertyName){
+	public Object getValue(Stereotype stereotype, String propertyName) {
 		return originalElement.getValue(stereotype, propertyName);
 	}
+
 	@Override
-	public EList<Relationship> getRelationships(){
+	public EList<Relationship> getRelationships() {
 		return originalElement.getRelationships();
 	}
+
 	@Override
-	public EList<Relationship> getRelationships(EClass eClass){
+	public EList<Relationship> getRelationships(EClass eClass) {
 		return originalElement.getRelationships(eClass);
 	}
+
 	@Override
-	public EList<DirectedRelationship> getSourceDirectedRelationships(){
+	public EList<DirectedRelationship> getSourceDirectedRelationships() {
 		return originalElement.getSourceDirectedRelationships();
 	}
+
 	@Override
-	public EList<DirectedRelationship> getSourceDirectedRelationships(EClass eClass){
+	public EList<DirectedRelationship> getSourceDirectedRelationships(EClass eClass) {
 		return originalElement.getSourceDirectedRelationships(eClass);
 	}
+
 	@Override
-	public EList<DirectedRelationship> getTargetDirectedRelationships(){
+	public EList<DirectedRelationship> getTargetDirectedRelationships() {
 		return originalElement.getTargetDirectedRelationships();
 	}
+
 	@Override
-	public EList<DirectedRelationship> getTargetDirectedRelationships(EClass eClass){
+	public EList<DirectedRelationship> getTargetDirectedRelationships(EClass eClass) {
 		return originalElement.getTargetDirectedRelationships(eClass);
 	}
-	public String getLabel(){
+
+	public String getLabel() {
 		return originalElement.getLabel();
 	}
+
 	@Override
-	public EList<String> getKeywords(){
+	public EList<String> getKeywords() {
 		return originalElement.getKeywords();
 	}
-	public String getLabel(boolean localize){
+
+	public String getLabel(boolean localize) {
 		return originalElement.getLabel(localize);
 	}
-	public EList<Namespace> allNamespaces(){
+
+	public EList<Namespace> allNamespaces() {
 		return originalElement.allNamespaces();
 	}
+
 	@Override
-	public Package getNearestPackage(){
+	public Package getNearestPackage() {
 		return originalElement.getNearestPackage();
 	}
+
 	@Override
-	public Model getModel(){
+	public Model getModel() {
 		return originalElement.getModel();
 	}
-	public boolean isDistinguishableFrom(NamedElement n,Namespace ns){
+
+	public boolean isDistinguishableFrom(NamedElement n, Namespace ns) {
 		return originalElement.isDistinguishableFrom(n, ns);
 	}
+
 	@Override
-	public boolean isStereotypeApplicable(Stereotype stereotype){
+	public boolean isStereotypeApplicable(Stereotype stereotype) {
 		return originalElement.isStereotypeApplicable(stereotype);
 	}
+
 	@Override
-	public boolean isStereotypeRequired(Stereotype stereotype){
+	public boolean isStereotypeRequired(Stereotype stereotype) {
 		return originalElement.isStereotypeRequired(stereotype);
 	}
-	public EList<Package> allOwningPackages(){
+
+	public EList<Package> allOwningPackages() {
 		return originalElement.allOwningPackages();
 	}
+
 	@Override
-	public boolean isStereotypeApplied(Stereotype stereotype){
+	public boolean isStereotypeApplied(Stereotype stereotype) {
 		return originalElement.isStereotypeApplied(stereotype);
 	}
+
 	@Override
-	public EList<Stereotype> getApplicableStereotypes(){
+	public EList<Stereotype> getApplicableStereotypes() {
 		return originalElement.getApplicableStereotypes();
 	}
+
 	@Override
-	public Stereotype getApplicableStereotype(String qualifiedName){
+	public Stereotype getApplicableStereotype(String qualifiedName) {
 		return originalElement.getApplicableStereotype(qualifiedName);
 	}
+
 	@Override
-	public boolean hasKeyword(String keyword){
+	public boolean hasKeyword(String keyword) {
 		return originalElement.hasKeyword(keyword);
 	}
+
 	@Override
-	public EList<Element> allOwnedElements(){
+	public EList<Element> allOwnedElements() {
 		return originalElement.allOwnedElements();
 	}
+
 	@Override
-	public boolean mustBeOwned(){
+	public boolean mustBeOwned() {
 		return originalElement.mustBeOwned();
 	}
-	
+
 }

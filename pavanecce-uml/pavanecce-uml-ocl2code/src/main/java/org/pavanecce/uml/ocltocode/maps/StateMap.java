@@ -10,29 +10,31 @@ public class StateMap extends PackageableElementMap {
 	private Vertex state = null;
 
 	public StateMap(UmlToCodeMaps CodeUtil, Vertex s) {
-		super(CodeUtil,s);
+		super(CodeUtil, s);
 		state = s;
 	}
-	public String javaFieldName(){
-		return EmfStateMachineUtil.getStatePath( state).replaceAll("\\:\\:", "_");
+
+	public String javaFieldName() {
+		return EmfStateMachineUtil.getStatePath(state).replaceAll("\\:\\:", "_");
 	}
 
-	public String getter(){
+	public String getter() {
 		return "get" + NameConverter.capitalize(javaFieldName());
 	}
 
-	
-	public CodeTypeReference javaType(){
+	public CodeTypeReference javaType() {
 		return codeUtil.classifierPathname(state);
 	}
-	
+
 	public String getOnEntryMethod() {
-		return "onEntryOf"+state.getName();
+		return "onEntryOf" + state.getName();
 	}
+
 	public String getOnExitMethod() {
-		return "onExitOf"+state.getName();
+		return "onExitOf" + state.getName();
 	}
-	public Vertex getState(){
+
+	public Vertex getState() {
 		return state;
 	}
 }

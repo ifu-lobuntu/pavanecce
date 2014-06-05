@@ -56,7 +56,7 @@ public class CodePackageReference implements Comparable<CodePackageReference> {
 		CodePackageReference cur = this;
 		while (cur != null) {
 			qn.add(0, cur.name);
-			cur=cur.parent;
+			cur = cur.parent;
 		}
 		return qn;
 	}
@@ -69,7 +69,7 @@ public class CodePackageReference implements Comparable<CodePackageReference> {
 
 	private void addQualifiedNameInLanguage(List<String> qn, String language, String seperator) {
 		String packageMapping = getPackageMappingFor(language);
-		if (packageMapping!=null) {
+		if (packageMapping != null) {
 			qn.addAll(Arrays.asList(packageMapping.split(seperator)));
 		} else {
 			if (parent != null) {

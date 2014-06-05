@@ -32,7 +32,7 @@ public class OclCodeBuilder extends DefaultCodeModelBuilder {
 		super.initialize(models, codeModel);
 		ResourceSet rst = models.iterator().next().eResource().getResourceSet();
 		this.oclContextFactory = new OclContextFactory(rst);
-		this.codeMaps = new UmlToCodeMaps(oclContextFactory.getLibrary(),oclContextFactory.getTypeResolver());
+		this.codeMaps = new UmlToCodeMaps(oclContextFactory.getLibrary(), oclContextFactory.getTypeResolver());
 
 	}
 

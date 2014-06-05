@@ -16,27 +16,38 @@ public class JcrCaseFileItemSubscriptionInfo extends AbstractCaseFileItemSubscri
 	private CaseFileItemTransition transition;
 	private long processInstanceId;
 	private String caseKey;
-	private String path;
 	private String relatedItemName;
 	private Node node;
 
-	public JcrCaseFileItemSubscriptionInfo(JcrCaseSubscriptionInfo caseSubscription) {
-		super();
+	public JcrCaseFileItemSubscriptionInfo(Node node) {
+		this.node = node;
 		try {
-			this.caseSubscription = caseSubscription;
-			// TODO the info require is not there yet
-			this.node = caseSubscription.getNode().addNode(calculateRelativePath());
+			this.id = node.getIdentifier();
+			this.itemName = node.getProperty("i:itemName").getString();
+			this.transition = CaseFileItemTransition.valueOf(node.getProperty("i:transition").getString());
+			this.processInstanceId = node.getProperty("i:processInstanceId").getLong();
+			this.caseKey = node.getProperty("i:caseKey").getString();
+			if (node.hasProperty("i:relatedItemName")) {
+				this.relatedItemName = node.getProperty("i:relatedItemName").getString();
+			}
 		} catch (Exception e) {
 			throw convertException(e);
 		}
 	}
 
 	public JcrCaseFileItemSubscriptionInfo() {
-		super();
 	}
 
-	public JcrCaseFileItemSubscriptionInfo(Node node) {
-		this.node = node;
+	public void flush() {
+		try {
+			node.setProperty("i:itemName", this.itemName);
+			node.setProperty("i:transition", this.transition.name());
+			node.setProperty("i:processInstanceId", this.processInstanceId);
+			node.setProperty("i:caseKey", this.caseKey);
+			node.setProperty("i:relatedItemName", this.relatedItemName);
+		} catch (Exception e) {
+			throw convertException(e);
+		}
 	}
 
 	public Node getNode() {
@@ -45,23 +56,6 @@ public class JcrCaseFileItemSubscriptionInfo extends AbstractCaseFileItemSubscri
 
 	public JcrCaseSubscriptionInfo getCaseSubscription() {
 		return caseSubscription;
-	}
-
-	public String getPath() {
-		if (path == null) {
-			String string = calculateRelativePath();
-			path = caseSubscription.getPath() + string;
-		}
-		return path;
-	}
-
-	private String calculateRelativePath() {
-		String string = "/caseFileItemSubscriptions/" + processInstanceId + itemName + transition.name();
-		return string;
-	}
-
-	public void setPath(String path) {
-		this.path = path;
 	}
 
 	@Override
@@ -132,5 +126,9 @@ public class JcrCaseFileItemSubscriptionInfo extends AbstractCaseFileItemSubscri
 
 	public String getIdentifier() {
 		return getCaseSubscription().getId().getClassName() + getCaseSubscription().getId().getId() + super.getIdentifier();
+	}
+
+	public void setNode(Node addNode) {
+		this.node = addNode;
 	}
 }

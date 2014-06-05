@@ -28,7 +28,7 @@ public class StageAsPlanItemTest extends AbstractControllableLifecycleTest {
 	// // *****THEN
 	// assertNodeTriggered(caseInstance.getId(), "TheStagePlanItem");
 	// list = getTaskService().getTasksAssignedAsPotentialOwner("Administrator", "en-UK");
-	// assertEquals(2, list.size());//Tasks representing Stage and the Case
+	// assertEquals(2, list.size()); //Tasks representing Stage and the Case
 	// assertTaskTypeCreated(list, "TheStagePlanItem");
 	// }
 

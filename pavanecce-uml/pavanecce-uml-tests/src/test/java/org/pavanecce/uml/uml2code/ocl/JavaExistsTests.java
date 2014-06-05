@@ -4,7 +4,7 @@ import org.junit.BeforeClass;
 import org.pavanecce.common.util.ConstructionCaseExample;
 import org.pavanecce.uml.uml2code.java.JavaCodeGenerator;
 
-public class JavaExistsTests extends AbstractExistsTests{
+public class JavaExistsTests extends AbstractExistsTests {
 	@BeforeClass
 	public static void before() throws Exception {
 		example = new ConstructionCaseExample("JavaExists");

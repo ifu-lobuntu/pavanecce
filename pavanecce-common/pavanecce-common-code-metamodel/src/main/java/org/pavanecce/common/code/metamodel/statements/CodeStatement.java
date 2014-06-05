@@ -5,13 +5,13 @@ import org.pavanecce.common.code.metamodel.CodeElement;
 
 public class CodeStatement extends CodeElement {
 
-	public CodeStatement( String string,CodeBlock block) {
+	public CodeStatement(String string, CodeBlock block) {
 		super(string);
 		block.getStatements().add(this);
 	}
 
-	public CodeStatement( CodeBlock block) {
-		this("",block);
+	public CodeStatement(CodeBlock block) {
+		this("", block);
 	}
 
 	public CodeStatement(String string) {

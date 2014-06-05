@@ -29,8 +29,7 @@ import java.util.jar.JarFile;
  */
 public class JarJavaFileObject extends BundleJavaFileObject {
 
-	public JarJavaFileObject(
-		URI uri, String className, URL resourceURL, String entryName) {
+	public JarJavaFileObject(URI uri, String className, URL resourceURL, String entryName) {
 
 		super(uri, className);
 
@@ -40,8 +39,7 @@ public class JarJavaFileObject extends BundleJavaFileObject {
 
 	@Override
 	public InputStream openInputStream() throws IOException {
-		JarURLConnection jarUrlConnection =
-			(JarURLConnection)_resourceURL.openConnection();
+		JarURLConnection jarUrlConnection = (JarURLConnection) _resourceURL.openConnection();
 
 		JarFile jarFile = jarUrlConnection.getJarFile();
 
@@ -52,8 +50,7 @@ public class JarJavaFileObject extends BundleJavaFileObject {
 
 	@Override
 	public String toString() {
-		return getClass().getSimpleName().concat("[").concat(
-			_resourceURL.toString()).concat("]");
+		return getClass().getSimpleName().concat("[").concat(_resourceURL.toString()).concat("]");
 	}
 
 	private String _entryName;

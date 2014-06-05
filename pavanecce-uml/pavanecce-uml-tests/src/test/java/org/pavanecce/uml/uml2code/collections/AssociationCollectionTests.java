@@ -64,7 +64,7 @@ public class AssociationCollectionTests extends Assert {
 		eval("housePlan.getWallPlans().remove(wallPlan1);");
 		assertEquals(1, eval("housePlan.getWallPlans().size();"));
 		assertNull(eval("wallPlan1.getHousePlan();"));
-		//Test the other side
+		// Test the other side
 		eval("wallPlan1.setHousePlan(housePlan);");
 		assertEquals(2, eval("housePlan.getWallPlans().size();"));
 		eval("wallPlan1.setHousePlan(null);");

@@ -14,7 +14,6 @@ import org.jbpm.services.task.wih.util.PeopleAssignmentHelper;
 import org.jbpm.workflow.core.Node;
 import org.jbpm.workflow.core.NodeContainer;
 import org.jbpm.workflow.core.impl.ConnectionImpl;
-import org.jbpm.workflow.core.node.CompositeNode;
 
 public class DiscretionaryItem<T extends PlanItemDefinition> extends TableItem implements TaskItemWithDefinition<T> {
 	private static final long serialVersionUID = 2371336993789669482L;

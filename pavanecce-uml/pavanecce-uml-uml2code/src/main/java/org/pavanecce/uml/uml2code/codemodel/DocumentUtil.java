@@ -34,7 +34,8 @@ public class DocumentUtil {
 	public IDocumentElement buildDocumentElement(Property p) {
 		IDocumentElement result = null;
 		if (EmfClassifierUtil.isSimpleType(p.getType())) {
-			result = new DocumentProperty(DocumentNameUtil.name(p), getNamespaceOf(p), simpleType(p.getType()), EmfPropertyUtil.isRequired(p), EmfPropertyUtil.isMany(p));
+			result = new DocumentProperty(DocumentNameUtil.name(p), getNamespaceOf(p), simpleType(p.getType()), EmfPropertyUtil.isRequired(p),
+					EmfPropertyUtil.isMany(p));
 		} else if (EmfClassifierUtil.isPersistent(p.getType())) {
 			if (EmfPropertyUtil.isMany(p)) {
 				if (p.isComposite()) {
@@ -44,11 +45,13 @@ public class DocumentUtil {
 				}
 			} else {
 				if (p.getOtherEnd() != null && p.getOtherEnd().isComposite()) {
-					result = new ParentDocument(getNamespaceOf(p), DocumentNameUtil.name(p), getDocumentNode((Class) p.getType()),EmfPropertyUtil.isMany(p.getOtherEnd()));
+					result = new ParentDocument(getNamespaceOf(p), DocumentNameUtil.name(p), getDocumentNode((Class) p.getType()), EmfPropertyUtil.isMany(p
+							.getOtherEnd()));
 				} else if (p.isComposite()) {
 					result = new ChildDocument(getNamespaceOf(p), DocumentNameUtil.name(p), getDocumentNode((Class) p.getType()), EmfPropertyUtil.isRequired(p));
 				} else {
-					result = new ReferencedDocument(getNamespaceOf(p), DocumentNameUtil.name(p), getDocumentNode((Class) p.getType()), EmfPropertyUtil.isRequired(p));
+					result = new ReferencedDocument(getNamespaceOf(p), DocumentNameUtil.name(p), getDocumentNode((Class) p.getType()),
+							EmfPropertyUtil.isRequired(p));
 				}
 			}
 		} else if (p.getType() instanceof Enumeration) {

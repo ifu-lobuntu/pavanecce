@@ -6,6 +6,7 @@ import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -83,7 +84,12 @@ public abstract class AbstractPersistentSubscriptionManager<T extends CaseSubscr
 		if (target instanceof Collection) {
 			Collection<?> targets = (Collection<?>) target;
 			for (Object currentTarget : targets) {
-				subscribeToSingleObject(process, subs, currentTarget, em);
+				subscribeToUnknownNumberOfObjects(process, subs, currentTarget, em);
+			}
+		} else if (target instanceof Iterator) {
+			Iterator<?> targets = (Iterator<?>) target;
+			while (targets.hasNext()) {
+				subscribeToUnknownNumberOfObjects(process, subs, targets.next(), em);
 			}
 		} else if (target != null) {
 			subscribeToSingleObject(process, subs, target, em);
@@ -145,7 +151,7 @@ public abstract class AbstractPersistentSubscriptionManager<T extends CaseSubscr
 				em.flush();
 				pcm.endCommandScopedEntityManager();
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error("Could not dispatch CaseFileItemEvents", e);
 			}
 			return true;
 		} else {
@@ -274,12 +280,20 @@ public abstract class AbstractPersistentSubscriptionManager<T extends CaseSubscr
 			Collection<OnPartInstanceSubscription> subs) {
 		for (CaseFileItem caseFileItem : related) {
 			String propName = caseFileItem.getName();
-			try {
-				Method getter = target.getClass().getMethod("get" + Character.toUpperCase(propName.charAt(0)) + propName.substring(1));
-				subscribeToUnknownNumberOfObjects(process, subs, getter.invoke(target), em);
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
+			Object children = getChildren(target, propName);
+			subscribeToUnknownNumberOfObjects(process, subs, children, em);
+		}
+	}
+
+	protected Object getChildren(Object target, String propName) {
+		try {
+			Method getter = target.getClass().getMethod("get" + Character.toUpperCase(propName.charAt(0)) + propName.substring(1));
+			Object children = getter.invoke(target);
+			return children;
+		} catch (RuntimeException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
 	}
 

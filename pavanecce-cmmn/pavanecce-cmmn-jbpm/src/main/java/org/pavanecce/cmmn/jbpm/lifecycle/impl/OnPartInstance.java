@@ -35,7 +35,7 @@ public class OnPartInstance extends EventNodeInstance {
 			if (e.getPlanItemName().equals(onPart.getSourcePlanItem().getName()) && e.getTransition() == onPart.getStandardEvent()) {
 				getEventStack().push(((PlanItemEvent) event).getValue());
 				triggerCompleted();
-				
+
 			}
 		}
 	}

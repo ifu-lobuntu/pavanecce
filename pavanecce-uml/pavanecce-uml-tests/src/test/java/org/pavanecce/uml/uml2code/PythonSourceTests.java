@@ -10,11 +10,10 @@ import org.pavanecce.uml.uml2code.python.PythonCodeGenerator;
 
 /**
  * 
- * Tests generation of Java code from CodeXXX objects directly. No underlying
- * UML model is being used.
+ * Tests generation of Java code from CodeXXX objects directly. No underlying UML model is being used.
  * 
  */
-public class PythonSourceTests  extends AbstractSourceTests{
+public class PythonSourceTests extends AbstractSourceTests {
 	PythonCodeGenerator pg = new PythonCodeGenerator();
 
 	@Test
@@ -45,8 +44,8 @@ public class PythonSourceTests  extends AbstractSourceTests{
 		assertEquals("", r.readLine());
 		assertEquals("", r.readLine());
 		assertEquals("", r.readLine());
-		assertEquals("class SimpleEnumeration():",r.readLine());
-		//TODO/////...
+		assertEquals("class SimpleEnumeration():", r.readLine());
+		// TODO/////...
 
 	}
 }

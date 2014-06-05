@@ -54,10 +54,10 @@ public class PythonCodeGenerator extends AbstractCodeGenerator {
 		for (CodeTypeReference r : imports) {
 			if (!(r instanceof CollectionTypeReference) && r.isPeer() && !mappedPythonTypes.containsKey(r)) {
 				if (!r.getCodePackageReference().equals(pkg.getPackageReference())) {
-					//TODO figure out why this causes the test to fail
-					//Maybe find a mechanism to import it on a need to know basis
-//					appendImport(sb, r);
-//					appendLineEnd();
+					// TODO figure out why this causes the test to fail
+					// Maybe find a mechanism to import it on a need to know basis
+					// appendImport(sb, r);
+					// appendLineEnd();
 				}
 			}
 		}
@@ -80,6 +80,7 @@ public class PythonCodeGenerator extends AbstractCodeGenerator {
 		return this;
 
 	}
+
 	@Override
 	protected void appendAssignmentStatement(AssignmentStatement statement2) {
 		sb.append(applyCommonReplacements(statement2.getVariableName()));
@@ -132,7 +133,8 @@ public class PythonCodeGenerator extends AbstractCodeGenerator {
 		}
 		sb.append("):\n");
 		appendMethodBody(method);
-		sb.append("\n");		return this;
+		sb.append("\n");
+		return this;
 
 	}
 
@@ -146,7 +148,8 @@ public class PythonCodeGenerator extends AbstractCodeGenerator {
 		appendCodeBlock("    ", method.getBody());
 		if (method.getResult() != null && method.returnsResult()) {
 			sb.append("    return result\n");
-		}		return this;
+		}
+		return this;
 
 	}
 
@@ -178,7 +181,7 @@ public class PythonCodeGenerator extends AbstractCodeGenerator {
 
 	@Override
 	protected void appendLineEnd() {
-		 sb.append("\n");
+		sb.append("\n");
 	}
 
 	@Override
@@ -208,6 +211,7 @@ public class PythonCodeGenerator extends AbstractCodeGenerator {
 		return this;
 
 	}
+
 	@Override
 	protected String defaultValue(CollectionTypeReference kind) {
 		return "[]";

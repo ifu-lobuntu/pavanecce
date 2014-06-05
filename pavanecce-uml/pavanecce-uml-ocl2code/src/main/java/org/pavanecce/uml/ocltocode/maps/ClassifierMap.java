@@ -52,9 +52,9 @@ public class ClassifierMap extends PackageableElementMap {
 	}
 
 	public boolean isJavaPrimitive() {
-		if(isUmlPrimitive()){
-			return getPrimitiveKind((PrimitiveType) elementType)!=CodePrimitiveTypeKind.STRING;
-		}else{
+		if (isUmlPrimitive()) {
+			return getPrimitiveKind((PrimitiveType) elementType) != CodePrimitiveTypeKind.STRING;
+		} else {
 			return false;
 		}
 	}
@@ -148,7 +148,7 @@ public class ClassifierMap extends PackageableElementMap {
 	private CodeTypeReference getJavaType(TupleType t) {
 		TupleTypeMap innerMap = codeUtil.buildTupleTypeMap(t);
 		String name = innerMap.getClassName();
-		return new CodeTypeReference(true,OclUtilityCreator.getTuplesPath().getCopy(), name,Collections.<String,String>emptyMap());
+		return new CodeTypeReference(true, OclUtilityCreator.getTuplesPath().getCopy(), name, Collections.<String, String> emptyMap());
 	}
 
 	private CodeExpression getJavaDefault(Classifier t, CollectionKind k) {
@@ -186,11 +186,11 @@ public class ClassifierMap extends PackageableElementMap {
 	private CodePrimitiveTypeKind getPrimitiveKind(PrimitiveType t) {
 		CodePrimitiveTypeKind kind = CodePrimitiveTypeKind.STRING;
 		if (t.getName().equals(OclTypeNames.StringTypeName)) {
-			 kind = CodePrimitiveTypeKind.STRING;
+			kind = CodePrimitiveTypeKind.STRING;
 		} else if (t.getName().equals(OclTypeNames.RealTypeName)) {
-			 kind = CodePrimitiveTypeKind.REAL;
+			kind = CodePrimitiveTypeKind.REAL;
 		} else if (t.getName().equals(OclTypeNames.IntegerTypeName)) {
-			 kind = CodePrimitiveTypeKind.INTEGER;
+			kind = CodePrimitiveTypeKind.INTEGER;
 		} else if (t.getName().equals(OclTypeNames.BooleanTypeName)) {
 			kind = CodePrimitiveTypeKind.BOOLEAN;
 		}
@@ -265,7 +265,7 @@ public class ClassifierMap extends PackageableElementMap {
 	}
 
 	protected CodeTypeReference pathname(Classifier t) {
-		return codeUtil.classifierPathname( t);
+		return codeUtil.classifierPathname(t);
 	}
 
 }

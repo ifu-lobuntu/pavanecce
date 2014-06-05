@@ -15,9 +15,8 @@ import org.pavanecce.uml.ocltocode.common.UmlToCodeMaps;
 public class TupleTypeMap extends ClassifierMap {
 	private TupleType modelClass = null;
 
-
 	public TupleTypeMap(UmlToCodeMaps CodeUtil, TupleType modelClass) {
-		super(CodeUtil,modelClass);
+		super(CodeUtil, modelClass);
 		this.modelClass = modelClass;
 	}
 
@@ -43,7 +42,7 @@ public class TupleTypeMap extends ClassifierMap {
 			Property var = (Property) it.next();
 			// TODO remove all 'strange' characters from the typeName
 			String name = var.getType().toString();
-			name = name.replaceAll( "\\(", "Of");
+			name = name.replaceAll("\\(", "Of");
 			name = name.replaceAll("\\)", "");
 			typeNames[j++] = name;
 		}

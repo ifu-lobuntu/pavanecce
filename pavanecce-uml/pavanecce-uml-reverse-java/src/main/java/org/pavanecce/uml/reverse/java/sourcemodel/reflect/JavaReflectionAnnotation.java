@@ -72,6 +72,7 @@ public class JavaReflectionAnnotation implements SourceAnnotation {
 		}
 		return value;
 	}
+
 	@Override
 	public Set<Entry<String, Object>> getMemberValuePairs() {
 		return this.attributeValues.entrySet();

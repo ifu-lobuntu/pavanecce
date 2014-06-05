@@ -7,36 +7,39 @@ public class LibraryTypeReference extends CodeTypeReference {
 
 	private Enum<?> kind;
 
-	public LibraryTypeReference(Enum<?> kind,Map<String,String> mappings) {
+	public LibraryTypeReference(Enum<?> kind, Map<String, String> mappings) {
 		super(false, "Library", kind.name());
-		this.kind=kind;
-		super.mappings=new CodeMappedType(mappings);
+		this.kind = kind;
+		super.mappings = new CodeMappedType(mappings);
 	}
+
 	public LibraryTypeReference(Enum<?> kind) {
-		this(kind,Collections.<String,String>emptyMap());
+		this(kind, Collections.<String, String> emptyMap());
 	}
+
 	public LibraryTypeReference(Enum<?> kind2, CodeMappedType mappings) {
 		this(kind2);
-		super.mappings=mappings;
+		super.mappings = mappings;
 	}
+
 	@Override
-	public LibraryTypeReference getCopy(){
-		return new LibraryTypeReference(kind,mappings);
+	public LibraryTypeReference getCopy() {
+		return new LibraryTypeReference(kind, mappings);
 	}
+
 	public Enum<?> getKind() {
 		return kind;
 	}
+
 	@Override
 	public int compareTo(CodeTypeReference o) {
 		if (o instanceof LibraryTypeReference) {
 			LibraryTypeReference other = (LibraryTypeReference) o;
 			int result = kind.name().compareTo(other.getKind().name());
 			return result;
-		}else{
+		} else {
 			return super.compareTo(o);
 		}
 	}
-
-
 
 }

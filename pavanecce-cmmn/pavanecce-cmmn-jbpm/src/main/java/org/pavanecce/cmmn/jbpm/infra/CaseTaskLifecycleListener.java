@@ -144,7 +144,7 @@ public class CaseTaskLifecycleListener extends ExternalTaskEventListener {
 
 	@Override
 	public void afterTaskExitedEvent(@Observes(notifyObserver = Reception.IF_EXISTS) @AfterTaskExitedEvent Task task) {
-		signalEvent(task, PlanItemTransition.TERMINATE);// In CMMN exit is when exit criteria occur
+		signalEvent(task, PlanItemTransition.TERMINATE); // In CMMN exit is when exit criteria occur
 	}
 
 	@Override

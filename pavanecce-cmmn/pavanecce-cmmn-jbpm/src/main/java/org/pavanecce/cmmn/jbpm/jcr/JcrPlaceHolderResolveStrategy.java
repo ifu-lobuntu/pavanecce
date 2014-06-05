@@ -13,6 +13,7 @@ import javax.jcr.Node;
 import org.drools.core.common.DroolsObjectInputStream;
 import org.drools.persistence.jpa.marshaller.JPAPlaceholderResolverStrategy;
 import org.kie.api.runtime.Environment;
+import org.pavanecce.common.jcr.JcrSessionFactory;
 
 public class JcrPlaceHolderResolveStrategy extends JPAPlaceholderResolverStrategy {
 	private Environment env;
@@ -40,8 +41,8 @@ public class JcrPlaceHolderResolveStrategy extends JPAPlaceholderResolverStrateg
 	public Object read(ObjectInputStream is) throws IOException, ClassNotFoundException {
 		try {
 			String uuid = is.readUTF();
-			JcrObjectPersistenceFactory f = (JcrObjectPersistenceFactory) env.get(JcrObjectPersistenceFactory.OBJECT_CONTENT_MANAGER_FACTORY);
-			return f.getCurrentObjectContentManager().getNodeByIdentifier(uuid);
+			JcrSessionFactory f = (JcrSessionFactory) env.get(JcrSessionFactory.JCR_SESSION_FACTORY);
+			return f.getCurrentSession().getNodeByIdentifier(uuid);
 		} catch (Exception e) {
 			throw convertException(e);
 		}

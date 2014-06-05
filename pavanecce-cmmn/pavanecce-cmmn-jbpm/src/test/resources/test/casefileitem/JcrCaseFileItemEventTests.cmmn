@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE doc [
+<!ENTITY structureDefs SYSTEM "src/test/resources/test/casefileitem/cndStructureDefs.xmlFragment">
+<!ENTITY caseFileModel SYSTEM "src/test/resources/test/caseFileModel.xmlFragment">
+]>
+<cmmn:definitions xmlns:cmmn="http://www.omg.org/spec/CMMN/20121031/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:test="http://ifu-lobuntu.org/test"
+	targetNamespace="http://ifu-lobuntu.org/test">
+	&structureDefs;
+	<cmmn:case name="CaseFileItemEventTests" id="CaseFileItemEventTests">
+		&caseFileModel;
+		<cmmn:casePlanModel name="CaseFileItemEventTests">
+			<cmmn:planItem definitionRef="theTask" name="PlanItemEnteredWhenWallPlanCreated" id="planItemEnteredWhenWallPlanCreatedId" entryCriteriaRefs="waitingForWallPlanCreatedSentryId">
+			</cmmn:planItem>
+			<cmmn:planItem definitionRef="theTask" name="PlanItemEnteredWhenRoofPlanCreated" id="planItemEnteredWhenRoofPlanCreatedId" entryCriteriaRefs="waitingForRoofPlanCreatedSentryId">
+			</cmmn:planItem>
+			<cmmn:planItem definitionRef="theTask" name="PlanItemEnteredWhenWallPlanAddedAsChild" id="planItemEnteredWhenWallPlanAddedAsChildId"
+				entryCriteriaRefs="waitingForWallPlanAddedAsChildSentryId">
+			</cmmn:planItem>
+			<cmmn:planItem definitionRef="theTask" name="PlanItemEnteredWhenRoofPlanAddedAsChild" id="planItemEnteredWhenRoofPlanAddedAsChildId"
+				entryCriteriaRefs="waitingForRoofPlanAddedAsChildSentryId">
+			</cmmn:planItem>
+			<cmmn:planItem definitionRef="theTask" name="PlanItemEnteredWhenWallPlanAddedAsReference" id="planItemEnteredWhenWallPlanAddedAsReferenceId"
+				entryCriteriaRefs="waitingForWallPlanAddedAsReferenceSentryId">
+			</cmmn:planItem>
+			<cmmn:planItem definitionRef="theTask" name="PlanItemEnteredWhenRoofPlanAddedAsReference" id="planItemEnteredWhenRoofPlanAddedAsReferenceId"
+				entryCriteriaRefs="waitingForRoofPlanAddedAsReferenceSentryId">
+			</cmmn:planItem>
+			<cmmn:planItem definitionRef="theTask" name="PlanItemEnteredWhenWallPlanDeleted" id="planItemEnteredWhenWallPlanDeletedId" entryCriteriaRefs="waitingForWallPlanDeletedSentryId">
+			</cmmn:planItem>
+			<cmmn:planItem definitionRef="theTask" name="PlanItemEnteredWhenRoofPlanDeleted" id="planItemEnteredWhenRoofPlanDeletedId" entryCriteriaRefs="waitingForRoofPlanDeletedSentryId">
+			</cmmn:planItem>
+			<cmmn:planItem definitionRef="theTask" name="PlanItemEnteredWhenWallPlanRemovedAsChild" id="planItemEnteredWhenWallPlanRemovedAsChildId"
+				entryCriteriaRefs="waitingForWallPlanRemovedAsChildSentryId">
+			</cmmn:planItem>
+			<cmmn:planItem definitionRef="theTask" name="PlanItemEnteredWhenRoofPlanRemovedAsChild" id="planItemEnteredWhenRoofPlanRemovedAsChildId"
+				entryCriteriaRefs="waitingForRoofPlanRemovedAsChildSentryId">
+			</cmmn:planItem>
+			<cmmn:planItem definitionRef="theTask" name="PlanItemEnteredWhenWallPlanRemovedAsReference" id="planItemEnteredWhenWallPlanRemovedAsReferenceId"
+				entryCriteriaRefs="waitingForWallPlanRemovedAsReferenceSentryId">
+			</cmmn:planItem>
+			<cmmn:planItem definitionRef="theTask" name="PlanItemEnteredWhenRoofPlanRemovedAsReference" id="planItemEnteredWhenRoofPlanRemovedAsReferenceId"
+				entryCriteriaRefs="waitingForRoofPlanRemovedAsReferenceSentryId">
+			</cmmn:planItem>
+			<cmmn:planItem definitionRef="theTask" name="PlanItemEnteredWhenHouseUpdated" id="planItemEnteredHouseUpdatedId" entryCriteriaRefs="waitingForHouseUpdatedSentryId">
+			</cmmn:planItem>
+			<cmmn:sentry id="waitingForHouseUpdatedSentryId" name="WaitingForHouseUpdatedSentry">
+				<cmmn:caseFileItemOnPart sourceRef="houseFileItemId" id="OnHouseUpdatedPart">
+					<cmmn:standardEvent>update</cmmn:standardEvent>
+				</cmmn:caseFileItemOnPart>
+			</cmmn:sentry>
+			<cmmn:sentry id="waitingForWallPlanCreatedSentryId" name="WaitingForWallPlanCreatedSentry">
+				<cmmn:caseFileItemOnPart sourceRef="wallPlanFileItemId" id="OnWallPlanCreatedPart">
+					<cmmn:standardEvent>create</cmmn:standardEvent>
+				</cmmn:caseFileItemOnPart>
+			</cmmn:sentry>
+			<cmmn:sentry id="waitingForRoofPlanCreatedSentryId" name="WaitingForRoofPlanCreatedSentry">
+				<cmmn:caseFileItemOnPart sourceRef="roofPlanFileItemId" id="OnRoofPlanCreatedPart">
+					<cmmn:standardEvent>create</cmmn:standardEvent>
+				</cmmn:caseFileItemOnPart>
+			</cmmn:sentry>
+			<cmmn:sentry id="waitingForWallPlanAddedAsChildSentryId" name="WaitingForWallPlanAddedAsChildSentry">
+				<cmmn:caseFileItemOnPart sourceRef="housePlanFileItemId" id="OnWallPlanAddedAsChildPart" relationRef="wallPlanFileItemId">
+					<cmmn:standardEvent>addChild</cmmn:standardEvent>
+				</cmmn:caseFileItemOnPart>
+			</cmmn:sentry>
+			<cmmn:sentry id="waitingForRoofPlanAddedAsChildSentryId" name="WaitingForRoofPlanAddedAsChildSentry">
+				<cmmn:caseFileItemOnPart sourceRef="housePlanFileItemId" id="OnRoofPlanAddedAsChildPart" relationRef="roofPlanFileItemId">
+					<cmmn:standardEvent>addChild</cmmn:standardEvent>
+				</cmmn:caseFileItemOnPart>
+			</cmmn:sentry>
+			<cmmn:sentry id="waitingForWallPlanAddedAsReferenceSentryId" name="WaitingForWallPlanAddedAsReferenceSentry">
+				<cmmn:caseFileItemOnPart sourceRef="houseFileItemId" id="OnWallPlanAddedAsReferencePart" relationRef="wallPlanFileItemId">
+					<cmmn:standardEvent>addReference</cmmn:standardEvent>
+				</cmmn:caseFileItemOnPart>
+			</cmmn:sentry>
+			<cmmn:sentry id="waitingForRoofPlanAddedAsReferenceSentryId" name="WaitingForRoofPlanAddedAsReferenceSentry">
+				<cmmn:caseFileItemOnPart sourceRef="houseFileItemId" id="OnRoofPlanAddedAsReferencePart" relationRef="roofPlanFileItemId">
+					<cmmn:standardEvent>addReference</cmmn:standardEvent>
+				</cmmn:caseFileItemOnPart>
+			</cmmn:sentry>
+			<cmmn:sentry id="waitingForWallPlanDeletedSentryId" name="WaitingForWallPlanDeletedSentry">
+				<cmmn:caseFileItemOnPart sourceRef="wallPlanFileItemId" id="OnWallPlanDeletedPart">
+					<cmmn:standardEvent>delete</cmmn:standardEvent>
+				</cmmn:caseFileItemOnPart>
+			</cmmn:sentry>
+			<cmmn:sentry id="waitingForRoofPlanDeletedSentryId" name="WaitingForRoofPlanDeletedSentry">
+				<cmmn:caseFileItemOnPart sourceRef="roofPlanFileItemId" id="OnRoofPlanDeletedPart">
+					<cmmn:standardEvent>delete</cmmn:standardEvent>
+				</cmmn:caseFileItemOnPart>
+			</cmmn:sentry>
+			<cmmn:sentry id="waitingForWallPlanRemovedAsChildSentryId" name="WaitingForWallPlanRemovedAsChildSentry">
+				<cmmn:caseFileItemOnPart sourceRef="housePlanFileItemId" id="OnWallPlanRemovedAsChildPart" relationRef="wallPlanFileItemId">
+					<cmmn:standardEvent>removeChild</cmmn:standardEvent>
+				</cmmn:caseFileItemOnPart>
+			</cmmn:sentry>
+			<cmmn:sentry id="waitingForRoofPlanRemovedAsChildSentryId" name="WaitingForRoofPlanRemovedAsChildSentry">
+				<cmmn:caseFileItemOnPart sourceRef="housePlanFileItemId" id="OnRoofPlanRemovedAsChildPart" relationRef="roofPlanFileItemId">
+					<cmmn:standardEvent>removeChild</cmmn:standardEvent>
+				</cmmn:caseFileItemOnPart>
+			</cmmn:sentry>
+			<cmmn:sentry id="waitingForWallPlanRemovedAsReferenceSentryId" name="WaitingForWallPlanRemovedAsReferenceSentry">
+				<cmmn:caseFileItemOnPart sourceRef="houseFileItemId" id="OnWallPlanRemovedAsReferencePart" relationRef="wallPlanFileItemId">
+					<cmmn:standardEvent>removeReference</cmmn:standardEvent>
+				</cmmn:caseFileItemOnPart>
+			</cmmn:sentry>
+			<cmmn:sentry id="waitingForRoofPlanRemovedAsReferenceSentryId" name="WaitingForRoofPlanRemovedAsReferenceSentry">
+				<cmmn:caseFileItemOnPart sourceRef="houseFileItemId" id="OnRoofPlanRemovedAsReferencePart" relationRef="roofPlanFileItemId">
+					<cmmn:standardEvent>removeReference</cmmn:standardEvent>
+				</cmmn:caseFileItemOnPart>
+			</cmmn:sentry>
+			<cmmn:humanTask id="theTask" name="The Task" performerRef="builderRoleId" isBlocking="true">
+				<cmmn:defaultControl />
+				<cmmn:inputs name="wallPlan" bindingRef="wallPlanFileItemId"></cmmn:inputs>
+				<cmmn:outputs name="wall" bindingRef="wallFileItemId"></cmmn:outputs>
+			</cmmn:humanTask>
+		</cmmn:casePlanModel>
+		<cmmn:caseRoles name="Builders" id="builderRoleId" />
+		<cmmn:input bindingRef="housePlanFileItemId" id="housePlanInputId" name="housePlan">
+		</cmmn:input>
+		<cmmn:input bindingRef="houseFileItemId" id="houseInputId" name="house">
+		</cmmn:input>
+		<cmmn:input bindingRef="wallPlanFileItemId" id="wallPlanInputId" name="housePlan">
+			<cmmn:bindingRefinement language="http://www.java.com/java">
+				<cmmn:body>return housePlan.getNodes("test:wallPlans/test:wallPlan");</cmmn:body>
+			</cmmn:bindingRefinement>
+		</cmmn:input>
+		<cmmn:input bindingRef="roofPlanFileItemId" id="roofPlanInputId" name="roofPlan">
+			<cmmn:bindingRefinement language="http://www.java.com/java">
+				<cmmn:body>return housePlan.getNodes("test:roofPlan");</cmmn:body>
+			</cmmn:bindingRefinement>
+		</cmmn:input>
+	</cmmn:case>
+</cmmn:definitions>
+
+	   

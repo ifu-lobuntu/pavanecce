@@ -17,11 +17,10 @@ import org.pavanecce.uml.uml2code.java.JavaCodeGenerator;
 
 public class JpaTests extends AbstractPersistenceTest {
 
-
 	@BeforeClass
 	public static void setup() throws Exception {
 		example = new ConstructionCaseExample("JpaPersistence");
-		example.generateCode(new JavaCodeGenerator(),  new JpaCodeDecorator());
+		example.generateCode(new JavaCodeGenerator(), new JpaCodeDecorator());
 		TestPersistenceUnitInfo pui = new TestPersistenceUnitInfo("construction", example.getClassLoader());
 		addMappedClasses(pui, example.getAdaptor().getCodeModel(), example.getCodeGenerator());
 		HibernatePersistence hibernatePersistence = new HibernatePersistence();
@@ -29,13 +28,14 @@ public class JpaTests extends AbstractPersistenceTest {
 		example.initScriptingEngine();
 		example.getJavaScriptContext().setAttribute("p", new JpaObjectPersistence(emf), ScriptContext.ENGINE_SCOPE);
 	}
+
 	protected static void addMappedClasses(TestPersistenceUnitInfo pui, CodePackage codePackage, AbstractCodeGenerator jcg) {
 		for (CodeClassifier cc : codePackage.getClassifiers().values()) {
 			pui.getManagedClassNames().add(jcg.toQualifiedName(cc.getTypeReference()));
 		}
 		Collection<CodePackage> values = codePackage.getChildren().values();
 		for (CodePackage child : values) {
-			addMappedClasses(pui, child,jcg);
+			addMappedClasses(pui, child, jcg);
 		}
 	}
 

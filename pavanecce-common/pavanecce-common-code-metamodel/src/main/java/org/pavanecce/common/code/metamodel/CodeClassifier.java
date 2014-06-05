@@ -14,12 +14,13 @@ import java.util.TreeSet;
 import org.pavanecce.common.code.metamodel.expressions.NewInstanceExpression;
 
 public class CodeClassifier extends CodeElement {
-	private CodeVisibilityKind visibility=CodeVisibilityKind.PUBLIC;
+	private CodeVisibilityKind visibility = CodeVisibilityKind.PUBLIC;
 	private CodePackage _package;
 	private SortedMap<String, CodeField> fields = new TreeMap<String, CodeField>();
 	private SortedMap<String, CodeMethod> methods = new TreeMap<String, CodeMethod>();
 	private CodeTypeReference typeReference;
-	protected Collection<Enum<?>> librariesToImport=new HashSet<Enum<?>>();
+	protected Collection<Enum<?>> librariesToImport = new HashSet<Enum<?>>();
+
 	public CodeClassifier(String name, CodePackage _package) {
 		super(name);
 		this._package = _package;
@@ -37,9 +38,11 @@ public class CodeClassifier extends CodeElement {
 	public SortedMap<String, CodeField> getFields() {
 		return fields;
 	}
-	public CodeMethod getMethod(String name, List<?> params){
+
+	public CodeMethod getMethod(String name, List<?> params) {
 		return getMethods().get(CodeBehaviour.generateIdentifier(name, params));
 	}
+
 	public void addStdLibToImports(OclStandardLibrary l) {
 		if (librariesToImport == null) {
 			librariesToImport = new HashSet<Enum<?>>();
@@ -50,6 +53,7 @@ public class CodeClassifier extends CodeElement {
 	public Collection<Enum<?>> getLibrariesToImport() {
 		return librariesToImport == null ? Collections.<Enum<?>> emptySet() : librariesToImport;
 	}
+
 	public SortedSet<CodeTypeReference> getImports() {
 		SortedSet<CodeTypeReference> result = new TreeSet<CodeTypeReference>();
 		for (Entry<String, CodeField> entry : this.fields.entrySet()) {

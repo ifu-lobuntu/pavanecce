@@ -14,7 +14,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.naming.InitialContext;
@@ -111,9 +114,11 @@ import org.pavanecce.cmmn.jbpm.ocm.OcmSubscriptionManager;
 import org.pavanecce.cmmn.jbpm.xml.handler.CMMNBuilder;
 import org.pavanecce.cmmn.jbpm.xml.handler.DefaultTypeMap;
 import org.pavanecce.cmmn.jbpm.xml.handler.DefinitionsHandler;
+import org.pavanecce.cmmn.jbpm.xml.handler.JcrTypeMap;
 import org.pavanecce.common.ObjectPersistence;
+import org.pavanecce.common.Stopwatch;
 import org.pavanecce.common.jpa.JpaObjectPersistence;
-import org.pavanecce.common.ocm.OcmFactory;
+import org.pavanecce.common.ocm.ObjectContentManagerFactory;
 import org.pavanecce.common.ocm.OcmObjectPersistence;
 import org.pavanecce.common.util.FileUtil;
 
@@ -127,30 +132,28 @@ import org.pavanecce.common.util.FileUtil;
 import bitronix.tm.resource.jdbc.PoolingDataSource;
 
 public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
-	ObjectPersistence persistence;
+	protected ObjectPersistence persistence;
 	protected boolean isJpa = false;
-	private static OcmFactory ocmFactory;
+	private static ObjectContentManagerFactory objectContentManagerFactory;
 	private RuntimeEngine runtimeEngine;
 	private UserTransaction transaction;
 	private RuntimeManager runtimeManager;
-	private long timer;
 	private static EntityManagerFactory emf;
 	private static PoolingDataSource ds;
 	private String persistenceUnitName;
-	protected EntityManagerFactory getEmf(){
+	private static Session jcrSession;
+	protected Stopwatch stopwatch = new Stopwatch(getClass());
+
+	protected EntityManagerFactory getEmf() {
 		return emf;
 	}
+
 	public AbstractCmmnCaseTestCase() {
 		super();
 	}
 
-	protected void startTimer() {
-		timer = System.currentTimeMillis();
-	}
-
-	protected void printTimer(String name) {
-//		System.out.println(name + " took " + (System.currentTimeMillis() - timer));
-		startTimer();
+	protected RuntimeManager getRuntimeManager() {
+		return runtimeManager;
 	}
 
 	public AbstractCmmnCaseTestCase(boolean setupDataSource, boolean sessionPersistence) {
@@ -159,16 +162,15 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 
 	@Before
 	public void setUp() throws Exception {
-		startTimer();
-
+		stopwatch.start();
 		if (setupDataSource && (ds == null || emf == null)) {
 			ds = setupPoolingDataSource();
-			printTimer("setupPoolingDataSource");
+			stopwatch.lap("setupPoolingDataSource");
 			emf = Persistence.createEntityManagerFactory(persistenceUnitName);
-			printTimer("createEntityManagerFactory");
+			stopwatch.lap("createEntityManagerFactory");
 		}
 		cleanupSingletonSessionId();
-		printTimer("cleanupSingletonSessionId");
+		stopwatch.lap("cleanupSingletonSessionId");
 	}
 
 	public AbstractCmmnCaseTestCase(boolean setupDataSource, boolean sessionPersistence, String persistenceUnitName) {
@@ -321,7 +323,7 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 
 	@After
 	public void tearDown() throws Exception {
-		startTimer();
+		stopwatch.start();
 		try {
 			getTransaction().rollback();
 		} catch (Exception e) {
@@ -337,7 +339,7 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 
 		}
 		transaction = null;
-		if(isJpa){
+		if (isJpa) {
 			getPersistence().close();
 		}
 		clearHistory();
@@ -350,7 +352,24 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 		fl.setAccessible(true);
 		ThreadLocal<?> l = (ThreadLocal<?>) fl.get(null);
 		l.set(null);
-		printTimer("tearDown");
+		if (jcrSession != null) {
+			removeChildren(jcrSession, "/cases");
+			removeChildren(jcrSession, "/subscriptions");
+			jcrSession.save();
+		}
+		stopwatch.lap("tearDown");
+	}
+
+	protected void removeChildren(Session session, String path) {
+		try {
+			Node node = session.getNode(path);
+			NodeIterator nodes = node.getNodes();
+			while (nodes.hasNext()) {
+				Node object = nodes.nextNode();
+				object.remove();
+			}
+		} catch (Exception e) {
+		}
 	}
 
 	protected void assertTaskTypeCreated(List<TaskSummary> list, String expected, int... numberOfTimes) {
@@ -389,6 +408,7 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 	protected PoolingDataSource setupPoolingDataSource() {
 		PoolingDataSource pds = new PoolingDataSource();
 		if (isJpa) {
+			// fake XA
 			pds.setUniqueName("jdbc/jbpm-ds");
 			pds.setClassName("bitronix.tm.resource.jdbc.lrc.LrcXADataSource");
 			pds.setMaxPoolSize(5);
@@ -462,6 +482,9 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 	@Override
 	protected RuntimeManager createRuntimeManager(String... processFile) {
 		DefinitionsHandler.registerTypeMap(CaseFileItemDefinitionType.UML_CLASS, new DefaultTypeMap());
+		DefinitionsHandler.registerTypeMap(CaseFileItemDefinitionType.CMIS_DOCUMENT, new JcrTypeMap());
+		DefinitionsHandler.registerTypeMap(CaseFileItemDefinitionType.CMIS_FOLDER, new JcrTypeMap());
+		DefinitionsHandler.registerTypeMap(CaseFileItemDefinitionType.CMIS_RELATIONSHIP, new JcrTypeMap());
 		ProcessNodeBuilderRegistry.INSTANCE.register(UserEventPlanItem.class, new PlanItemBuilder());
 		ProcessNodeBuilderRegistry.INSTANCE.register(TimerEventPlanItem.class, new PlanItemBuilder());
 		ProcessNodeBuilderRegistry.INSTANCE.register(StagePlanItem.class, new PlanItemBuilder());
@@ -476,17 +499,7 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 		this.runtimeManager = rm;
 		RuntimeEngine runtimeEngine = getRuntimeEngine();
 		Environment env = runtimeEngine.getKieSession().getEnvironment();
-		env.set(OBJECT_MARSHALLING_STRATEGIES, getPlaceholdStrategies(env));
-		AbstractPersistentSubscriptionManager<?, ?> subscriptionManager = getSubscriptionManager();
-		if (subscriptionManager != null) {
-			env.set(SubscriptionManager.ENV_NAME, subscriptionManager);
-		}
-		if (isJpa) {
-			env.set(JpaObjectPersistence.ENV_NAME, getPersistence());
-
-		} else {
-			env.set(OcmFactory.OBJECT_CONTENT_MANAGER_FACTORY, getOcmFactory());
-		}
+		prepareEnvironment(env);
 		NodeInstanceFactoryRegistry nodeInstanceFactoryRegistry = NodeInstanceFactoryRegistry.getInstance(env);
 		nodeInstanceFactoryRegistry.register(DefaultJoin.class, new ReuseNodeFactory(DefaultJoinInstance.class));
 		nodeInstanceFactoryRegistry.register(Sentry.class, new ReuseNodeFactory(SentryInstance.class));
@@ -513,6 +526,19 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 		// for some reason the task service does not persist the users and groups ???
 		populateUsers();
 		return rm;
+	}
+
+	protected void prepareEnvironment(Environment env) {
+		env.set(OBJECT_MARSHALLING_STRATEGIES, getPlaceholdStrategies(env));
+		AbstractPersistentSubscriptionManager<?, ?> subscriptionManager = getSubscriptionManager();
+		if (subscriptionManager != null) {
+			env.set(SubscriptionManager.ENV_NAME, subscriptionManager);
+		}
+		if (isJpa) {
+			env.set(JpaObjectPersistence.ENV_NAME, getPersistence());
+		} else {
+			env.set(ObjectContentManagerFactory.OBJECT_CONTENT_MANAGER_FACTORY, getOcmFactory());
+		}
 	}
 
 	protected void populateUsers() {
@@ -573,42 +599,52 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 	}
 
 	@SuppressWarnings("rawtypes")
-	protected OcmFactory getOcmFactory() {
-		if (ocmFactory == null) {
+	protected ObjectContentManagerFactory getOcmFactory() {
+		if (objectContentManagerFactory == null) {
 			try {
-				startTimer();
-				FileUtil.deleteRoot(new File("./repository"));
-				TransientRepository jcrRepo = new TransientRepository();
-				printTimer("new TransientRepository()");
-				Session session;
-				session = jcrRepo.login(new SimpleCredentials("admin", "admin".toCharArray()));
-				printTimer("login");
-				session.getRootNode().addNode("cases");
-				session.getRootNode().addNode("subscriptions");
-				printTimer("addNode");
-				CndImporter.registerNodeTypes(new InputStreamReader(AbstractCmmnCaseTestCase.class.getResourceAsStream("/META-INF/definitions.cnd")), session);
-				CndImporter.registerNodeTypes(new InputStreamReader(AbstractCmmnCaseTestCase.class.getResourceAsStream("/test.cnd")), session);
-				printTimer("registerNodeTypes");
-				session.save();
-				printTimer("save()");
-				//We have to keep one session open or the TransientRepository resets
-//				session.logout();
-//				session = jcrRepo.login(new SimpleCredentials("admin", "admin".toCharArray()));
-//				Node node = session.getNode("/cases");
-//				printTimer("logout()");
-				ocmFactory = new OcmFactory(jcrRepo, "admin", "admin", new AnnotationMapperImpl(Arrays.<Class> asList(getClasses())), new OcmSubscriptionManager(
-						runtimeManager));
-				printTimer("new OcmFactory()");
-				OcmSubscriptionManager eventListener = (OcmSubscriptionManager) ocmFactory.getEventListener();
-				eventListener.setOcmFactory(ocmFactory);
-				return ocmFactory;
+				objectContentManagerFactory = new ObjectContentManagerFactory(getJcrSession(), new AnnotationMapperImpl(Arrays.<Class> asList(getClasses())),
+						new OcmSubscriptionManager(runtimeManager));
+				stopwatch.lap("new OcmFactory()");
+				OcmSubscriptionManager eventListener = (OcmSubscriptionManager) objectContentManagerFactory.getEventListener();
+				eventListener.setOcmFactory(objectContentManagerFactory);
+				return objectContentManagerFactory;
 			} catch (RuntimeException e) {
 				throw e;
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
 		}
-		return ocmFactory;
+		return objectContentManagerFactory;
+	}
+
+	protected Session getJcrSession() {
+		if (jcrSession == null) {
+			try {
+				stopwatch.start();
+				TransientRepository jcrRepo = new TransientRepository();
+				stopwatch.lap("new TransientRepository()");
+				FileUtil.deleteRoot(new File("./repository"));
+				stopwatch.lap("deleteJcrRepository", 10, TimeUnit.SECONDS);
+				jcrSession = jcrRepo.login(new SimpleCredentials("admin", "admin".toCharArray()));
+				stopwatch.lap("login", 10, TimeUnit.SECONDS);
+				jcrSession.getRootNode().addNode("cases");
+				jcrSession.getRootNode().addNode("subscriptions");
+				stopwatch.lap("addNode");
+				CndImporter.registerNodeTypes(new InputStreamReader(AbstractCmmnCaseTestCase.class.getResourceAsStream("/META-INF/definitions.cnd")),
+						jcrSession);
+				CndImporter.registerNodeTypes(new InputStreamReader(AbstractCmmnCaseTestCase.class.getResourceAsStream("/test.cnd")), jcrSession);
+				stopwatch.lap("registerNodeTypes", 3, TimeUnit.SECONDS);
+				jcrSession.save();
+				// We have to keep one session open or the TransientRepository resets
+				// session.logout();
+				stopwatch.lap("save()");
+			} catch (RuntimeException e) {
+				throw e;
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
+		return this.jcrSession;
 	}
 
 	@SuppressWarnings("rawtypes")

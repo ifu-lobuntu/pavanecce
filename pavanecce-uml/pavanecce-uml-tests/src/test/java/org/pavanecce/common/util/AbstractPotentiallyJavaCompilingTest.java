@@ -50,7 +50,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class AbstractPotentiallyJavaCompilingTest extends Assert {
-	Logger logger=LoggerFactory.getLogger(getClass());
+	Logger logger = LoggerFactory.getLogger(getClass());
 	protected IFileLocator fileLocator = new AdaptableFileLocator();
 	private AbstractCodeGenerator javaCodeGenerator;
 	private ScriptEngine javaScriptEngine;
@@ -93,9 +93,9 @@ public abstract class AbstractPotentiallyJavaCompilingTest extends Assert {
 			return ".java";
 		} else if (getCodeGenerator() instanceof JavaScriptGenerator) {
 			return ".js";
-		}else{
+		} else {
 			return ".py";
-					
+
 		}
 	}
 
@@ -141,8 +141,8 @@ public abstract class AbstractPotentiallyJavaCompilingTest extends Assert {
 
 			options.add("-proc:none"); // don't process annotations (typical for
 										// jsps)
-//			options.add("-verbose"); // Phidias adds to the default verbose
-//										// output
+										// options.add("-verbose"); // Phidias adds to the default verbose
+			// // output
 			options.add("-d");
 			options.add(destination.getCanonicalPath());
 			JavaCompiler javaCompiler = ToolProvider.getSystemJavaCompiler();

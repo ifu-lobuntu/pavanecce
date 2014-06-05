@@ -15,10 +15,9 @@ import org.pavanecce.common.code.metamodel.documentdb.IDocumentProperty;
 import org.pavanecce.uml.uml2code.AbstractBuilder;
 import org.pavanecce.uml.uml2code.codemodel.DocumentUtil;
 
-public class DocumentModelBuilder  extends AbstractBuilder<DocumentNamespace, DocumentNodeType> {
+public class DocumentModelBuilder extends AbstractBuilder<DocumentNamespace, DocumentNodeType> {
 	DocumentNamespace rootNamespace;
 	private DocumentUtil documentUtil;
-	
 
 	@Override
 	public DocumentNamespace visitModel(Model model) {
@@ -29,8 +28,8 @@ public class DocumentModelBuilder  extends AbstractBuilder<DocumentNamespace, Do
 
 	@Override
 	public void initialize(SortedSet<Model> models, DocumentNamespace p) {
-		this.rootNamespace=p;
-		this.documentUtil=new DocumentUtil();
+		this.rootNamespace = p;
+		this.documentUtil = new DocumentUtil();
 	}
 
 	@Override
@@ -50,9 +49,9 @@ public class DocumentModelBuilder  extends AbstractBuilder<DocumentNamespace, Do
 	@Override
 	public void visitProperty(Property p, DocumentNodeType parent) {
 		IDocumentElement e = documentUtil.buildDocumentElement(p);
-		if(e instanceof IDocumentProperty){
+		if (e instanceof IDocumentProperty) {
 			parent.addProperty((IDocumentProperty) e);
-		}else if(e instanceof IChildDocument){
+		} else if (e instanceof IChildDocument) {
 			parent.addChild((IChildDocument) e);
 		}
 	}

@@ -1,14 +1,6 @@
 package org.pavanecce.cmmn.jbpm.casefileitem;
 
-import java.io.IOException;
-
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.pavanecce.cmmn.jbpm.JcrTestCase;
 import org.pavanecce.common.ocm.OcmObjectPersistence;
 
 import test.ConstructionCase;
@@ -22,28 +14,6 @@ public class OcmPersistentSubscriptionEventTest extends CaseFileItemEventTest {
 	{
 		super.isJpa = false;
 	}
-
-	@Before
-	public void before() throws Exception {
-		OcmObjectPersistence p = new OcmObjectPersistence(getOcmFactory());
-		removeChildren(p, "/cases");
-		removeChildren(p, "/subscriptions");
-		p.getObjectContentManager().save();
-	}
-
-	protected void removeChildren(OcmObjectPersistence p, String path) {
-		try {
-			Node node = p.getObjectContentManager().getSession().getNode(path);
-			NodeIterator nodes = node.getNodes();
-			while (nodes.hasNext()) {
-				Node object = nodes.nextNode();
-				object.remove();
-			}
-		} catch (Exception e) {
-		}
-	}
-
-
 	@Test
 	public void testModel() throws Exception {
 		OcmObjectPersistence p = new OcmObjectPersistence(getOcmFactory());

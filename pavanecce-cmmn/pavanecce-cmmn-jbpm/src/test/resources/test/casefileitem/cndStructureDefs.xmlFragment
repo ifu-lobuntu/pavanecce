@@ -1,0 +1,35 @@
+      <cmmn:caseFileItemDefinition id="constructionCaseDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/CMISDocument" structureRef="test:ConstructionCase">
+      </cmmn:caseFileItemDefinition>
+      <cmmn:caseFileItemDefinition id="houseDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/CMISDocument" structureRef="test:House">
+      </cmmn:caseFileItemDefinition>
+      <cmmn:caseFileItemDefinition id="constructionCaseHouseDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/CMISDocument" structureRef="test:ConstructionCaseHouse">
+      </cmmn:caseFileItemDefinition>
+      <cmmn:caseFileItemDefinition id="housePlanDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/CMISDocument" structureRef="test:HousePlan">
+      </cmmn:caseFileItemDefinition>
+      <cmmn:caseFileItemDefinition id="roofPlanDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/CMISDocument" structureRef="test:RoofPlan">
+      </cmmn:caseFileItemDefinition>
+      <cmmn:caseFileItemDefinition id="constructionCaseHousePlanDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/CMISDocument" structureRef="test:ConstructionCaseHousePlan">
+      </cmmn:caseFileItemDefinition>
+      <cmmn:caseFileItemDefinition id="housePlanRoofPlanDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/CMISDocument" structureRef="test:HousePlanRoofPlan">
+      </cmmn:caseFileItemDefinition>
+      <cmmn:caseFileItemDefinition id="houseRoofPlanDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/CMISDocument" structureRef="test:HouseRoofPlan">
+      </cmmn:caseFileItemDefinition>
+      <cmmn:caseFileItemDefinition id="wallDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/CMISDocument" structureRef="test:Wall">
+      </cmmn:caseFileItemDefinition>
+      <cmmn:caseFileItemDefinition id="houseWallDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/CMISDocument" structureRef="test:HouseWall">
+      </cmmn:caseFileItemDefinition>
+      <cmmn:caseFileItemDefinition id="wallPlanDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/CMISDocument" structureRef="test:WallPlan">
+      </cmmn:caseFileItemDefinition>
+      <cmmn:caseFileItemDefinition id="wallPlanWallDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/CMISDocument" structureRef="test:WallPlanWall">
+      </cmmn:caseFileItemDefinition>
+      <cmmn:caseFileItemDefinition id="housePlanWallPlanDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/CMISDocument" structureRef="test:HousePlanWallPlan">
+      </cmmn:caseFileItemDefinition>
+      <cmmn:caseFileItemDefinition id="houseWallPlanDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/CMISDocument" structureRef="test:HouseWallPlan">
+      </cmmn:caseFileItemDefinition>
+      <cmmn:caseFileItemDefinition id="roomPlanDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/CMISDocument" structureRef="test:RoomPlan">
+      </cmmn:caseFileItemDefinition>
+      <cmmn:caseFileItemDefinition id="housePlanRoomPlanDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/CMISDocument" structureRef="test:HousePlanRoomPlan">
+      </cmmn:caseFileItemDefinition>
+      <cmmn:caseFileItemDefinition id="roomPlanWallPlanDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/CMISDocument" structureRef="test:RoomPlanWallPlan">
+      </cmmn:caseFileItemDefinition>
+

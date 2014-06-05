@@ -15,8 +15,9 @@ public class JavaAnnotated {
 
 	public JavaAnnotated(JavaDescriptorFactory factory) {
 		super();
-		this.factory=factory;
+		this.factory = factory;
 	}
+
 	protected void init(Annotation[] annotations) {
 		this.annotations = new SourceAnnotation[annotations.length];
 		for (int i = 0; i < annotations.length; i++) {
@@ -27,11 +28,12 @@ public class JavaAnnotated {
 	public SourceAnnotation[] getAnnotations() {
 		return annotations;
 	}
+
 	protected static Annotation[] resolveAnnotations(Type type) {
-		if(type instanceof AnnotatedElement){
+		if (type instanceof AnnotatedElement) {
 			Set<Annotation> result = new HashSet<Annotation>();
-			for (Annotation annotation : ((AnnotatedElement)type).getAnnotations()) {
-				if(!annotation.annotationType().equals(type)){
+			for (Annotation annotation : ((AnnotatedElement) type).getAnnotations()) {
+				if (!annotation.annotationType().equals(type)) {
 					result.add(annotation);
 				}
 			}
@@ -39,6 +41,7 @@ public class JavaAnnotated {
 		}
 		return new Annotation[0];
 	}
+
 	public SourceAnnotation getAnnotation(String string) {
 		for (SourceAnnotation javaAnnotation : getAnnotations()) {
 			if (javaAnnotation.getAnnotationType().getQualifiedName().equals(string)) {

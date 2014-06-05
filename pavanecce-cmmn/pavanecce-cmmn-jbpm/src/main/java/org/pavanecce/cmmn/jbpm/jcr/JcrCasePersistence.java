@@ -1,15 +1,17 @@
 package org.pavanecce.cmmn.jbpm.jcr;
 
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 
 import org.kie.api.runtime.manager.RuntimeManager;
 import org.kie.internal.runtime.manager.context.EmptyContext;
 import org.pavanecce.cmmn.jbpm.event.AbstractPersistentSubscriptionManager;
+import org.pavanecce.common.jcr.JcrSessionFactory;
 
 public class JcrCasePersistence extends JcrObjectPersistence {
 	RuntimeManager runtimeManager;
 
-	public JcrCasePersistence(JcrObjectPersistenceFactory factory, RuntimeManager runtimeManager) {
+	public JcrCasePersistence(JcrSessionFactory factory, RuntimeManager runtimeManager) {
 		super(factory);
 		this.runtimeManager = runtimeManager;
 	}
@@ -23,7 +25,7 @@ public class JcrCasePersistence extends JcrObjectPersistence {
 				JcrCaseSubscriptionKey key = (JcrCaseSubscriptionKey) id;
 				return (T) getSubscription(key.getClassName(), key.getId());
 			}
-			return (T) getObjectContentManager().getNodeByIdentifier((String) id);
+			return (T) getCurrentSession().getNodeByIdentifier((String) id);
 		} catch (Exception e) {
 			throw convertException(e);
 		}
@@ -38,10 +40,16 @@ public class JcrCasePersistence extends JcrObjectPersistence {
 	}
 
 	@Override
+	public void start() {
+		super.start();
+		super.factory.updateEventListener();
+	}
+
+	@Override
 	public void commit() {
 		try {
 			startTransaction();
-			getObjectContentManager().save();
+			getCurrentSession().save();
 			doCaseFileItemEvents();
 			if (startedTransaction) {
 				getTransaction().commit();
@@ -65,14 +73,14 @@ public class JcrCasePersistence extends JcrObjectPersistence {
 		while (AbstractPersistentSubscriptionManager.dispatchEventQueue(runtimeManager.getRuntimeEngine(EmptyContext.get()))) {
 			AbstractPersistentSubscriptionManager.commitSubscriptionsTo(this);
 			try {
-				getObjectContentManager().save();
+				getCurrentSession().save();
 			} catch (Exception e) {
 				throw convertException(e);
 			}
 		}
 		if (AbstractPersistentSubscriptionManager.commitSubscriptionsTo(this)) {
 			try {
-				getObjectContentManager().save();
+				getCurrentSession().save();
 			} catch (Exception e) {
 				throw convertException(e);
 			}
@@ -81,7 +89,10 @@ public class JcrCasePersistence extends JcrObjectPersistence {
 
 	protected JcrCaseSubscriptionInfo getSubscription(String className, String id) {
 		try {
-			return (JcrCaseSubscriptionInfo) getObjectContentManager().getRootNode().getNode("/subscriptions/" + className + "$" + id);
+			Node node = getCurrentSession().getRootNode().getNode("subscriptions/" + className + "$" + id);
+			return new JcrCaseSubscriptionInfo(node);
+		} catch (PathNotFoundException e) {
+			return null;
 		} catch (Exception e) {
 			throw convertException(e);
 		}

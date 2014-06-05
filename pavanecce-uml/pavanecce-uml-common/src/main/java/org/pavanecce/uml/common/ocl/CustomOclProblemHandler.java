@@ -6,14 +6,15 @@ import org.eclipse.emf.common.util.BasicDiagnostic;
 import org.eclipse.ocl.lpg.AbstractParser;
 import org.eclipse.ocl.parser.OCLProblemHandler;
 
-public class CustomOclProblemHandler extends OCLProblemHandler{
+public class CustomOclProblemHandler extends OCLProblemHandler {
 	BasicDiagnostic diagnostics;
-	CustomOclProblemHandler(AbstractParser parser){
+
+	CustomOclProblemHandler(AbstractParser parser) {
 		super(parser);
 	}
+
 	@Override
-	public void handleProblem(Severity problemSeverity,Phase processingPhase,String problemMessage,String processingContext,
-			int startOffset,int endOffset){
+	public void handleProblem(Severity problemSeverity, Phase processingPhase, String problemMessage, String processingContext, int startOffset, int endOffset) {
 		IPrsStream prsStream = getIPrsStream();
 		int leftToken = prsStream.getTokenIndexAtCharacter(startOffset);
 		int rightToken = prsStream.getTokenIndexAtCharacter(endOffset);
@@ -21,30 +22,33 @@ public class CustomOclProblemHandler extends OCLProblemHandler{
 		int rightTokenLoc = rightToken;
 		int line = prsStream.getLine(leftTokenLoc) + getErrorReportLineOffset();
 		CustomDiagnostic diagnostic = new CustomDiagnostic(problemSeverity.getDiagnosticSeverity(), "org.eclipse.ocl", 1, problemMessage,
-				new Object[]{processingContext});
-		if(line > 0){
+				new Object[] { processingContext });
+		if (line > 0) {
 			diagnostic.setStartLine(prsStream.getLine(leftTokenLoc) + getErrorReportLineOffset());
 			diagnostic.setStartPosition(prsStream.getColumn(leftTokenLoc));
 			diagnostic.setEndPosition(prsStream.getEndColumn(rightTokenLoc));
 			diagnostic.setEndLine(prsStream.getEndLine(rightTokenLoc) + getErrorReportLineOffset());
 		}
-		if(diagnostics == null){
+		if (diagnostics == null) {
 			diagnostics = diagnostic;
-		}else{
+		} else {
 			diagnostics.add(diagnostic);
 		}
 	}
+
 	@Override
-	public void clearDiagnostic(){
-		diagnostics=null;
+	public void clearDiagnostic() {
+		diagnostics = null;
 		super.clearDiagnostic();
 	}
+
 	@Override
-	public BasicDiagnostic getDiagnostic(){
+	public BasicDiagnostic getDiagnostic() {
 		return diagnostics;
 	}
+
 	@Override
-	public void parserProblem(Severity problemSeverity,String problemMessage,String processingContext,int startOffset,int endOffset){
+	public void parserProblem(Severity problemSeverity, String problemMessage, String processingContext, int startOffset, int endOffset) {
 		IPrsStream prsStream = getIPrsStream();
 		int leftToken = prsStream.getTokenIndexAtCharacter(startOffset);
 		int rightToken = prsStream.getTokenIndexAtCharacter(endOffset);
@@ -52,18 +56,18 @@ public class CustomOclProblemHandler extends OCLProblemHandler{
 		int rightTokenLoc = rightToken;
 		int line = prsStream.getLine(leftTokenLoc) + getErrorReportLineOffset();
 		CustomDiagnostic diagnostic = new CustomDiagnostic(problemSeverity.getDiagnosticSeverity(), "org.eclipse.ocl", 1, problemMessage,
-				new Object[]{processingContext});
-		if(line > 0){
+				new Object[] { processingContext });
+		if (line > 0) {
 			diagnostic.setStartLine(prsStream.getLine(leftTokenLoc) + getErrorReportLineOffset());
 			diagnostic.setStartPosition(prsStream.getColumn(leftTokenLoc));
 			diagnostic.setEndPosition(prsStream.getEndColumn(rightTokenLoc));
 			diagnostic.setEndLine(prsStream.getEndLine(rightTokenLoc) + getErrorReportLineOffset());
 		}
-		if(diagnostics == null){
+		if (diagnostics == null) {
 			diagnostics = diagnostic;
-		}else{
+		} else {
 			diagnostics.add(diagnostic);
 		}
-		
+
 	}
 }

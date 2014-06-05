@@ -197,7 +197,8 @@ public class EmfClassifierUtil {
 	}
 
 	public static boolean isSimpleType(Type type) {
-		return type instanceof PrimitiveType || (type.eClass().equals(UMLPackage.eINSTANCE.getDataType()) && StereotypesHelper.hasStereotype(type, StereotypeNames.VALUE_TYPE));
+		return type instanceof PrimitiveType
+				|| (type.eClass().equals(UMLPackage.eINSTANCE.getDataType()) && StereotypesHelper.hasStereotype(type, StereotypeNames.VALUE_TYPE));
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -256,7 +257,8 @@ public class EmfClassifierUtil {
 		Set<BehavioredClassifier> result = new TreeSet<BehavioredClassifier>(new DefaultElementComparator());
 		Collection<Setting> refs = ECrossReferenceAdapter.getCrossReferenceAdapter(i.eResource().getResourceSet()).getNonNavigableInverseReferences(i);
 		for (Setting setting : refs) {
-			if (setting.getEObject() instanceof InterfaceRealization && setting.getEStructuralFeature().equals(UMLPackage.eINSTANCE.getInterfaceRealization_Contract())) {
+			if (setting.getEObject() instanceof InterfaceRealization
+					&& setting.getEStructuralFeature().equals(UMLPackage.eINSTANCE.getInterfaceRealization_Contract())) {
 				result.add(((InterfaceRealization) setting.getEObject()).getImplementingClassifier());
 			}
 		}
@@ -307,8 +309,8 @@ public class EmfClassifierUtil {
 		if (type instanceof PrimitiveType) {
 			return false;
 		}
-		if (type instanceof Signal || type instanceof Enumeration || type instanceof Class || type instanceof Actor || type instanceof Collaboration || type instanceof MessageType
-				|| isStructuredDataType(type) || (type instanceof Association && EmfAssociationUtil.isClass((Association) type))) {
+		if (type instanceof Signal || type instanceof Enumeration || type instanceof Class || type instanceof Actor || type instanceof Collaboration
+				|| type instanceof MessageType || isStructuredDataType(type) || (type instanceof Association && EmfAssociationUtil.isClass((Association) type))) {
 			return true;
 		}
 		return false;

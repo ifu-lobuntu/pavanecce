@@ -10,8 +10,7 @@ import org.pavanecce.uml.uml2code.java.JavaCodeGenerator;
 
 /**
  * 
- * Tests generation of Java code from CodeXXX objects directly. No underlying
- * UML model is being used.
+ * Tests generation of Java code from CodeXXX objects directly. No underlying UML model is being used.
  * 
  */
 public class JavaSourceTests extends AbstractSourceTests {

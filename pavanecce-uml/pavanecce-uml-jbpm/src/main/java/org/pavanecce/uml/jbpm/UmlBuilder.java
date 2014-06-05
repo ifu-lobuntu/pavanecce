@@ -20,40 +20,40 @@ import org.pavanecce.uml.common.util.StandaloneLocator;
 import org.pavanecce.uml.common.util.UmlResourceSetFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+
 public class UmlBuilder implements ResourceTypeBuilder {
-	public static final ResourceType UML_RESOURCE_TYPE = ResourceType
-			.addResourceTypeToRegistry("UML", "UML", "src/main/resources",
-					"uml");
+	public static final ResourceType UML_RESOURCE_TYPE = ResourceType.addResourceTypeToRegistry("UML", "UML", "src/main/resources", "uml");
 	public static final String UML_RESOURCE_SET = "uml.resource.set";
-	static{
+	static {
 		ResourceTypeBuilderRegistry.getInstance().register(UML_RESOURCE_TYPE, new UmlBuilder());
 	}
 	private PackageBuilder packageBuilder;
 	private ResourceSet rst = new UmlResourceSetFactory(new StandaloneLocator()).prepareResourceSet();
+
 	@Override
 	public void setPackageBuilder(PackageBuilder packageBuilder) {
-		this.packageBuilder=packageBuilder;
+		this.packageBuilder = packageBuilder;
 		SemanticModules modules = this.packageBuilder.getPackageBuilderConfiguration().getSemanticModules();
-		//yeah don't know about this
+		// yeah don't know about this
 		SemanticModule cmmnSemanticModule = modules.getSemanticModule(CMMNSemanticModule.CMMN_URI);
 		if (cmmnSemanticModule == null) {
-			modules.addSemanticModule(cmmnSemanticModule=new CMMNSemanticModule());
+			modules.addSemanticModule(cmmnSemanticModule = new CMMNSemanticModule());
 		}
-		cmmnSemanticModule.addHandler("case", new CaseHandler(){
+		cmmnSemanticModule.addHandler("case", new CaseHandler() {
 			@Override
 			public Object start(String uri, String localName, Attributes attrs, ExtensibleXmlParser parser) throws SAXException {
 				Process process = (Process) super.start(uri, localName, attrs, parser);
 				process.setMetaData(UML_RESOURCE_SET, rst);
 				return process;
 			}
-			
+
 		});
 		this.packageBuilder.getPackageBuilderConfiguration().getSemanticModules().addSemanticModule(cmmnSemanticModule);
 
 	}
+
 	@Override
-	public void addKnowledgeResource(Resource resource, ResourceType type,
-			ResourceConfiguration configuration) throws Exception {
+	public void addKnowledgeResource(Resource resource, ResourceType type, ResourceConfiguration configuration) throws Exception {
 		rst.createResource(URI.createFileURI(resource.getSourcePath())).load(resource.getInputStream(), new HashMap<Object, Object>());
 	}
 }

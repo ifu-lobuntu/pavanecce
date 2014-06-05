@@ -7,6 +7,7 @@ Bundle-ManifestVersion: 2
 Bundle-ClassPath: .
 Export-Package: org.pavanecce.common,
  org.pavanecce.common.collections,
+ org.pavanecce.common.jcr,
  org.pavanecce.common.jpa,
  org.pavanecce.common.ocm,
  org.pavanecce.common.util
@@ -21,4 +22,5 @@ Import-Package: javax.jcr,
  org.apache.jackrabbit.ocm.manager.impl,
  org.apache.jackrabbit.ocm.manager.objectconverter,
  org.apache.jackrabbit.ocm.mapper,
- org.apache.jackrabbit.ocm.mapper.model
+ org.apache.jackrabbit.ocm.mapper.model,
+ org.slf4j

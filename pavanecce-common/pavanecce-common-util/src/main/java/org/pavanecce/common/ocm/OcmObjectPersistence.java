@@ -16,10 +16,10 @@ import org.pavanecce.common.ObjectPersistence;
 
 public class OcmObjectPersistence implements ObjectPersistence {
 	private UserTransaction transaction;
-	private OcmFactory factory;
+	protected ObjectContentManagerFactory factory;
 	protected boolean startedTransaction = false;
 
-	public OcmObjectPersistence(OcmFactory factory) {
+	public OcmObjectPersistence(ObjectContentManagerFactory factory) {
 		this.factory = factory;
 	}
 

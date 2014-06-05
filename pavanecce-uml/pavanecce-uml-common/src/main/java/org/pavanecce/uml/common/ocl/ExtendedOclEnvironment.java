@@ -92,10 +92,11 @@ public final class ExtendedOclEnvironment extends DefaultParentOclEnvironment {
 		this.variables = new HashSet<Variable>();
 		setProblemHandler(new CustomOclProblemHandler(getParser()));
 	}
+
 	@Override
 	public Classifier getContextClassifier() {
 		org.eclipse.ocl.expressions.Variable<Classifier, Parameter> selfVariable = getSelfVariable();
-		return selfVariable ==null?super.getOCLStandardLibrary().getOclAny():selfVariable.getType();
+		return selfVariable == null ? super.getOCLStandardLibrary().getOclAny() : selfVariable.getType();
 	}
 
 	@Override
@@ -307,7 +308,8 @@ public final class ExtendedOclEnvironment extends DefaultParentOclEnvironment {
 	}
 
 	@Override
-	public void setFactory(EnvironmentFactory<Package, Classifier, Operation, Property, EnumerationLiteral, Parameter, State, CallOperationAction, SendSignalAction, Constraint, Class, EObject> d) {
+	public void setFactory(
+			EnvironmentFactory<Package, Classifier, Operation, Property, EnumerationLiteral, Parameter, State, CallOperationAction, SendSignalAction, Constraint, Class, EObject> d) {
 		super.setFactory(d);
 	}
 
@@ -384,7 +386,8 @@ public final class ExtendedOclEnvironment extends DefaultParentOclEnvironment {
 		}
 	}
 
-	private void addDurationObservations(Collection<org.eclipse.ocl.expressions.Variable<Classifier, Parameter>> variables, Element element, Type duration, String businesStateMachine) {
+	private void addDurationObservations(Collection<org.eclipse.ocl.expressions.Variable<Classifier, Parameter>> variables, Element element, Type duration,
+			String businesStateMachine) {
 		Stereotype s = StereotypesHelper.getStereotype(element, businesStateMachine);
 		if (s != null) {
 			@SuppressWarnings("unchecked")
@@ -398,7 +401,8 @@ public final class ExtendedOclEnvironment extends DefaultParentOclEnvironment {
 		}
 	}
 
-	protected void addTimeObservations(Collection<org.eclipse.ocl.expressions.Variable<Classifier, Parameter>> variables, Element element, Type br, String businesStateMachine) {
+	protected void addTimeObservations(Collection<org.eclipse.ocl.expressions.Variable<Classifier, Parameter>> variables, Element element, Type br,
+			String businesStateMachine) {
 		Stereotype s = StereotypesHelper.getStereotype(element, businesStateMachine);
 		if (s != null) {
 			@SuppressWarnings("unchecked")
@@ -422,9 +426,9 @@ public final class ExtendedOclEnvironment extends DefaultParentOclEnvironment {
 				p = super.lookupProperty(oclType, name);
 			}
 		}
-		if(p==null && owner!=null){
+		if (p == null && owner != null) {
 			for (Property property : EmfPropertyUtil.getEffectiveProperties(owner)) {
-				if(name.equals(property.getName())){
+				if (name.equals(property.getName())) {
 					return property;
 				}
 			}

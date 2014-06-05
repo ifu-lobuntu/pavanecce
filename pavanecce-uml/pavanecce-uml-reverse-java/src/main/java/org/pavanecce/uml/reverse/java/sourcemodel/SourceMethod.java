@@ -5,6 +5,7 @@ import org.eclipse.uml2.uml.VisibilityKind;
 public interface SourceMethod {
 
 	VisibilityKind getVisibility();
+
 	boolean isConstructor();
 
 	SourceClass getReturnType();
@@ -20,6 +21,7 @@ public interface SourceMethod {
 	SourceAnnotation[] getAnnotations();
 
 	String[] getParameterNames();
+
 	boolean isStatic();
-	
+
 }

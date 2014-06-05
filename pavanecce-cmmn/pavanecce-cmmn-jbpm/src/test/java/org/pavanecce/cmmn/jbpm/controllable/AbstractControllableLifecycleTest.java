@@ -38,7 +38,7 @@ public abstract class AbstractControllableLifecycleTest extends AbstractConstruc
 
 	@Test
 	public void testTaskLifecycleComplete() throws Exception {
-		startTimer();
+		stopwatch.start();
 		// *****GIVEN
 		givenThatTheTestCaseIsStarted();
 		// *****WHEN
@@ -57,12 +57,12 @@ public abstract class AbstractControllableLifecycleTest extends AbstractConstruc
 		completeTask(taskId);
 		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.COMPLETED);
 		// *****THEN
-		printTimer("testTaskLifecycleComplete");
+		stopwatch.finish("testTaskLifecycleComplete");
 	}
 
 	@Test
 	public void testTaskLifecycleTerminate() throws Exception {
-		startTimer();
+		stopwatch.start();
 
 		// *****GIVEN
 		givenThatTheTestCaseIsStarted();
@@ -81,13 +81,13 @@ public abstract class AbstractControllableLifecycleTest extends AbstractConstruc
 		getTaskService().exit(list.get(0).getId(), getBusinessAdministratorUser());
 		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.TERMINATED);
 		// *****THEN
-		printTimer("testTaskLifecycleTerminate");
+		stopwatch.finish("testTaskLifecycleTerminate");
 
 	}
 
 	@Test
 	public void testTaskLifecycleFailed() throws Exception {
-		startTimer();
+		stopwatch.start();
 
 		// *****GIVEN
 		givenThatTheTestCaseIsStarted();
@@ -107,12 +107,12 @@ public abstract class AbstractControllableLifecycleTest extends AbstractConstruc
 		failTask(taskId);
 		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.FAILED);
 		// *****THEN
-		printTimer("testTaskLifecycleFailed");
+		stopwatch.finish("testTaskLifecycleFailed");
 	}
 
 	@Test
 	public void testTaskLifecycleExit() throws Exception {
-		startTimer();
+		stopwatch.start();
 
 		// *****GIVEN
 		givenThatTheTestCaseIsStarted();
@@ -132,14 +132,14 @@ public abstract class AbstractControllableLifecycleTest extends AbstractConstruc
 		getRuntimeEngine().getKieSession().signalEvent("TheUserEvent", new Object(), caseInstance.getId());
 		getPersistence().commit();
 		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.TERMINATED);
-		printTimer("testTaskLifecycleExit");
+		stopwatch.finish("testTaskLifecycleExit");
 	}
 
 	public abstract String getEventGeneratingTaskUser();
 
 	@Test
 	public void testEventGeneratedOnCompletionOfTask() throws Exception {
-		startTimer();
+		stopwatch.start();
 
 		// *****GIVEN
 		givenThatTheTestCaseIsStarted();
@@ -158,12 +158,12 @@ public abstract class AbstractControllableLifecycleTest extends AbstractConstruc
 		assertEquals(2, list.size());
 		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.COMPLETED);
 		assertEquals("PlanItemEnteredWhenTaskCompleted", list.get(0).getName());
-		printTimer("testEventGeneratedOnCompletionOfTask");
+		stopwatch.finish("testEventGeneratedOnCompletionOfTask");
 	}
 
 	@Test
 	public void testEventGeneratedOnFaultOnTask() throws Exception {
-		startTimer();
+		stopwatch.start();
 
 		// *****GIVEN
 		givenThatTheTestCaseIsStarted();
@@ -181,12 +181,12 @@ public abstract class AbstractControllableLifecycleTest extends AbstractConstruc
 		assertEquals(2, list.size());
 		assertEquals("PlanItemEnteredWhenTaskFaultOccurred", list.get(0).getName());
 		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.FAILED);
-		printTimer("testEventGeneratedOnFaultOnTask");
+		stopwatch.finish("testEventGeneratedOnFaultOnTask");
 	}
 
 	@Test
 	public void testEventGeneratedOnSuspensionOfTask() throws Exception {
-		startTimer();
+		stopwatch.start();
 
 		// *****GIVEN
 		givenThatTheTestCaseIsStarted();
@@ -204,12 +204,12 @@ public abstract class AbstractControllableLifecycleTest extends AbstractConstruc
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenTaskSuspended");
 		assertTaskTypeCreated(list, "PlanItemEnteredWhenTaskSuspended");
 		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.SUSPENDED);
-		printTimer("testEventGeneratedOnSuspensionOfTask");
+		stopwatch.finish("testEventGeneratedOnSuspensionOfTask");
 	}
 
 	@Test
 	public void testEventGeneratedOnTerminationOfTask() throws Exception {
-		startTimer();
+		stopwatch.start();
 
 		// *****GIVEN
 		givenThatTheTestCaseIsStarted();
@@ -227,7 +227,7 @@ public abstract class AbstractControllableLifecycleTest extends AbstractConstruc
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenTaskTerminated");
 		assertEquals("PlanItemEnteredWhenTaskTerminated", list.get(0).getName());
 		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.TERMINATED);
-		printTimer("testEventGeneratedOnTerminationOfTask");
+		stopwatch.finish("testEventGeneratedOnTerminationOfTask");
 	}
 
 	protected String getBusinessAdministratorUser() {
@@ -236,7 +236,7 @@ public abstract class AbstractControllableLifecycleTest extends AbstractConstruc
 
 	@Test
 	public void testEventGeneratedOnResumptionOfTask() throws Exception {
-		startTimer();
+		stopwatch.start();
 
 		// *****GIVEN
 		givenThatTheTestCaseIsStarted();
@@ -254,12 +254,12 @@ public abstract class AbstractControllableLifecycleTest extends AbstractConstruc
 
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenTaskResumed");
 		assertTaskTypeCreated(list, "PlanItemEnteredWhenTaskResumed");
-		printTimer("testEventGeneratedOnResumptionOfTask");
+		stopwatch.finish("testEventGeneratedOnResumptionOfTask");
 	}
 
 	@Test()
 	public void testEventGeneratedOnExitOfTask() throws Exception {
-		startTimer();
+		stopwatch.start();
 
 		// *****GIVEN
 		givenThatTheTestCaseIsStarted();
@@ -274,11 +274,11 @@ public abstract class AbstractControllableLifecycleTest extends AbstractConstruc
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenTaskExited");
 		assertTaskTypeCreated(list, "PlanItemEnteredWhenTaskExited");
 		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.TERMINATED);
-		printTimer("testEventGeneratedOnExitOfTask");
+		stopwatch.finish("testEventGeneratedOnExitOfTask");
 	}
 
 	private void triggerExitOfTask(List<TaskSummary> list) {
-		startTimer();
+		stopwatch.start();
 
 		getTaskService().start(list.get(0).getId(), getEventGeneratingTaskUser());
 		getPersistence().start();
@@ -289,7 +289,7 @@ public abstract class AbstractControllableLifecycleTest extends AbstractConstruc
 
 	@Test
 	public void testEventGeneratedOnDisableOfTask() throws Exception {
-		startTimer();
+		stopwatch.start();
 
 		// *****GIVEN
 		givenThatTheTestCaseIsStarted();
@@ -303,13 +303,13 @@ public abstract class AbstractControllableLifecycleTest extends AbstractConstruc
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenTaskDisabled");
 		assertTaskTypeCreated(list, "PlanItemEnteredWhenTaskDisabled");
 		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.DISABLED);
-		printTimer("testEventGeneratedOnDisableOfTask");
+		stopwatch.finish("testEventGeneratedOnDisableOfTask");
 
 	}
 
 	@Test
 	public void testEventGeneratedOnEnableOfTask() throws Exception {
-		startTimer();
+		stopwatch.start();
 
 		// *****GIVEN
 		givenThatTheTestCaseIsStarted();
@@ -324,13 +324,13 @@ public abstract class AbstractControllableLifecycleTest extends AbstractConstruc
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenTaskEnabled");
 		assertTaskTypeCreated(list, "PlanItemEnteredWhenTaskEnabled");
 		assertPlanItemInState(caseInstance.getId(), "TheManuallyActivatedTaskPlanItem", PlanElementState.ENABLED);
-		printTimer("testEventGeneratedOnEnableOfTask");
+		stopwatch.finish("testEventGeneratedOnEnableOfTask");
 
 	}
 
 	@Test
 	public void testEventGeneratedOnManualStartOfTask() throws Exception {
-		startTimer();
+		stopwatch.start();
 
 		// *****GIVEN
 		givenThatTheTestCaseIsStarted();
@@ -338,7 +338,7 @@ public abstract class AbstractControllableLifecycleTest extends AbstractConstruc
 		getRuntimeEngine().getKieSession().signalEvent("UserEventToStartManuallyActivatedTask", new Object(), caseInstance.getId());
 		getPersistence().commit();
 		List<TaskSummary> list = getTaskService().getTasksAssignedAsPotentialOwner(getEventGeneratingTaskUser(), "en-UK");
-		assertTrue(list.size() > 0);// there could be 2
+		assertTrue(list.size() > 0); // there could be 2
 		assertNodeTriggered(caseInstance.getId(), "TheManuallyActivatedTaskPlanItem");
 		getTaskService().start(findTask(list, "TheManuallyActivatedTaskPlanItem"), getEventGeneratingTaskUser());
 		// *****THEN
@@ -349,7 +349,7 @@ public abstract class AbstractControllableLifecycleTest extends AbstractConstruc
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenTaskEnabled");
 		assertTaskTypeCreated(list, "PlanItemEnteredWhenTaskEnabled");
 		assertPlanItemInState(caseInstance.getId(), "TheManuallyActivatedTaskPlanItem", PlanElementState.ACTIVE);
-		printTimer("testEventGeneratedOnManualStartOfTask");
+		stopwatch.finish("testEventGeneratedOnManualStartOfTask");
 
 	}
 
@@ -376,7 +376,7 @@ public abstract class AbstractControllableLifecycleTest extends AbstractConstruc
 
 	@Test
 	public void testEventGeneratedOnAutomaticStartOfTask() throws Exception {
-		startTimer();
+		stopwatch.start();
 
 		// *****GIVEN
 		givenThatTheTestCaseIsStarted();
@@ -388,13 +388,13 @@ public abstract class AbstractControllableLifecycleTest extends AbstractConstruc
 		List<TaskSummary> list = getTaskService().getTasksAssignedAsPotentialOwner(getEventGeneratingTaskUser(), "en-UK");
 		assertNodeTriggered(caseInstance.getId(), "TheAutoActivatedTaskPlanItem");
 		assertTaskTypeCreated(list, "TheAutoActivatedTaskPlanItem");
-		assertTrue(list.size() > 0);// could be two
+		assertTrue(list.size() > 0); // could be two
 		list = getTaskService().getTasksAssignedAsPotentialOwner("Builder", "en-UK");
 		assertEquals(2, list.size());
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenTaskAutomaticallyStarted");
 		assertTaskTypeCreated(list, "PlanItemEnteredWhenTaskAutomaticallyStarted");
 		assertPlanItemInState(caseInstance.getId(), "TheAutoActivatedTaskPlanItem", PlanElementState.ACTIVE);
-		printTimer("testEventGeneratedOnAutomaticStartOfTask");
+		stopwatch.finish("testEventGeneratedOnAutomaticStartOfTask");
 
 	}
 
@@ -415,7 +415,7 @@ public abstract class AbstractControllableLifecycleTest extends AbstractConstruc
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenTaskReactivated");
 		assertTaskTypeCreated(list, "PlanItemEnteredWhenTaskReactivated");
 		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.ACTIVE);
-		printTimer("testEventGeneratedOnReactivateOfTask");
+		stopwatch.finish("testEventGeneratedOnReactivateOfTask");
 
 	}
 
@@ -435,7 +435,7 @@ public abstract class AbstractControllableLifecycleTest extends AbstractConstruc
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenTaskReenabled");
 		assertTaskTypeCreated(list, "PlanItemEnteredWhenTaskReenabled");
 		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.ENABLED);
-		printTimer("testEventGeneratedOnReenableOfTask");
+		stopwatch.finish("testEventGeneratedOnReenableOfTask");
 
 	}
 
@@ -453,7 +453,7 @@ public abstract class AbstractControllableLifecycleTest extends AbstractConstruc
 		assertNodeTriggered(caseInstance.getId(), "PlanItemEnteredWhenTaskCreated");
 		assertTaskTypeCreated(list, "PlanItemEnteredWhenTaskCreated");
 		assertPlanItemInState(caseInstance.getId(), "TheEventGeneratingTaskPlanItem", PlanElementState.ENABLED);
-		printTimer("testEventGeneratedOnCreateOfTask");
+		stopwatch.finish("testEventGeneratedOnCreateOfTask");
 
 	}
 

@@ -13,7 +13,7 @@ public class CodeMappedType {
 	}
 
 	public CodeMappedType(Map<String, String> mappings) {
-		this.qualifiedNames=mappings;
+		this.qualifiedNames = mappings;
 	}
 
 	public String getQualifiedJavaName() {

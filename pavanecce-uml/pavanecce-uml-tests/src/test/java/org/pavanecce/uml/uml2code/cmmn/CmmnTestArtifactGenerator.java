@@ -25,7 +25,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class CmmnTestArtifactGenerator extends OcmTests {
-	static Logger logger=LoggerFactory.getLogger(CmmnTestArtifactGenerator.class);
+	static Logger logger = LoggerFactory.getLogger(CmmnTestArtifactGenerator.class);
+
 	public static void main(String[] args) throws Exception {
 		final File outputRoot = new File("/home/ampie/Code/pavanecce/pavanecce-cmmn/");
 		// final File outputRoot = new File("/home/ampie/Code/pavanecce/pavanecce-uml");
@@ -39,7 +40,8 @@ public abstract class CmmnTestArtifactGenerator extends OcmTests {
 				// "pavanecce-uml-jbpm");
 				VersionNumber vn = new VersionNumber("0.0.1");
 				TextProject tp = tw.findOrCreateTextProject(tfd, "", vn);
-				SourceFolder sf = tp.findOrCreateSourceFolder(new SourceFolderDefinition(SourceFolderNameStrategy.QUALIFIER_ONLY, "src/test/generated-java"), "", vn);
+				SourceFolder sf = tp.findOrCreateSourceFolder(new SourceFolderDefinition(SourceFolderNameStrategy.QUALIFIER_ONLY, "src/test/generated-java"),
+						"", vn);
 				TextNodeVisitorAdapter tnva = new TextNodeVisitorAdapter();
 				createText(codeModel, sf);
 				tnva.startVisiting(tw, tfg);

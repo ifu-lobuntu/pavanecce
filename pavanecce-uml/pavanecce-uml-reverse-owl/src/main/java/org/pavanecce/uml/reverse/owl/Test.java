@@ -17,9 +17,11 @@ import org.semanticweb.owlapi.model.OWLOntologyManager;
 
 public class Test {
 	private static Logger logger = Logger.getLogger(Test.class.getName());
+
 	public static void main(String[] args) throws OWLOntologyCreationException {
 		OWLOntologyManager m = OWLManager.createOWLOntologyManager();
-//		OWLOntology o = m.loadOntologyFromOntologyDocument(new File("/home/ampie/Ampie/Code/vdfp/uml2code/org.vdfp.reverse.owl/src/Museum.owl"));
+		// OWLOntology o = m.loadOntologyFromOntologyDocument(new
+		// File("/home/ampie/Ampie/Code/vdfp/uml2code/org.vdfp.reverse.owl/src/Museum.owl"));
 		OWLOntology o = m.loadOntologyFromOntologyDocument(new File("/home/ampie/Ampie/Code/vdfp/uml2code/org.vdfp.reverse.owl/src/observation.rdf"));
 		logger.info(o.getOntologyID().toString());
 		for (OWLClass owlClass : o.getClassesInSignature()) {
@@ -38,7 +40,7 @@ public class Test {
 			for (OWLClassExpression owlDataRange : ranges) {
 				if (owlDataRange instanceof OWLClass) {
 					logger.info("Entity Property Type: " + ((OWLClass) owlDataRange).getIRI());
-				}else{
+				} else {
 					logger.info(owlDataRange.getClass().getName());
 				}
 			}
@@ -49,7 +51,7 @@ public class Test {
 			for (OWLDataRange owlDataRange : ranges) {
 				if (owlDataRange instanceof OWLDatatype) {
 					logger.info("Data Property Type: " + ((OWLDatatype) owlDataRange).getIRI());
-				}else{
+				} else {
 					logger.info(owlDataRange.getClass().getName());
 				}
 			}

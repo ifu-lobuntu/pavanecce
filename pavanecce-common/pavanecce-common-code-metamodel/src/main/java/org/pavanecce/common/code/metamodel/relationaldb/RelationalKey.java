@@ -7,6 +7,7 @@ public class RelationalKey implements IRelationalElement {
 		super();
 		this.strategy = strategy;
 	}
+
 	public IdStrategy getStrategy() {
 		return strategy;
 	}

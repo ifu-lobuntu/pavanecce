@@ -22,9 +22,8 @@ public abstract class AbstractJavaCodeDecorator {
 
 	public abstract void appendAdditionalFields(JavaCodeGenerator sb, CodeClassifier cc);
 
-
 	public void decorateMethodDeclaration(JavaCodeGenerator sb, CodeMethod value) {
-		
+
 	}
 
 }

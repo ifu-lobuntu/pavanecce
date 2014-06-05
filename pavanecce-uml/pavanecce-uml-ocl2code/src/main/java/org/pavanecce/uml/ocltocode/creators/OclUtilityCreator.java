@@ -18,43 +18,47 @@ import org.pavanecce.common.code.metamodel.CodePackage;
 import org.pavanecce.common.code.metamodel.CodePackageReference;
 import org.pavanecce.uml.ocltocode.common.UmlToCodeMaps;
 
-public class OclUtilityCreator{
+public class OclUtilityCreator {
 	static private CodePackageReference tuplesPath;
 	static private CodePackage tuplesPackage;
 	private UmlToCodeMaps codeMaps;
-	public OclUtilityCreator(UmlToCodeMaps umlToCodeMaps, CodeModel javamodel,Element element){
+
+	public OclUtilityCreator(UmlToCodeMaps umlToCodeMaps, CodeModel javamodel, Element element) {
 		super();
-		this.codeMaps=umlToCodeMaps;
-		tuplesPath=new CodePackageReference(umlToCodeMaps.utilPackagePath(element), "tuples", Collections.<String,String>emptyMap());
-		tuplesPackage=javamodel.findOrCreatePackage(tuplesPath);
-		
+		this.codeMaps = umlToCodeMaps;
+		tuplesPath = new CodePackageReference(umlToCodeMaps.utilPackagePath(element), "tuples", Collections.<String, String> emptyMap());
+		tuplesPackage = javamodel.findOrCreatePackage(tuplesPath);
+
 	}
-	public void makeOclUtilities(TypeResolver<Classifier,Operation,Property> tr){
+
+	public void makeOclUtilities(TypeResolver<Classifier, Operation, Property> tr) {
 		makeTupleTypes(tr);
 	}
-	private void makeTupleTypes(TypeResolver<Classifier,Operation,Property> tr){
+
+	private void makeTupleTypes(TypeResolver<Classifier, Operation, Property> tr) {
 		// get the tupletypes from the standlib and transform these
 		EList<Type> types = null;
-		for(EObject o:tr.getResource().getContents()){
-			if(o instanceof Package){
+		for (EObject o : tr.getResource().getContents()) {
+			if (o instanceof Package) {
 				Package pkg = (Package) o;
-				if("tuples".equals(pkg.getName())){
+				if ("tuples".equals(pkg.getName())) {
 					types = pkg.getOwnedTypes();
 					break;
 				}
 			}
 		}
-		if(types != null){
+		if (types != null) {
 			Iterator<?> it = types.iterator();
-			while(it.hasNext()){
+			while (it.hasNext()) {
 				TupleType tupletype = (TupleType) it.next();
 				TupleTypeCreator tupleMaker = new TupleTypeCreator(codeMaps);
 				tupleMaker.make(tupletype, tuplesPackage);
 			}
 		}
-	
+
 	}
 
-	public static CodePackageReference getTuplesPath(){
+	public static CodePackageReference getTuplesPath() {
 		return tuplesPath.getCopy();
-	}}
+	}
+}
