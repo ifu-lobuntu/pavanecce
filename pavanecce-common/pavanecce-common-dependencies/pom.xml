@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<parent>
 		<groupId>org.pavanecce</groupId>
 		<artifactId>pavanecce-common-parent</artifactId>
@@ -6,8 +7,8 @@
 		<relativePath>..</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>${artifactId}</artifactId>
-	<packaging>${packaging}</packaging>
+	<artifactId>pavanecce-common-dependencies</artifactId>
+	<packaging>bundle</packaging>
 	<properties>
 		<embeddedGroupIds>
 			org.springframework,org.jahia.server,junit,log4j,org.mvel,joda-time,com.google.protobuf,javax,org.javassist,org.python,javax,org.hibernate,org.codehaus.btm,com.h2database,org.apache,org.apache,org.jboss.logging,dom4j,antlr,org.slf4j,org.apache.jackrabbit,commons-io,concurrent,org.apache.derby,commons-dbcp,commons-pool,commons-lang,commons-beanutils,commons-collections,xalan,cglib,asm,org.jbpm,org.kie,org.drools,com.thoughtworks.xstream
@@ -30,87 +31,71 @@
 			</snapshots>
 		</repository>
 	</repositories>
-	<profiles>
-		<profile>
-			<id>standalone</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<properties>
-				<artifactId>pavanecce-common-dependencies</artifactId>
-				<packaging>jar</packaging>
-			</properties>
-		</profile>
-		<profile>
-			<id>osgi</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<properties>
-				<artifactId>pavanecce-common-dependencies</artifactId>
-				<packaging>eclipse-plugin</packaging>
-			</properties>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.eclipse.tycho</groupId>
-						<artifactId>tycho-maven-plugin</artifactId>
-						<version>${tycho.version}</version>
-						<extensions>true</extensions>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-dependency-plugin</artifactId>
-						<inherited>false</inherited>
-						<executions>
-							<execution>
-								<id>copy-dependencies</id>
-								<phase>generate-resources</phase>
-								<goals>
-									<goal>copy-dependencies</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${project.basedir}/libs</outputDirectory>
-									<stripVersion>true</stripVersion>
-									<failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Export-Package>org.pavanecce.</Export-Package>
+						<Bundle-SymbolicName>org.pavanecce.common.dependencies</Bundle-SymbolicName>
+						<_include>META-INF/MANIFEST.MF</_include>
+					</instructions>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<inherited>false</inherited>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.basedir}/libs</outputDirectory>
+							<stripVersion>true</stripVersion>
+							<failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
 
-									<overWriteReleases>false</overWriteReleases>
-									<overWriteSnapshots>false</overWriteSnapshots>
-									<overWriteIfNewer>true</overWriteIfNewer>
-									<includeGroupIds>${embeddedGroupIds}</includeGroupIds>
-									<excludeArtifactIds></excludeArtifactIds>
-									<excludeTransitive>false</excludeTransitive>
-									<excludeScope>provided</excludeScope>
-								</configuration>
-							</execution>
-							<execution>
-								<id>copy-dependencies-sources</id>
-								<phase>generate-sources</phase>
-								<goals>
-									<goal>copy-dependencies</goal>
-								</goals>
-								<configuration>
-									<classifier>sources</classifier>
-									<outputDirectory>${project.basedir}/libs</outputDirectory>
-									<stripVersion>true</stripVersion>
-									<failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>false</overWriteSnapshots>
+							<overWriteIfNewer>true</overWriteIfNewer>
+							<includeGroupIds>${embeddedGroupIds}</includeGroupIds>
+							<excludeArtifactIds></excludeArtifactIds>
+							<excludeTransitive>false</excludeTransitive>
+							<excludeScope>provided</excludeScope>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-dependencies-sources</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<classifier>sources</classifier>
+							<outputDirectory>${project.basedir}/libs</outputDirectory>
+							<stripVersion>true</stripVersion>
+							<failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
 
-									<overWriteReleases>false</overWriteReleases>
-									<overWriteSnapshots>false</overWriteSnapshots>
-									<overWriteIfNewer>true</overWriteIfNewer>
-									<includeGroupIds>${embeddedGroupIds}</includeGroupIds>
-									<excludeArtifactIds></excludeArtifactIds>
-									<excludeTransitive>false</excludeTransitive>
-									<excludeScope>provided</excludeScope>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>false</overWriteSnapshots>
+							<overWriteIfNewer>true</overWriteIfNewer>
+							<includeGroupIds>${embeddedGroupIds}</includeGroupIds>
+							<excludeArtifactIds></excludeArtifactIds>
+							<excludeTransitive>false</excludeTransitive>
+							<excludeScope>provided</excludeScope>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
+		</plugins>
+	</build>
 	<dependencies>
 		<dependency>
 			<groupId>org.jbpm</groupId>

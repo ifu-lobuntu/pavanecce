@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Bundle-Name: pavanecce-common-dependencies
-Bundle-SymbolicName: pavanecce-common-dependencies
+Bundle-Name: org.pavanecce.common.dependencies
+Bundle-SymbolicName: org.pavanecce.common.dependencies
 Bundle-Version: 0.0.1.qualifier
 Bundle-ManifestVersion: 2
 Bundle-ClassPath: .,

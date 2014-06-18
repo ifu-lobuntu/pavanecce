@@ -6,18 +6,8 @@
 		<relativePath>..</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>${artifactId}</artifactId>
-	<packaging>${packaging}</packaging>
-	<profiles>
-		<profile>
-			<id>standalone</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<properties>
-				<artifactId>pavanecce-common-util</artifactId>
-				<packaging>jar</packaging>
-			</properties>
+	<artifactId>pavanecce-common-util</artifactId>
+	<packaging>bundle</packaging>
 			<dependencies>
 				<dependency>
 					<groupId>org.pavanecce</groupId>
@@ -26,28 +16,6 @@
 					<type>jar</type>
 				</dependency>
 			</dependencies>
-		</profile>
-		<profile>
-			<id>osgi</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<properties>
-				<artifactId>org.pavanecce.common.util</artifactId>
-				<packaging>eclipse-plugin</packaging>
-			</properties>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.eclipse.tycho</groupId>
-						<artifactId>tycho-maven-plugin</artifactId>
-						<version>${tycho.version}</version>
-						<extensions>true</extensions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 	<build>
 	<plugins>
 	<plugin><artifactId>maven-checkstyle-plugin</artifactId></plugin>
