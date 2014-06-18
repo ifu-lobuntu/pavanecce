@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+	<bean id="jBPMProvider" class="org.pavanecce.cmmn.jahia.CmmnWorkflowProvider" factory-method="getInstance" init-method="start" destroy-method="stop">
+		<property name="key" value="jBPM" />
+		<property name="workflowService" ref="workflowService" />
+		<property name="platformTransactionManager" ref="jbpmTxManager" />
+		<property name="entityManagerFactory" ref="jbpmEmf" />
+		<property name="sharedEntityManager" ref="jbpmEm" />
+		<property name="jbpmServicesPersistenceManager" ref="jbpmServicesPersistenceManager" />
+		<property name="userManager" ref="JahiaUserManagerService" />
+		<property name="groupManager" ref="JahiaGroupManagerService" />
+		<property name="peopleAssignmentPipeline" ref="peopleAssignmentPipeline" />
+		<property name="jahiaUserGroupCallback">
+			<bean class="org.jahia.services.workflow.jbpm.JahiaUserGroupCallback">
+				<property name="userService" ref="JahiaUserManagerService" />
+				<property name="groupService" ref="JahiaGroupManagerService" />
+			</bean>
+		</property>
+	</bean>
+	
+<!-- 	<alias name="cmmnProvider" alias="jBPMProvider"/> -->
+</beans>

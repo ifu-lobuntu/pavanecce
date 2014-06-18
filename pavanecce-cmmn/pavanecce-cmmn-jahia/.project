@@ -26,6 +26,11 @@
 			</arguments>
 		</buildCommand>
 		<buildCommand>
+			<name>net.sf.eclipsecs.core.CheckstyleBuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
 			<name>org.eclipse.m2e.core.maven2Builder</name>
 			<arguments>
 			</arguments>
@@ -36,12 +41,6 @@
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.xtext.ui.shared.xtextNature</nature>
 		<nature>org.eclipse.pde.PluginNature</nature>
+		<nature>net.sf.eclipsecs.core.CheckstyleNature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>JSR283_NODETYPES</name>
-			<type>2</type>
-			<location>/home/ampie/IDEs/eclipse/configuration/org.eclipse.osgi/bundles/829/1/.cp/jcr-cnd</location>
-		</link>
-	</linkedResources>
 </projectDescription>

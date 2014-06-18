@@ -1,2 +1,3 @@
 language: java
-install: mvn test
+install: mvn --quiet install 
+script: mvn --quiet verify

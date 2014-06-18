@@ -9,6 +9,10 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>pavanecce-cmmn</artifactId>
 	<packaging>pom</packaging>
+	<modules>
+		<module>pavanecce-cmmn-jbpm</module>
+		<module>pavanecce-cmmn-jahia</module>
+	</modules>
 	<profiles>
 		<profile>
 			<id>init</id>
@@ -23,18 +27,12 @@
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
-			<modules>
-				<module>pavanecce-cmmn-jbpm</module>
-			</modules>
 		</profile>
 		<profile>
 			<id>osgi</id>
 			<activation>
 				<activeByDefault>false</activeByDefault>
 			</activation>
-			<modules>
-				<module>pavanecce-cmmn-jbpm</module>
-			</modules>
 		</profile>
 	</profiles>
 </project>
