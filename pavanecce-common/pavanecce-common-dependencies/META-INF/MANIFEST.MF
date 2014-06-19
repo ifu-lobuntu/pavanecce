@@ -4,8 +4,7 @@ Bundle-Name: org.pavanecce.common.dependencies
 Bundle-SymbolicName: org.pavanecce.common.dependencies
 Bundle-Version: 0.0.1.qualifier
 Bundle-ManifestVersion: 2
-Bundle-ClassPath: .,
- libs/btm.jar,
+Bundle-ClassPath: libs/btm.jar,
  libs/h2.jar,
  libs/hibernate-commons-annotations.jar,
  libs/hibernate-core.jar,

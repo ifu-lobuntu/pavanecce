@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="src" output="target/classes" path="src/main/java">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/java">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="libs/btm.jar" sourcepath="libs/btm-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/h2.jar" sourcepath="libs/h2-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/hibernate-commons-annotations.jar" sourcepath="libs/hibernate-commons-annotations-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/hibernate-core.jar" sourcepath="libs/hibernate-core-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/hibernate-entitymanager.jar" sourcepath="libs/hibernate-entitymanager-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jackrabbit-ocm.jar" sourcepath="libs/jackrabbit-ocm-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/javassist.jar" sourcepath="libs/javassist-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jcr.jar" sourcepath="libs/jcr-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jython.jar" sourcepath="libs/jython-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jboss-logging.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/dom4j.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/slf4j-api.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jackrabbit-api.jar" sourcepath="libs/jackrabbit-api-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jackrabbit-core.jar" sourcepath="libs/jackrabbit-core-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jackrabbit-jcr-commons.jar" sourcepath="libs/jackrabbit-jcr-commons-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jackrabbit-spi-commons.jar" sourcepath="libs/jackrabbit-spi-commons-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jackrabbit-spi.jar" sourcepath="libs/jackrabbit-spi-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jcl-over-slf4j.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/lucene-core.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/tika-core.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/commons-io.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/concurrent.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/derby.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/commons-dbcp.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/commons-pool.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/commons-collections.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/xalan.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/cglib.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/commons-beanutils.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/commons-lang.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/asm.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/drools-compiler.jar" sourcepath="libs/drools-compiler-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/drools-core.jar" sourcepath="libs/drools-core-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/drools-persistence-jpa.jar" sourcepath="libs/drools-persistence-jpa-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jbpm-audit.jar" sourcepath="libs/jbpm-audit-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jbpm-flow-builder.jar" sourcepath="libs/jbpm-flow-builder-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jbpm-flow.jar" sourcepath="libs/jbpm-flow-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jbpm-human-task-core.jar" sourcepath="libs/jbpm-human-task-core-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jbpm-human-task-workitems.jar" sourcepath="libs/jbpm-human-task-workitems-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jbpm-persistence-jpa.jar" sourcepath="libs/jbpm-persistence-jpa-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jbpm-runtime-manager.jar" sourcepath="libs/jbpm-runtime-manager-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jbpm-shared-services.jar" sourcepath="libs/jbpm-shared-services-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jbpm-test.jar" sourcepath="libs/jbpm-test-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/kie-api.jar" sourcepath="libs/kie-api-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/kie-ci.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/kie-internal.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/xstream.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/hibernate-jpa-2.0-api.jar" sourcepath="libs/hibernate-jpa-2.0-api-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/javaee-api.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/protobuf-java.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/joda-time.jar" sourcepath="libs/joda-time-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/mvel2.jar" sourcepath="libs/mvel2-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/slf4j-log4j12.jar" sourcepath="libs/slf4j-log4j12-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/log4j.jar" sourcepath="libs/log4j-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/junit.jar" sourcepath="libs/junit-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jahia-api.jar" sourcepath="libs/jahia-api-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jahia-gwt.jar" sourcepath="libs/jahia-gwt-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jahia-impl.jar" sourcepath="libs/jahia-impl-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/kie-spring.jar" sourcepath="libs/kie-spring-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/spring-tx.jar" sourcepath="libs/spring-tx-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/spring-beans.jar" sourcepath="libs/spring-beans-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/spring-core.jar" sourcepath="libs/spring-core-sources.jar"/>
+	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>

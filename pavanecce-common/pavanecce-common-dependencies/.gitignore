@@ -2,3 +2,4 @@ target
 test-output
 libs
 libs-sources
+/bin

@@ -39,9 +39,11 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-						<Export-Package>org.pavanecce.</Export-Package>
+						<Export-Package>!*</Export-Package>
+						<Import-Package>!*</Import-Package>
 						<Bundle-SymbolicName>org.pavanecce.common.dependencies</Bundle-SymbolicName>
 						<_include>META-INF/MANIFEST.MF</_include>
+						<Include-Resource>libs=libs</Include-Resource>
 					</instructions>
 				</configuration>
 			</plugin>
@@ -60,7 +62,6 @@
 							<outputDirectory>${project.basedir}/libs</outputDirectory>
 							<stripVersion>true</stripVersion>
 							<failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
-
 							<overWriteReleases>false</overWriteReleases>
 							<overWriteSnapshots>false</overWriteSnapshots>
 							<overWriteIfNewer>true</overWriteIfNewer>
@@ -81,7 +82,6 @@
 							<outputDirectory>${project.basedir}/libs</outputDirectory>
 							<stripVersion>true</stripVersion>
 							<failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
-
 							<overWriteReleases>false</overWriteReleases>
 							<overWriteSnapshots>false</overWriteSnapshots>
 							<overWriteIfNewer>true</overWriteIfNewer>
