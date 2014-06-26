@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/ifu-lobuntu/pavanecce.png)](https://travis-ci.org/ifu-lobuntu/pavanecce)
 #PlAtform for VAlue NEtwork Emergence and Continued Capability Evolution
 
 This project aims to establish a web based platform that allows participants to collaborate across traditional organizational boundaries, producing, exchanging and transforming value of different kinds.
