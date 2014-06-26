@@ -7,26 +7,28 @@ import java.io.PrintWriter;
 
 public class FileUtil {
 	public static void deleteAllChildren(File f) {
-		File[] listFiles = f.listFiles();
-		for (File file : listFiles) {
-			if (file.isFile()) {
-				file.delete();
-			} else {
-				deleteAllChildren(file);
-				file.delete();
+		if (f.exists()) {
+			File[] listFiles = f.listFiles();
+			for (File file : listFiles) {
+				if (file.isFile()) {
+					file.delete();
+				} else {
+					deleteAllChildren(file);
+					file.delete();
+				}
 			}
 		}
 	}
 
 	public static void deleteRoot(File repo) {
-
 		try {
 			if (repo.exists()) {
 				if (repo.isDirectory()) {
 					deleteAllChildren(repo);
 				}
 				if (!repo.delete()) {
-					throw new RuntimeException("could not delete " + repo.getCanonicalPath());
+					throw new RuntimeException("could not delete "
+							+ repo.getCanonicalPath());
 				}
 			}
 		} catch (IOException e) {

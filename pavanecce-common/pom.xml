@@ -10,10 +10,13 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>pavanecce-common-build</module>
-		<module>pavanecce-common-dependencies</module>
 		<module>pavanecce-common-util</module>
+		<module>pavanecce-common-jcr</module>
+		<module>pavanecce-common-jpa</module>
+		<module>pavanecce-common-ocm</module>
 		<module>pavanecce-common-text-workspace</module>
 		<module>pavanecce-common-code-metamodel</module>
+		<module>pavanecce-common-tests</module>
 	</modules>
 </project>
 

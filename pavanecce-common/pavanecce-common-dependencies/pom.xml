@@ -11,7 +11,7 @@
 	<packaging>bundle</packaging>
 	<properties>
 		<embeddedGroupIds>
-			org.springframework,org.jahia.server,junit,log4j,org.mvel,joda-time,com.google.protobuf,javax,org.javassist,org.python,javax,org.hibernate,org.codehaus.btm,com.h2database,org.apache,org.apache,org.jboss.logging,dom4j,antlr,org.slf4j,org.apache.jackrabbit,commons-io,concurrent,org.apache.derby,commons-dbcp,commons-pool,commons-lang,commons-beanutils,commons-collections,xalan,cglib,asm,org.jbpm,org.kie,org.drools,com.thoughtworks.xstream
+			org.springframework|org.jahia.server|junit|log4j|org.mvel|joda-time|com.google.protobuf|javax|org.javassist|org.python|javax|org.hibernate|org.codehaus.btm|com.h2database|org.apache|org.apache|org.jboss.logging|dom4j|antlr|org.slf4j|org.apache.jackrabbit|commons-io|concurrent|org.apache.derby|commons-dbcp|commons-pool|commons-lang|commons-beanutils|commons-collections|xalan|cglib|asm|org.jbpm|org.kie|org.drools|com.thoughtworks.xstream
 
 		</embeddedGroupIds>
 	</properties>
@@ -39,11 +39,11 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-						<Export-Package>!*</Export-Package>
-						<Import-Package>!*</Import-Package>
+<!-- 						<Export-Package>!*</Export-Package> -->
+<!-- 						<Import-Package>!*</Import-Package> -->
 						<Bundle-SymbolicName>org.pavanecce.common.dependencies</Bundle-SymbolicName>
-						<_include>META-INF/MANIFEST.MF</_include>
-						<Include-Resource>libs=libs</Include-Resource>
+						<Embed-Dependency>groupId=${embeddedGroupIds}</Embed-Dependency>
+<!-- 						<_include>META-INF/MANIFEST.MF</_include> -->
 					</instructions>
 				</configuration>
 			</plugin>
