@@ -60,6 +60,7 @@ public class CaseInstanceTest extends AbstractPlanItemInstanceContainerLifecycle
 
 	}
 
+	@SuppressWarnings("unchecked")
 	protected void testCloseAndOutput(PlanItemInstanceContainer piic) {
 		// and close it
 		if (piic instanceof CaseInstance) {

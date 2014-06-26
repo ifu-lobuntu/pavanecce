@@ -2,3 +2,6 @@ bin
 .settings
 classes
 /target
+.project
+.classpath
+.settings

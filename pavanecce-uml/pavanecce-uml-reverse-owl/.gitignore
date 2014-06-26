@@ -3,3 +3,6 @@ bin
 classes
 /target
 /libs
+.project
+.classpath
+.settings

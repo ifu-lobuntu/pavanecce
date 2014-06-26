@@ -109,7 +109,7 @@ public class JcrTestCase extends AbstractCmmnCaseTestCase {
 	}
 
 	@Override
-	protected Class[] getClasses() {
+	protected Class<?>[] getClasses() {
 		return new Class[0];
 	}
 

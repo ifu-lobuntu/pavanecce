@@ -270,6 +270,7 @@ public class CmmnWorkflowProvider extends JBPM6WorkflowProvider {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void addComment(final String processId, final String comment, final String user) {
 		executeCommand(new AddCommentCommand(processId, comment, user));
@@ -312,6 +313,7 @@ public class CmmnWorkflowProvider extends JBPM6WorkflowProvider {
 		}
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void recompilePackages() {
 		synchronized (getWorkflowService()) {
 			long timer = System.currentTimeMillis();

@@ -5,3 +5,6 @@ cachedir
 test-input
 repository
 derby.*
+.project
+.classpath
+.settings

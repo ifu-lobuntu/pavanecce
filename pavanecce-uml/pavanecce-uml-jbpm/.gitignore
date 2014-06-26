@@ -2,3 +2,6 @@
 /derby.log
 /btm1.tlog
 /btm2.tlog
+.project
+.classpath
+.settings

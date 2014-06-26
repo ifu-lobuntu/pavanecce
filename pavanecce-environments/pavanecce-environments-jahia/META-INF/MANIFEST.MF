@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1403794590987
+Bnd-LastModified: 1403798579922
 Build-Jdk: 1.7.0_55
 Built-By: ampie
 Bundle-ClassPath: .,libs/jahia-impl-7.0.0.0.jar,libs/jahia-api-7.0.0.0.j
@@ -521,19 +521,19 @@ Export-Package: com.thoughtworks.xstream;version="1.4.4",javassist;versi
  .springframework.core.io;version="3.2.8",org.springframework.transactio
  n;version="3.2.8",org.springframework.transaction.support;version="3.2.
  8";uses:="org.springframework.beans.factory,org.springframework.transac
- tion",net.sf.cglib.asm.signature;version="2.2.2",net.sf.cglib.asm;versi
- on="2.2.2",javax.enterprise.util;version="1.0.0",net.sf.cglib.util;vers
- ion="2.2.2",net.sf.cglib.transform.impl;version="2.2.2",org.springframe
- work.cor.e.io;version="3.2.8",net.sf.cglib.core;version="2.2.2",net.sf.
- cglib.beans;version="2.2.2",javax.enterprise.event;version="1.0.0",net.
- sf.cglib.proxy;version="2.2.2",javax.enterprise.inject;version="1.0.0",
- org.hibernate.annotations.common;version="4.0.2.Final",javax.inject;ver
- sion="1.0.0",net.sf.cglib.reflect;version="2.2.2",net.sf.cglib.transfor
- m;version="2.2.2"
-Import-Package: javax.xml.transform.stream,javax.xml.transform,org.slf4j
- ;version="[1.1.6,2)",javax.naming,org.xml.sax.helpers,org.w3c.dom,org.x
- ml.sax,javax.imageio.spi,javax.xml.parsers,javax.sql,javax.xml.transfor
- m.dom,javax.security.auth.callback,javax.security.auth.spi,javax.securi
- ty.auth,javax.security.auth.login
+ tion",javax.inject;version="1.0.0",javax.enterprise.event;version="1.0.
+ 0",net.sf.cglib.transform;version="2.2.2",net.sf.cglib.core;version="2.
+ 2.2",javax.enterprise.inject;version="1.0.0",net.sf.cglib.reflect;versi
+ on="2.2.2",javax.enterprise.util;version="1.0.0",net.sf.cglib.beans;ver
+ sion="2.2.2",net.sf.cglib.transform.impl;version="2.2.2",org.hibernate.
+ annotations.common;version="4.0.2.Final",net.sf.cglib.util;version="2.2
+ .2",net.sf.cglib.proxy;version="2.2.2",org.springframework.cor.e.io;ver
+ sion="3.2.8",net.sf.cglib.asm;version="2.2.2",net.sf.cglib.asm.signatur
+ e;version="2.2.2"
+Import-Package: javax.xml.parsers,javax.security.auth.callback,javax.sec
+ urity.auth.spi,javax.security.auth,org.slf4j;version="[1.1.6,2)",org.xm
+ l.sax.helpers,javax.security.auth.login,javax.xml.transform.stream,java
+ x.xml.transform.dom,org.xml.sax,javax.sql,javax.xml.transform,javax.nam
+ ing,javax.imageio.spi,org.w3c.dom
 JBOSS_HOME: /opt/jboss-5.1.0.GA
 Tool: Bnd-2.1.0.20130426-122213
