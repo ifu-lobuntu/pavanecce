@@ -34,7 +34,7 @@ import org.pavanecce.cmmn.jbpm.event.DemarcatedSubscriptionContext;
 import org.pavanecce.cmmn.jbpm.event.SubscriptionManager;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
-import org.pavanecce.common.ObjectPersistence;
+import org.pavanecce.common.util.ObjectPersistence;
 import org.pavanecce.common.jcr.JcrSessionFactory;
 
 public class JcrSubscriptionManager extends AbstractPersistentSubscriptionManager<JcrCaseSubscriptionInfo, JcrCaseFileItemSubscriptionInfo> implements

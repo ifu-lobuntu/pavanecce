@@ -26,7 +26,7 @@ import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
 import org.pavanecce.cmmn.jbpm.flow.OnPart;
 import org.pavanecce.cmmn.jbpm.infra.OnPartInstanceSubscription;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
-import org.pavanecce.common.ObjectPersistence;
+import org.pavanecce.common.util.ObjectPersistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

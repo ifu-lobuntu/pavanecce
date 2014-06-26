@@ -36,7 +36,7 @@ import org.pavanecce.cmmn.jbpm.event.SubscriptionManager;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
 import org.pavanecce.cmmn.jbpm.infra.OnPartInstanceSubscription;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
-import org.pavanecce.common.ObjectPersistence;
+import org.pavanecce.common.util.ObjectPersistence;
 import org.pavanecce.common.jpa.JpaObjectPersistence;
 
 public class HibernateSubscriptionManager extends AbstractPersistentSubscriptionManager<JpaCaseSubscriptionInfo, JpaCaseFileItemSubscriptionInfo> implements

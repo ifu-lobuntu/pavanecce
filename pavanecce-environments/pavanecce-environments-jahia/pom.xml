@@ -253,6 +253,7 @@
 							org.mvel2,
 							org.springframework.beans.factory;version="3.2.8",
 							org.springframework.cor.e.io;version="3.2.8",
+							org.springframework.core.io;version="3.2.8",
 							org.springframework.transaction;version="3.2.8",
 							org.springframework.transaction.support;version="3.2.8",
 						</_exportcontents>

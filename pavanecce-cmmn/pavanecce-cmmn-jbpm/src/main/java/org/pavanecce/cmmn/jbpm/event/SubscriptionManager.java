@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItem;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
-import org.pavanecce.common.ObjectPersistence;
+import org.pavanecce.common.util.ObjectPersistence;
 
 public interface SubscriptionManager {
 	String ENV_NAME = SubscriptionManager.class.getName();

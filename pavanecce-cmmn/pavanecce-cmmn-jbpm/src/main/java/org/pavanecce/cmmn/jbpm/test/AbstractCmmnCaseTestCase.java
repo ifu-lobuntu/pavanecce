@@ -115,8 +115,8 @@ import org.pavanecce.cmmn.jbpm.xml.handler.CMMNBuilder;
 import org.pavanecce.cmmn.jbpm.xml.handler.DefaultTypeMap;
 import org.pavanecce.cmmn.jbpm.xml.handler.DefinitionsHandler;
 import org.pavanecce.cmmn.jbpm.xml.handler.JcrTypeMap;
-import org.pavanecce.common.ObjectPersistence;
-import org.pavanecce.common.Stopwatch;
+import org.pavanecce.common.util.ObjectPersistence;
+import org.pavanecce.common.util.Stopwatch;
 import org.pavanecce.common.jpa.JpaObjectPersistence;
 import org.pavanecce.common.ocm.ObjectContentManagerFactory;
 import org.pavanecce.common.ocm.OcmObjectPersistence;
@@ -644,7 +644,7 @@ public abstract class AbstractCmmnCaseTestCase extends JbpmJUnitBaseTestCase {
 				throw new RuntimeException(e);
 			}
 		}
-		return this.jcrSession;
+		return jcrSession;
 	}
 
 	@SuppressWarnings("rawtypes")
