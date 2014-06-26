@@ -12,6 +12,7 @@
 	<modules>
 		<module>pavanecce-cmmn-jbpm</module>
 		<module>pavanecce-cmmn-jahia</module>
+		<module>pavanecce-cmmn-extensions</module>
 	</modules>
 	<profiles>
 		<profile>
