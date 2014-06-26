@@ -16,7 +16,7 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
-			<artifactId>pavanecce-environments-extensions</artifactId>
+			<artifactId>${environment.artifactId}</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 	</dependencies>

@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<parent>
 		<groupId>org.pavanecce</groupId>
 		<artifactId>pavanecce-uml</artifactId>
@@ -6,49 +7,32 @@
 		<relativePath>..</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>${artifactId}</artifactId>
-	<packaging>${packaging}</packaging>
-	<profiles>
-		<profile>
-			<id>standalone</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<properties>
-				<artifactId>pavanecce-uml-reverse-java</artifactId>
-				<packaging>jar</packaging>
-			</properties>
-			<dependencies>
-				<dependency>
-					<groupId>${project.parent.groupId}</groupId>
-					<artifactId>pavanecce-uml-common</artifactId>
-					<version>${project.parent.version}</version>
-				</dependency>
-			</dependencies>
-		</profile>
-		<profile>
-			<id>osgi</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<properties>
-				<artifactId>org.pavanecce.uml.reverse.java</artifactId>
-				<packaging>eclipse-plugin</packaging>
-			</properties>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-compiler-plugin</artifactId>
-						<inherited>true</inherited>
-					</plugin>
-					<plugin>
-						<groupId>org.eclipse.tycho</groupId>
-						<artifactId>tycho-maven-plugin</artifactId>
-						<version>${tycho.version}</version>
-						<extensions>true</extensions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
+	<artifactId>pavanecce-uml-reverse-java</artifactId>
+	<packaging>bundle</packaging>
+	<dependencies>
+		<dependency>
+			<groupId>${project.parent.groupId}</groupId>
+			<artifactId>pavanecce-uml-common</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<manifestLocation>META-INF</manifestLocation>
+					<instructions>
+						<Export-Package>org.pavanecce.uml.reverse.java,
+							org.pavanecce.uml.reverse.java.sourcemodel,
+							org.pavanecce.uml.reverse.java.sourcemodel.reflect</Export-Package>
+						<Bundle-SymbolicName>org.pavanecce.uml.reverse.java</Bundle-SymbolicName>
+						<Bundle-Name>org.pavanecce.uml.reverse.java</Bundle-Name>
+					</instructions>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>

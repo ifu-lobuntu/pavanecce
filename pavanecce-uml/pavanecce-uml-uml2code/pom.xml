@@ -8,58 +8,42 @@
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
-	<artifactId>${artifactId}</artifactId>
-	<packaging>${packaging}</packaging>
-
+	<artifactId>pavanecce-uml-uml2code</artifactId>
+	<packaging>bundle</packaging>
 	<dependencies>
+		<dependency>
+			<groupId>${project.parent.groupId}</groupId>
+			<artifactId>pavanecce-uml-common</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.parent.groupId}</groupId>
+			<artifactId>pavanecce-common-code-metamodel</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
 	</dependencies>
-	<profiles>
-		<profile>
-			<id>standalone</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<properties>
-				<artifactId>pavanecce-uml-uml2code</artifactId>
-				<packaging>jar</packaging>
-			</properties>
-			<dependencies>
-				<dependency>
-					<groupId>${project.parent.groupId}</groupId>
-					<artifactId>pavanecce-uml-common</artifactId>
-					<version>${project.parent.version}</version>
-				</dependency>
-				<dependency>
-					<groupId>${project.parent.groupId}</groupId>
-					<artifactId>pavanecce-common-code-metamodel</artifactId>
-					<version>${project.parent.version}</version>
-				</dependency>
-			</dependencies>
-		</profile>
-		<profile>
-			<id>osgi</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<properties>
-				<artifactId>org.pavanecce.uml.uml2code</artifactId>
-				<packaging>eclipse-plugin</packaging>
-			</properties>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-compiler-plugin</artifactId>
-						<inherited>true</inherited>
-					</plugin>
-					<plugin>
-						<groupId>org.eclipse.tycho</groupId>
-						<artifactId>tycho-maven-plugin</artifactId>
-						<version>${tycho.version}</version>
-						<extensions>true</extensions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
-
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<manifestLocation>META-INF</manifestLocation>
+					<instructions>
+						<Export-Package>org.pavanecce.uml.uml2code,
+							org.pavanecce.uml.uml2code.cmmn,
+							org.pavanecce.uml.uml2code.codemodel,
+							org.pavanecce.uml.uml2code.java,
+							org.pavanecce.uml.uml2code.javascript,
+							org.pavanecce.uml.uml2code.jpa,
+							org.pavanecce.uml.uml2code.ocm,
+							org.pavanecce.uml.uml2code.python</Export-Package>
+						<Bundle-SymbolicName>org.pavanecce.uml.uml2code</Bundle-SymbolicName>
+						<Bundle-Name>org.pavanecce.uml.uml2code</Bundle-Name>
+					</instructions>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>

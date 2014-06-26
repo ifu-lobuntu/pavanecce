@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<parent>
 		<groupId>org.pavanecce</groupId>
 		<artifactId>pavanecce-uml</artifactId>
@@ -66,14 +67,45 @@
 						</goals>
 						<configuration>
 							<tasks>
-								<echo message="hello" />
+								<echo message="deleting embedded manifests" />
 								<delete verbose="true">
-									<fileset dir="${project.build.directory}/classes/META-INF" includes="ECLIPSE*.* eclipse.*" />
+									<fileset dir="${project.build.directory}/classes/META-INF"
+										includes="ECLIPSE*.* eclipse.* services" />
+									<fileset dir="${project.build.directory}/classes/META-INF/services"
+										includes="**/*.*" />
 								</delete>
 							</tasks>
 						</configuration>
 					</execution>
+					<execution>
+						<id>archive-manifest</id>
+						<phase>install</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+								<echo message="archiving manifest" />
+								<jar update="true"
+									destfile="${project.basedir}/target/${project.build.finalName}.jar"
+									manifest="${project.basedir}/src/main/resources/META-INF/MANIFEST.MF">
+									<fileset dir="${project.basedir}/src/main/resources/"
+										includes="**/*.*" />
+								</jar>
+							</tasks>
+						</configuration>
+					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<archive>
+						<manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
+					</archive>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

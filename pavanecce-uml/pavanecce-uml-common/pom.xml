@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<parent>
 		<groupId>org.pavanecce</groupId>
 		<artifactId>pavanecce-uml</artifactId>
@@ -6,60 +7,73 @@
 		<relativePath>..</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>${artifactId}</artifactId>
-	<packaging>${packaging}</packaging>
-
+	<artifactId>pavanecce-uml-common</artifactId>
+	<packaging>bundle</packaging>
 	<dependencies>
+		<dependency>
+			<groupId>${project.parent.groupId}</groupId>
+			<artifactId>pavanecce-common-util</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.parent.groupId}</groupId>
+			<artifactId>pavanecce-uml-dependencies</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
 	</dependencies>
-	<profiles>
-		<profile>
-			<id>standalone</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<properties>
-				<artifactId>pavanecce-uml-common</artifactId>
-				<packaging>jar</packaging>
-			</properties>
-			<dependencies>
-				<dependency>
-					<groupId>${project.parent.groupId}</groupId>
-					<artifactId>pavanecce-common-util</artifactId>
-					<version>${project.parent.version}</version>
-				</dependency>
-				<dependency>
-					<groupId>${project.parent.groupId}</groupId>
-					<artifactId>pavanecce-uml-dependencies</artifactId>
-					<version>${project.parent.version}</version>
-				</dependency>
-			</dependencies>
-		</profile>
-		<profile>
-			<id>osgi</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<properties>
-				<artifactId>org.pavanecce.uml.common</artifactId>
-				<packaging>eclipse-plugin</packaging>
-			</properties>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-compiler-plugin</artifactId>
-						<inherited>true</inherited>
-					</plugin>
-					<plugin>
-						<groupId>org.eclipse.tycho</groupId>
-						<artifactId>tycho-maven-plugin</artifactId>
-						<version>${tycho.version}</version>
-						<extensions>true</extensions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 	<build>
-
+		<plugins>
+<!-- 			<plugin> -->
+<!-- 				<artifactId>maven-checkstyle-plugin</artifactId> -->
+<!-- 			</plugin> -->
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<manifestLocation>META-INF</manifestLocation>
+					<instructions>
+						<Import-Package>lpg.runtime,
+							org.eclipse.emf.common.notify,
+							org.eclipse.emf.common.notify.impl,
+							org.eclipse.emf.common.util,
+							org.eclipse.emf.ecore,
+							org.eclipse.emf.ecore.impl,
+							org.eclipse.emf.ecore.resource,
+							org.eclipse.emf.ecore.resource.impl,
+							org.eclipse.emf.ecore.util,
+							org.eclipse.emf.ecore.xmi,
+							org.eclipse.ocl,
+							org.eclipse.ocl.common,
+							org.eclipse.ocl.ecore,
+							org.eclipse.ocl.ecore.delegate,
+							org.eclipse.ocl.expressions,
+							org.eclipse.ocl.helper,
+							org.eclipse.ocl.lpg,
+							org.eclipse.ocl.parser,
+							org.eclipse.ocl.types,
+							org.eclipse.ocl.uml,
+							org.eclipse.ocl.uml.impl,
+							org.eclipse.ocl.uml.internal,
+							org.eclipse.ocl.uml.util,
+							org.eclipse.ocl.util,
+							org.eclipse.ocl.utilities,
+							org.eclipse.uml2.uml,
+							org.eclipse.uml2.uml.internal.impl,
+							org.eclipse.uml2.uml.resource,
+							org.eclipse.uml2.uml.resources.util,
+							org.eclipse.uml2.uml.util,
+						</Import-Package>
+						<Export-Package>models.libraries,
+							models.profiles,
+							org.pavanecce.uml.common.ocl,
+							org.pavanecce.uml.common.util,
+							org.pavanecce.uml.common.util.emulated</Export-Package>
+						<Bundle-SymbolicName>org.pavanecce.uml.common</Bundle-SymbolicName>
+						<Bundle-Name>org.pavanecce.uml.common</Bundle-Name>
+					</instructions>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
 </project>

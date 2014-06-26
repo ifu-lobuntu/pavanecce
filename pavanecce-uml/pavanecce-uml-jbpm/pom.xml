@@ -1,77 +1,76 @@
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<parent>
 		<groupId>org.pavanecce</groupId>
 		<artifactId>pavanecce-uml</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>${artifactId}</artifactId>
-	<packaging>${packaging}</packaging>
-
-	<profiles>
-		<profile>
-			<id>standalone</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<properties>
-				<artifactId>pavanecce-uml-jbpm</artifactId>
-				<packaging>jar</packaging>
-			</properties>
-			<dependencies>
-				<dependency>
-					<groupId>${project.parent.groupId}</groupId>
-					<artifactId>pavanecce-uml-ocl2code</artifactId>
-					<version>${project.parent.version}</version>
-				</dependency>
-				<dependency>
-					<groupId>${project.parent.groupId}</groupId>
-					<artifactId>pavanecce-common-util</artifactId>
-					<version>${project.parent.version}</version>
-					<type>${packaging}</type>
-				</dependency>
-				<dependency>
-					<groupId>${project.parent.groupId}</groupId>
-					<artifactId>pavanecce-cmmn-jbpm</artifactId>
-					<version>${project.parent.version}</version>
-					<type>${packaging}</type>
-				</dependency>
-				<dependency>
-					<groupId>org.pavanecce</groupId>
-					<artifactId>pavanecce-uml-dependencies</artifactId>
-					<version>${project.parent.version}</version>
-					<type>${packaging}</type>
-				</dependency>
-			</dependencies>
-		</profile>
-		<profile>
-			<id>osgi</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<properties>
-				<artifactId>org.pavanecce.uml.jbpm</artifactId>
-				<packaging>eclipse-plugin</packaging>
-			</properties>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-compiler-plugin</artifactId>
-						<inherited>true</inherited>
-					</plugin>
-					<plugin>
-						<groupId>org.eclipse.tycho</groupId>
-						<artifactId>tycho-maven-plugin</artifactId>
-						<version>${tycho.version}</version>
-						<extensions>true</extensions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
+	<artifactId>pavanecce-uml-jbpm</artifactId>
+	<packaging>bundle</packaging>
+	<dependencies>
+		<dependency>
+			<groupId>${project.parent.groupId}</groupId>
+			<artifactId>pavanecce-uml-ocl2code</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.parent.groupId}</groupId>
+			<artifactId>pavanecce-common-util</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.parent.groupId}</groupId>
+			<artifactId>pavanecce-cmmn-jbpm</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.pavanecce</groupId>
+			<artifactId>pavanecce-uml-dependencies</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.ops4j.pax.exam</groupId>
+			<artifactId>pax-exam-container-native</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.ops4j.pax.exam</groupId>
+			<artifactId>pax-exam-junit4</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.ops4j.pax.exam</groupId>
+			<artifactId>pax-exam-link-mvn</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.ops4j.pax.url</groupId>
+			<artifactId>pax-url-aether</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.felix</groupId>
+			<artifactId>org.apache.felix.framework</artifactId>
+		</dependency>
+	</dependencies>
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<manifestLocation>META-INF</manifestLocation>
+					<instructions>
+						<Export-Package>org.pavanecce.uml.uml2code,
+							org.pavanecce.uml.ocl2code,
+							org.pavanecce.common.util,
+							org.pavanecce.uml.common,
+							org.pavanecce.common.code.metamodel,
+							org.pavanecce.cmmn.jbpm</Export-Package>
+						<Bundle-SymbolicName>org.pavanecce.uml.jbpm</Bundle-SymbolicName>
+						<Bundle-Name>org.pavanecce.uml.jbpm</Bundle-Name>
+					</instructions>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>

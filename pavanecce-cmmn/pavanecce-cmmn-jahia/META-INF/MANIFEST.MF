@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1403789480055
+Bnd-LastModified: 1403794737395
 Build-Jdk: 1.7.0_55
 Built-By: ampie
 Bundle-ManifestVersion: 2
@@ -13,25 +13,22 @@ Export-Package: org.pavanecce.cmmn.jahia;uses:="javax.persistence,org.dr
  .jahia.services.workflow.jbpm.custom,org.jbpm.shared.services.impl,org.
  kie.api.builder,org.kie.api.runtime.process,org.springframework.core.io
  ,org.springframework.transaction.support";version="0.0.1.SNAPSHOT"
-Import-Package: javax.persistence;version="[2.0,3)",org.drools.core.comm
- and.impl;version="[6.0,7)",org.drools.core.impl;version="[6.0,7)",org.d
- rools.core.process.instance;version="[6.0,7)",org.drools.persistence;ve
- rsion="[6.0,7)",org.jahia.pipelines;version="[7.0,8)",org.jahia.service
- s.usermanager;version="[7.0,8)",org.jahia.services.workflow;version="[7
- .0,8)",org.jahia.services.workflow.jbpm;version="[7.0,8)",org.jahia.ser
- vices.workflow.jbpm.command;version="[7.0,8)",org.jahia.services.workfl
- ow.jbpm.custom;version="[7.0,8)",org.jbpm.runtime.manager.impl;version=
- "[6.0,7)",org.jbpm.shared.services.api;version="[6.0,7)",org.jbpm.share
- d.services.impl;version="[6.0,7)",org.kie.api;version="[6.0,7)",org.kie
- .api.builder;version="[6.0,7)",org.kie.api.command;version="[6.0,7)",or
- g.kie.api.event.process;version="[6.0,7)",org.kie.api.io;version="[6.0,
- 7)",org.kie.api.runtime;version="[6.0,7)",org.kie.api.runtime.manager;v
- ersion="[6.0,7)",org.kie.api.runtime.process;version="[6.0,7)",org.kie.
- api.task;version="[6.0,7)",org.kie.internal.runtime.manager;version="[6
- .0,7)",org.kie.internal.runtime.manager.context;version="[6.0,7)",org.k
- ie.internal.task.api;version="[6.0,7)",org.kie.spring.persistence;versi
- on="[6.0,7)",org.slf4j;version="[1.6,2)",org.springframework.core.io;ve
- rsion="[3.2,4)",org.springframework.transaction.support;version="[3.2,4
- )"
+Import-Package: javax.persistence,org.drools.core.command.impl;version="
+ [6.0,7)",org.drools.core.impl;version="[6.0,7)",org.drools.core.process
+ .instance;version="[6.0,7)",org.drools.persistence;version="[6.0,7)",or
+ g.jahia.pipelines,org.jahia.services.usermanager,org.jahia.services.wor
+ kflow,org.jahia.services.workflow.jbpm,org.jahia.services.workflow.jbpm
+ .command,org.jahia.services.workflow.jbpm.custom,org.jbpm.runtime.manag
+ er.impl;version="[6.0,7)",org.jbpm.shared.services.api;version="[6.0,7)
+ ",org.jbpm.shared.services.impl;version="[6.0,7)",org.kie.api;version="
+ [6.0,7)",org.kie.api.builder;version="[6.0,7)",org.kie.api.command;vers
+ ion="[6.0,7)",org.kie.api.event.process;version="[6.0,7)",org.kie.api.i
+ o;version="[6.0,7)",org.kie.api.runtime;version="[6.0,7)",org.kie.api.r
+ untime.manager;version="[6.0,7)",org.kie.api.runtime.process;version="[
+ 6.0,7)",org.kie.api.task;version="[6.0,7)",org.kie.internal.runtime.man
+ ager;version="[6.0,7)",org.kie.internal.runtime.manager.context;version
+ ="[6.0,7)",org.kie.internal.task.api;version="[6.0,7)",org.kie.spring.p
+ ersistence;version="[6.0,7)",org.slf4j;version="[1.6,2)",org.springfram
+ ework.core.io,org.springframework.transaction.support
 JBOSS_HOME: /opt/jboss-5.1.0.GA
 Tool: Bnd-2.1.0.20130426-122213

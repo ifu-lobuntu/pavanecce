@@ -1,56 +1,39 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<parent>
 		<groupId>org.pavanecce</groupId>
 		<artifactId>pavanecce-uml</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>${artifactId}</artifactId>
-	<packaging>${packaging}</packaging>
+	<artifactId>pavanecce-uml-ocl2code</artifactId>
+	<packaging>bundle</packaging>
 
 	<dependencies>
+		<dependency>
+			<groupId>${project.parent.groupId}</groupId>
+			<artifactId>pavanecce-uml-uml2code</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
 	</dependencies>
-	<profiles>
-		<profile>
-			<id>standalone</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<properties>
-				<artifactId>pavanecce-uml-ocl2code</artifactId>
-				<packaging>jar</packaging>
-			</properties>
-			<dependencies>
-				<dependency>
-					<groupId>${project.parent.groupId}</groupId>
-					<artifactId>pavanecce-uml-uml2code</artifactId>
-					<version>${project.parent.version}</version>
-				</dependency>
-			</dependencies>
-		</profile>
-		<profile>
-			<id>osgi</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<properties>
-				<artifactId>org.pavanecce.uml.ocl2code</artifactId>
-				<packaging>eclipse-plugin</packaging>
-			</properties>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-compiler-plugin</artifactId>
-						<inherited>true</inherited>
-					</plugin>
-					<plugin>
-						<groupId>org.eclipse.tycho</groupId>
-						<artifactId>tycho-maven-plugin</artifactId>
-						<version>${tycho.version}</version>
-						<extensions>true</extensions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<manifestLocation>META-INF</manifestLocation>
+					<instructions>
+						<Export-Package>org.pavanecce.uml.ocltocode,
+							org.pavanecce.uml.ocltocode.common,
+							org.pavanecce.uml.ocltocode.creators,
+							org.pavanecce.uml.ocltocode.maps</Export-Package>
+						<Bundle-SymbolicName>org.pavanecce.uml.ocl2code</Bundle-SymbolicName>
+						<Bundle-Name>org.pavanecce.uml.ocl2code</Bundle-Name>
+					</instructions>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>

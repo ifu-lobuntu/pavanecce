@@ -1,10 +1,11 @@
 Manifest-Version: 1.0
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-Name: pavanecce-uml-dependencies
-Bundle-SymbolicName: pavanecce-uml-dependencies
+Bundle-SymbolicName: org.pavanecce.uml.dependencies
 Bundle-Version: 0.0.1.qualifier
 Bundle-ManifestVersion: 2
 Bundle-ClassPath: .
+Import-Package:  
 Export-Package: lpg.runtime,
  org.eclipse.emf.common.notify,
  org.eclipse.emf.common.notify.impl,
@@ -35,4 +36,4 @@ Export-Package: lpg.runtime,
  org.eclipse.uml2.uml.resource,
  org.eclipse.uml2.uml.resources.util,
  org.eclipse.uml2.uml.util
-
+ 
