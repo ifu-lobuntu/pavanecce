@@ -270,6 +270,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
+							<silent>true</silent>
 							<outputDirectory>${project.basedir}/libs</outputDirectory>
 							<stripVersion>false</stripVersion>
 							<failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
@@ -288,6 +289,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
+							<silent>true</silent>
 							<classifier>sources</classifier>
 							<outputDirectory>${project.basedir}/libs</outputDirectory>
 							<stripVersion>false</stripVersion>

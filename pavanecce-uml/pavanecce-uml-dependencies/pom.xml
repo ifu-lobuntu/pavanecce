@@ -35,6 +35,7 @@
 						</goals>
 						<inherited>false</inherited>
 						<configuration>
+							<silent>true</silent>
 							<failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
 							<classifier>sources</classifier>
 							<outputDirectory>${project.build.directory}/classes</outputDirectory>
@@ -49,6 +50,7 @@
 						</goals>
 						<inherited>false</inherited>
 						<configuration>
+							<silent>true</silent>
 							<failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
 							<outputDirectory>${project.build.directory}/classes</outputDirectory>
 							<actTransitively>true</actTransitively>

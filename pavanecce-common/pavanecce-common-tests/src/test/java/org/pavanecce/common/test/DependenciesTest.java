@@ -1,9 +1,6 @@
 package org.pavanecce.common.test;
 
-import static org.ops4j.pax.exam.CoreOptions.junitBundles;
-import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
-import static org.ops4j.pax.exam.CoreOptions.options;
-import static org.ops4j.pax.exam.CoreOptions.systemPackages;
+import static org.ops4j.pax.exam.CoreOptions.*;
 
 import java.io.File;
 
@@ -18,25 +15,31 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 import org.pavanecce.common.ocm.ObjectContentManagerFactory;
 import org.pavanecce.common.util.FileUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @RunWith(PaxExam.class)
 public class DependenciesTest {
 	@Test
-	public void testIt() throws Exception{
+	public void testIt() throws Exception {
 		File jcrRepoDir = new File("./repository");
 		FileUtil.deleteAllChildren(jcrRepoDir);
 		jcrRepoDir.mkdirs();
-		
+
 		TransientRepository tr = new TransientRepository();
-		Session transientSession=tr.login(new SimpleCredentials("admin", "admin".toCharArray()));
+		Session transientSession = tr.login(new SimpleCredentials("admin",
+				"admin".toCharArray()));
 		new ObjectContentManagerFactory(transientSession, null, null);
 	}
 
 	@Configuration
 	public Option[] config() {
 		return options(
-				systemPackages("javax.xml.transform","javax.sql"),
-//				mavenBundle("org.slf4j", "slf4j-api", "1.6.4"),
-//				mavenBundle("org.slf4j", "slf4j-log4j12", "1.6.6"),
+				systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level")
+						.value("WARN"),
+				systemPackages("javax.xml.transform", "javax.sql"),
+				// mavenBundle("org.slf4j", "slf4j-api", "1.6.4"),
+				// mavenBundle("org.slf4j", "slf4j-log4j12", "1.6.6"),
 				mavenBundle("org.pavanecce", "pavanecce-environments-jahia",
 						"0.0.1-SNAPSHOT"),
 				mavenBundle("org.pavanecce", "pavanecce-common-util",

@@ -60,12 +60,7 @@
 				<configuration>
 					<manifestLocation>META-INF</manifestLocation>
 					<instructions>
-						<Export-Package>org.pavanecce.uml.uml2code,
-							org.pavanecce.uml.ocl2code,
-							org.pavanecce.common.util,
-							org.pavanecce.uml.common,
-							org.pavanecce.common.code.metamodel,
-							org.pavanecce.cmmn.jbpm</Export-Package>
+						<Export-Package>org.pavanecce.uml.jbpm</Export-Package>
 						<Bundle-SymbolicName>org.pavanecce.uml.jbpm</Bundle-SymbolicName>
 						<Bundle-Name>org.pavanecce.uml.jbpm</Bundle-Name>
 					</instructions>
