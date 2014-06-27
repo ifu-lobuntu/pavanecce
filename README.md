@@ -6,7 +6,7 @@ Read more about the project at [Ifu Lobuntu](http://www.ifu-lobuntu.org/home/pro
 
 A this point, the project consists of the following subprojectssupport for the following 
 
-1. [Pavanecce CMMN](pavanecce-cmm/readme.md) which provides runtime semantics of CMMN.
+1. [Pavanecce CMMN](pavanecce-cmmn/readme.md) which provides runtime semantics of CMMN.
 2. [Pavanecce UML](pavanecce-uml/readme.md) which provides integrated domain models generated from UML 
 3. pavanecce-common provides some common infrastructure
 4. pavanecce-eclipse provides some optional utilities we use during development
