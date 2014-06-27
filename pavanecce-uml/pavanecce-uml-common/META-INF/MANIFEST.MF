@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1403798782303
+Bnd-LastModified: 1403843828655
 Build-Jdk: 1.7.0_55
 Built-By: ampie
 Bundle-ManifestVersion: 2
@@ -32,8 +32,8 @@ Import-Package: lpg.runtime,org.eclipse.emf.common.notify,org.eclipse.em
  .ocl.uml.impl,org.eclipse.ocl.uml.internal,org.eclipse.ocl.uml.util,org
  .eclipse.ocl.util,org.eclipse.ocl.utilities,org.eclipse.uml2.uml,org.ec
  lipse.uml2.uml.internal.impl,org.eclipse.uml2.uml.resource,org.eclipse.
- uml2.uml.resources.util,org.eclipse.uml2.uml.util,org.eclipse.ocl.commo
- n,org.eclipse.ocl.ecore.delegate,org.eclipse.ocl.ecore,org.eclipse.emf.
- ecore.xmi
+ uml2.uml.resources.util,org.eclipse.uml2.uml.util,org.eclipse.ocl.ecore
+ ,org.eclipse.emf.ecore.xmi,org.eclipse.ocl.common,org.eclipse.ocl.ecore
+ .delegate
 JBOSS_HOME: /opt/jboss-5.1.0.GA
 Tool: Bnd-2.1.0.20130426-122213

@@ -9,6 +9,20 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>pavanecce-environments-jahia</artifactId>
 	<packaging>bundle</packaging>
+	<repositories>
+		<repository>
+			<id>jahia-public</id>
+			<name>Jahia Public Repository</name>
+			<url>https://devtools.jahia.com/nexus/content/groups/public</url>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 	<properties>
 		<embeddedGroupIds>
 			org.apache.tika|org.apache.lucene|commons-digester|javax.transaction|org.hibernate.javax.persistence|javax.jcr|org.springframework|org.jahia.server|org.mvel|joda-time|com.google.protobuf|javax|org.javassist|org.hibernate|org.apache|org.jboss.logging|dom4j|antlr|org.apache.jackrabbit|commons-io|concurrent|org.apache.derby|commons-dbcp|commons-pool|commons-lang|commons-beanutils|commons-collections|xalan|cglib|asm|org.jbpm|org.kie|org.drools|com.thoughtworks.xstream
@@ -19,22 +33,6 @@
 
 		</commaSeparatedembeddedGroupIds>
 	</properties>
-	<repositories>
-		<repository>
-			<id>jboss-public-repository-group</id>
-			<name>JBoss Public Repository Group</name>
-			<url>http://repository.jboss.org/nexus/content/groups/public/</url>
-			<layout>default</layout>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>never</updatePolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>daily</updatePolicy>
-			</snapshots>
-		</repository>
-	</repositories>
 	<build>
 		<plugins>
 			<plugin>

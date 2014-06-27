@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1403798792160
+Bnd-LastModified: 1403843833833
 Build-Jdk: 1.7.0_55
 Built-By: ampie
 Bundle-ManifestVersion: 2
@@ -7,14 +7,14 @@ Bundle-Name: org.pavanecce.uml.jbpm
 Bundle-SymbolicName: org.pavanecce.uml.jbpm
 Bundle-Version: 0.0.1.SNAPSHOT
 Created-By: Apache Maven Bundle Plugin
-Export-Package: org.pavanecce.uml.uml2code;uses:="org.eclipse.uml2.uml,o
- rg.pavanecce.common.code.metamodel,org.pavanecce.common.code.metamodel.
- expressions,org.pavanecce.common.code.metamodel.statements";version="0.
- 0.1.SNAPSHOT",org.pavanecce.common.util;version="0.0.1.SNAPSHOT",org.pa
+Export-Package: org.pavanecce.uml.uml2code;version="0.0.1.SNAPSHOT";uses
+ :="org.eclipse.uml2.uml,org.pavanecce.common.code.metamodel,org.pavanec
+ ce.common.code.metamodel.expressions,org.pavanecce.common.code.metamode
+ l.statements",org.pavanecce.common.util;version="0.0.1.SNAPSHOT",org.pa
  vanecce.common.code.metamodel;uses:="org.pavanecce.common.code.metamode
  l.statements";version="0.0.1.SNAPSHOT",org.pavanecce.cmmn.jbpm;version=
- "0.0.1.SNAPSHOT",org.pavanecce.uml.common;version="0.0.1.SNAPSHOT",org.
- pavanecce.uml.ocl2code;version="0.0.1.SNAPSHOT"
+ "0.0.1.SNAPSHOT",org.pavanecce.uml.ocl2code;version="0.0.1.SNAPSHOT",or
+ g.pavanecce.uml.common;version="0.0.1.SNAPSHOT"
 Import-Package: org.drools.compiler.compiler;version="[6.0,7)",org.drool
  s.compiler.rule.builder;version="[6.0,7)",org.drools.core.rule;version=
  "[6.0,7)",org.drools.core.xml;version="[6.0,7)",org.eclipse.emf.common.
@@ -25,12 +25,14 @@ Import-Package: org.drools.compiler.compiler;version="[6.0,7)",org.drool
  [6.0,7)",org.jbpm.process.core;version="[6.0,7)",org.jbpm.process.core.
  context.variable;version="[6.0,7)",org.jbpm.process.instance.impl;versi
  on="[6.0,7)",org.kie.api.definition.process;version="[6.0,7)",org.kie.a
- pi.io;version="[6.0,7)",org.pavanecce.cmmn.jbpm.flow,org.pavanecce.cmmn
- .jbpm.xml.handler,org.pavanecce.common.code.metamodel,org.pavanecce.com
- mon.code.metamodel.expressions,org.pavanecce.common.code.metamodel.stat
- ements,org.pavanecce.uml.common.ocl,org.pavanecce.uml.common.util,org.p
- avanecce.uml.common.util.emulated,org.pavanecce.uml.ocltocode.common,or
- g.pavanecce.uml.ocltocode.creators,org.pavanecce.uml.uml2code.java,org.
- slf4j;version="[1.6,2)",org.xml.sax
+ pi.io;version="[6.0,7)",org.pavanecce.cmmn.jbpm.flow;version="[0.0,1)",
+ org.pavanecce.cmmn.jbpm.xml.handler;version="[0.0,1)",org.pavanecce.com
+ mon.code.metamodel,org.pavanecce.common.code.metamodel.expressions,org.
+ pavanecce.common.code.metamodel.statements,org.pavanecce.uml.common.ocl
+ ;version="[0.0,1)",org.pavanecce.uml.common.util;version="[0.0,1)",org.
+ pavanecce.uml.common.util.emulated;version="[0.0,1)",org.pavanecce.uml.
+ ocltocode.common;version="[0.0,1)",org.pavanecce.uml.ocltocode.creators
+ ;version="[0.0,1)",org.pavanecce.uml.uml2code.java;version="[0.0,1)",or
+ g.slf4j;version="[1.6,2)",org.xml.sax
 JBOSS_HOME: /opt/jboss-5.1.0.GA
 Tool: Bnd-2.1.0.20130426-122213
