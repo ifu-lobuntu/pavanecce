@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1403844132664
+Bnd-LastModified: 1403854817351
 Build-Jdk: 1.7.0_55
 Built-By: ampie
 Bundle-ManifestVersion: 2
@@ -36,7 +36,8 @@ Import-Package: org.eclipse.emf.common.util,org.eclipse.emf.ecore,org.ec
  code.metamodel,org.pavanecce.common.code.metamodel.documentdb,org.pavan
  ecce.common.code.metamodel.expressions,org.pavanecce.common.code.metamo
  del.relationaldb,org.pavanecce.common.code.metamodel.statements,org.pav
- anecce.common.collections,org.pavanecce.common.util,org.pavanecce.uml.c
- ommon.util,org.pavanecce.uml.common.util.emulated
+ anecce.common.collections;version="[0.0,1)",org.pavanecce.common.util;v
+ ersion="[0.0,1)",org.pavanecce.uml.common.util;version="[0.0,1)",org.pa
+ vanecce.uml.common.util.emulated;version="[0.0,1)"
 JBOSS_HOME: /opt/jboss-5.1.0.GA
 Tool: Bnd-2.1.0.20130426-122213

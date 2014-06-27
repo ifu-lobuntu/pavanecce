@@ -1,5 +1,7 @@
 package org.pavanecce.cmmn.jbpm;
 
+import net.sf.cglib.proxy.Enhancer;
+
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 import org.pavanecce.cmmn.jbpm.ocm.OcmCaseFileItemSubscriptionInfo;
 import org.pavanecce.cmmn.jbpm.ocm.OcmCaseSubscriptionInfo;
@@ -22,18 +24,22 @@ public class AbstractConstructionTestCase extends AbstractCmmnCaseTestCase {
 		super(true, true, "org.jbpm.persistence.jpa");
 	}
 
-	public AbstractConstructionTestCase(boolean setupDataSource, boolean sessionPersistence, String persistenceUnitName) {
+	public AbstractConstructionTestCase(boolean setupDataSource,
+			boolean sessionPersistence, String persistenceUnitName) {
 		super(setupDataSource, sessionPersistence, persistenceUnitName);
 	}
 
-	public AbstractConstructionTestCase(boolean setupDataSource, boolean sessionPersistence) {
+	public AbstractConstructionTestCase(boolean setupDataSource,
+			boolean sessionPersistence) {
 		super(setupDataSource, sessionPersistence);
 	}
 
 	@Override
 	protected Class<?>[] getClasses() {
-		return new Class<?>[] { ConstructionCase.class, HousePlan.class, House.class, Wall.class, WallPlan.class, RoofPlan.class,
-				OcmCaseSubscriptionInfo.class, OcmCaseFileItemSubscriptionInfo.class, RoomPlan.class };
+		return new Class<?>[] { ConstructionCase.class, HousePlan.class,
+				House.class, Wall.class, WallPlan.class, RoofPlan.class,
+				OcmCaseSubscriptionInfo.class,
+				OcmCaseFileItemSubscriptionInfo.class, RoomPlan.class };
 	}
 
 }

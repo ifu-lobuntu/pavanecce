@@ -315,5 +315,12 @@
 			<artifactId>pax-logging-api</artifactId>
 			<version>1.6.6</version>
 		</dependency>
+		<!-- TODO This is a problem. Jahia uses cglib 2.2 along with an incompatible 
+			version of ASM - 4.1 -->
+		<dependency>
+			<artifactId>cglib</artifactId>
+			<groupId>cglib</groupId>
+			<version>3.1</version>
+		</dependency>
 	</dependencies>
 </project>

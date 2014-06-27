@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1403844128776
+Bnd-LastModified: 1403854824011
 Build-Jdk: 1.7.0_55
 Built-By: ampie
 Bundle-ManifestVersion: 2
@@ -17,6 +17,7 @@ Export-Package: org.pavanecce.uml.reverse.java;uses:="org.eclipse.emf.co
 Import-Package: org.eclipse.emf.common.notify,org.eclipse.emf.common.uti
  l,org.eclipse.emf.ecore,org.eclipse.emf.ecore.impl,org.eclipse.emf.ecor
  e.resource,org.eclipse.emf.ecore.util,org.eclipse.uml2.uml,org.pavanecc
- e.common.util,org.pavanecce.uml.common.util
+ e.common.util;version="[0.0,1)",org.pavanecce.uml.common.util;version="
+ [0.0,1)"
 JBOSS_HOME: /opt/jboss-5.1.0.GA
 Tool: Bnd-2.1.0.20130426-122213
