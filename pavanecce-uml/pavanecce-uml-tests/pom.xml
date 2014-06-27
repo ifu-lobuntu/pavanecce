@@ -17,11 +17,6 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
-			<artifactId>pavanecce-common-dependencies</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
 			<artifactId>pavanecce-uml-ocl2code</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
