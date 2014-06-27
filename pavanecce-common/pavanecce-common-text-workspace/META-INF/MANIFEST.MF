@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1403843724675
+Bnd-LastModified: 1403844116592
 Build-Jdk: 1.7.0_55
 Built-By: ampie
 Bundle-ManifestVersion: 2
@@ -7,7 +7,6 @@ Bundle-Name: org.pavanecce.common.text.workspace
 Bundle-SymbolicName: org.pavanecce.common.text.workspace
 Bundle-Version: 0.0.1.SNAPSHOT
 Created-By: Apache Maven Bundle Plugin
-Import-Package: org.slf4j;version="[1.6,2)",org.pavanecce.common.util;ve
- rsion="[0.0,1)"
+Import-Package: org.slf4j;version="[1.6,2)",org.pavanecce.common.util
 JBOSS_HOME: /opt/jboss-5.1.0.GA
 Tool: Bnd-2.1.0.20130426-122213

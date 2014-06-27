@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1403843710917
+Bnd-LastModified: 1403844112314
 Build-Jdk: 1.7.0_55
 Built-By: ampie
 Bundle-ClassPath: .,libs/jahia-impl-7.0.0.0.jar,libs/jahia-api-7.0.0.0.j
@@ -521,19 +521,19 @@ Export-Package: com.thoughtworks.xstream;version="1.4.4",javassist;versi
  .springframework.core.io;version="3.2.8",org.springframework.transactio
  n;version="3.2.8",org.springframework.transaction.support;version="3.2.
  8";uses:="org.springframework.beans.factory,org.springframework.transac
- tion",org.springframework.cor.e.io;version="3.2.8",net.sf.cglib.asm.sig
- nature;version="2.2.2",javax.enterprise.event;version="1.0.0",net.sf.cg
- lib.beans;version="2.2.2",net.sf.cglib.transform.impl;version="2.2.2",j
- avax.inject;version="1.0.0",javax.enterprise.util;version="1.0.0",net.s
- f.cglib.reflect;version="2.2.2",net.sf.cglib.transform;version="2.2.2",
- net.sf.cglib.util;version="2.2.2",org.hibernate.annotations.common;vers
- ion="4.0.2.Final",net.sf.cglib.core;version="2.2.2",net.sf.cglib.proxy;
- version="2.2.2",javax.enterprise.inject;version="1.0.0",net.sf.cglib.as
- m;version="2.2.2"
-Import-Package: javax.naming,javax.security.auth,javax.xml.parsers,javax
- .xml.transform.dom,javax.sql,org.w3c.dom,javax.xml.transform.stream,jav
- ax.security.auth.login,org.slf4j;version="[1.1.6,2)",javax.security.aut
- h.spi,javax.xml.transform,javax.imageio.spi,org.xml.sax.helpers,javax.s
- ecurity.auth.callback,org.xml.sax
+ tion",net.sf.cglib.transform;version="2.2.2",net.sf.cglib.core;version=
+ "2.2.2",javax.enterprise.event;version="1.0.0",net.sf.cglib.asm.signatu
+ re;version="2.2.2",javax.enterprise.inject;version="1.0.0",org.springfr
+ amework.cor.e.io;version="3.2.8",org.hibernate.annotations.common;versi
+ on="4.0.2.Final",net.sf.cglib.util;version="2.2.2",javax.inject;version
+ ="1.0.0",net.sf.cglib.asm;version="2.2.2",net.sf.cglib.reflect;version=
+ "2.2.2",net.sf.cglib.beans;version="2.2.2",net.sf.cglib.proxy;version="
+ 2.2.2",net.sf.cglib.transform.impl;version="2.2.2",javax.enterprise.uti
+ l;version="1.0.0"
+Import-Package: javax.imageio.spi,javax.security.auth.spi,org.xml.sax.he
+ lpers,javax.security.auth,org.xml.sax,javax.xml.transform.dom,javax.xml
+ .transform,javax.sql,javax.security.auth.callback,javax.xml.transform.s
+ tream,org.slf4j;version="[1.1.6,2)",org.w3c.dom,javax.security.auth.log
+ in,javax.xml.parsers,javax.naming
 JBOSS_HOME: /opt/jboss-5.1.0.GA
 Tool: Bnd-2.1.0.20130426-122213
