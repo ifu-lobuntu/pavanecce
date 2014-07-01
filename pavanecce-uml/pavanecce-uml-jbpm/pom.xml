@@ -60,38 +60,17 @@
 				<configuration>
 					<manifestLocation>META-INF</manifestLocation>
 					<instructions>
+						<Import-Package>*,
+						org.pavanecce.uml.uml2code,
+						</Import-Package>
 						<Export-Package>org.pavanecce.uml.jbpm</Export-Package>
 						<Bundle-SymbolicName>org.pavanecce.uml.jbpm</Bundle-SymbolicName>
 						<Bundle-Name>org.pavanecce.uml.jbpm</Bundle-Name>
 					</instructions>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>add-test-source</goal>
-						</goals>
-						<configuration>
-							<sources>
-								<source>src/test/generated-java</source>
-							</sources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+
 		</plugins>
-		<testResources>
-			<testResource>
-				<directory>src/test/generated-resources</directory>
-			</testResource>
-			<testResource>
-				<directory>src/test/resources</directory>
-			</testResource>
-		</testResources>
 	</build>
 </project>
 

@@ -1,6 +1,7 @@
 package org.pavanecce.cmmn.jbpm.infra;
 
-import static org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition.*;
+import static org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition.CREATE;
+import static org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition.DELETE;
 
 import java.util.Collection;
 import java.util.HashSet;

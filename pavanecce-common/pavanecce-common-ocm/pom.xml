@@ -118,7 +118,11 @@
 							org.apache.jackrabbit.ocm.manager.impl;version="2.0.0",
 							org.apache.jackrabbit.ocm.manager.objectconverter;version="2.0.0",
 							org.apache.jackrabbit.ocm.mapper;version="2.0.0",
-							org.apache.jackrabbit.ocm.mapper.model;version="2.0.0"</Export-Package>
+							org.apache.jackrabbit.ocm.mapper.model;version="2.0.0",
+							org.apache.jackrabbit.ocm.query;version="2.0.0",
+							org.apache.jackrabbit.ocm.mapper.impl.annotation;version="2.0.0",
+							org.apache.jackrabbit.ocm.manager.enumconverter;version="2.0.0",
+							</Export-Package>
 						<Bundle-SymbolicName>org.pavanecce.common.ocm</Bundle-SymbolicName>
 						<Bundle-Name>org.pavanecce.common.ocm</Bundle-Name>
 						<Embed-Dependency>artifactId=${embeddedArtifactIds}</Embed-Dependency>

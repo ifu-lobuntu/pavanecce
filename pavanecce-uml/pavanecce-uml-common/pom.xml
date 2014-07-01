@@ -63,6 +63,7 @@
 							org.eclipse.uml2.uml.resource,
 							org.eclipse.uml2.uml.resources.util,
 							org.eclipse.uml2.uml.util,
+							org.pavanecce.common.util,
 						</Import-Package>
 						<Export-Package>models.libraries,
 							models.profiles,

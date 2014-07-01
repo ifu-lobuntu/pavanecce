@@ -11,8 +11,8 @@ import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
-import org.pavanecce.common.util.ObjectPersistence;
 import org.pavanecce.common.jcr.JcrSessionFactory;
+import org.pavanecce.common.util.ObjectPersistence;
 
 public class JcrObjectPersistence implements ObjectPersistence {
 	private UserTransaction transaction;

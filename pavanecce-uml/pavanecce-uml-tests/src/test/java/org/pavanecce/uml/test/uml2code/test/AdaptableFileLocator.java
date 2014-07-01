@@ -9,7 +9,6 @@ import org.pavanecce.uml.common.util.IFileLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@SuppressWarnings("restriction")
 public class AdaptableFileLocator implements IFileLocator {
 	Logger logger = LoggerFactory.getLogger(getClass());
 	URLConverterImpl uci = new URLConverterImpl();

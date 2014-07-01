@@ -24,7 +24,7 @@ public class Stopwatch {
 
 	public long lap(String name) {
 		long result = (System.currentTimeMillis() - lastLap);
-		logger.debug("%s took %d", name, result);
+		logger.debug("{} took {}", name, result);
 		lastLap = System.currentTimeMillis();
 		return result;
 	}

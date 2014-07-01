@@ -25,11 +25,11 @@
 	</repositories>
 	<properties>
 		<embeddedGroupIds>
-			org.apache.tika|org.apache.lucene|commons-digester|javax.transaction|org.hibernate.javax.persistence|javax.jcr|org.springframework|org.jahia.server|org.mvel|joda-time|com.google.protobuf|javax|org.javassist|org.hibernate|org.apache|org.jboss.logging|dom4j|antlr|org.apache.jackrabbit|commons-io|concurrent|org.apache.derby|commons-dbcp|commons-pool|commons-lang|commons-beanutils|commons-collections|xalan|cglib|asm|org.jbpm|org.kie|org.drools|com.thoughtworks.xstream
+			javax.enterprise|org.apache.tika|org.apache.lucene|commons-digester|javax.transaction|org.hibernate.javax.persistence|javax.jcr|org.springframework|org.jahia.server|org.mvel|joda-time|com.google.protobuf|javax|org.javassist|org.hibernate|org.apache|org.jboss.logging|dom4j|antlr|org.apache.jackrabbit|commons-io|concurrent|org.apache.derby|commons-dbcp|commons-pool|commons-lang|commons-beanutils|commons-collections|xalan|cglib|asm|org.jbpm|org.kie|org.drools|com.thoughtworks.xstream
 
 		</embeddedGroupIds>
 		<commaSeparatedembeddedGroupIds>
-			org.apache.tika,org.apache.lucene,commons-digester,javax.transaction,org.hibernate.javax.persistence,javax.jcr,org.springframework,org.jahia.server,org.mvel,joda-time,com.google.protobuf,javax,org.javassist,org.hibernate,org.apache,org.jboss.logging,dom4j,antlr,org.apache.jackrabbit,commons-io,concurrent,org.apache.derby,commons-dbcp,commons-pool,commons-lang,commons-beanutils,commons-collections,xalan,cglib,asm,org.jbpm,org.kie,org.drools,com.thoughtworks.xstream
+			javax.enterprise|org.apache.tika,org.apache.lucene,commons-digester,javax.transaction,org.hibernate.javax.persistence,javax.jcr,org.springframework,org.jahia.server,org.mvel,joda-time,com.google.protobuf,javax,org.javassist,org.hibernate,org.apache,org.jboss.logging,dom4j,antlr,org.apache.jackrabbit,commons-io,concurrent,org.apache.derby,commons-dbcp,commons-pool,commons-lang,commons-beanutils,commons-collections,xalan,cglib,asm,org.jbpm,org.kie,org.drools,com.thoughtworks.xstream
 
 		</commaSeparatedembeddedGroupIds>
 	</properties>
@@ -150,6 +150,7 @@
 							org.drools.core.process.instance,
 							org.drools.core.process.instance.impl,
 							org.drools.core.rule,
+							org.drools.core.runtime.process,
 							org.drools.core.spi,
 							org.drools.core.xml,
 							org.drools.persistence,
@@ -174,6 +175,7 @@
 							org.jahia.services.workflow.jbpm.command;version="7.0.0",
 							org.jahia.services.workflow.jbpm.custom;version="7.0.0",
 							org.jahia.services.workflow.jbpm.custom.email;version="7.0.0",
+							org.jbpm.compiler.xml,
 							org.jbpm.marshalling.impl,
 							org.jbpm.process.audit,
 							org.jbpm.process.builder,

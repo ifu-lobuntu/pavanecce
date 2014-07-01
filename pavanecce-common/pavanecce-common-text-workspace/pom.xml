@@ -34,7 +34,7 @@
 					<manifestLocation>META-INF</manifestLocation>
 					<instructions>
 						<Import-Package>org.slf4j;version="[1.6,2)",org.pavanecce.common.util</Import-Package>
-						<Export-Package>!*</Export-Package>
+						<Export-Package>org.pavanecce.common.text.workspace,org.pavanecce.common.text.filegeneration</Export-Package>
 						<Bundle-SymbolicName>org.pavanecce.common.text.workspace</Bundle-SymbolicName>
 						<Bundle-Name>org.pavanecce.common.text.workspace</Bundle-Name>
 					</instructions>

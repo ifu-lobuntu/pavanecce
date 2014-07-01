@@ -9,3 +9,4 @@ Bundle-Version: 0.0.1.SNAPSHOT
 Created-By: Apache Maven Bundle Plugin
 JBOSS_HOME: /opt/jboss-5.1.0.GA
 Tool: Bnd-2.1.0.20130426-122213
+Export-Package: org.pavanecce.uml.jbpm;version="0.0.1.SNAPSHOT";uses:="org.eclipse.uml2.uml,org.pavanecce.cmmn.jbpm.flow,org.pavanecce.uml.common.util.emulated"

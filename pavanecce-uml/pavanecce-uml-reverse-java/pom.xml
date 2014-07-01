@@ -25,6 +25,8 @@
 				<configuration>
 					<manifestLocation>META-INF</manifestLocation>
 					<instructions>
+						<Import-Package>*,
+						org.eclipse.uml2.uml.resource</Import-Package>
 						<Export-Package>org.pavanecce.uml.reverse.java,
 							org.pavanecce.uml.reverse.java.sourcemodel,
 							org.pavanecce.uml.reverse.java.sourcemodel.reflect</Export-Package>

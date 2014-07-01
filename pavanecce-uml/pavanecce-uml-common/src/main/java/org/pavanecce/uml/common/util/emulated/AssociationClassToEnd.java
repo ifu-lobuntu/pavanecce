@@ -1,6 +1,5 @@
 package org.pavanecce.uml.common.util.emulated;
 
-import org.eclipse.uml2.uml.Classifier;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Type;
 import org.pavanecce.uml.common.util.EmfAssociationUtil;

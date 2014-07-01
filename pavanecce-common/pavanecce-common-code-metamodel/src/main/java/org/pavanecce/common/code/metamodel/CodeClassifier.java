@@ -2,10 +2,10 @@ package org.pavanecce.common.code.metamodel;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.Map.Entry;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;

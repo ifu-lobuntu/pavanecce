@@ -21,7 +21,6 @@ import org.kie.api.task.model.Task;
 import org.kie.internal.command.Context;
 import org.kie.internal.runtime.manager.context.ProcessInstanceIdContext;
 import org.kie.internal.task.api.model.InternalTaskData;
-import org.pavanecce.cmmn.jbpm.lifecycle.ControllableItemInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanningTableContainerInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.HumanTaskInstance;
@@ -68,9 +67,9 @@ public class SubmitPlanCommand extends AbstractPlanningCommand<Void> {
 			wii.getWorkItem(env, irb).getParameters().putAll(plannedTask.getParameterOverrides());
 			wii.setId(wi.getId());
 			pc.merge(wii);
-			ControllableItemInstance<?> pi = ci.ensurePlanItemCreated(workItemId, plannedTask.getDiscretionaryItemId(), wi);
+			ci.ensurePlanItemCreated(workItemId, plannedTask.getDiscretionaryItemId(), wi);
 			if (td.getStatus() == Status.Created) {
-				// td.setStatus(Status.Ready);
+//				// td.setStatus(Status.Ready);
 			}
 		}
 		if (resume) {

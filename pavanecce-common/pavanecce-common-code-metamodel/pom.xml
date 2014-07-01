@@ -30,7 +30,7 @@
 					<manifestLocation>META-INF</manifestLocation>
 					<instructions>
 						<Import-Package>org.slf4j</Import-Package>
-						<Export-Package>org.pavanecce.code.metamodel.*</Export-Package>
+						<Export-Package>org.pavanecce.common.code.metamodel.*</Export-Package>
 						<Bundle-SymbolicName>org.pavanecce.common.code.metamodel</Bundle-SymbolicName>
 						<Bundle-Name>org.pavanecce.common.code.metamodel</Bundle-Name>
 					</instructions>

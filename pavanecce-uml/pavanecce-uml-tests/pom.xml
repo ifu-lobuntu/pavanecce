@@ -8,7 +8,7 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>pavanecce-uml-tests</artifactId>
-<!-- 	<packaging>bundle</packaging> -->
+	<!-- <packaging>bundle</packaging> -->
 	<dependencies>
 		<dependency>
 			<groupId>org.osgi</groupId>
@@ -38,6 +38,16 @@
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
 			<artifactId>pavanecce-uml-ocl2code</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.parent.groupId}</groupId>
+			<artifactId>pavanecce-cmmn-tests</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.parent.groupId}</groupId>
+			<artifactId>pavanecce-uml-jbpm</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
@@ -97,7 +107,6 @@
 					</instructions>
 				</configuration>
 			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
@@ -180,7 +189,7 @@
 										<limit>
 											<counter>COMPLEXITY</counter>
 											<value>COVEREDRATIO</value>
-											<minimum>0.6</minimum>
+											<minimum>0.5</minimum>
 										</limit>
 									</limits>
 								</rule>
@@ -193,6 +202,31 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-test-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>src/test/generated-java</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
+		<testResources>
+			<testResource>
+				<directory>src/test/generated-resources</directory>
+			</testResource>
+			<testResource>
+				<directory>src/test/resources</directory>
+			</testResource>
+		</testResources>
 	</build>
 </project>

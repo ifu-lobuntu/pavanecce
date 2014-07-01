@@ -4,7 +4,6 @@ import javax.script.ScriptException;
 
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.uml2.uml.Type;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.pavanecce.common.test.util.ConstructionCaseExample;

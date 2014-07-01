@@ -1,0 +1,35 @@
+      <cmmn:caseFileItemDefinition id="constructionCaseDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass" structureRef="org::pavanecce::uml::jbpm::testdomain::ConstructionCase">
+      </cmmn:caseFileItemDefinition>
+      <cmmn:caseFileItemDefinition id="houseDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass" structureRef="org::pavanecce::uml::jbpm::testdomain::House">
+      </cmmn:caseFileItemDefinition>
+      <cmmn:caseFileItemDefinition id="constructionCaseHouseDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass" structureRef="org::pavanecce::uml::jbpm::testdomain::ConstructionCaseHouse">
+      </cmmn:caseFileItemDefinition>
+      <cmmn:caseFileItemDefinition id="housePlanDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass" structureRef="org::pavanecce::uml::jbpm::testdomain::HousePlan">
+      </cmmn:caseFileItemDefinition>
+      <cmmn:caseFileItemDefinition id="roofPlanDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass" structureRef="org::pavanecce::uml::jbpm::testdomain::RoofPlan">
+      </cmmn:caseFileItemDefinition>
+      <cmmn:caseFileItemDefinition id="constructionCaseHousePlanDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass" structureRef="org::pavanecce::uml::jbpm::testdomain::ConstructionCaseHousePlan">
+      </cmmn:caseFileItemDefinition>
+      <cmmn:caseFileItemDefinition id="housePlanRoofPlanDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass" structureRef="org::pavanecce::uml::jbpm::testdomain::HousePlanRoofPlan">
+      </cmmn:caseFileItemDefinition>
+      <cmmn:caseFileItemDefinition id="houseRoofPlanDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass" structureRef="org::pavanecce::uml::jbpm::testdomain::HouseRoofPlan">
+      </cmmn:caseFileItemDefinition>
+      <cmmn:caseFileItemDefinition id="wallDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass" structureRef="org::pavanecce::uml::jbpm::testdomain::Wall">
+      </cmmn:caseFileItemDefinition>
+      <cmmn:caseFileItemDefinition id="houseWallDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass" structureRef="org::pavanecce::uml::jbpm::testdomain::HouseWall">
+      </cmmn:caseFileItemDefinition>
+      <cmmn:caseFileItemDefinition id="wallPlanDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass" structureRef="org::pavanecce::uml::jbpm::testdomain::WallPlan">
+      </cmmn:caseFileItemDefinition>
+      <cmmn:caseFileItemDefinition id="wallPlanWallDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass" structureRef="org::pavanecce::uml::jbpm::testdomain::WallPlanWall">
+      </cmmn:caseFileItemDefinition>
+      <cmmn:caseFileItemDefinition id="housePlanWallPlanDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass" structureRef="org::pavanecce::uml::jbpm::testdomain::HousePlanWallPlan">
+      </cmmn:caseFileItemDefinition>
+      <cmmn:caseFileItemDefinition id="houseWallPlanDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass" structureRef="org::pavanecce::uml::jbpm::testdomain::HouseWallPlan">
+      </cmmn:caseFileItemDefinition>
+      <cmmn:caseFileItemDefinition id="roomPlanDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass" structureRef="org::pavanecce::uml::jbpm::testdomain::RoomPlan">
+      </cmmn:caseFileItemDefinition>
+      <cmmn:caseFileItemDefinition id="housePlanRoomPlanDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass" structureRef="org::pavanecce::uml::jbpm::testdomain::HousePlanRoomPlan">
+      </cmmn:caseFileItemDefinition>
+      <cmmn:caseFileItemDefinition id="roomPlanWallPlanDefinitionId" definitionType="http://www.omg.org/spec/CMMN/DefinitionType/UMLClass" structureRef="org::pavanecce::uml::jbpm::testdomain::RoomPlanWallPlan">
+      </cmmn:caseFileItemDefinition>
+

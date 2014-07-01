@@ -8,13 +8,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>pavanecce-cmmn-jbpm</artifactId>
 	<packaging>bundle</packaging>
-
 	<dependencies>
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-			<version>2.3</version>
-		</dependency>
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
 			<artifactId>pavanecce-common-util</artifactId>
@@ -35,17 +29,6 @@
 			<artifactId>${environment.artifactId}</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.jbpm</groupId>
-			<artifactId>jbpm-test</artifactId>
-			<version>6.0.0.Final</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.jboss.solder</groupId>
-					<artifactId>solder-impl</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -56,92 +39,17 @@
 				<configuration>
 					<manifestLocation>META-INF</manifestLocation>
 					<instructions>
+						<Import-Package>*,org.jbpm.process.core.context.exception,
+						org.jbpm.process.core.impl,
+						org.jbpm.process.instance.context
+						</Import-Package>
 						<Export-Package>org.pavanecce.cmmn.jbpm.*</Export-Package>
 						<Bundle-SymbolicName>org.pavanecce.cmmn.jbpm</Bundle-SymbolicName>
 						<Bundle-Name>org.pavanecce.cmmn.jbpm</Bundle-Name>
 					</instructions>
 				</configuration>
 			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.17</version>
-			</plugin>
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.7.1.201405082137</version>
-				<executions>
-					<execution>
-						<id>default-prepare-agent</id>
-						<goals>
-							<goal>prepare-agent</goal>
-						</goals>
-						<configuration>
-							<includes>
-								<include>org.pavanecce.**</include>
-							</includes>
-						</configuration>
-					</execution>
-					<execution>
-						<id>default-report</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>report</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>default-check</id>
-						<goals>
-							<goal>check</goal>
-						</goals>
-						<configuration>
-							<rules>
-								<rule>
-									<element>BUNDLE</element>
-									<limits>
-										<limit>
-											<counter>COMPLEXITY</counter>
-											<value>COVEREDRATIO</value>
-											<minimum>0.6</minimum>
-										</limit>
-									</limits>
-								</rule>
-							</rules>
-							<includes>
-								<include>org.pavanecce.**</include>
-							</includes>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>add-test-source</goal>
-						</goals>
-						<configuration>
-							<sources>
-								<source>src/test/generated-java</source>
-							</sources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
-		<testResources>
-			<testResource>
-				<directory>src/test/generated-resources</directory>
-			</testResource>
-			<testResource>
-				<directory>src/test/resources</directory>
-			</testResource>
-		</testResources>
 	</build>
 </project>
 

@@ -1,6 +1,6 @@
 package org.pavanecce.cmmn.jbpm.jcr;
 
-import static org.pavanecce.cmmn.jbpm.jcr.JcrUtil.*;
+import static org.pavanecce.cmmn.jbpm.jcr.JcrUtil.convertException;
 
 import java.util.HashSet;
 import java.util.Set;

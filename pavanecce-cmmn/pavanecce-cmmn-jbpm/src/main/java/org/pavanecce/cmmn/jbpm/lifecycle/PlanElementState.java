@@ -1,6 +1,23 @@
 package org.pavanecce.cmmn.jbpm.lifecycle;
 
-import static org.pavanecce.cmmn.jbpm.flow.PlanItemTransition.*;
+import static org.pavanecce.cmmn.jbpm.flow.PlanItemTransition.CLOSE;
+import static org.pavanecce.cmmn.jbpm.flow.PlanItemTransition.COMPLETE;
+import static org.pavanecce.cmmn.jbpm.flow.PlanItemTransition.CREATE;
+import static org.pavanecce.cmmn.jbpm.flow.PlanItemTransition.DISABLE;
+import static org.pavanecce.cmmn.jbpm.flow.PlanItemTransition.ENABLE;
+import static org.pavanecce.cmmn.jbpm.flow.PlanItemTransition.EXIT;
+import static org.pavanecce.cmmn.jbpm.flow.PlanItemTransition.FAULT;
+import static org.pavanecce.cmmn.jbpm.flow.PlanItemTransition.MANUAL_START;
+import static org.pavanecce.cmmn.jbpm.flow.PlanItemTransition.OCCUR;
+import static org.pavanecce.cmmn.jbpm.flow.PlanItemTransition.PARENT_RESUME;
+import static org.pavanecce.cmmn.jbpm.flow.PlanItemTransition.PARENT_SUSPEND;
+import static org.pavanecce.cmmn.jbpm.flow.PlanItemTransition.PARENT_TERMINATE;
+import static org.pavanecce.cmmn.jbpm.flow.PlanItemTransition.REACTIVATE;
+import static org.pavanecce.cmmn.jbpm.flow.PlanItemTransition.REENABLE;
+import static org.pavanecce.cmmn.jbpm.flow.PlanItemTransition.RESUME;
+import static org.pavanecce.cmmn.jbpm.flow.PlanItemTransition.START;
+import static org.pavanecce.cmmn.jbpm.flow.PlanItemTransition.SUSPEND;
+import static org.pavanecce.cmmn.jbpm.flow.PlanItemTransition.TERMINATE;
 
 import org.pavanecce.cmmn.jbpm.event.PlanItemEvent;
 import org.pavanecce.cmmn.jbpm.flow.OnPart;

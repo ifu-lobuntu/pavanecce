@@ -25,6 +25,8 @@
 				<configuration>
 					<manifestLocation>META-INF</manifestLocation>
 					<instructions>
+						<Import-Package>*,
+						org.eclipse.ocl.utilities,</Import-Package>
 						<Export-Package>org.pavanecce.uml.ocltocode,
 							org.pavanecce.uml.ocltocode.common,
 							org.pavanecce.uml.ocltocode.creators,

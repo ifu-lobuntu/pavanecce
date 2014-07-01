@@ -18,6 +18,7 @@ public class StereotypeNames {
 	public static final String MODELS_PATHMAP = "pathmap://VDFP_MODELS/";
 
 	public static final String ASSOCIATION_END = "AssociationEnd";
+	public static final String ENUMERATION = "Enumeration";
 
 	public static final String ATTRIBUTE_STEREOTYPE = "Attribute";
 

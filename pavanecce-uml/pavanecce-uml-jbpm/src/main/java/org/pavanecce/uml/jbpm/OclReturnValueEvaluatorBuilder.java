@@ -134,13 +134,26 @@ public class OclReturnValueEvaluatorBuilder implements ReturnValueEvaluatorBuild
 	private Classifier findClassifier(Collection<Package> rootObjects, String structureRef) {
 		String[] qn = structureRef.split("\\:\\:");
 		for (Namespace ns : rootObjects) {
-			if (qn[0].equals(ns.getName())) {
-				for (int i = 1; i < qn.length; i++) {
-					ns = (Namespace) ns.getMember(qn[1]);
-				}
-				return (Classifier) ns;
+			Classifier result = tryToMatch(qn, ns);
+			if(result!=null){
+				return result;
 			}
 		}
 		return null;
+	}
+
+	private Classifier tryToMatch(String[] qn, Namespace ns) {
+		Classifier result=null;
+		if (qn[0].equals(ns.getName())) {
+			for (int i = 1; i < qn.length; i++) {
+				if (ns == null) {
+					result=null;
+				} else {
+					ns = (Namespace) ns.getMember(qn[i]);
+				}
+			}
+			result=(Classifier) ns;
+		}
+		return result;
 	}
 }

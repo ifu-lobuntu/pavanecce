@@ -1,7 +1,11 @@
 package org.pavanecce.cmmn.jbpm.jcr;
 
-import static org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition.*;
-import static org.pavanecce.cmmn.jbpm.jcr.JcrUtil.*;
+import static org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition.ADD_CHILD;
+import static org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition.CREATE;
+import static org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition.DELETE;
+import static org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition.REMOVE_CHILD;
+import static org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition.UPDATE;
+import static org.pavanecce.cmmn.jbpm.jcr.JcrUtil.convertException;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -34,8 +38,8 @@ import org.pavanecce.cmmn.jbpm.event.DemarcatedSubscriptionContext;
 import org.pavanecce.cmmn.jbpm.event.SubscriptionManager;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
-import org.pavanecce.common.util.ObjectPersistence;
 import org.pavanecce.common.jcr.JcrSessionFactory;
+import org.pavanecce.common.util.ObjectPersistence;
 
 public class JcrSubscriptionManager extends AbstractPersistentSubscriptionManager<JcrCaseSubscriptionInfo, JcrCaseFileItemSubscriptionInfo> implements
 		SubscriptionManager, SynchronousEventListener {

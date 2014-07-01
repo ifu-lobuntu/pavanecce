@@ -1,0 +1,29 @@
+BindingRef for input parameters to Cases - is that subscription active?
+
+For an instance of the Stage representing the casePlanModel of a Case:
+  - does table 7.9 pertain to the Stage instance representing the casePlanModel as well
+  - which transition is called when its exitCriteria become true - it does not seem to be in the statemachine. Table 7.5. does state that it will end up in the Terminated state, but table 7.6. does not say how.
+  - when this stage instance follows the re-activate transition, what is the effect on the child planItemInstances? This is not covered in table 7.9.
+
+There is a bit of ambiguity in my head around the lifecycle of a Stage/CaseTask/HumanTask/Process task
+  - it starts off in the available state
+  - when the entryCriteria become true, the repetitionRule is evaluated, and a new instance may be created.
+  - as I understand it, if the repitionRule is false, the current instance will progress normally through the lifecycle until completion
+  - however, given a repetitionRule=true, does this mean we create a new instance which progresses normally through the lifecycle, depending on manual activation, either from the Enabled or the Active state,
+      while the old instance remains in the Available state "under the covers" so to speak, to await the entryCriteria?
+
+If there are multiple instances of a PlanItem, and the exitCriterion occurs, do we exit all of the instances?
+When a Stage needs to be completed manually, which users should be allowed to do that? Same goes for suspend/resume/terminate/close etc.
+Can a UserEvent occur more than once?
+ApplicabilityRules: AND or OR?
+If it is assumed that the planning activity could be used to override the user assigned to a task, or the input parameters in the task, would it be contrary to CMMN's philosophy to allow the Planning user to do this
+to non-discretionary tasks too?
+For Sentries with a Condition but not an OnPart - when do we evaluate the condition?
+
+
+Some ideas for the future:
+Names for reference associations.
+CaseFileOnParts listening to custom transitions in the statemachine of the document/entity
+ADD_CHILD, REMOVE_CHILD CaseFileOnParts that state which child relationship they're interested in  
+ADD_REFERENCE, REMOVE_REFERENCE CaseFileOnParts that state which reference relationship they're interested in
+A standard way of associating the "cause" of a CaseFileItem event with an input parameter in the task whose creation it triggered.  
