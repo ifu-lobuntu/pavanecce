@@ -15,7 +15,7 @@ import org.junit.Before;
 import org.pavanecce.uml.common.util.UmlResourceSetFactory;
 import org.pavanecce.uml.common.util.emulated.DefaultParentOclEnvironment;
 import org.pavanecce.uml.common.util.emulated.OclRuntimeLibrary;
-import org.pavanecce.uml.ocltocode.OclCodeBuilder;
+import org.pavanecce.uml.ocl2code.OclCodeBuilder;
 import org.pavanecce.uml.uml2code.codemodel.CodeModelBuilder;
 import org.pavanecce.uml.uml2code.codemodel.UmlCodeModelVisitorAdaptor;
 

@@ -27,10 +27,10 @@
 					<instructions>
 						<Import-Package>*,
 						org.eclipse.ocl.utilities,</Import-Package>
-						<Export-Package>org.pavanecce.uml.ocltocode,
-							org.pavanecce.uml.ocltocode.common,
-							org.pavanecce.uml.ocltocode.creators,
-							org.pavanecce.uml.ocltocode.maps</Export-Package>
+						<Export-Package>org.pavanecce.uml.ocl2code,
+							org.pavanecce.uml.ocl2code.common,
+							org.pavanecce.uml.ocl2code.creators,
+							org.pavanecce.uml.ocl2code.maps</Export-Package>
 						<Bundle-SymbolicName>org.pavanecce.uml.ocl2code</Bundle-SymbolicName>
 						<Bundle-Name>org.pavanecce.uml.ocl2code</Bundle-Name>
 					</instructions>

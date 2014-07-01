@@ -36,8 +36,8 @@ import org.pavanecce.common.code.metamodel.CodeVisibilityKind;
 import org.pavanecce.uml.common.ocl.FreeExpressionContext;
 import org.pavanecce.uml.common.util.EmfPackageUtil;
 import org.pavanecce.uml.common.util.emulated.OclContextFactory;
-import org.pavanecce.uml.ocltocode.common.UmlToCodeMaps;
-import org.pavanecce.uml.ocltocode.creators.ExpressionCreator;
+import org.pavanecce.uml.ocl2code.common.UmlToCodeMaps;
+import org.pavanecce.uml.ocl2code.creators.ExpressionCreator;
 import org.pavanecce.uml.uml2code.java.JavaCodeGenerator;
 
 public class OclReturnValueEvaluatorBuilder implements ReturnValueEvaluatorBuilder {

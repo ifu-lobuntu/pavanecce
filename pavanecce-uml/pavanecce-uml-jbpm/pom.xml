@@ -61,7 +61,12 @@
 					<manifestLocation>META-INF</manifestLocation>
 					<instructions>
 						<Import-Package>*,
-						org.pavanecce.uml.uml2code,
+							org.jbpm.process.core.context.variable,
+							org.eclipse.ocl.expressions,
+							org.jbpm.process.builder.dialect,
+							org.drools.core.rule,
+							org.kie.api.definition.process,
+
 						</Import-Package>
 						<Export-Package>org.pavanecce.uml.jbpm</Export-Package>
 						<Bundle-SymbolicName>org.pavanecce.uml.jbpm</Bundle-SymbolicName>

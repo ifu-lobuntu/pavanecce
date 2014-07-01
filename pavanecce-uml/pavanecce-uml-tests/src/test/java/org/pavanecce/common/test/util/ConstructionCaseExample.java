@@ -22,7 +22,7 @@ import org.pavanecce.common.util.NameConverter;
 import org.pavanecce.uml.common.util.LibraryImporter;
 import org.pavanecce.uml.common.util.StereotypeNames;
 import org.pavanecce.uml.common.util.UmlResourceSetFactory;
-import org.pavanecce.uml.ocltocode.OclCodeBuilder;
+import org.pavanecce.uml.ocl2code.OclCodeBuilder;
 import org.pavanecce.uml.test.uml2code.test.AdaptableFileLocator;
 import org.pavanecce.uml.uml2code.AbstractCodeGenerator;
 import org.pavanecce.uml.uml2code.codemodel.CodeModelBuilder;
