@@ -53,6 +53,7 @@
 	</dependencies>
 	<build>
 		<plugins>
+		<!-- the bundle plugin could not calculate these dependencies correctly - had to hardcode them  -->
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
@@ -60,13 +61,37 @@
 				<configuration>
 					<manifestLocation>META-INF</manifestLocation>
 					<instructions>
-						<Import-Package>*,
-							org.jbpm.process.core.context.variable,
+						<Import-Package>
+							org.drools.compiler.compiler;version="[6.0,7)",
+							org.drools.compiler.rule.builder;version="[6.0,7)",
+							org.drools.core.rule;version="[6.0,7)",
+							org.drools.core.xml;version="[6.0,7)",
+							org.eclipse.emf.common.util,
+							org.eclipse.emf.ecore.resource,
+							org.eclipse.ocl,
 							org.eclipse.ocl.expressions,
-							org.jbpm.process.builder.dialect,
-							org.drools.core.rule,
-							org.kie.api.definition.process,
-
+							org.eclipse.ocl.types,
+							org.eclipse.ocl.uml,
+							org.eclipse.uml2.uml,
+							org.jbpm.process.builder;version="[6.0,7)",
+							org.jbpm.process.builder.dialect;version="[6.0,7)",
+							org.jbpm.process.builder.dialect.java;version="[6.0,7)",
+							org.jbpm.process.core;version="[6.0,7)",
+							org.jbpm.process.core.context.variable;version="[6.0,7)",
+							org.jbpm.process.instance.impl;version="[6.0,7)",
+							org.kie.api.definition.process;version="[6.0,7)",
+							org.kie.api.io;version="[6.0,7)",
+							org.pavanecce.cmmn.jbpm.flow,
+							org.pavanecce.cmmn.jbpm.xml.handler,
+							org.pavanecce.common.code.metamodel,
+							org.pavanecce.uml.common.ocl,
+							org.pavanecce.uml.common.util,
+							org.pavanecce.uml.common.util.emulated,
+							org.pavanecce.uml.ocl2code.common,
+							org.pavanecce.uml.ocl2code.creators,
+							org.pavanecce.uml.uml2code,
+							org.pavanecce.uml.uml2code.java,
+							org.xml.sax,
 						</Import-Package>
 						<Export-Package>org.pavanecce.uml.jbpm</Export-Package>
 						<Bundle-SymbolicName>org.pavanecce.uml.jbpm</Bundle-SymbolicName>
