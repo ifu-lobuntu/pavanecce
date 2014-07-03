@@ -5,11 +5,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import test.ConstructionCase;
-import test.House;
-import test.HousePlan;
-import test.RoofPlan;
-import test.WallPlan;
+import test.cmmn.ConstructionCase;
+import test.cmmn.House;
+import test.cmmn.HousePlan;
+import test.cmmn.RoofPlan;
+import test.cmmn.WallPlan;
 
 public abstract class CaseFileItemEventTest extends AbstractCaseFileItemEventTest {
 

@@ -30,6 +30,7 @@ public class JpaObjectPersistence implements ObjectPersistence {
 
 	public JpaObjectPersistence(EntityManagerFactory emf2) {
 		this.emf = emf2;
+
 	}
 
 	@Override

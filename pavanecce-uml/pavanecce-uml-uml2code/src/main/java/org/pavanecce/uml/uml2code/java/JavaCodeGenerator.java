@@ -1,11 +1,13 @@
 package org.pavanecce.uml.uml2code.java;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.SortedSet;
 
 import org.pavanecce.common.code.metamodel.CodeClass;
 import org.pavanecce.common.code.metamodel.CodeClassifier;
@@ -13,8 +15,10 @@ import org.pavanecce.common.code.metamodel.CodeCollectionKind;
 import org.pavanecce.common.code.metamodel.CodeConstructor;
 import org.pavanecce.common.code.metamodel.CodeElementType;
 import org.pavanecce.common.code.metamodel.CodeEnumeration;
+import org.pavanecce.common.code.metamodel.CodeEnumerationLiteral;
 import org.pavanecce.common.code.metamodel.CodeExpression;
 import org.pavanecce.common.code.metamodel.CodeField;
+import org.pavanecce.common.code.metamodel.CodeFieldValue;
 import org.pavanecce.common.code.metamodel.CodeInterface;
 import org.pavanecce.common.code.metamodel.CodeMethod;
 import org.pavanecce.common.code.metamodel.CodeParameter;
@@ -27,6 +31,7 @@ import org.pavanecce.common.code.metamodel.OclStandardLibrary;
 import org.pavanecce.common.code.metamodel.PrimitiveTypeReference;
 import org.pavanecce.common.code.metamodel.expressions.BinaryOperatorExpression;
 import org.pavanecce.common.code.metamodel.expressions.IsNullExpression;
+import org.pavanecce.common.code.metamodel.expressions.LiteralPrimitiveExpression;
 import org.pavanecce.common.code.metamodel.expressions.MethodCallExpression;
 import org.pavanecce.common.code.metamodel.expressions.NewInstanceExpression;
 import org.pavanecce.common.code.metamodel.expressions.NotExpression;
@@ -38,6 +43,7 @@ import org.pavanecce.common.code.metamodel.expressions.StaticFieldExpression;
 import org.pavanecce.common.code.metamodel.expressions.StaticMethodCallExpression;
 import org.pavanecce.common.code.metamodel.expressions.TypeExpression;
 import org.pavanecce.common.code.metamodel.statements.AssignmentStatement;
+import org.pavanecce.common.util.NameConverter;
 import org.pavanecce.common.util.OclCollections;
 import org.pavanecce.common.util.OclMath;
 import org.pavanecce.common.util.OclPrimitives;
@@ -260,9 +266,14 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 			sb.append(" extends ");
 			sb.append(this.toSimpleName(cc.getSuperClass()));
 		}
-		if (cc.getImplementedInterfaces().size() > 0) {
+		appendImplementedInterfaces(cc.getImplementedInterfaces());
+		return this;
+	}
+
+	private void appendImplementedInterfaces(SortedSet<CodeTypeReference> implementedInterfaces) {
+		if (implementedInterfaces.size() > 0) {
 			sb.append(" implements ");
-			Iterator<CodeTypeReference> iterator = cc.getImplementedInterfaces().iterator();
+			Iterator<CodeTypeReference> iterator = implementedInterfaces.iterator();
 			while (iterator.hasNext()) {
 				CodeTypeReference ii = iterator.next();
 				sb.append(this.toSimpleName(ii));
@@ -272,7 +283,6 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 			}
 
 		}
-		return this;
 	}
 
 	protected JavaCodeGenerator appendImports(CodeClassifier cc) {
@@ -428,29 +438,30 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 	@Override
 	public JavaCodeGenerator interpretExpression(CodeExpression exp) {
 		if (exp instanceof PortableExpression) {
-			sb.append(super.applyCommonReplacements((PortableExpression) exp));
+			append(super.applyCommonReplacements((PortableExpression) exp));
 		} else if (exp instanceof TypeExpression) {
 			TypeExpression te = (TypeExpression) exp;
 			switch (te.getKind()) {
 			case AS_TYPE:
-				sb.append("(");
-				sb.append(te.getType().getLastName());
-				sb.append(")");
-				interpretExpression(te.getArg());
+				append("(").append(te.getType().getLastName()).append(")").interpretExpression(te.getArg());
 			case IS_TYPE:
 				// TODO make this more intelligent
 				interpretExpression(te.getArg());
 				sb.append(" instanceof ");
 				sb.append(te.getType().getLastName());
 			case IS_KIND:
-				interpretExpression(te.getArg());
-				sb.append(" instanceof ");
-				sb.append(te.getType().getLastName());
+				interpretExpression(te.getArg()).append(" instanceof ").append(te.getType().getLastName());
 			}
 		} else if (exp instanceof IsNullExpression) {
 			IsNullExpression ne = (IsNullExpression) exp;
-			interpretExpression(ne.getSource());
-			sb.append(" == null");
+			interpretExpression(ne.getSource()).append(" == null");
+		} else if (exp instanceof LiteralPrimitiveExpression) {
+			LiteralPrimitiveExpression ne = (LiteralPrimitiveExpression) exp;
+			if (ne.getPrimitiveTypeKind() == CodePrimitiveTypeKind.STRING) {
+				append("\"").append(ne.getValue()).append("\"");
+			} else {
+				append(ne.getValue());
+			}
 		} else if (exp instanceof NotExpression) {
 			NotExpression ne = (NotExpression) exp;
 			sb.append("!(");
@@ -552,25 +563,69 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 	@Override
 	protected JavaCodeGenerator appendEnumerationDefinition(CodeEnumeration cc) {
 		appendPackageAndImports(cc);
-		sb.append("public enum ");
-		if (cc.getImplementedInterfaces().size() > 0) {
-			sb.append(" implements ");
-			Iterator<CodeTypeReference> iterator = cc.getImplementedInterfaces().iterator();
-			while (iterator.hasNext()) {
-				CodeTypeReference ii = iterator.next();
-				sb.append(this.toSimpleName(ii));
-				if (iterator.hasNext()) {
-					sb.append(", ");
+		append("public enum ").append(cc.getName());
+		appendImplementedInterfaces(cc.getImplementedInterfaces());
+		append("{\n");
+		int numberOfFieldValues = appendEnumerationLiterals(cc);
+		appendEnumerationConstructor(cc, numberOfFieldValues);
+		appendFieldsAndMethodDeclarations(cc);
+		append("}\n");
+		return this;
+	}
+
+	private void appendEnumerationConstructor(CodeEnumeration cc, int numberOfFieldValues) {
+		if (numberOfFieldValues > 0) {
+			append("  private ").append(cc.getName()).append("(");
+			Collection<CodeFieldValue> fieldValues = cc.getLiterals().get(0).getFieldValues().values();
+			Iterator<CodeFieldValue> fieldValueIter = fieldValues.iterator();
+			while (fieldValueIter.hasNext()) {
+				CodeFieldValue cfv = fieldValueIter.next();
+				append(typeLastName(cfv.getField().getType())).append(" ").append(cfv.getField().getName());
+				if (fieldValueIter.hasNext()) {
+					append(", ");
 				}
 			}
-
+			append("){\n");
+			for (CodeFieldValue cfv : fieldValues) {
+				String name = cfv.getField().getName();
+				String capitalized = NameConverter.capitalize(name);
+				append("    this.").append("set").append(capitalized).append("(").append(name).append(")").appendLineEnd();
+			}
+			append("  }\n");
 		}
-		sb.append("{\n");
-		appendFieldsAndMethodDeclarations(cc);
-		sb.append("}\n");
-		sb.append(cc.getName());
+	}
 
-		return this;
+	private int appendEnumerationLiterals(CodeEnumeration cc) {
+		Iterator<CodeEnumerationLiteral> litIter = cc.getLiterals().iterator();
+		int numberOfFieldValues = -1;
+		while (litIter.hasNext()) {
+			CodeEnumerationLiteral cel = (CodeEnumerationLiteral) litIter.next();
+			append("  ").append(cel.getName());
+			if (numberOfFieldValues == -1) {
+				numberOfFieldValues = cel.getFieldValues().size();
+			}
+			if (numberOfFieldValues != cel.getFieldValues().size()) {
+				throw new IllegalStateException("All enumeration literals for " + cc.getName() + "must have " + numberOfFieldValues + " field values");
+			}
+			if (cel.getFieldValues().size() > 0) {
+				append("(");
+				Iterator<CodeFieldValue> iterator = cel.getFieldValues().values().iterator();
+				while (iterator.hasNext()) {
+					CodeFieldValue codeFieldValue = iterator.next();
+					this.interpretExpression(codeFieldValue.getValue());
+					if (iterator.hasNext()) {
+						append(", ");
+					}
+				}
+				append(")");
+			}
+			if (litIter.hasNext()) {
+				append(",\n");
+			} else {
+				append(";\n");
+			}
+		}
+		return numberOfFieldValues;
 	}
 
 	@Override

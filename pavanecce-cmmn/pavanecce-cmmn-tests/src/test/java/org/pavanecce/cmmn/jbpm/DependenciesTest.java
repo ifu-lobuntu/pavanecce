@@ -8,24 +8,19 @@ import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 
 import java.io.File;
 
-import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
-
-import org.apache.jackrabbit.core.TransientRepository;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
-import org.pavanecce.common.ocm.ObjectContentManagerFactory;
 import org.pavanecce.common.util.FileUtil;
 
 @RunWith(PaxExam.class)
 public class DependenciesTest {
 	@Test
 	public void testIt() throws Exception {
-		//if we got here, the dependencies worked
+		// if we got here, the dependencies worked
 	}
 
 	@After

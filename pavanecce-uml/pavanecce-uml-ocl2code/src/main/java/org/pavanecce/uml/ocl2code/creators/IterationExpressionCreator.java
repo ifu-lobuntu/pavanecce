@@ -15,7 +15,7 @@ import org.eclipse.uml2.uml.Classifier;
 import org.eclipse.uml2.uml.Parameter;
 import org.pavanecce.common.code.metamodel.CodeBehaviour;
 import org.pavanecce.common.code.metamodel.CodeBlock;
-import org.pavanecce.common.code.metamodel.CodeClass;
+import org.pavanecce.common.code.metamodel.CodeClassifier;
 import org.pavanecce.common.code.metamodel.CodeExpression;
 import org.pavanecce.common.code.metamodel.CodeField;
 import org.pavanecce.common.code.metamodel.CodeMethod;
@@ -44,7 +44,7 @@ import org.pavanecce.uml.ocl2code.maps.ClassifierMap;
 import org.pavanecce.uml.uml2code.StdlibMap;
 
 public class IterationExpressionCreator {
-	private CodeClass myClass = null;
+	private CodeClassifier myClass = null;
 	private CodeVisibilityKind priv = CodeVisibilityKind.PRIVATE;
 	private String[] iterVarNames = { "it" };
 	private CodeTypeReference resultTypePath = null;
@@ -59,7 +59,7 @@ public class IterationExpressionCreator {
 	private UmlToCodeMaps codeMaps;
 	private AbstractOclContext context;
 
-	public IterationExpressionCreator(ExpGeneratorHelper h, CodeClass myClass, AbstractOclContext context) {
+	public IterationExpressionCreator(ExpGeneratorHelper h, CodeClassifier myClass, AbstractOclContext context) {
 		super();
 		this.expGeneratorHelper = h;
 		this.codeMaps = h.CodeUtil;

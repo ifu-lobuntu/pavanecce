@@ -3,15 +3,19 @@ package org.pavanecce.uml.uml2code.ocm;
 import java.util.SortedSet;
 
 import org.eclipse.uml2.uml.Class;
+import org.eclipse.uml2.uml.Enumeration;
+import org.eclipse.uml2.uml.EnumerationLiteral;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.Operation;
 import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.Property;
+import org.pavanecce.common.code.metamodel.documentdb.DocumentEnumeratedType;
 import org.pavanecce.common.code.metamodel.documentdb.DocumentNamespace;
 import org.pavanecce.common.code.metamodel.documentdb.DocumentNodeType;
 import org.pavanecce.common.code.metamodel.documentdb.IChildDocument;
 import org.pavanecce.common.code.metamodel.documentdb.IDocumentElement;
 import org.pavanecce.common.code.metamodel.documentdb.IDocumentProperty;
+import org.pavanecce.common.util.NameConverter;
 import org.pavanecce.uml.uml2code.AbstractBuilder;
 import org.pavanecce.uml.uml2code.codemodel.DocumentUtil;
 
@@ -62,6 +66,19 @@ public class DocumentModelBuilder extends AbstractBuilder<DocumentNamespace, Doc
 
 	public DocumentNamespace getDocumentModel() {
 		return rootNamespace;
+	}
+
+	@Override
+	public DocumentNodeType visitEnum(Enumeration en, DocumentNamespace parent) {
+		DocumentNodeType result = documentUtil.getDocumentNode(en);
+		parent.addNodeType(result);
+		return result;
+	}
+
+	@Override
+	public void visitEnumerationLiteral(EnumerationLiteral el, DocumentNodeType parent) {
+		DocumentEnumeratedType type = (DocumentEnumeratedType) parent;
+		type.addLiteral(NameConverter.toUnderscoreStyle(NameConverter.toValidVariableName(el.getName())).toUpperCase());
 	}
 
 }

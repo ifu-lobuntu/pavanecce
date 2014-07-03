@@ -10,10 +10,10 @@ import org.jbpm.services.task.utils.ContentMarshallerHelper;
 import org.kie.api.task.model.Content;
 import org.kie.api.task.model.Task;
 
-import test.ConstructionCase;
-import test.HousePlan;
-import test.RoofPlan;
-import test.WallPlan;
+import test.cmmn.ConstructionCase;
+import test.cmmn.HousePlan;
+import test.cmmn.RoofPlan;
+import test.cmmn.WallPlan;
 
 public class HumanTaskTest extends AbstractControllableLifecycleTest {
 	{

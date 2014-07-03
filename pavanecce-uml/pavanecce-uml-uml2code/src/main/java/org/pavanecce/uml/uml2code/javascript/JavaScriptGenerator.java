@@ -1,6 +1,7 @@
 package org.pavanecce.uml.uml2code.javascript;
 
 import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -13,8 +14,10 @@ import java.util.TreeSet;
 import org.pavanecce.common.code.metamodel.CodeClass;
 import org.pavanecce.common.code.metamodel.CodeClassifier;
 import org.pavanecce.common.code.metamodel.CodeEnumeration;
+import org.pavanecce.common.code.metamodel.CodeEnumerationLiteral;
 import org.pavanecce.common.code.metamodel.CodeExpression;
 import org.pavanecce.common.code.metamodel.CodeField;
+import org.pavanecce.common.code.metamodel.CodeFieldValue;
 import org.pavanecce.common.code.metamodel.CodeInterface;
 import org.pavanecce.common.code.metamodel.CodeMethod;
 import org.pavanecce.common.code.metamodel.CodePackage;
@@ -26,6 +29,7 @@ import org.pavanecce.common.code.metamodel.CollectionTypeReference;
 import org.pavanecce.common.code.metamodel.PrimitiveTypeReference;
 import org.pavanecce.common.code.metamodel.expressions.BinaryOperatorExpression;
 import org.pavanecce.common.code.metamodel.expressions.IsNullExpression;
+import org.pavanecce.common.code.metamodel.expressions.LiteralPrimitiveExpression;
 import org.pavanecce.common.code.metamodel.expressions.MethodCallExpression;
 import org.pavanecce.common.code.metamodel.expressions.NewInstanceExpression;
 import org.pavanecce.common.code.metamodel.expressions.NotExpression;
@@ -256,6 +260,13 @@ public class JavaScriptGenerator extends AbstractCodeGenerator {
 				sb.append(" instanceof ");
 				sb.append(te.getType().getLastName());
 			}
+		} else if (exp instanceof LiteralPrimitiveExpression) {
+			LiteralPrimitiveExpression ne = (LiteralPrimitiveExpression) exp;
+			if (ne.getPrimitiveTypeKind() == CodePrimitiveTypeKind.STRING) {
+				append("\"").append(ne.getValue()).append("\"");
+			} else {
+				append(ne.getValue());
+			}
 		} else if (exp instanceof IsNullExpression) {
 			IsNullExpression ne = (IsNullExpression) exp;
 			sb.append("!");
@@ -270,11 +281,7 @@ public class JavaScriptGenerator extends AbstractCodeGenerator {
 		} else if (exp instanceof BinaryOperatorExpression) {
 			BinaryOperatorExpression boe = (BinaryOperatorExpression) exp;
 			if (boe.getOperator().equals("${equals}")) {
-				sb.append("( ");
-				interpretExpression(boe.getArg1());
-				sb.append("===");
-				interpretExpression(boe.getArg2());
-				sb.append(")");
+				append("( ").interpretExpression(boe.getArg1()).append("===").interpretExpression(boe.getArg2()).append(")");
 			} else {
 				sb.append("( ");
 				interpretExpression(boe.getArg1());
@@ -326,6 +333,11 @@ public class JavaScriptGenerator extends AbstractCodeGenerator {
 	}
 
 	@Override
+	public JavaScriptGenerator append(String string) {
+		return (JavaScriptGenerator) super.append(string);
+	}
+
+	@Override
 	protected JavaScriptGenerator appendInterfaceDefinition(CodeInterface value) {
 		appendClassifierDefinitionImpl(value);
 		return this;
@@ -334,6 +346,15 @@ public class JavaScriptGenerator extends AbstractCodeGenerator {
 	@Override
 	protected JavaScriptGenerator appendEnumerationDefinition(CodeEnumeration value) {
 		appendClassifierDefinitionImpl(value);
+		appendLineEnd();
+		for (CodeEnumerationLiteral cel : value.getLiterals()) {
+			append(value.getName()).append(".").append(cel.getName()).append(" = new ").append(value.getName()).append("()").appendLineEnd();
+			Collection<CodeFieldValue> values = cel.getFieldValues().values();
+			for (CodeFieldValue cfv : values) {
+				append(value.getName()).append(".").append(cel.getName()).append(".set(\"").append(cfv.getField().getName()).append("\",")
+						.interpretExpression(cfv.getValue()).append(")").appendLineEnd();
+			}
+		}
 		return this;
 	}
 

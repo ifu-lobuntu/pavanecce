@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.eclipse.ocl.uml.Variable;
 import org.eclipse.uml2.uml.Classifier;
-import org.pavanecce.common.code.metamodel.CodeClass;
+import org.pavanecce.common.code.metamodel.CodeClassifier;
 import org.pavanecce.common.code.metamodel.CodeExpression;
 import org.pavanecce.common.code.metamodel.CodeParameter;
 import org.pavanecce.common.code.metamodel.CodeTypeReference;
@@ -62,7 +62,7 @@ public class ExpGeneratorHelper {
 		return myType;
 	}
 
-	public CodeExpression makeListElem(CodeClass myClass, Classifier type, CodeExpression argStr) {
+	public CodeExpression makeListElem(CodeClassifier myClass, Classifier type, CodeExpression argStr) {
 		return argStr;
 		// ClassifierMap typeMap = codeMaps.buildClassifierMap(type);
 		// if(typeMap.isJavaPrimitive()){

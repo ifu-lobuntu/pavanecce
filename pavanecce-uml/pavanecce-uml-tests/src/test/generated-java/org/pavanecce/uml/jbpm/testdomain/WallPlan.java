@@ -16,7 +16,6 @@ import javax.persistence.Table;
 import org.pavanecce.common.collections.ManyToManyCollection;
 import org.pavanecce.common.collections.ManyToManySet;
 
-
 @Entity(name = "WallPlan")
 @Table(name = "wall_plan")
 public class WallPlan {

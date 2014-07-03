@@ -222,24 +222,21 @@ public abstract class AbstractPotentiallyJavaCompilingTest extends Assert {
 		ClassLoader newClassLoader = null;
 		File destination = calculateBinaryOutputRoot();
 		FileUtil.deleteAllChildren(destination);
-		newClassLoader = new URLClassLoader(new URL[] { destination.toURI().toURL() }, getClass().getClassLoader());
 		if (Thread.currentThread().getContextClassLoader() instanceof URLClassLoader) {
 			logger.info("!!!!!!!!!!!!!!!!!!!!Compiling in Standalone architecture!!!!!!!!!!!!!!!!!!");
-			compileInStandalone(set, destination);
+			newClassLoader = compileInStandalone(set, destination);
 		} else {
 			logger.info("!!!!!!!!!!!!!!!!!!!!Compiling in OSGi architecture!!!!!!!!!!!!!!!!!!");
 			compileInOsgi(set, destination);
+			newClassLoader = new URLClassLoader(new URL[] { destination.toURI().toURL() }, getClass().getClassLoader());
 		}
 		return newClassLoader;
 	}
 
-	private void compileInStandalone(Set<File> set, File destination) throws IOException {
+	private ClassLoader compileInStandalone(Set<File> set, File destination) throws IOException {
 		StringBuilder cp = new StringBuilder();
 		URLClassLoader urlClassLoader = (URLClassLoader) Thread.currentThread().getContextClassLoader();
 		appendClassPath(cp, urlClassLoader);
-		// newClassLoader=URLClassLoader.newInstance(list.toArray(new
-		// URL[list.size()]));
-
 		try {
 			JavaCompiler jc = ToolProvider.getSystemJavaCompiler();
 			StandardJavaFileManager sjfm = jc.getStandardFileManager(null, null, null);
@@ -253,6 +250,9 @@ public abstract class AbstractPotentiallyJavaCompilingTest extends Assert {
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}
+		List<URL> list = new ArrayList<URL>(Arrays.asList(urlClassLoader.getURLs()));
+		list.add(0, destination.toURI().toURL());
+		return new URLClassLoader(list.toArray(new URL[list.size()]), urlClassLoader);
 	}
 
 	protected void appendClassPath(StringBuilder cp, URLClassLoader urlClassLoader) {

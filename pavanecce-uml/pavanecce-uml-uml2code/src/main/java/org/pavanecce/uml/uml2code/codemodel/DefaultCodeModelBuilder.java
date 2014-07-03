@@ -3,6 +3,8 @@ package org.pavanecce.uml.uml2code.codemodel;
 import java.util.SortedSet;
 
 import org.eclipse.uml2.uml.Class;
+import org.eclipse.uml2.uml.Enumeration;
+import org.eclipse.uml2.uml.EnumerationLiteral;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.Namespace;
 import org.eclipse.uml2.uml.Operation;
@@ -10,6 +12,8 @@ import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Type;
 import org.pavanecce.common.code.metamodel.CodeClass;
+import org.pavanecce.common.code.metamodel.CodeClassifier;
+import org.pavanecce.common.code.metamodel.CodeEnumeration;
 import org.pavanecce.common.code.metamodel.CodeModel;
 import org.pavanecce.common.code.metamodel.CodePackage;
 import org.pavanecce.common.code.metamodel.CodePackageReference;
@@ -24,7 +28,7 @@ import org.pavanecce.uml.uml2code.UmlToCodeReferenceMap;
  * @author ampie
  * 
  */
-public class DefaultCodeModelBuilder extends AbstractBuilder<CodePackage, CodeClass> {
+public class DefaultCodeModelBuilder extends AbstractBuilder<CodePackage, CodeClassifier> {
 	protected CodeModel codeModel;
 	private UmlToCodeReferenceMap umlToCodeReferenceMap = new UmlToCodeReferenceMap();
 
@@ -56,7 +60,7 @@ public class DefaultCodeModelBuilder extends AbstractBuilder<CodePackage, CodeCl
 	}
 
 	@Override
-	public void visitProperty(Property property, CodeClass codeClass) {
+	public void visitProperty(Property property, CodeClassifier codeClass) {
 
 	}
 
@@ -66,8 +70,17 @@ public class DefaultCodeModelBuilder extends AbstractBuilder<CodePackage, CodeCl
 	}
 
 	@Override
-	public void visitOperation(Operation operation, CodeClass codeClass) {
+	public void visitOperation(Operation operation, CodeClassifier codeClass) {
 
+	}
+
+	@Override
+	public CodeEnumeration visitEnum(Enumeration en, CodePackage parent) {
+		return (CodeEnumeration) parent.getClassifiers().get(en.getName());
+	}
+
+	@Override
+	public void visitEnumerationLiteral(EnumerationLiteral el, CodeClassifier parent) {
 	}
 
 }

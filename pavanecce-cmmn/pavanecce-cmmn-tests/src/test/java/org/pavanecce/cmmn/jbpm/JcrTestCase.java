@@ -21,12 +21,12 @@ import org.pavanecce.common.ocm.OcmObjectPersistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import test.ConstructionCase;
-import test.House;
-import test.HousePlan;
-import test.RoofPlan;
-import test.Wall;
-import test.WallPlan;
+import test.cmmn.ConstructionCase;
+import test.cmmn.House;
+import test.cmmn.HousePlan;
+import test.cmmn.RoofPlan;
+import test.cmmn.Wall;
+import test.cmmn.WallPlan;
 
 public class JcrTestCase extends AbstractCmmnCaseTestCase {
 	static Logger logger = LoggerFactory.getLogger(JcrTestCase.class);

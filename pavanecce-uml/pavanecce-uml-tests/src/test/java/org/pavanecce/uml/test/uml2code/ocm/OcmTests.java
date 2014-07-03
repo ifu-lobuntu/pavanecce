@@ -16,6 +16,7 @@ import org.apache.jackrabbit.core.TransientRepository;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.AnnotationMapperImpl;
 import org.apache.jackrabbit.ocm.reflection.ReflectionUtils;
 import org.junit.BeforeClass;
+import org.pavanecce.common.code.metamodel.CodeClass;
 import org.pavanecce.common.code.metamodel.CodeClassifier;
 import org.pavanecce.common.code.metamodel.CodePackage;
 import org.pavanecce.common.code.metamodel.documentdb.DocumentNamespace;
@@ -76,7 +77,9 @@ public class OcmTests extends AbstractPersistenceTest {
 	@SuppressWarnings("rawtypes")
 	protected static void addMappedClasses(List<Class> classes, CodePackage codePackage, JavaCodeGenerator jcg, ClassLoader cl) throws Exception {
 		for (CodeClassifier cc : codePackage.getClassifiers().values()) {
-			classes.add(cl.loadClass(jcg.toQualifiedName(cc.getTypeReference())));
+			if (cc instanceof CodeClass) {
+				classes.add(cl.loadClass(jcg.toQualifiedName(cc.getTypeReference())));
+			}
 		}
 		Collection<CodePackage> values = codePackage.getChildren().values();
 		for (CodePackage child : values) {

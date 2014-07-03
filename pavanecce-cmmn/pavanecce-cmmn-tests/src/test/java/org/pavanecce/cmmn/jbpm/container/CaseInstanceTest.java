@@ -12,7 +12,7 @@ import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstanceContainer;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 
-import test.WallPlan;
+import test.cmmn.WallPlan;
 
 public class CaseInstanceTest extends AbstractPlanItemInstanceContainerLifecycleTest {
 

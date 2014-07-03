@@ -1,10 +1,10 @@
 package org.pavanecce.uml.common.ocl;
 
-import lpg.runtime.IPrsStream;
-
 import org.eclipse.emf.common.util.BasicDiagnostic;
 import org.eclipse.ocl.lpg.AbstractParser;
 import org.eclipse.ocl.parser.OCLProblemHandler;
+
+import lpg.runtime.IPrsStream;
 
 public class CustomOclProblemHandler extends OCLProblemHandler {
 	BasicDiagnostic diagnostics;

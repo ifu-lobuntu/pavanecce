@@ -22,7 +22,7 @@ import org.eclipse.uml2.uml.TimeExpression;
 import org.eclipse.uml2.uml.Transition;
 import org.pavanecce.common.code.metamodel.CodeBehaviour;
 import org.pavanecce.common.code.metamodel.CodeBlock;
-import org.pavanecce.common.code.metamodel.CodeClass;
+import org.pavanecce.common.code.metamodel.CodeClassifier;
 import org.pavanecce.common.code.metamodel.CodeExpression;
 import org.pavanecce.common.code.metamodel.CodeField;
 import org.pavanecce.common.code.metamodel.CodeMethod;
@@ -44,12 +44,12 @@ import org.pavanecce.uml.ocl2code.maps.ClassifierMap;
 import org.pavanecce.uml.ocl2code.maps.PropertyMap;
 
 public class ExpressionCreator {
-	private CodeClass myClass = null;
+	private CodeClassifier myClass = null;
 	UmlToCodeMaps codeMaps;
 	ExpGeneratorHelper expGeneratorHelper;
 	private AbstractOclContext context;
 
-	ExpressionCreator(UmlToCodeMaps codeMaps, CodeClass myOwner, AbstractOclContext context) {
+	ExpressionCreator(UmlToCodeMaps codeMaps, CodeClassifier myOwner, AbstractOclContext context) {
 		super();
 		this.context = context;
 		this.codeMaps = codeMaps;
@@ -57,7 +57,7 @@ public class ExpressionCreator {
 		this.myClass = myOwner;
 	}
 
-	public ExpressionCreator(UmlToCodeMaps codeMaps, CodeClass myClass2) {
+	public ExpressionCreator(UmlToCodeMaps codeMaps, CodeClassifier myClass2) {
 		this.codeMaps = codeMaps;
 		this.expGeneratorHelper = new ExpGeneratorHelper(codeMaps);
 		this.myClass = myClass2;

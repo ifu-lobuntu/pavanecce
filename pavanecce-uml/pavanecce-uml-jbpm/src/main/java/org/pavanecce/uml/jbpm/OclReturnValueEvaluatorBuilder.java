@@ -135,7 +135,7 @@ public class OclReturnValueEvaluatorBuilder implements ReturnValueEvaluatorBuild
 		String[] qn = structureRef.split("\\:\\:");
 		for (Namespace ns : rootObjects) {
 			Classifier result = tryToMatch(qn, ns);
-			if(result!=null){
+			if (result != null) {
 				return result;
 			}
 		}
@@ -143,16 +143,16 @@ public class OclReturnValueEvaluatorBuilder implements ReturnValueEvaluatorBuild
 	}
 
 	private Classifier tryToMatch(String[] qn, Namespace ns) {
-		Classifier result=null;
+		Classifier result = null;
 		if (qn[0].equals(ns.getName())) {
 			for (int i = 1; i < qn.length; i++) {
 				if (ns == null) {
-					result=null;
+					result = null;
 				} else {
 					ns = (Namespace) ns.getMember(qn[i]);
 				}
 			}
-			result=(Classifier) ns;
+			result = (Classifier) ns;
 		}
 		return result;
 	}

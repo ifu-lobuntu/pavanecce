@@ -9,6 +9,7 @@ import org.eclipse.uml2.uml.OpaqueExpression;
 import org.eclipse.uml2.uml.Operation;
 import org.eclipse.uml2.uml.Property;
 import org.pavanecce.common.code.metamodel.CodeClass;
+import org.pavanecce.common.code.metamodel.CodeClassifier;
 import org.pavanecce.common.code.metamodel.CodeConstructor;
 import org.pavanecce.common.code.metamodel.CodeExpression;
 import org.pavanecce.common.code.metamodel.CodeMethod;
@@ -37,7 +38,7 @@ public class OclCodeBuilder extends DefaultCodeModelBuilder {
 	}
 
 	@Override
-	public void visitProperty(Property property, CodeClass codeClass) {
+	public void visitProperty(Property property, CodeClassifier codeClass) {
 		if (property.getDefaultValue() instanceof OpaqueExpression) {
 			PropertyMap map = codeMaps.buildStructuralFeatureMap(property);
 			OpaqueExpressionContext ctx = oclContextFactory.getOclExpressionContext((OpaqueExpression) property.getDefaultValue());
@@ -46,15 +47,15 @@ public class OclCodeBuilder extends DefaultCodeModelBuilder {
 			if (property.isDerived()) {
 				CodeMethod getter = codeClass.getMethod(map.getter(), Collections.<CodeParameter> emptyList());
 				getter.setResultInitialValue(codeExpression);
-			} else {
-				CodeConstructor constr = codeClass.findOrCreateConstructor(Collections.<CodeParameter> emptyList());
+			} else if (codeClass instanceof CodeClass) {
+				CodeConstructor constr = ((CodeClass) codeClass).findOrCreateConstructor(Collections.<CodeParameter> emptyList());
 				new AssignmentStatement(constr.getBody(), map.fieldname(), codeExpression);
 			}
 		}
 	}
 
 	@Override
-	public void visitOperation(Operation operation, CodeClass codeClass) {
+	public void visitOperation(Operation operation, CodeClassifier codeClass) {
 		if (operation.getBodyCondition() != null && operation.getBodyCondition().getSpecification() instanceof OpaqueExpression) {
 			OperationMap map = codeMaps.buildOperationMap(operation);
 			OpaqueExpressionContext ctx = oclContextFactory.getOclExpressionContext((OpaqueExpression) operation.getBodyCondition().getSpecification());

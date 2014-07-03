@@ -1,4 +1,4 @@
-package test;
+package test.cmmn;
 
 import java.util.HashSet;
 import java.util.Set;

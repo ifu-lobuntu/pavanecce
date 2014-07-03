@@ -69,7 +69,7 @@ public class SubmitPlanCommand extends AbstractPlanningCommand<Void> {
 			pc.merge(wii);
 			ci.ensurePlanItemCreated(workItemId, plannedTask.getDiscretionaryItemId(), wi);
 			if (td.getStatus() == Status.Created) {
-//				// td.setStatus(Status.Ready);
+				// // td.setStatus(Status.Ready);
 			}
 		}
 		if (resume) {

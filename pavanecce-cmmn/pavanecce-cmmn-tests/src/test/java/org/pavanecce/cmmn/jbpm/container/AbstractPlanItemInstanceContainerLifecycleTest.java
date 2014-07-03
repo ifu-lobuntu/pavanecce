@@ -165,8 +165,9 @@ public abstract class AbstractPlanItemInstanceContainerLifecycleTest extends Abs
 		assertPlanItemInState(caseInstance.getId(), "TheStagePlanItem", PlanElementState.AVAILABLE);
 		assertPlanItemInState(caseInstance.getId(), "TheCaseTaskPlanItem", PlanElementState.ACTIVE);
 		assertEquals(PlanElementState.ACTIVE, reloadCaseInstance(subCase).getPlanElementState());
-//		Task taskByWorkItemId = getTaskService().getTaskByWorkItemId(getWorkitemId());
-//		List<TaskSummary> subTasksByParent = getTaskService().getSubTasksByParent(taskByWorkItemId.getTaskData().getWorkItemId());
+		// Task taskByWorkItemId = getTaskService().getTaskByWorkItemId(getWorkitemId());
+		// List<TaskSummary> subTasksByParent =
+		// getTaskService().getSubTasksByParent(taskByWorkItemId.getTaskData().getWorkItemId());
 		// assertTaskInState(subTasksByParent, "TheHumanTaskPlanItem", Status.Reserved);
 		// assertTaskInState(subTasksByParent, "TheStagePlanItem", Status.Reserved);
 		// assertTaskInState(subTasksByParent, "TheCaseTaskPlanItem", Status.InProgress);

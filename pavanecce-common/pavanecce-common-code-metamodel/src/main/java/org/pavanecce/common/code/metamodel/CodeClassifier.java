@@ -20,6 +20,7 @@ public class CodeClassifier extends CodeElement {
 	private SortedMap<String, CodeMethod> methods = new TreeMap<String, CodeMethod>();
 	private CodeTypeReference typeReference;
 	protected Collection<Enum<?>> librariesToImport = new HashSet<Enum<?>>();
+	private int uniqueNumber;
 
 	public CodeClassifier(String name, CodePackage _package) {
 		super(name);
@@ -135,5 +136,9 @@ public class CodeClassifier extends CodeElement {
 
 	public void setVisibility(CodeVisibilityKind visibility) {
 		this.visibility = visibility;
+	}
+
+	public int getUniqueNumber() {
+		return uniqueNumber++;
 	}
 }

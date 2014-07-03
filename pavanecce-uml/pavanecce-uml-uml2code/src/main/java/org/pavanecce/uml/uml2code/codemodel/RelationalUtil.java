@@ -58,7 +58,7 @@ public class RelationalUtil {
 				}
 			}
 		} else if (p.getType() instanceof Enumeration) {
-			result = new RelationalColumn(PersistentNameUtil.getPersistentName(p), EmfPropertyUtil.isRequired(p));
+			result = new RelationalColumn(PersistentNameUtil.getPersistentName(p), EmfPropertyUtil.isRequired(p), true);
 		}
 		return result;
 	}

@@ -14,9 +14,9 @@ import org.pavanecce.cmmn.jbpm.event.SubscriptionManager;
 import org.pavanecce.cmmn.jbpm.flow.CaseFileItemTransition;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 
-import test.ConstructionCase;
-import test.House;
-import test.HousePlan;
+import test.cmmn.ConstructionCase;
+import test.cmmn.House;
+import test.cmmn.HousePlan;
 
 public abstract class SubscriptionScopeTest extends AbstractConstructionTestCase {
 	public SubscriptionScopeTest() {

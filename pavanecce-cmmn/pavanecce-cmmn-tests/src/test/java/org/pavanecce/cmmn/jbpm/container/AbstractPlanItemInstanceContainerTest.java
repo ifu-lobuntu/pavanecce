@@ -17,10 +17,10 @@ import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseTaskInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import test.ConstructionCase;
-import test.House;
-import test.HousePlan;
-import test.WallPlan;
+import test.cmmn.ConstructionCase;
+import test.cmmn.House;
+import test.cmmn.HousePlan;
+import test.cmmn.WallPlan;
 
 public abstract class AbstractPlanItemInstanceContainerTest extends AbstractConstructionTestCase {
 	Logger logger = LoggerFactory.getLogger(getClass());

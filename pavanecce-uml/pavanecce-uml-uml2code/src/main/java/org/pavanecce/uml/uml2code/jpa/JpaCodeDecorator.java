@@ -137,9 +137,13 @@ public class JpaCodeDecorator extends AbstractJavaCodeDecorator {
 					imports.add("javax.persistence.GeneratedValue");
 				}
 			} else if (data instanceof RelationalColumn) {
-				JpaDataTypeStrategy jpaDataTypeStrategy = dataTypeStrategies.get(field.getType());
-				if (jpaDataTypeStrategy != null) {
-					imports.addAll(jpaDataTypeStrategy.getImports());
+				if (((RelationalColumn) data).isEnumeration()) {
+					imports.add("javax.persistence.Enumerated");
+				} else {
+					JpaDataTypeStrategy jpaDataTypeStrategy = dataTypeStrategies.get(field.getType());
+					if (jpaDataTypeStrategy != null) {
+						imports.addAll(jpaDataTypeStrategy.getImports());
+					}
 				}
 			}
 		}
@@ -165,67 +169,73 @@ public class JpaCodeDecorator extends AbstractJavaCodeDecorator {
 
 	@Override
 	public void decorateFieldDeclaration(JavaCodeGenerator sb, CodeField field) {
-		IRelationalElement element = field.getData(IRelationalElement.class);
-		if (element instanceof RelationalLink) {
-			RelationalLink relationalLink = (RelationalLink) element;
-			if (relationalLink.isOneToOne()) {
-				sb.append("  @OneToOne()\n");
-			} else {
-				sb.append("  @ManyToOne()\n");
-			}
-			Map<String, String> columnMap = relationalLink.getColumnMap();
-			if (columnMap.size() > 0) {
-				sb.append("  @JoinColumns(value=");
-				appendJoinColumns(sb, columnMap);
-				sb.append("  )\n");
-			}
-		} else if (element instanceof RelationalLinkTable) {
-			RelationalLinkTable relationalLink = (RelationalLinkTable) element;
-			sb.append("  @ManyToMany()\n");
-			sb.append("  @JoinTable(name=\"");
-			sb.append(relationalLink.getTableName());
-			Map<String, String> fromColumnMap = relationalLink.getFromColumnMap();
-			if (fromColumnMap.size() > 0) {
-				sb.append("\",");
-				sb.append("joinColumns=");
-				appendJoinColumns(sb, fromColumnMap);
-			}
-			Map<String, String> toColumnMap = relationalLink.getToColumnMap();
-			if (toColumnMap.size() > 0) {
-				sb.append("            , inverseJoinColumns=");
-				appendJoinColumns(sb, toColumnMap);
-			}
-			sb.append("    )\n");
-		} else if (element instanceof RelationalInverseLink) {
-			RelationalInverseLink relationalInverseLink = (RelationalInverseLink) element;
-			if (relationalInverseLink.isManyToMany()) {
-				sb.append("  @ManyToMany(mappedBy=\"");
-			} else if (relationalInverseLink.isOneToMany()) {
-				sb.append("  @OneToMany(mappedBy=\"");
-			} else {
-				sb.append("  @OneToOne(mappedBy=\"");
-			}
-			sb.append(relationalInverseLink.getLinkProperty());
-			sb.append("\"");
-			if (relationalInverseLink.isChild()) {
-				sb.append(",cascade=CascadeType.ALL");
-				if (softDelete == false) {
-					sb.append(",orphanRemoval=true");
+		if (field.getOwner() instanceof CodeClass) {
+			IRelationalElement element = field.getData(IRelationalElement.class);
+			if (element instanceof RelationalLink) {
+				RelationalLink relationalLink = (RelationalLink) element;
+				if (relationalLink.isOneToOne()) {
+					sb.append("  @OneToOne()\n");
+				} else {
+					sb.append("  @ManyToOne()\n");
 				}
-			}
-			sb.append(")\n");
-		} else if (element instanceof RelationalKey) {
-			sb.append("  @Id()\n");
-			if (((RelationalKey) element).getStrategy() == IdStrategy.AUTO_ID) {
-				sb.append("  @GeneratedValue()\n");
-			}
+				Map<String, String> columnMap = relationalLink.getColumnMap();
+				if (columnMap.size() > 0) {
+					sb.append("  @JoinColumns(value=");
+					appendJoinColumns(sb, columnMap);
+					sb.append("  )\n");
+				}
+			} else if (element instanceof RelationalLinkTable) {
+				RelationalLinkTable relationalLink = (RelationalLinkTable) element;
+				sb.append("  @ManyToMany()\n");
+				sb.append("  @JoinTable(name=\"");
+				sb.append(relationalLink.getTableName());
+				Map<String, String> fromColumnMap = relationalLink.getFromColumnMap();
+				if (fromColumnMap.size() > 0) {
+					sb.append("\",");
+					sb.append("joinColumns=");
+					appendJoinColumns(sb, fromColumnMap);
+				}
+				Map<String, String> toColumnMap = relationalLink.getToColumnMap();
+				if (toColumnMap.size() > 0) {
+					sb.append("            , inverseJoinColumns=");
+					appendJoinColumns(sb, toColumnMap);
+				}
+				sb.append("    )\n");
+			} else if (element instanceof RelationalInverseLink) {
+				RelationalInverseLink relationalInverseLink = (RelationalInverseLink) element;
+				if (relationalInverseLink.isManyToMany()) {
+					sb.append("  @ManyToMany(mappedBy=\"");
+				} else if (relationalInverseLink.isOneToMany()) {
+					sb.append("  @OneToMany(mappedBy=\"");
+				} else {
+					sb.append("  @OneToOne(mappedBy=\"");
+				}
+				sb.append(relationalInverseLink.getLinkProperty());
+				sb.append("\"");
+				if (relationalInverseLink.isChild()) {
+					sb.append(",cascade=CascadeType.ALL");
+					if (softDelete == false) {
+						sb.append(",orphanRemoval=true");
+					}
+				}
+				sb.append(")\n");
+			} else if (element instanceof RelationalKey) {
+				sb.append("  @Id()\n");
+				if (((RelationalKey) element).getStrategy() == IdStrategy.AUTO_ID) {
+					sb.append("  @GeneratedValue()\n");
+				}
 
-		} else if (element instanceof RelationalColumn) {
-			JpaDataTypeStrategy jpaDataTypeStrategy = dataTypeStrategies.get(field.getType());
-			if (jpaDataTypeStrategy != null) {
-				jpaDataTypeStrategy.beforeField("  ", sb, field, (RelationalColumn) element);
-			}
+			} else if (element instanceof RelationalColumn) {
+				if (((RelationalColumn) element).isEnumeration()) {
+					sb.append("  @Enumerated()\n");
+				} else {
+					JpaDataTypeStrategy jpaDataTypeStrategy = dataTypeStrategies.get(field.getType());
+					if (jpaDataTypeStrategy != null) {
+						jpaDataTypeStrategy.beforeField("  ", sb, field, (RelationalColumn) element);
+					}
+				}
 
+			}
 		}
 	}
 

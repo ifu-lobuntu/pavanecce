@@ -13,7 +13,7 @@ import org.eclipse.ocl.uml.TypeType;
 import org.eclipse.uml2.uml.Classifier;
 import org.eclipse.uml2.uml.Enumeration;
 import org.eclipse.uml2.uml.Operation;
-import org.pavanecce.common.code.metamodel.CodeClass;
+import org.pavanecce.common.code.metamodel.CodeClassifier;
 import org.pavanecce.common.code.metamodel.CodeExpression;
 import org.pavanecce.common.code.metamodel.CodeParameter;
 import org.pavanecce.common.code.metamodel.expressions.BinaryOperatorExpression;
@@ -34,11 +34,10 @@ public class OperationCallCreator extends AbstractOperationCallCreator {
 	private ExpGeneratorHelper expGeneratorHelper;
 	private AbstractOclContext context;
 
-	public OperationCallCreator(ExpGeneratorHelper h, CodeClass myClass, AbstractOclContext context) {
+	public OperationCallCreator(ExpGeneratorHelper h, CodeClassifier myClass, AbstractOclContext context) {
 		super(myClass);
 		expGeneratorHelper = h;
 		this.codeMaps = h.CodeUtil;
-		this.myClass = myClass;
 		this.context = context;
 	}
 

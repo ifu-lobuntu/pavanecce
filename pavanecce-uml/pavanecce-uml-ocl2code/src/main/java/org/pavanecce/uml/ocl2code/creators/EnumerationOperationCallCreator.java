@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.eclipse.ocl.uml.OperationCallExp;
 import org.eclipse.uml2.uml.Operation;
-import org.pavanecce.common.code.metamodel.CodeClass;
+import org.pavanecce.common.code.metamodel.CodeClassifier;
 import org.pavanecce.common.code.metamodel.CodeExpression;
 import org.pavanecce.common.code.metamodel.CodeParameter;
 import org.pavanecce.common.code.metamodel.expressions.BinaryOperatorExpression;
@@ -12,7 +12,7 @@ import org.pavanecce.common.code.metamodel.expressions.NotExpression;
 
 public class EnumerationOperationCallCreator extends AbstractOperationCallCreator {
 
-	public EnumerationOperationCallCreator(CodeClass myClass) {
+	public EnumerationOperationCallCreator(CodeClassifier myClass) {
 		super(myClass);
 	}
 

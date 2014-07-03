@@ -1,7 +1,7 @@
 package org.pavanecce.uml.ocl2code.creators;
 
 import org.eclipse.uml2.uml.Operation;
-import org.pavanecce.common.code.metamodel.CodeClass;
+import org.pavanecce.common.code.metamodel.CodeClassifier;
 import org.pavanecce.common.code.metamodel.CodeExpression;
 import org.pavanecce.common.code.metamodel.OclStandardLibrary;
 import org.pavanecce.common.code.metamodel.expressions.IsNullExpression;
@@ -9,9 +9,9 @@ import org.pavanecce.common.code.metamodel.expressions.MethodCallExpression;
 
 public class AbstractOperationCallCreator {
 
-	protected CodeClass myClass = null;
+	protected CodeClassifier myClass = null;
 
-	public AbstractOperationCallCreator(CodeClass myClass) {
+	public AbstractOperationCallCreator(CodeClassifier myClass) {
 		super();
 		this.myClass = myClass;
 	}

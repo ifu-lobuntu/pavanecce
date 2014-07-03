@@ -113,8 +113,13 @@ public abstract class AbstractPersistenceTest extends Assert {
 		example.getJavaScriptContext().setAttribute("date", date, ScriptContext.ENGINE_SCOPE);
 		example.getJavaScriptContext().setAttribute("picture", new byte[] { 1, 2, 3, 4, 5, 6 }, ScriptContext.ENGINE_SCOPE);
 		eval("ConstructionCase=Packages.test.ConstructionCase;");
+		eval("HouseStatus=Packages.test.HouseStatus;");
+		eval("House=Packages.test.House;");
 		eval("Date=Packages.java.util.Date;");
 		eval("var constructionCase = new ConstructionCase();");
+		eval("var house = new House();");
+		eval("constructionCase.setHouse(house);");
+		eval("house.setStatus(HouseStatus.FINISHED)");
 		eval("constructionCase.setStartDate(date);");
 		eval("constructionCase.setName('Pietie');");
 		eval("constructionCase.setActive(true);");
@@ -134,6 +139,7 @@ public abstract class AbstractPersistenceTest extends Assert {
 		assertEquals(1240.45, eval("constructionCase.getPricePerSquareMetre()"));
 		assertEquals(1, eval("constructionCase.getPicture()[0]"));
 		assertEquals(6, eval("constructionCase.getPicture()[5]"));
+		assertEquals(eval("HouseStatus.FINISHED"), eval("constructionCase.getHouse().getStatus()"));
 
 	}
 

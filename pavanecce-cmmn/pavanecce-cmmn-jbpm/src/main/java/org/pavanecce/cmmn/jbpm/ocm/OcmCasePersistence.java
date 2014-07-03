@@ -37,11 +37,13 @@ public class OcmCasePersistence extends OcmObjectPersistence {
 			return null;
 		}
 	}
+
 	@Override
 	public void start() {
 		super.start();
 		super.factory.updateEventListener();
 	}
+
 	@Override
 	public void commit() {
 		try {

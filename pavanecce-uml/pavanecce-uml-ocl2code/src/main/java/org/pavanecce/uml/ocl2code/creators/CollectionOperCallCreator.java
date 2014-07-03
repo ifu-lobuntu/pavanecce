@@ -9,7 +9,7 @@ import org.eclipse.uml2.uml.Classifier;
 import org.eclipse.uml2.uml.Operation;
 import org.eclipse.uml2.uml.PrimitiveType;
 import org.pavanecce.common.code.metamodel.CodeBehaviour;
-import org.pavanecce.common.code.metamodel.CodeClass;
+import org.pavanecce.common.code.metamodel.CodeClassifier;
 import org.pavanecce.common.code.metamodel.CodeExpression;
 import org.pavanecce.common.code.metamodel.CodeMethod;
 import org.pavanecce.common.code.metamodel.CodeParameter;
@@ -36,11 +36,11 @@ import org.pavanecce.uml.ocl2code.maps.OperationMap;
 import org.pavanecce.uml.uml2code.StdlibMap;
 
 public class CollectionOperCallCreator {
-	private CodeClass myClass = null;
+	private CodeClassifier myClass = null;
 	private UmlToCodeMaps codeMaps;
 	private ExpGeneratorHelper expGeneratorHelper;
 
-	public CollectionOperCallCreator(ExpGeneratorHelper h, CodeClass myClass) {
+	public CollectionOperCallCreator(ExpGeneratorHelper h, CodeClassifier myClass) {
 		super();
 		this.expGeneratorHelper = h;
 		this.codeMaps = h.CodeUtil;

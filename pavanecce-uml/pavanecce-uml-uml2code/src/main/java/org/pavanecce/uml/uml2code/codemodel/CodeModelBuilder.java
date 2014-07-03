@@ -8,7 +8,15 @@ import java.util.Map;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.uml2.uml.Class;
+import org.eclipse.uml2.uml.Enumeration;
+import org.eclipse.uml2.uml.EnumerationLiteral;
 import org.eclipse.uml2.uml.Interface;
+import org.eclipse.uml2.uml.LiteralBoolean;
+import org.eclipse.uml2.uml.LiteralInteger;
+import org.eclipse.uml2.uml.LiteralNull;
+import org.eclipse.uml2.uml.LiteralReal;
+import org.eclipse.uml2.uml.LiteralSpecification;
+import org.eclipse.uml2.uml.LiteralString;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.MultiplicityElement;
 import org.eclipse.uml2.uml.OpaqueExpression;
@@ -17,17 +25,24 @@ import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.Parameter;
 import org.eclipse.uml2.uml.PrimitiveType;
 import org.eclipse.uml2.uml.Property;
+import org.eclipse.uml2.uml.Slot;
 import org.eclipse.uml2.uml.TypedElement;
+import org.eclipse.uml2.uml.ValueSpecification;
 import org.pavanecce.common.code.metamodel.AssociationCollectionTypeReference;
 import org.pavanecce.common.code.metamodel.CodeClass;
+import org.pavanecce.common.code.metamodel.CodeClassifier;
 import org.pavanecce.common.code.metamodel.CodeCollectionKind;
 import org.pavanecce.common.code.metamodel.CodeConstructor;
+import org.pavanecce.common.code.metamodel.CodeEnumeration;
+import org.pavanecce.common.code.metamodel.CodeEnumerationLiteral;
+import org.pavanecce.common.code.metamodel.CodeExpression;
 import org.pavanecce.common.code.metamodel.CodeField;
 import org.pavanecce.common.code.metamodel.CodeMethod;
 import org.pavanecce.common.code.metamodel.CodePackage;
 import org.pavanecce.common.code.metamodel.CodeParameter;
 import org.pavanecce.common.code.metamodel.CodePrimitiveTypeKind;
 import org.pavanecce.common.code.metamodel.CodeTypeReference;
+import org.pavanecce.common.code.metamodel.CodeVisibilityKind;
 import org.pavanecce.common.code.metamodel.CollectionTypeReference;
 import org.pavanecce.common.code.metamodel.PrimitiveTypeReference;
 import org.pavanecce.common.code.metamodel.documentdb.DocumentProperty;
@@ -35,6 +50,7 @@ import org.pavanecce.common.code.metamodel.documentdb.IDocumentElement;
 import org.pavanecce.common.code.metamodel.documentdb.PropertyType;
 import org.pavanecce.common.code.metamodel.expressions.BinaryOperatorExpression;
 import org.pavanecce.common.code.metamodel.expressions.IsNullExpression;
+import org.pavanecce.common.code.metamodel.expressions.LiteralPrimitiveExpression;
 import org.pavanecce.common.code.metamodel.expressions.NewInstanceExpression;
 import org.pavanecce.common.code.metamodel.expressions.NotExpression;
 import org.pavanecce.common.code.metamodel.expressions.NullExpression;
@@ -72,7 +88,7 @@ public class CodeModelBuilder extends DefaultCodeModelBuilder {
 	}
 
 	@Override
-	public void visitProperty(Property p, CodeClass codeClass) {
+	public void visitProperty(Property p, CodeClassifier codeClass) {
 		String fieldName = toValidVariableName(p.getName());
 		CodeField cf = new CodeField(codeClass, fieldName);
 		cf.setType(calculateType(p));
@@ -88,6 +104,9 @@ public class CodeModelBuilder extends DefaultCodeModelBuilder {
 			getter.setResultInitialValue(new ReadFieldExpression(fieldName));
 		}
 		CodeMethod setter = new CodeMethod("set" + capitalized);
+		if (codeClass instanceof CodeEnumeration) {
+			setter.setVisibility(CodeVisibilityKind.PRIVATE);
+		}
 		CodeParameter param = new CodeParameter("new" + capitalized, setter, cf.getType());
 		setter.setDeclaringClass(codeClass);
 		if (p.getOtherEnd() != null && p.getOtherEnd().isNavigable()) {
@@ -209,7 +228,7 @@ public class CodeModelBuilder extends DefaultCodeModelBuilder {
 	}
 
 	@Override
-	public void visitOperation(Operation operation, CodeClass codeClass) {
+	public void visitOperation(Operation operation, CodeClassifier codeClass) {
 		CodeMethod cm = new CodeMethod(operation.getName());
 		for (Parameter parameter : EmfParameterUtil.getArgumentParameters(operation)) {
 			cm.addParam(toValidVariableName(parameter.getName()), calculateType(parameter));
@@ -255,9 +274,63 @@ public class CodeModelBuilder extends DefaultCodeModelBuilder {
 		return result;
 	}
 
+	private String toCodeLiteral(EnumerationLiteral lit) {
+		return NameConverter.toUnderscoreStyle(toValidVariableName(lit.getName())).toUpperCase();
+	}
+
+	@Override
+	public void visitEnumerationLiteral(EnumerationLiteral el, CodeClassifier parent) {
+		CodeEnumeration codeEnumeration = (CodeEnumeration) parent;
+		CodeEnumerationLiteral codeLiteral = new CodeEnumerationLiteral(codeEnumeration, toCodeLiteral(el));
+		EList<Slot> slots = el.getSlots();
+		for (Slot slot : slots) {
+			if (slot.getDefiningFeature() != null) {
+				CodeExpression value = null;
+				if (EmfPropertyUtil.isMany(slot.getDefiningFeature())) {
+					// TODO: ampie
+				} else {
+					if (slot.getValues().size() == 0) {
+						value = new NullExpression();
+					} else if (slot.getValues().size() == 1) {
+						ValueSpecification valueSpecification = slot.getValues().get(0);
+						if (valueSpecification instanceof LiteralSpecification) {
+							LiteralSpecification literal = (LiteralSpecification) valueSpecification;
+							if (literal instanceof LiteralString) {
+								value = new LiteralPrimitiveExpression(CodePrimitiveTypeKind.STRING, literal.stringValue() + "");
+							} else if (literal instanceof LiteralBoolean) {
+								value = new LiteralPrimitiveExpression(CodePrimitiveTypeKind.BOOLEAN, literal.booleanValue() + "");
+							} else if (literal instanceof LiteralInteger) {
+								value = new LiteralPrimitiveExpression(CodePrimitiveTypeKind.INTEGER, literal.integerValue() + "");
+							} else if (literal instanceof LiteralNull) {
+								value = new NullExpression();
+							} else if (literal instanceof LiteralReal) {
+								value = new LiteralPrimitiveExpression(CodePrimitiveTypeKind.REAL, literal.realValue() + "");
+							}
+						}
+					} else {
+						throw new IllegalStateException("Property '" + slot.getDefiningFeature().getName() + "' can only have one value");
+					}
+				}
+				if (value == null) {
+					value = new NullExpression();
+				}
+				CodeField field = codeEnumeration.getFields().get(toValidVariableName(slot.getDefiningFeature().getName()));
+				codeLiteral.addToFieldValues(field, value);
+			}
+		}
+	}
+
+	@Override
+	public CodeEnumeration visitEnum(Enumeration en, CodePackage parent) {
+		CodeEnumeration codeEnum = new CodeEnumeration(toValidVariableName(en.getName()), parent);
+		codeEnum.setTypeReference(this.calculateTypeReference(en));
+		codeEnum.putData(Model.class, en.getModel());
+		return codeEnum;
+	}
+
 	@Override
 	public CodeClass visitClass(Class c, CodePackage codePackage) {
-		CodeClass codeClass = new CodeClass(c.getName(), codePackage);
+		CodeClass codeClass = new CodeClass(toValidVariableName(c.getName()), codePackage);
 		EList<Class> superClasses = c.getSuperClasses();
 		if (superClasses.size() == 1) {
 			codeClass.setSuperClass(calculateTypeReference(superClasses.get(0)));

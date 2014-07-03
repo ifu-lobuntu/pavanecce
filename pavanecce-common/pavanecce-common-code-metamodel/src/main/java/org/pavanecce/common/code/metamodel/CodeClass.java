@@ -9,7 +9,6 @@ import java.util.TreeSet;
 public class CodeClass extends CodeClassifier {
 	private CodeTypeReference superClass;
 	private SortedSet<CodeTypeReference> implementedInterfaces = new TreeSet<CodeTypeReference>();
-	private int uniqueNumber;
 
 	private SortedMap<String, CodeConstructor> constructors = new TreeMap<String, CodeConstructor>();
 
@@ -48,10 +47,6 @@ public class CodeClass extends CodeClassifier {
 
 	public void addToImplementedInterfaces(CodeTypeReference ref) {
 		implementedInterfaces.add(ref);
-	}
-
-	public int getUniqueNumber() {
-		return uniqueNumber++;
 	}
 
 	public CodeConstructor findOrCreateConstructor(List<CodeParameter> parameters) {

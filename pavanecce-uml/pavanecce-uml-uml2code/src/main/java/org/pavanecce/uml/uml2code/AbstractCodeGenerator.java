@@ -87,6 +87,8 @@ public abstract class AbstractCodeGenerator extends AbstractTextGenerator {
 			appendEnumerationDefinition((CodeEnumeration) value);
 		} else if (value instanceof CodeInterface) {
 			appendInterfaceDefinition((CodeInterface) value);
+		} else if (value instanceof CodeEnumeration) {
+			appendEnumerationDefinition((CodeEnumeration) value);
 		}
 		return this;
 

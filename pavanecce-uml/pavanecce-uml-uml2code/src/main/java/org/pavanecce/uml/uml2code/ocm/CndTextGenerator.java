@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.pavanecce.common.code.metamodel.documentdb.ChildDocument;
 import org.pavanecce.common.code.metamodel.documentdb.ChildDocumentCollection;
+import org.pavanecce.common.code.metamodel.documentdb.DocumentEnumProperty;
 import org.pavanecce.common.code.metamodel.documentdb.DocumentNamespace;
 import org.pavanecce.common.code.metamodel.documentdb.DocumentNodeType;
 import org.pavanecce.common.code.metamodel.documentdb.IChildDocument;
@@ -101,9 +102,20 @@ public class CndTextGenerator extends AbstractTextGenerator {
 	}
 
 	private void appendProperty(IDocumentProperty p) {
-		append("  - ").append(p.getFullName()).append(" ( ").append(p.getPropertyType().name()).append(" ) ").multiplicity(p);
-		if (p instanceof IReferencedDocumentProperty) {
-			append(" < ").append(((IReferencedDocumentProperty) p).getType().getFullName());
+		if (p instanceof DocumentEnumProperty) {
+			append("  - ").append(p.getFullName()).append(" ( ").append(p.getPropertyType().name()).append(" )").multiplicity(p).append(" < ");
+			Iterator<String> iterator = ((DocumentEnumProperty) p).getEnumeratedType().getLiterals().iterator();
+			while (iterator.hasNext()) {
+				append("'").append(iterator.next()).append("'");
+				if (iterator.hasNext()) {
+					append(", ");
+				}
+			}
+		} else {
+			append("  - ").append(p.getFullName()).append(" ( ").append(p.getPropertyType().name()).append(" ) ").multiplicity(p);
+			if (p instanceof IReferencedDocumentProperty) {
+				append(" < ").append(((IReferencedDocumentProperty) p).getType().getFullName());
+			}
 		}
 		endLine();
 	}

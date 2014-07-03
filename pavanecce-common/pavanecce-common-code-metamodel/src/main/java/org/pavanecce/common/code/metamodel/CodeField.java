@@ -9,25 +9,34 @@ public class CodeField extends CodeElement {
 	private boolean isTransient;
 	private boolean isStatic;
 	private boolean isConstant;
+	private CodeElement owner;
 
 	public CodeField(CodeClassifier cls, String name) {
 		super(name);
 		cls.getFields().put(name, this);
+		owner = cls;
 	}
 
-	public CodeField(CodeBlock cls, String name) {
+	public CodeField(CodeBlock block, String name) {
 		super(name);
-		cls.getLocals().add(this);
+		block.getLocals().add(this);
+		owner = block;
 	}
 
 	public CodeField(CodeClassifier cls, String name, CodeTypeReference type) {
 		this(cls, name);
 		this.type = type;
+		owner = cls;
 	}
 
-	public CodeField(CodeBlock owner, String name, CodeTypeReference type) {
-		this(owner, name);
+	public CodeField(CodeBlock block, String name, CodeTypeReference type) {
+		this(block, name);
 		this.type = type;
+		this.owner = block;
+	}
+
+	public CodeElement getOwner() {
+		return owner;
 	}
 
 	public CodeTypeReference getType() {

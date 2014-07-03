@@ -12,8 +12,13 @@ import org.eclipse.uml2.uml.AggregationKind;
 import org.eclipse.uml2.uml.Association;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.Classifier;
+import org.eclipse.uml2.uml.Enumeration;
+import org.eclipse.uml2.uml.EnumerationLiteral;
+import org.eclipse.uml2.uml.LiteralBoolean;
+import org.eclipse.uml2.uml.LiteralInteger;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.Property;
+import org.eclipse.uml2.uml.Slot;
 import org.eclipse.uml2.uml.UMLFactory;
 import org.eclipse.uml2.uml.UMLPackage;
 import org.eclipse.uml2.uml.resource.UMLResource;
@@ -44,6 +49,7 @@ public class ConstructionCaseExample extends AbstractPotentiallyJavaCompilingTes
 	private Class housePlan;
 	private Class house;
 	private Class constructionCase;
+	private Enumeration houseStatus;
 	private ResourceSet rst;
 	private TextFileGenerator textFileGenerator;
 	private Model primitiveTypes;
@@ -95,12 +101,33 @@ public class ConstructionCaseExample extends AbstractPotentiallyJavaCompilingTes
 		roomPlan.createOwnedAttribute("name", primitiveTypes.getOwnedType("String"));
 		createOneToMany(housePlan, roomPlan, CollectionKind.SET_LITERAL, AggregationKind.COMPOSITE_LITERAL);
 		createManyToMany(roomPlan, wallPlan, CollectionKind.SET_LITERAL);
+		houseStatus = (Enumeration) getModel().createOwnedEnumeration("HouseStatus");
+		houseStatus.createOwnedAttribute("exists", primitiveTypes.getOwnedType("Boolean"));
+		houseStatus.createOwnedAttribute("sequence", primitiveTypes.getOwnedType("Integer"));
+		createHouseStatusLiteral("Planned", false, 1);
+		createHouseStatusLiteral("InProgress", true, 2);
+		createHouseStatusLiteral("Finished", true, 3);
+		house.createOwnedAttribute("status", houseStatus).setLower(0);
 		try {
 			model.eResource().save(null);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	private void createHouseStatusLiteral(String name, boolean exists, int sequence) {
+		EnumerationLiteral lit = houseStatus.createOwnedLiteral(name);
+		Slot sequenceSlot = lit.createSlot();
+		sequenceSlot.setDefiningFeature(houseStatus.getOwnedAttribute("sequence", null));
+		LiteralInteger sequenceValue = UMLFactory.eINSTANCE.createLiteralInteger();
+		sequenceValue.setValue(sequence);
+		sequenceSlot.getValues().add(sequenceValue);
+		Slot existsSlot = lit.createSlot();
+		existsSlot.setDefiningFeature(houseStatus.getOwnedAttribute("exists", null));
+		LiteralBoolean existsValue = UMLFactory.eINSTANCE.createLiteralBoolean();
+		existsValue.setValue(exists);
+		existsSlot.getValues().add(existsValue);
 	}
 
 	protected void createConstructionCase() {
@@ -166,7 +193,6 @@ public class ConstructionCaseExample extends AbstractPotentiallyJavaCompilingTes
 
 	public void setup(CodeModelBuilder codeModelBuilder, AbstractCodeGenerator codeGenerator, AbstractJavaCodeDecorator... decorators) throws Exception {
 		this.builder = codeModelBuilder;
-		oldContextClassLoader = Thread.currentThread().getContextClassLoader();
 		super.setup();
 		super.setJavaCodeGenerator(codeGenerator);
 		if (getCodeGenerator() instanceof JavaCodeGenerator) {
@@ -183,6 +209,12 @@ public class ConstructionCaseExample extends AbstractPotentiallyJavaCompilingTes
 		if (getCodeGenerator() instanceof JavaCodeGenerator) {
 			setClassLoader(super.compile(textFileGenerator.getNewFiles()));
 		}
+	}
+
+	public void setClassLoader(ClassLoader classLoader) {
+		super.setClassLoader(classLoader);
+		oldContextClassLoader = Thread.currentThread().getContextClassLoader();
+		Thread.currentThread().setContextClassLoader(classLoader);
 	}
 
 	public TextFileGenerator getTextFileGenerator() {

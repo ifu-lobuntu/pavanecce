@@ -1,5 +1,7 @@
 package org.pavanecce.uml.ocl2code.common;
 
+import static org.pavanecce.common.util.NameConverter.toValidVariableName;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -324,7 +326,7 @@ public class UmlToCodeMaps extends UmlToCodeReferenceMap {
 	}
 
 	public String toCodeLiteral(EnumerationLiteral lit) {
-		return NameConverter.toUnderscoreStyle(lit.getName()).toString();
+		return NameConverter.toUnderscoreStyle(toValidVariableName(lit.getName())).toUpperCase();
 	}
 
 	public EmulatedPropertyHolderForAssociation getEmulatedPropertyHolder(Association association) {

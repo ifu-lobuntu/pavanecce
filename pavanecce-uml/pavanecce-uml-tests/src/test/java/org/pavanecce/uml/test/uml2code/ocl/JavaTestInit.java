@@ -14,6 +14,7 @@ public class JavaTestInit {
 		AbstractOclTest.eval("House=Packages.test.House;");
 		AbstractOclTest.eval("WallPlan=Packages.test.WallPlan;");
 		AbstractOclTest.eval("RoomPlan=Packages.test.RoomPlan;");
+		AbstractOclTest.eval("HouseStatus=Packages.test.HouseStatus;");
 	}
 
 }

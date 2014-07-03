@@ -27,8 +27,7 @@ public class FileUtil {
 					deleteAllChildren(repo);
 				}
 				if (!repo.delete()) {
-					throw new RuntimeException("could not delete "
-							+ repo.getCanonicalPath());
+					throw new RuntimeException("could not delete " + repo.getCanonicalPath());
 				}
 			}
 		} catch (IOException e) {

@@ -15,6 +15,7 @@ import org.eclipse.uml2.uml.Type;
 import org.pavanecce.common.code.metamodel.documentdb.ChildDocument;
 import org.pavanecce.common.code.metamodel.documentdb.ChildDocumentCollection;
 import org.pavanecce.common.code.metamodel.documentdb.DocumentEnumProperty;
+import org.pavanecce.common.code.metamodel.documentdb.DocumentEnumeratedType;
 import org.pavanecce.common.code.metamodel.documentdb.DocumentNamespace;
 import org.pavanecce.common.code.metamodel.documentdb.DocumentNodeType;
 import org.pavanecce.common.code.metamodel.documentdb.DocumentProperty;
@@ -55,7 +56,8 @@ public class DocumentUtil {
 				}
 			}
 		} else if (p.getType() instanceof Enumeration) {
-			result = new DocumentEnumProperty(DocumentNameUtil.name(p), getNamespaceOf(p), EmfPropertyUtil.isRequired(p), EmfPropertyUtil.isMany(p));
+			result = new DocumentEnumProperty(DocumentNameUtil.name(p), getNamespaceOf(p), EmfPropertyUtil.isRequired(p), EmfPropertyUtil.isMany(p),
+					getDocumentNode((Enumeration) p.getType()));
 		}
 		return result;
 	}
@@ -114,6 +116,14 @@ public class DocumentUtil {
 		DocumentNodeType result = nodes.get(clss);
 		if (result == null) {
 			nodes.put(clss, result = buildDocumentNode(clss));
+		}
+		return result;
+	}
+
+	public DocumentEnumeratedType getDocumentNode(Enumeration clss) {
+		DocumentEnumeratedType result = (DocumentEnumeratedType) nodes.get(clss);
+		if (result == null) {
+			nodes.put(clss, result = new DocumentEnumeratedType(getNamespaceOf(clss), DocumentNameUtil.name(clss)));
 		}
 		return result;
 	}

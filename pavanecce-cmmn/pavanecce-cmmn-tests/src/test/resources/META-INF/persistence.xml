@@ -53,13 +53,13 @@
         <class>org.pavanecce.cmmn.jbpm.jpa.JpaCaseSubscriptionInfo</class>
         <class>org.pavanecce.cmmn.jbpm.planning.PlannedTaskImpl</class>
         <!-- Customer entities -->
-        <class>test.HousePlan</class>
-        <class>test.RoomPlan</class>
-        <class>test.RoofPlan</class>
-        <class>test.House</class>
-        <class>test.WallPlan</class>
-        <class>test.Wall</class>
-        <class>test.ConstructionCase</class>
+        <class>test.cmmn.HousePlan</class>
+        <class>test.cmmn.RoomPlan</class>
+        <class>test.cmmn.RoofPlan</class>
+        <class>test.cmmn.House</class>
+        <class>test.cmmn.WallPlan</class>
+        <class>test.cmmn.Wall</class>
+        <class>test.cmmn.ConstructionCase</class>
         
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
 

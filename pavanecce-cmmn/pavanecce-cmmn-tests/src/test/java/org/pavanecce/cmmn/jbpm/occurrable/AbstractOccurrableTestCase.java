@@ -13,9 +13,9 @@ import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
 import org.pavanecce.cmmn.jbpm.lifecycle.PlanItemInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 
-import test.ConstructionCase;
-import test.House;
-import test.HousePlan;
+import test.cmmn.ConstructionCase;
+import test.cmmn.House;
+import test.cmmn.HousePlan;
 
 public abstract class AbstractOccurrableTestCase extends AbstractConstructionTestCase {
 

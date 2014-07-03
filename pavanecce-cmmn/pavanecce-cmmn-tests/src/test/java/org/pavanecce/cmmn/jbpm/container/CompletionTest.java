@@ -10,9 +10,9 @@ import org.pavanecce.cmmn.jbpm.AbstractConstructionTestCase;
 import org.pavanecce.cmmn.jbpm.TaskParameters;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 
-import test.ConstructionCase;
-import test.House;
-import test.HousePlan;
+import test.cmmn.ConstructionCase;
+import test.cmmn.House;
+import test.cmmn.HousePlan;
 
 public class CompletionTest extends AbstractConstructionTestCase {
 

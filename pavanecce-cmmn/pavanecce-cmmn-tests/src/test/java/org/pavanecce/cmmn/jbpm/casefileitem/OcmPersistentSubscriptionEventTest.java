@@ -3,17 +3,18 @@ package org.pavanecce.cmmn.jbpm.casefileitem;
 import org.junit.Test;
 import org.pavanecce.common.ocm.OcmObjectPersistence;
 
-import test.ConstructionCase;
-import test.House;
-import test.HousePlan;
-import test.RoofPlan;
-import test.Wall;
-import test.WallPlan;
+import test.cmmn.ConstructionCase;
+import test.cmmn.House;
+import test.cmmn.HousePlan;
+import test.cmmn.RoofPlan;
+import test.cmmn.Wall;
+import test.cmmn.WallPlan;
 
 public class OcmPersistentSubscriptionEventTest extends CaseFileItemEventTest {
 	{
 		super.isJpa = false;
 	}
+
 	@Test
 	public void testModel() throws Exception {
 		OcmObjectPersistence p = new OcmObjectPersistence(getOcmFactory());

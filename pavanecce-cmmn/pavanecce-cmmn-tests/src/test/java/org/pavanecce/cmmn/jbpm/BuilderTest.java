@@ -13,11 +13,11 @@ import org.kie.api.task.TaskService;
 import org.kie.api.task.model.TaskSummary;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 
-import test.ConstructionCase;
-import test.House;
-import test.HousePlan;
-import test.Wall;
-import test.WallPlan;
+import test.cmmn.ConstructionCase;
+import test.cmmn.House;
+import test.cmmn.HousePlan;
+import test.cmmn.Wall;
+import test.cmmn.WallPlan;
 
 public class BuilderTest extends AbstractConstructionTestCase {
 

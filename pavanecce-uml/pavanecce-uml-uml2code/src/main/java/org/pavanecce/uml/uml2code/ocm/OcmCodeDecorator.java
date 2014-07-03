@@ -36,6 +36,12 @@ public class OcmCodeDecorator extends AbstractJavaCodeDecorator {
 				sb.append("  String ").append(getPathFieldName(nodeType)).appendLineEnd();
 			}
 		}
+		for (CodeField codeField : cc.getFields().values()) {
+			if (codeField.getData(IDocumentElement.class) instanceof DocumentEnumProperty) {
+				sb.append("  public static class ConverterFor").append(codeField.getName()).append(" extends GenericEnumTypeConverter<")
+						.append(sb.typeLastName(codeField.getType())).append(">{};\n");
+			}
+		}
 	}
 
 	protected boolean hasPkField(CodeClassifier cc, DocumentNodeType nodeType) {
@@ -120,7 +126,7 @@ public class OcmCodeDecorator extends AbstractJavaCodeDecorator {
 				imports.add("org.apache.jackrabbit.ocm.mapper.impl.annotation.Bean");
 			} else if (data instanceof DocumentProperty) {
 				if (data instanceof DocumentEnumProperty) {
-					imports.add("org.apache.jackrabbit.ocm.manager.enumconverter.EnumTypeConverter");
+					imports.add("org.pavanecce.common.ocm.GenericEnumTypeConverter");
 				}
 			} else if (data instanceof ParentDocument) {
 				imports.add("org.apache.jackrabbit.ocm.mapper.impl.annotation.Bean");
@@ -145,50 +151,54 @@ public class OcmCodeDecorator extends AbstractJavaCodeDecorator {
 		if (element instanceof DocumentNodeType) {
 			sb.append("@Node(jcrType = \"").append(((DocumentNodeType) element).getFullName()).append("\", discriminator = false)\n");
 		}
+
 	}
 
 	@Override
 	public void decorateFieldDeclaration(JavaCodeGenerator sb, CodeField field) {
-		IDocumentElement element = field.getData(IDocumentElement.class);
-		if (element instanceof ChildDocument) {
-			sb.append("  @Bean(jcrName = \"").append(((ChildDocument) element).getFullName()).append("\")\n");
-		} else if (element instanceof ParentDocument) {
-			String converter = null;
-			ParentDocument parentDocument = (ParentDocument) element;
-			if (parentDocument.isChildIsMany()) {
-				converter = "GrandParentBeanConverterImpl";
-			} else {
-				converter = "ParentBeanConverterImpl";
-			}
-			sb.append("  @Bean(jcrName = \"").append(parentDocument.getFullName()).append("\", converter=").append(converter).append(".class)\n");
-		} else if (element instanceof ReferencedDocument) {
-			ReferencedDocument ref = (ReferencedDocument) element;
-			sb.append("  @Bean(jcrName = \"").append(ref.getFullName()).append("\", converter = ReferenceBeanConverterImpl.class)\n");
-		} else if (element instanceof ChildDocumentCollection) {
-			ChildDocumentCollection children = (ChildDocumentCollection) element;
-			sb.append("  @Collection(jcrName = \"").append(children.getFullName()).append("\", jcrElementName = \"").append(children.getType().getFullName())
-					.append("\")\n");
-		} else if (element instanceof ReferencedDocumentCollection) {
-			ReferencedDocumentCollection refs = (ReferencedDocumentCollection) element;
-			sb.append("  @Collection(jcrName = \"").append(refs.getFullName())
-					.append("\", collectionConverter =  BeanReferenceCollectionConverterImpl.class)\n");
-		} else if (element instanceof DocumentEnumProperty) {
-			DocumentEnumProperty prop = (DocumentEnumProperty) element;
-			sb.append("  @Field(jcrName = \"").append(prop.getFullName()).append("\", converter = EnumTypeConverter.class)\n");
-		} else if (element instanceof DocumentProperty) {
-			DocumentProperty prop = (DocumentProperty) element;
-			sb.append("  @Field(");
-			if (prop.isUuid()) {
-				sb.append("uuid = true)\n");
-			} else {
-				sb.append("jcrName = \"").append(prop.getFullName());
-				sb.append("\"");
-				if (prop.isPath()) {
-					sb.append(", path = true");
+		if (field.getOwner() instanceof CodeClass) {
+			IDocumentElement element = field.getData(IDocumentElement.class);
+			if (element instanceof ChildDocument) {
+				sb.append("  @Bean(jcrName = \"").append(((ChildDocument) element).getFullName()).append("\")\n");
+			} else if (element instanceof ParentDocument) {
+				String converter = null;
+				ParentDocument parentDocument = (ParentDocument) element;
+				if (parentDocument.isChildIsMany()) {
+					converter = "GrandParentBeanConverterImpl";
+				} else {
+					converter = "ParentBeanConverterImpl";
 				}
-				sb.append(", jcrType = \"");
-				sb.append(prop.getPropertyType().name());
-				sb.append("\")\n");
+				sb.append("  @Bean(jcrName = \"").append(parentDocument.getFullName()).append("\", converter=").append(converter).append(".class)\n");
+			} else if (element instanceof ReferencedDocument) {
+				ReferencedDocument ref = (ReferencedDocument) element;
+				sb.append("  @Bean(jcrName = \"").append(ref.getFullName()).append("\", converter = ReferenceBeanConverterImpl.class)\n");
+			} else if (element instanceof ChildDocumentCollection) {
+				ChildDocumentCollection children = (ChildDocumentCollection) element;
+				sb.append("  @Collection(jcrName = \"").append(children.getFullName()).append("\", jcrElementName = \"")
+						.append(children.getType().getFullName()).append("\")\n");
+			} else if (element instanceof ReferencedDocumentCollection) {
+				ReferencedDocumentCollection refs = (ReferencedDocumentCollection) element;
+				sb.append("  @Collection(jcrName = \"").append(refs.getFullName())
+						.append("\", collectionConverter =  BeanReferenceCollectionConverterImpl.class)\n");
+			} else if (element instanceof DocumentEnumProperty) {
+				DocumentEnumProperty prop = (DocumentEnumProperty) element;
+				sb.append("  @Field(jcrName = \"").append(prop.getFullName()).append("\", converter = ConverterFor").append(field.getName())
+						.append(".class)\n");
+			} else if (element instanceof DocumentProperty) {
+				DocumentProperty prop = (DocumentProperty) element;
+				sb.append("  @Field(");
+				if (prop.isUuid()) {
+					sb.append("uuid = true)\n");
+				} else {
+					sb.append("jcrName = \"").append(prop.getFullName());
+					sb.append("\"");
+					if (prop.isPath()) {
+						sb.append(", path = true");
+					}
+					sb.append(", jcrType = \"");
+					sb.append(prop.getPropertyType().name());
+					sb.append("\")\n");
+				}
 			}
 		}
 	}

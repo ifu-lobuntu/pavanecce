@@ -17,10 +17,10 @@ import org.pavanecce.cmmn.jbpm.lifecycle.PlanElementState;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseTaskInstance;
 
-import test.ConstructionCase;
-import test.HousePlan;
-import test.RoofPlan;
-import test.WallPlan;
+import test.cmmn.ConstructionCase;
+import test.cmmn.HousePlan;
+import test.cmmn.RoofPlan;
+import test.cmmn.WallPlan;
 
 public class CaseTaskTest extends AbstractControllableLifecycleTest {
 	{

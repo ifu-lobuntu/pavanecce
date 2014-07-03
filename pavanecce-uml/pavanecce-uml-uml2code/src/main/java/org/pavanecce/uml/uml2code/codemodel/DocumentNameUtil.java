@@ -1,6 +1,6 @@
 package org.pavanecce.uml.uml2code.codemodel;
 
-import org.eclipse.uml2.uml.Class;
+import org.eclipse.uml2.uml.Classifier;
 import org.eclipse.uml2.uml.Property;
 import org.pavanecce.common.util.NameConverter;
 import org.pavanecce.uml.common.util.EmfPropertyUtil;
@@ -16,7 +16,7 @@ public class DocumentNameUtil {
 		}
 	}
 
-	public static String name(Class c) {
+	public static String name(Classifier c) {
 		return NameConverter.decapitalize(NameConverter.toValidVariableName(c.getName()));
 	}
 }

@@ -15,7 +15,7 @@ import org.eclipse.ocl.uml.OCLExpression;
 import org.eclipse.ocl.uml.OperationCallExp;
 import org.eclipse.ocl.uml.PropertyCallExp;
 import org.eclipse.uml2.uml.Property;
-import org.pavanecce.common.code.metamodel.CodeClass;
+import org.pavanecce.common.code.metamodel.CodeClassifier;
 import org.pavanecce.common.code.metamodel.CodeExpression;
 import org.pavanecce.common.code.metamodel.CodeMethod;
 import org.pavanecce.common.code.metamodel.CodeParameter;
@@ -40,12 +40,12 @@ import org.pavanecce.uml.ocl2code.maps.PropertyMap;
 import org.pavanecce.uml.uml2code.StdlibMap;
 
 public class PropCallCreator {
-	private CodeClass myClass = null;
+	private CodeClassifier myClass = null;
 	private ExpGeneratorHelper expGeneratorHelper;
 	private UmlToCodeMaps codeMaps;
 	private AbstractOclContext context;
 
-	public PropCallCreator(ExpGeneratorHelper e, CodeClass myClass, AbstractOclContext context) {
+	public PropCallCreator(ExpGeneratorHelper e, CodeClassifier myClass, AbstractOclContext context) {
 		super();
 		expGeneratorHelper = e;
 		this.myClass = myClass;

@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.eclipse.uml2.uml.Classifier;
 import org.pavanecce.common.code.metamodel.CodeClass;
+import org.pavanecce.common.code.metamodel.CodeClassifier;
 import org.pavanecce.common.code.metamodel.CodeModel;
 import org.pavanecce.common.code.metamodel.CodePackage;
 import org.pavanecce.common.code.metamodel.CodeTypeReference;
@@ -16,7 +17,7 @@ import org.pavanecce.uml.uml2code.AbstractUmlVisitorAdaptor;
  * @author ampie
  * 
  */
-public class UmlCodeModelVisitorAdaptor extends AbstractUmlVisitorAdaptor<CodePackage, CodeClass, DefaultCodeModelBuilder> {
+public class UmlCodeModelVisitorAdaptor extends AbstractUmlVisitorAdaptor<CodePackage, CodeClassifier, DefaultCodeModelBuilder> {
 
 	protected CodeModel codeModel = new CodeModel();
 
@@ -34,10 +35,13 @@ public class UmlCodeModelVisitorAdaptor extends AbstractUmlVisitorAdaptor<CodePa
 	}
 
 	@Override
-	protected void doArtificialInterfaceImplementation(CodeClass codeClass, Classifier toImplement, DefaultCodeModelBuilder builder) {
-		// TODO find a better place for this - this was just to make
-		// uml.Classifer compile
-		codeClass.setSuperClass(new CodeTypeReference(false, org.eclipse.emf.ecore.impl.EModelElementImpl.class.getName().split("\\.")));
-		codeClass.addToImplementedInterfaces(builder.calculateTypeReference(toImplement));
+	protected void doArtificialInterfaceImplementation(CodeClassifier codeClassifier, Classifier toImplement, DefaultCodeModelBuilder builder) {
+		if (codeClassifier instanceof CodeClass) {
+			// TODO find a better place for this - this was just to make
+			// uml.Classifer compile
+			CodeClass codeClass = (CodeClass) codeClassifier;
+			codeClass.setSuperClass(new CodeTypeReference(false, org.eclipse.emf.ecore.impl.EModelElementImpl.class.getName().split("\\.")));
+			codeClass.addToImplementedInterfaces(builder.calculateTypeReference(toImplement));
+		}
 	}
 }

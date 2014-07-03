@@ -22,7 +22,7 @@ import org.eclipse.uml2.uml.EnumerationLiteral;
 import org.eclipse.uml2.uml.Property;
 import org.pavanecce.common.code.metamodel.CodeBehaviour;
 import org.pavanecce.common.code.metamodel.CodeBlock;
-import org.pavanecce.common.code.metamodel.CodeClass;
+import org.pavanecce.common.code.metamodel.CodeClassifier;
 import org.pavanecce.common.code.metamodel.CodeExpression;
 import org.pavanecce.common.code.metamodel.CodeField;
 import org.pavanecce.common.code.metamodel.CodeMethod;
@@ -47,11 +47,11 @@ import org.pavanecce.uml.ocl2code.maps.PropertyMap;
 import org.pavanecce.uml.ocl2code.maps.TupleTypeMap;
 
 public class LiteralExpCreator {
-	private CodeClass myClass = null;
+	private CodeClassifier myClass = null;
 	private UmlToCodeMaps codeMaps;
 	private AbstractOclContext context;
 
-	public LiteralExpCreator(UmlToCodeMaps CodeUtil, CodeClass myClass, AbstractOclContext context) {
+	public LiteralExpCreator(UmlToCodeMaps CodeUtil, CodeClassifier myClass, AbstractOclContext context) {
 		this.myClass = myClass;
 		this.codeMaps = CodeUtil;
 		this.context = context;

@@ -9,8 +9,8 @@ import org.junit.After;
 import org.junit.Test;
 import org.pavanecce.cmmn.jbpm.lifecycle.impl.CaseInstance;
 
-import test.HousePlan;
-import test.WallPlan;
+import test.cmmn.HousePlan;
+import test.cmmn.WallPlan;
 
 public class TimerEventTest extends AbstractOccurrableTestCase {
 

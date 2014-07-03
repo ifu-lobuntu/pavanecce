@@ -3,12 +3,12 @@ package org.pavanecce.cmmn.jbpm.casefileitem;
 import org.junit.Test;
 import org.pavanecce.common.jpa.JpaObjectPersistence;
 
-import test.ConstructionCase;
-import test.House;
-import test.HousePlan;
-import test.RoofPlan;
-import test.Wall;
-import test.WallPlan;
+import test.cmmn.ConstructionCase;
+import test.cmmn.House;
+import test.cmmn.HousePlan;
+import test.cmmn.RoofPlan;
+import test.cmmn.Wall;
+import test.cmmn.WallPlan;
 
 public class JpaPersistentSubscriptionEventTest extends CaseFileItemEventTest {
 	{

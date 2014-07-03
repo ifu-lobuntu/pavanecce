@@ -4,4 +4,5 @@ libs-sources
 .settings
 .project
 .classpath
+.externalToolBuilders
 libs

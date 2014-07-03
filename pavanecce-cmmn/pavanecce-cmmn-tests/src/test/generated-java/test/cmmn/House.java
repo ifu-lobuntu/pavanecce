@@ -1,9 +1,11 @@
-package test;
+package test.cmmn;
 
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -14,74 +16,51 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.apache.jackrabbit.ocm.manager.beanconverter.impl.ParentBeanConverterImpl;
+import org.apache.jackrabbit.ocm.manager.beanconverter.impl.ReferenceBeanConverterImpl;
+import org.apache.jackrabbit.ocm.manager.collectionconverter.impl.BeanReferenceCollectionConverterImpl;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Bean;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Collection;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
 import org.pavanecce.common.collections.OneToManySet;
 
-@Node(jcrType = "test:housePlan", discriminator = false)
-@Entity(name = "HousePlan")
-@Table(name = "house_plan")
-public class HousePlan {
+@Node(jcrType = "test:house", discriminator = false)
+@Entity(name = "House")
+@Table(name = "house")
+public class House {
 	@Bean(jcrName = "test:constructionCase", converter = ParentBeanConverterImpl.class)
 	@OneToOne()
 	@JoinColumns(value = { @JoinColumn(name = "construction_case_id", referencedColumnName = "id") })
 	private ConstructionCase constructionCase = null;
+	@Field(jcrName = "test:description", jcrType = "STRING")
+	@Basic()
+	@Column(name = "description")
+	private String description = "";
 	@Field(uuid = true)
 	@Id()
 	@GeneratedValue()
 	private String id = null;
-	@Bean(jcrName = "test:roofPlan")
-	@OneToOne(mappedBy = "housePlan", cascade = CascadeType.ALL)
+	@Bean(jcrName = "test:roofPlan", converter = ReferenceBeanConverterImpl.class)
+	@OneToOne()
+	@JoinColumns(value = { @JoinColumn(name = "roof_plan_id", referencedColumnName = "id") })
 	private RoofPlan roofPlan = null;
 	@SuppressWarnings("serial")
-	private transient OneToManySet<HousePlan, RoomPlan> roomPlansWrapper = new OneToManySet<HousePlan, RoomPlan>(this) {
-		public Set<RoomPlan> getDelegate() {
-			return roomPlans;
-		}
-
-		@SuppressWarnings("unchecked")
-		protected OneToManySet<HousePlan, RoomPlan> getChildren(HousePlan parent) {
-			return (OneToManySet<HousePlan, RoomPlan>) parent.getRoomPlans();
-		}
-
-		public HousePlan getParent(RoomPlan child) {
-			return (HousePlan) child.getHousePlan();
-		}
-
-		public void setParent(RoomPlan child, HousePlan parent) {
-			child.zz_internalSetHousePlan(parent);
-		}
-
-		public boolean isLoaded() {
-			return true;
-		}
-
-		public boolean isInstanceOfChild(Object o) {
-			return o instanceof RoomPlan;
-		}
-	};
-	@Collection(jcrName = "test:roomPlans", jcrElementName = "test:roomPlan")
-	@OneToMany(mappedBy = "housePlan", cascade = CascadeType.ALL)
-	private Set<RoomPlan> roomPlans = new HashSet<RoomPlan>();
-	@SuppressWarnings("serial")
-	private transient OneToManySet<HousePlan, WallPlan> wallPlansWrapper = new OneToManySet<HousePlan, WallPlan>(this) {
+	private transient OneToManySet<House, WallPlan> wallPlansWrapper = new OneToManySet<House, WallPlan>(this) {
 		public Set<WallPlan> getDelegate() {
 			return wallPlans;
 		}
 
 		@SuppressWarnings("unchecked")
-		protected OneToManySet<HousePlan, WallPlan> getChildren(HousePlan parent) {
-			return (OneToManySet<HousePlan, WallPlan>) parent.getWallPlans();
+		protected OneToManySet<House, WallPlan> getChildren(House parent) {
+			return (OneToManySet<House, WallPlan>) parent.getWallPlans();
 		}
 
-		public HousePlan getParent(WallPlan child) {
-			return (HousePlan) child.getHousePlan();
+		public House getParent(WallPlan child) {
+			return (House) child.getHouse();
 		}
 
-		public void setParent(WallPlan child, HousePlan parent) {
-			child.zz_internalSetHousePlan(parent);
+		public void setParent(WallPlan child, House parent) {
+			child.zz_internalSetHouse(parent);
 		}
 
 		public boolean isLoaded() {
@@ -92,24 +71,59 @@ public class HousePlan {
 			return o instanceof WallPlan;
 		}
 	};
-	@Collection(jcrName = "test:wallPlans", jcrElementName = "test:wallPlan")
-	@OneToMany(mappedBy = "housePlan", cascade = CascadeType.ALL)
+	@Collection(jcrName = "test:wallPlans", collectionConverter = BeanReferenceCollectionConverterImpl.class)
+	@OneToMany(mappedBy = "house")
 	private Set<WallPlan> wallPlans = new HashSet<WallPlan>();
+	@SuppressWarnings("serial")
+	private transient OneToManySet<House, Wall> wallsWrapper = new OneToManySet<House, Wall>(this) {
+		public Set<Wall> getDelegate() {
+			return walls;
+		}
+
+		@SuppressWarnings("unchecked")
+		protected OneToManySet<House, Wall> getChildren(House parent) {
+			return (OneToManySet<House, Wall>) parent.getWalls();
+		}
+
+		public House getParent(Wall child) {
+			return (House) child.getHouse();
+		}
+
+		public void setParent(Wall child, House parent) {
+			child.zz_internalSetHouse(parent);
+		}
+
+		public boolean isLoaded() {
+			return true;
+		}
+
+		public boolean isInstanceOfChild(Object o) {
+			return o instanceof Wall;
+		}
+	};
+	@Collection(jcrName = "test:walls", jcrElementName = "test:wall")
+	@OneToMany(mappedBy = "house", cascade = CascadeType.ALL)
+	private Set<Wall> walls = new HashSet<Wall>();
 	@Field(path = true)
 	String path;
 	@Field(jcrName = "test:uuid", jcrType = "String")
 	@javax.persistence.Basic()
 	private String uuid = getUuid();
 
-	public HousePlan() {
+	public House() {
 	}
 
-	public HousePlan(ConstructionCase owner) {
+	public House(ConstructionCase owner) {
 		this.setConstructionCase(owner);
 	}
 
 	public ConstructionCase getConstructionCase() {
 		ConstructionCase result = this.constructionCase;
+		return result;
+	}
+
+	public String getDescription() {
+		String result = this.description;
 		return result;
 	}
 
@@ -123,13 +137,13 @@ public class HousePlan {
 		return result;
 	}
 
-	public Set<RoomPlan> getRoomPlans() {
-		Set<RoomPlan> result = this.roomPlansWrapper;
+	public Set<WallPlan> getWallPlans() {
+		Set<WallPlan> result = this.wallPlansWrapper;
 		return result;
 	}
 
-	public Set<WallPlan> getWallPlans() {
-		Set<WallPlan> result = this.wallPlansWrapper;
+	public Set<Wall> getWalls() {
+		Set<Wall> result = this.wallsWrapper;
 		return result;
 	}
 
@@ -138,14 +152,18 @@ public class HousePlan {
 		if ((newConstructionCase == null || !(newConstructionCase.equals(oldValue)))) {
 			this.constructionCase = newConstructionCase;
 			if (!(oldValue == null)) {
-				oldValue.setHousePlan(null);
+				oldValue.setHouse(null);
 			}
 			if (!(newConstructionCase == null)) {
-				if (!(this.equals(newConstructionCase.getHousePlan()))) {
-					newConstructionCase.setHousePlan(this);
+				if (!(this.equals(newConstructionCase.getHouse()))) {
+					newConstructionCase.setHouse(this);
 				}
 			}
 		}
+	}
+
+	public void setDescription(String newDescription) {
+		this.description = newDescription;
 	}
 
 	public void setId(String id) {
@@ -157,22 +175,22 @@ public class HousePlan {
 		if ((newRoofPlan == null || !(newRoofPlan.equals(oldValue)))) {
 			this.roofPlan = newRoofPlan;
 			if (!(oldValue == null)) {
-				oldValue.setHousePlan(null);
+				oldValue.setHouse(null);
 			}
 			if (!(newRoofPlan == null)) {
-				if (!(this.equals(newRoofPlan.getHousePlan()))) {
-					newRoofPlan.setHousePlan(this);
+				if (!(this.equals(newRoofPlan.getHouse()))) {
+					newRoofPlan.setHouse(this);
 				}
 			}
 		}
 	}
 
-	public void setRoomPlans(Set<RoomPlan> newRoomPlans) {
-		this.roomPlans = newRoomPlans;
-	}
-
 	public void setWallPlans(Set<WallPlan> newWallPlans) {
 		this.wallPlans = newWallPlans;
+	}
+
+	public void setWalls(Set<Wall> newWalls) {
+		this.walls = newWalls;
 	}
 
 	public void zz_internalSetConstructionCase(ConstructionCase value) {
@@ -196,7 +214,7 @@ public class HousePlan {
 	}
 
 	public boolean equals(Object o) {
-		return o instanceof HousePlan && ((HousePlan) o).getUuid().equals(getUuid());
+		return o instanceof House && ((House) o).getUuid().equals(getUuid());
 	}
 
 	public String getUuid() {

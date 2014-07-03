@@ -6,7 +6,7 @@ import org.eclipse.ocl.uml.OperationCallExp;
 import org.eclipse.ocl.uml.TypeExp;
 import org.eclipse.uml2.uml.Classifier;
 import org.eclipse.uml2.uml.Operation;
-import org.pavanecce.common.code.metamodel.CodeClass;
+import org.pavanecce.common.code.metamodel.CodeClassifier;
 import org.pavanecce.common.code.metamodel.CodeExpression;
 import org.pavanecce.common.code.metamodel.CodeParameter;
 import org.pavanecce.common.code.metamodel.OclStandardLibrary;
@@ -19,7 +19,7 @@ import org.pavanecce.uml.common.util.EmfClassifierUtil;
 import org.pavanecce.uml.ocl2code.common.OclTypeNames;
 
 public class PrimitiveTypeOperCallCreator extends AbstractOperationCallCreator {
-	public PrimitiveTypeOperCallCreator(CodeClass myClass) {
+	public PrimitiveTypeOperCallCreator(CodeClassifier myClass) {
 		super(myClass);
 	}
 
