@@ -31,6 +31,7 @@ import org.eclipse.uml2.uml.Trigger;
 import org.eclipse.uml2.uml.TypedElement;
 import org.eclipse.uml2.uml.UMLFactory;
 import org.eclipse.uml2.uml.util.UMLUtil;
+import org.pavanecce.uml.common.util.emulated.EndToAssociationClass;
 import org.pavanecce.uml.common.util.emulated.IEmulatedElement;
 
 public class EmfElementFinder {
@@ -53,7 +54,9 @@ public class EmfElementFinder {
 	}
 
 	public static EObject getContainer(EObject s) {
-		if (s == null) {
+		if (s instanceof EndToAssociationClass) {
+			return ((EndToAssociationClass) s).getOtherEnd().getType();
+		} else if (s == null) {
 			return null;
 		} else if (s instanceof IEmulatedElement) {
 			return getContainer(((IEmulatedElement) s).getOriginalElement());

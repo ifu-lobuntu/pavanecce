@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1404387318854
+Bnd-LastModified: 1404390714300
 Build-Jdk: 1.7.0_55
 Built-By: ampie
 Bundle-ManifestVersion: 2
@@ -139,7 +139,7 @@ Import-Package: com.thoughtworks.xstream,javax.enterprise.event,javax.en
  internal.task.api.model;version="[6.0,7)",org.pavanecce.common.jcr,org.
  pavanecce.common.jpa,org.pavanecce.common.ocm,org.pavanecce.common.util
  ,org.slf4j;version="[1.6,2)",org.w3c.dom,org.xml.sax,org.jbpm.process.c
- ore.impl;version="[6.0,7)",org.jbpm.process.core.context.exception;vers
+ ore.context.exception;version="[6.0,7)",org.jbpm.process.core.impl;vers
  ion="[6.0,7)",org.jbpm.process.instance.context;version="[6.0,7)"
 JBOSS_HOME: /opt/jboss-5.1.0.GA
 Tool: Bnd-2.1.0.20130426-122213

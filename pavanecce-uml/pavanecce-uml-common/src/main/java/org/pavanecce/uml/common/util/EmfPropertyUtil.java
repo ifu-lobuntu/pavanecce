@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.ocl.expressions.CollectionKind;
 import org.eclipse.uml2.uml.Association;
 import org.eclipse.uml2.uml.BehavioredClassifier;
@@ -259,16 +260,21 @@ public class EmfPropertyUtil {
 	}
 
 	public static boolean isQualifier(Property p) {
-		Classifier c = (Classifier) EmfElementFinder.getContainer(p);
-		List<Property> propertiesInScope = EmfPropertyUtil.getEffectiveProperties(c);
-		for (Property property : propertiesInScope) {
-			if (property.getOtherEnd() != null) {
-				for (Property q : property.getOtherEnd().getQualifiers()) {
-					if (p.getName().equals(q.getName())) {
-						return true;
+		EObject container = EmfElementFinder.getContainer(p);
+		if (container instanceof Classifier) {
+			Classifier c = (Classifier) container;
+			List<Property> propertiesInScope = EmfPropertyUtil.getEffectiveProperties(c);
+			for (Property property : propertiesInScope) {
+				if (property.getOtherEnd() != null) {
+					for (Property q : property.getOtherEnd().getQualifiers()) {
+						if (p.getName().equals(q.getName())) {
+							return true;
+						}
 					}
 				}
 			}
+		} else {
+			System.out.println();
 		}
 		return false;
 	}
