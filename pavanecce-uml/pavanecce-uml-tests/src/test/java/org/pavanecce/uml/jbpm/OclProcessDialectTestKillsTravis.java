@@ -27,7 +27,7 @@ import org.pavanecce.uml.jbpm.testdomain.RoomPlan;
 import org.pavanecce.uml.jbpm.testdomain.Wall;
 import org.pavanecce.uml.jbpm.testdomain.WallPlan;
 
-public class OclProcessDialectTests extends AbstractCmmnCaseTestCase {
+public class OclProcessDialectTestKillsTravis extends AbstractCmmnCaseTestCase {
 	{
 		super.isJpa = true;
 	}
@@ -35,7 +35,7 @@ public class OclProcessDialectTests extends AbstractCmmnCaseTestCase {
 	protected House house;
 	private CaseInstance caseInstance;
 
-	public OclProcessDialectTests() {
+	public OclProcessDialectTestKillsTravis() {
 		super(true, true, "org.jbpm.persistence.jpa");
 	}
 
