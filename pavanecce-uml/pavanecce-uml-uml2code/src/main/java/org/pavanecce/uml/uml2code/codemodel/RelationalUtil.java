@@ -94,7 +94,7 @@ public class RelationalUtil {
 			if (pkFeature != null) {
 				Property pkProp = (Property) sa.eGet(pkFeature);
 				if (pkProp != null) {
-					pk = PersistentNameUtil.getPersistentName(pkProp);
+					pk = pkProp.getName();
 					break;
 				}
 			}

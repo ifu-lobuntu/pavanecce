@@ -348,35 +348,36 @@ public class CodeModelBuilder extends DefaultCodeModelBuilder {
 		codeClass.putData(IDocumentElement.class, documentUtil.getDocumentNode(c));
 		Property endToComposite = EmfPropertyUtil.getEndToComposite(c);
 		new CodeConstructor(codeClass);
-		CodeField id = new CodeField(codeClass, "id", new PrimitiveTypeReference(CodePrimitiveTypeKind.STRING));
-		id.putData(IRelationalElement.class, new RelationalKey(IdStrategy.AUTO_ID));
-		DocumentProperty uuid = new DocumentProperty("id", documentUtil.buildNamespace(c), PropertyType.STRING, false, false);
-		uuid.setUuid(true);
-		id.setInitialization(new NullExpression());
-		id.putData(IDocumentElement.class, uuid);// (IdStrategy.AUTO_ID));
-		CodeMethod getId = new CodeMethod(codeClass, "getId", new PrimitiveTypeReference(CodePrimitiveTypeKind.STRING));
-		getId.setResultInitialValue(new ReadFieldExpression("id"));
-		CodeMethod setId = new CodeMethod("setId");
-		setId.addParam("id", new PrimitiveTypeReference(CodePrimitiveTypeKind.STRING));
-		setId.setDeclaringClass(codeClass);
-		new AssignmentStatement(setId.getBody(), "${self}.id", new PortableExpression("id"));
-		if (!c.isAbstract() && endToComposite == null) {
-			// TODO put in a OcmCodeModelBuilder
-			CodeField path = new CodeField(codeClass, "path", new PrimitiveTypeReference(CodePrimitiveTypeKind.STRING));
-			DocumentProperty prop = new DocumentProperty("path", documentUtil.getNamespaceOf(c), PropertyType.STRING, true, false);
-			prop.setPath(true);
-			path.putData(IDocumentElement.class, prop);
-			path.setInitialization("\"/" + codeClass.getName() + "Collection\"");
-			new CodeMethod(codeClass, "getPath", path.getType()).setResultInitialValue("${self}.path");
-			CodeMethod setter = new CodeMethod("setPath");
-			setter.addParam("path", path.getType());
-			setter.setDeclaringClass(codeClass);
-			new PortableStatement(setter.getBody(), "${self}.path=path");
-			CodeConstructor constr = new CodeConstructor();
-			constr.addParam("path", new PrimitiveTypeReference(CodePrimitiveTypeKind.STRING));
-			new AssignmentStatement(constr.getBody(), "${self}.path", new PortableExpression("path"));
-			constr.setDeclaringClass(codeClass);
-		} else if (endToComposite != null) {
+//		CodeField id = new CodeField(codeClass, "id", new PrimitiveTypeReference(CodePrimitiveTypeKind.STRING));
+//		id.putData(IRelationalElement.class, new RelationalKey(IdStrategy.AUTO_ID));
+//		DocumentProperty uuid = new DocumentProperty("id", documentUtil.buildNamespace(c), PropertyType.STRING, false, false);
+//		uuid.setUuid(true);
+//		id.setInitialization(new NullExpression());
+//		id.putData(IDocumentElement.class, uuid);// (IdStrategy.AUTO_ID));
+//		CodeMethod getId = new CodeMethod(codeClass, "getId", new PrimitiveTypeReference(CodePrimitiveTypeKind.STRING));
+//		getId.setResultInitialValue(new ReadFieldExpression("id"));
+//		CodeMethod setId = new CodeMethod("setId");
+//		setId.addParam("id", new PrimitiveTypeReference(CodePrimitiveTypeKind.STRING));
+//		setId.setDeclaringClass(codeClass);
+//		new AssignmentStatement(setId.getBody(), "${self}.id", new PortableExpression("id"));
+//		if (!c.isAbstract() && endToComposite == null) {
+//			// TODO put in a OcmCodeModelBuilder
+//			CodeField path = new CodeField(codeClass, "path", new PrimitiveTypeReference(CodePrimitiveTypeKind.STRING));
+//			DocumentProperty prop = new DocumentProperty("path", documentUtil.getNamespaceOf(c), PropertyType.STRING, true, false);
+//			prop.setPath(true);
+//			path.putData(IDocumentElement.class, prop);
+//			path.setInitialization("\"/" + codeClass.getName() + "Collection\"");
+//			new CodeMethod(codeClass, "getPath", path.getType()).setResultInitialValue("${self}.path");
+//			CodeMethod setter = new CodeMethod("setPath");
+//			setter.addParam("path", path.getType());
+//			setter.setDeclaringClass(codeClass);
+//			new PortableStatement(setter.getBody(), "${self}.path=path");
+//			CodeConstructor constr = new CodeConstructor();
+//			constr.addParam("path", new PrimitiveTypeReference(CodePrimitiveTypeKind.STRING));
+//			new AssignmentStatement(constr.getBody(), "${self}.path", new PortableExpression("path"));
+//			constr.setDeclaringClass(codeClass);
+//		} else 
+		if (endToComposite != null) {
 			CodeConstructor constr = new CodeConstructor();
 			constr.addParam("owner", calculateType(endToComposite));
 			constr.setDeclaringClass(codeClass);

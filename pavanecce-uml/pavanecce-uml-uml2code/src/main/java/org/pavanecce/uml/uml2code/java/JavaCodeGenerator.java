@@ -176,6 +176,9 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 		}
 		appendClassDeclaration(cc);
 		sb.append("{\n");
+		for (AbstractJavaCodeDecorator d1 : this.decorators) {
+			d1.appendAdditionalInnerClasses(this, cc);
+		}
 		appendFieldsAndMethodDeclarations(cc);
 		sb.append("}\n");
 		return this;
@@ -203,14 +206,31 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 	}
 
 	protected JavaCodeGenerator appendFieldsAndMethodDeclarations(CodeClassifier cc) {
-		for (Entry<String, CodeField> fieldEntry : cc.getFields().entrySet()) {
-			for (AbstractJavaCodeDecorator d : this.decorators) {
-				d.decorateFieldDeclaration(this, fieldEntry.getValue());
-			}
-			appendFieldDeclaration(fieldEntry.getValue());
-			appendLineEnd();
-		}
 		appendAdditionalFields(cc);
+		appendFields(cc);
+		appendAdditionalConstructors(cc);
+		appendConstructors(cc);
+		appendAdditionalMethods(cc);
+		appendMethods(cc);
+		return this;
+	}
+
+	protected void appendAdditionalConstructors(CodeClassifier cc) {
+		for (AbstractJavaCodeDecorator d : this.decorators) {
+			d.appendAdditionalConstructors(this, cc);
+		}
+	}
+
+	protected void appendMethods(CodeClassifier cc) {
+		for (Entry<String, CodeMethod> methodEntry : cc.getMethods().entrySet()) {
+			for (AbstractJavaCodeDecorator d : this.decorators) {
+				d.decorateMethodDeclaration(this, methodEntry.getValue());
+			}
+			appendMethodDeclaration(methodEntry.getValue());
+		}
+	}
+
+	protected void appendConstructors(CodeClassifier cc) {
 		if (cc instanceof CodeClass) {
 			for (CodeConstructor c : ((CodeClass) cc).getConstructors().values()) {
 				sb.append("  ");
@@ -223,14 +243,16 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 				sb.append("  }\n");
 			}
 		}
-		for (Entry<String, CodeMethod> methodEntry : cc.getMethods().entrySet()) {
+	}
+
+	protected void appendFields(CodeClassifier cc) {
+		for (Entry<String, CodeField> fieldEntry : cc.getFields().entrySet()) {
 			for (AbstractJavaCodeDecorator d : this.decorators) {
-				d.decorateMethodDeclaration(this, methodEntry.getValue());
+				d.decorateFieldDeclaration(this, fieldEntry.getValue());
 			}
-			appendMethodDeclaration(methodEntry.getValue());
+			appendFieldDeclaration(fieldEntry.getValue());
+			appendLineEnd();
 		}
-		appendAdditionalMethods(cc);
-		return this;
 	}
 
 	protected JavaCodeGenerator appendAdditionalFields(CodeClassifier cc) {
@@ -621,10 +643,9 @@ public class JavaCodeGenerator extends AbstractCodeGenerator {
 			}
 			if (litIter.hasNext()) {
 				append(",\n");
-			} else {
-				append(";\n");
 			}
 		}
+		append(";\n");
 		return numberOfFieldValues;
 	}
 

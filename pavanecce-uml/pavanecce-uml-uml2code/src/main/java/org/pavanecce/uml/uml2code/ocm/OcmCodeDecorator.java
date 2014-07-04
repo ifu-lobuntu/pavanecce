@@ -33,14 +33,27 @@ public class OcmCodeDecorator extends AbstractJavaCodeDecorator {
 			}
 			if (!hasPathField(cc, nodeType)) {
 				sb.append("  @Field(path=true)\n");
-				sb.append("  String ").append(getPathFieldName(nodeType)).appendLineEnd();
+				sb.append("  String ").append(getPathFieldName(nodeType)).append(" = \"/").append(cc.getName()).append("Collection\"").appendLineEnd();
 			}
 		}
+	}
+
+	@Override
+	public void appendAdditionalInnerClasses(JavaCodeGenerator sb, CodeClassifier cc) {
 		for (CodeField codeField : cc.getFields().values()) {
 			if (codeField.getData(IDocumentElement.class) instanceof DocumentEnumProperty) {
 				sb.append("  public static class ConverterFor").append(codeField.getName()).append(" extends GenericEnumTypeConverter<")
 						.append(sb.typeLastName(codeField.getType())).append(">{};\n");
 			}
+		}
+	}
+
+	@Override
+	public void appendAdditionalConstructors(JavaCodeGenerator sb, CodeClassifier cc) {
+		if (cc instanceof CodeClass) {
+			sb.append("  public ").append(cc.getName()).append("(String path){\n");
+			sb.append("    this.path = path;\n");
+			sb.append("  }\n");
 		}
 	}
 

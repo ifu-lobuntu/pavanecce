@@ -80,28 +80,28 @@ public abstract class AbstractUmlVisitorAdaptor<PACKAGE, CLASSIFIER, BUILDER ext
 			if (type instanceof Class) {
 				Class cls = (Class) type;
 				CLASSIFIER codeClass = builder.visitClass(cls, codePackage);
-				Set<String> implementedProps = buildProperties(builder, cls, codeClass);
-				buildAssociationClassProps(builder, cls, codeClass);
-				buildPropertiesFromArtificialInterface(builder, cls, codeClass, implementedProps);
-				Set<String> implementedOperations = buildOperations(builder, cls, codeClass);
-				buildMethodsFromArtificialInterface(builder, cls, codeClass, implementedOperations);
+				Set<String> implementedProps = visitProperties(builder, cls, codeClass);
+				visitAssociationClassProps(builder, cls, codeClass);
+				visitPropertiesFromArtificialInterface(builder, cls, codeClass, implementedProps);
+				Set<String> implementedOperations = visitOperations(builder, cls, codeClass);
+				visitMethodsFromArtificialInterface(builder, cls, codeClass, implementedOperations);
 			} else if (type instanceof Enumeration) {
 				Enumeration cls = (Enumeration) type;
 				CLASSIFIER codeClass = builder.visitEnum(cls, codePackage);
-				buildProperties(builder, cls, codeClass);
-				buildLilterals(builder, cls, codeClass);
-				buildOperations(builder, cls, codeClass);
+				visitProperties(builder, cls, codeClass);
+				visitLiterals(builder, cls, codeClass);
+				visitOperations(builder, cls, codeClass);
 			}
 		}
 	}
 
-	private void buildLilterals(BUILDER builder, Enumeration cls, CLASSIFIER codeClass) {
+	private void visitLiterals(BUILDER builder, Enumeration cls, CLASSIFIER codeClass) {
 		for (EnumerationLiteral el : cls.getOwnedLiterals()) {
 			builder.visitEnumerationLiteral(el, codeClass);
 		}
 	}
 
-	private Set<String> buildOperations(BUILDER builder, Classifier cls, CLASSIFIER codeClass) {
+	private Set<String> visitOperations(BUILDER builder, Classifier cls, CLASSIFIER codeClass) {
 		Set<String> implementedOperations = new HashSet<String>();
 		for (Operation operation : EmfOperationUtil.getDirectlyImplementedOperations(cls)) {
 			builder.visitOperation(operation, codeClass);
@@ -110,7 +110,7 @@ public abstract class AbstractUmlVisitorAdaptor<PACKAGE, CLASSIFIER, BUILDER ext
 		return implementedOperations;
 	}
 
-	private void buildMethodsFromArtificialInterface(BUILDER builder, Class cls, CLASSIFIER codeClass, Set<String> implementedOperations) {
+	private void visitMethodsFromArtificialInterface(BUILDER builder, Class cls, CLASSIFIER codeClass, Set<String> implementedOperations) {
 		Classifier toImplement2 = this.interfacesToImplement.get(cls.getQualifiedName());
 		if (toImplement2 != null) {
 			Collection<Operation> attributes = EmfOperationUtil.getDirectlyImplementedOperations(toImplement2);
@@ -122,7 +122,7 @@ public abstract class AbstractUmlVisitorAdaptor<PACKAGE, CLASSIFIER, BUILDER ext
 		}
 	}
 
-	private void buildPropertiesFromArtificialInterface(BUILDER builder, Class cls, CLASSIFIER codeClass, Set<String> implementedProps) {
+	private void visitPropertiesFromArtificialInterface(BUILDER builder, Class cls, CLASSIFIER codeClass, Set<String> implementedProps) {
 		Classifier toImplement = this.interfacesToImplement.get(cls.getQualifiedName());
 		if (toImplement != null) {
 			Collection<Property> attributes = EmfPropertyUtil.getEffectiveProperties(toImplement);
@@ -135,23 +135,23 @@ public abstract class AbstractUmlVisitorAdaptor<PACKAGE, CLASSIFIER, BUILDER ext
 		}
 	}
 
-	private void buildAssociationClassProps(BUILDER builder, Class cls, CLASSIFIER codeClass) {
+	private void visitAssociationClassProps(BUILDER builder, Class cls, CLASSIFIER codeClass) {
 		if (cls instanceof AssociationClass) {
 			EList<Property> memberEnds = ((AssociationClass) cls).getMemberEnds();
 			for (Property property : memberEnds) {
-				AssociationClassToEnd etac = new AssociationClassToEnd(property);
-				etac.setOtherEnd(new EndToAssociationClass(property));
-				builder.visitProperty(etac, codeClass);
+				AssociationClassToEnd acte = new AssociationClassToEnd(property);
+				acte.setOtherEnd(new EndToAssociationClass(property.getOtherEnd()));
+				builder.visitProperty(acte, codeClass);
 			}
 		}
 	}
 
-	private Set<String> buildProperties(BUILDER builder, Classifier cls, CLASSIFIER codeClass) {
+	private Set<String> visitProperties(BUILDER builder, Classifier cls, CLASSIFIER codeClass) {
 		Set<String> implementedProps = new HashSet<String>();
 		for (Property property : EmfPropertyUtil.getDirectlyImplementedAttributes(cls)) {
 			if (property.getAssociation() instanceof AssociationClass) {
 				EndToAssociationClass etac = new EndToAssociationClass(property);
-				etac.setOtherEnd(new AssociationClassToEnd(property));
+				etac.setOtherEnd(new AssociationClassToEnd(property.getOtherEnd()));
 				builder.visitProperty(etac, codeClass);
 			} else {
 				builder.visitProperty(property, codeClass);

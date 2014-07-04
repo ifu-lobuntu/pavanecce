@@ -74,7 +74,7 @@ public class EndToAssociationClass extends AbstractEmulatedProperty {
 
 	@Override
 	public String getName() {
-		return NameConverter.decapitalize(property.getAssociation().getName()) + "_" + property.getName();
+		return NameConverter.decapitalize(property.getAssociation().getName());// + "_" + property.getOtherEnd().getName();
 	}
 
 	@Override

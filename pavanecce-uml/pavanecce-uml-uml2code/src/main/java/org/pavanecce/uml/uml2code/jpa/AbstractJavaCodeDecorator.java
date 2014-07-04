@@ -19,8 +19,15 @@ public abstract class AbstractJavaCodeDecorator {
 	public abstract void appendAdditionalImports(JavaCodeGenerator sb, CodeClassifier cc);
 
 	public abstract void appendAdditionalMethods(JavaCodeGenerator sb, CodeClassifier cc);
+	public void appendAdditionalConstructors(JavaCodeGenerator sb, CodeClassifier cc){
+		
+	}
 
 	public abstract void appendAdditionalFields(JavaCodeGenerator sb, CodeClassifier cc);
+
+	public void appendAdditionalInnerClasses(JavaCodeGenerator sb, CodeClassifier cc) {
+
+	}
 
 	public void decorateMethodDeclaration(JavaCodeGenerator sb, CodeMethod value) {
 
