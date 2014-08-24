@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1404465416517
-Build-Jdk: 1.7.0_55
+Bnd-LastModified: 1408900709429
+Build-Jdk: 1.8.0_20
 Built-By: ampie
 Bundle-ClassPath: .,libs/jahia-impl-7.0.0.0.jar,libs/jahia-api-7.0.0.0.j
  ar,libs/jahia-gwt-7.0.0.0.jar,libs/commons-beanutils-1.8.3.jar,libs/com
@@ -37,12 +37,12 @@ Bundle-ClassPath: .,libs/jahia-impl-7.0.0.0.jar,libs/jahia-api-7.0.0.0.j
  .jar,libs/jbpm-workitems-6.0.0.Final.jar,libs/jbpm-human-task-core-6.0.
  0.Final-jahia-nocdi.jar,libs/cdi-api-1.0-SP4.jar,libs/jbpm-human-task-a
  udit-6.0.0.Final-nocdi.jar,libs/jbpm-human-task-workitems-6.0.0.Final-n
- ocdi.jar,libs/jbpm-audit-6.0.0.Final-jahia.jar,libs/jbpm-runtime-manage
- r-6.0.0.Final-nocdi.jar,libs/jbpm-persistence-jpa-6.0.0.Final.jar,libs/
- jbpm-shared-services-6.0.0.Final-jahia-nocdi.jar,libs/jbpm-executor-6.0
- .0.Final-nocdi.jar,libs/kie-spring-6.0.0.Final-jahia.jar,libs/drools-de
- cisiontables-6.0.0.Final.jar,libs/drools-templates-6.0.0.Final.jar,libs
- /joda-time-1.6.jar,libs/cglib-3.1.jar
+ ocdi.jar,libs/jbpm-audit-6.0.0.Final-jahia.jar,libs/kie-bom-6.0.0.Final
+ .pom,libs/jbpm-runtime-manager-6.0.0.Final-nocdi.jar,libs/jbpm-persiste
+ nce-jpa-6.0.0.Final.jar,libs/jbpm-shared-services-6.0.0.Final-jahia-noc
+ di.jar,libs/jbpm-executor-6.0.0.Final-nocdi.jar,libs/kie-spring-6.0.0.F
+ inal-jahia.jar,libs/drools-decisiontables-6.0.0.Final.jar,libs/drools-t
+ emplates-6.0.0.Final.jar,libs/joda-time-1.6.jar,libs/cglib-3.1.jar
 Bundle-ManifestVersion: 2
 Bundle-Name: pavanecce-environments-jahia
 Bundle-SymbolicName: org.pavanecce.environments.jahia
@@ -150,18 +150,19 @@ Embedded-Artifacts: libs/jahia-impl-7.0.0.0.jar;g="org.jahia.server";a="
  libs/jbpm-human-task-workitems-6.0.0.Final-nocdi.jar;g="org.jbpm";a="jb
  pm-human-task-workitems";v="6.0.0.Final";c="nocdi",libs/jbpm-audit-6.0.
  0.Final-jahia.jar;g="org.jbpm";a="jbpm-audit";v="6.0.0.Final-jahia",lib
- s/jbpm-runtime-manager-6.0.0.Final-nocdi.jar;g="org.jbpm";a="jbpm-runti
- me-manager";v="6.0.0.Final";c="nocdi",libs/jbpm-persistence-jpa-6.0.0.F
- inal.jar;g="org.jbpm";a="jbpm-persistence-jpa";v="6.0.0.Final",libs/jbp
- m-shared-services-6.0.0.Final-jahia-nocdi.jar;g="org.jbpm";a="jbpm-shar
- ed-services";v="6.0.0.Final-jahia";c="nocdi",libs/jbpm-executor-6.0.0.F
- inal-nocdi.jar;g="org.jbpm";a="jbpm-executor";v="6.0.0.Final";c="nocdi"
- ,libs/kie-spring-6.0.0.Final-jahia.jar;g="org.kie";a="kie-spring";v="6.
- 0.0.Final-jahia",libs/drools-decisiontables-6.0.0.Final.jar;g="org.droo
- ls";a="drools-decisiontables";v="6.0.0.Final",libs/drools-templates-6.0
- .0.Final.jar;g="org.drools";a="drools-templates";v="6.0.0.Final",libs/j
- oda-time-1.6.jar;g="joda-time";a="joda-time";v="1.6",libs/cglib-3.1.jar
- ;g="cglib";a="cglib";v="3.1"
+ s/kie-bom-6.0.0.Final.pom;g="org.kie";a="kie-bom";v="6.0.0.Final",libs/
+ jbpm-runtime-manager-6.0.0.Final-nocdi.jar;g="org.jbpm";a="jbpm-runtime
+ -manager";v="6.0.0.Final";c="nocdi",libs/jbpm-persistence-jpa-6.0.0.Fin
+ al.jar;g="org.jbpm";a="jbpm-persistence-jpa";v="6.0.0.Final",libs/jbpm-
+ shared-services-6.0.0.Final-jahia-nocdi.jar;g="org.jbpm";a="jbpm-shared
+ -services";v="6.0.0.Final-jahia";c="nocdi",libs/jbpm-executor-6.0.0.Fin
+ al-nocdi.jar;g="org.jbpm";a="jbpm-executor";v="6.0.0.Final";c="nocdi",l
+ ibs/kie-spring-6.0.0.Final-jahia.jar;g="org.kie";a="kie-spring";v="6.0.
+ 0.Final-jahia",libs/drools-decisiontables-6.0.0.Final.jar;g="org.drools
+ ";a="drools-decisiontables";v="6.0.0.Final",libs/drools-templates-6.0.0
+ .Final.jar;g="org.drools";a="drools-templates";v="6.0.0.Final",libs/jod
+ a-time-1.6.jar;g="joda-time";a="joda-time";v="1.6",libs/cglib-3.1.jar;g
+ ="cglib";a="cglib";v="3.1"
 Export-Package: com.thoughtworks.xstream;version="1.4.4",javassist;versi
  on="3.18.1.GA";uses:="javassist.bytecode",javassist.bytecode;version="3
  .18.1.GA";uses:=javassist,javassist.util.proxy;version="3.18.1.GA";uses
@@ -363,65 +364,65 @@ Export-Package: com.thoughtworks.xstream;version="1.4.4",javassist;versi
  .workflow.jbpm.custom.email;version="7.0.0";uses:="org.jahia.services.w
  orkflow.jbpm.custom,org.kie.api.runtime.process,org.kie.internal.task.a
  pi,org.springframework.beans.factory",org.jbpm.compiler.xml;version="6.
- 0.0.20140411-1001";uses:="javax.xml.parsers,org.drools.core.process.cor
+ 0.0.20131120-0620";uses:="javax.xml.parsers,org.drools.core.process.cor
  e.datatype,org.drools.core.xml,org.jbpm.process.core.context.exception,
  org.jbpm.process.core.context.variable,org.jbpm.process.core.impl,org.j
  bpm.workflow.core,org.kie.api.definition.process,org.xml.sax",org.jbpm.
- marshalling.impl;version="6.0.0.20140411-1001";uses:="org.drools.core.c
+ marshalling.impl;version="6.0.0.20131120-0620";uses:="org.drools.core.c
  ommon,org.drools.core.marshalling.impl,org.drools.core.process.instance
  ,org.jbpm.process.instance,org.jbpm.process.instance.timer,org.jbpm.wor
  kflow.instance.impl,org.kie.api.marshalling,org.kie.api.runtime.process
- ",org.jbpm.process.audit;version="6.0.0.20140325-0749";uses:="javax.per
+ ",org.jbpm.process.audit;version="6.0.0.20131216-1729";uses:="javax.per
  sistence,javax.transaction,org.drools.core,org.kie.api.event.process,or
- g.kie.api.runtime",org.jbpm.process.builder;version="6.0.0.20140411-100
- 1";uses:="org.drools.compiler.compiler,org.drools.compiler.lang.descr,o
+ g.kie.api.runtime",org.jbpm.process.builder;version="6.0.0.20131120-062
+ 0";uses:="org.drools.compiler.compiler,org.drools.compiler.lang.descr,o
  rg.drools.compiler.rule.builder,org.drools.core.rule,org.jbpm.process.c
  ore,org.jbpm.process.instance.impl,org.jbpm.workflow.core,org.jbpm.work
  flow.core.impl,org.jbpm.workflow.core.node,org.kie.api.definition.proce
- ss",org.jbpm.process.builder.dialect;version="6.0.0.20140411-1001";uses
+ ss",org.jbpm.process.builder.dialect;version="6.0.0.20131120-0620";uses
  :="org.jbpm.process.builder",org.jbpm.process.builder.dialect.java;vers
- ion="6.0.0.20140411-1001";uses:="org.drools.compiler.compiler,org.drool
+ ion="6.0.0.20131120-0620";uses:="org.drools.compiler.compiler,org.drool
  s.compiler.lang.descr,org.drools.compiler.rule.builder,org.jbpm.process
  .builder,org.jbpm.process.builder.dialect,org.jbpm.process.core,org.jbp
  m.process.instance.impl,org.jbpm.workflow.core",org.jbpm.process.core;v
- ersion="6.0.0.20140411-1001";uses:="org.drools.core.process.core,org.ki
+ ersion="6.0.0.20131120-0620";uses:="org.drools.core.process.core,org.ki
  e.api.definition.process",org.jbpm.process.core.context.exception;versi
- on="6.0.0.20140411-1001";uses:="org.jbpm.process.core,org.jbpm.workflow
+ on="6.0.0.20131120-0620";uses:="org.jbpm.process.core,org.jbpm.workflow
  .core,org.kie.api.definition.process",org.jbpm.process.core.context.var
- iable;version="6.0.0.20140411-1001";uses:="org.drools.core.process.core
+ iable;version="6.0.0.20131120-0620";uses:="org.drools.core.process.core
  ,org.drools.core.process.core.datatype,org.jbpm.process.core,org.jbpm.w
- orkflow.core.node",org.jbpm.process.core.event;version="6.0.0.20140411-
- 1001",org.jbpm.process.core.impl;version="6.0.0.20140411-1001";uses:="o
+ orkflow.core.node",org.jbpm.process.core.event;version="6.0.0.20131120-
+ 0620",org.jbpm.process.core.impl;version="6.0.0.20131120-0620";uses:="o
  rg.jbpm.process.core,org.kie.api,org.kie.api.definition.process,org.kie
- .api.io",org.jbpm.process.core.timer;version="6.0.0.20140411-1001",org.
- jbpm.process.instance;version="6.0.0.20140411-1001";uses:="org.drools.c
+ .api.io",org.jbpm.process.core.timer;version="6.0.0.20131120-0620",org.
+ jbpm.process.instance;version="6.0.0.20131120-0620";uses:="org.drools.c
  ore.common,org.drools.core.marshalling.impl,org.drools.core.runtime.pro
  cess,org.jbpm.process.core,org.jbpm.process.core.timer,org.jbpm.process
  .instance.event,org.jbpm.process.instance.timer,org.jbpm.workflow.core.
  node,org.kie.api,org.kie.api.definition.process,org.kie.api.event.proce
  ss,org.kie.api.runtime.process,org.kie.internal.process,org.kie.interna
- l.runtime",org.jbpm.process.instance.context;version="6.0.0.20140411-10
- 01";uses:="org.jbpm.process.core,org.jbpm.process.instance",org.jbpm.pr
- ocess.instance.context.exception;version="6.0.0.20140411-1001";uses:="o
+ l.runtime",org.jbpm.process.instance.context;version="6.0.0.20131120-06
+ 20";uses:="org.jbpm.process.core,org.jbpm.process.instance",org.jbpm.pr
+ ocess.instance.context.exception;version="6.0.0.20131120-0620";uses:="o
  rg.jbpm.process.core.context.exception,org.jbpm.process.instance.contex
  t,org.jbpm.workflow.instance",org.jbpm.process.instance.context.variabl
- e;version="6.0.0.20140411-1001";uses:="org.jbpm.process.core.context.va
+ e;version="6.0.0.20131120-0620";uses:="org.jbpm.process.core.context.va
  riable,org.jbpm.process.instance,org.jbpm.process.instance.context",org
- .jbpm.process.instance.event;version="6.0.0.20140411-1001";uses:="org.d
+ .jbpm.process.instance.event;version="6.0.0.20131120-0620";uses:="org.d
  rools.core.common,org.drools.core.marshalling.impl,org.kie.api.runtime.
- process",org.jbpm.process.instance.impl;version="6.0.0.20140411-1001";u
+ process",org.jbpm.process.instance.impl;version="6.0.0.20131120-0620";u
  ses:="org.drools.core.common,org.drools.core.process.instance,org.drool
  s.core.rule,org.drools.core.spi,org.jbpm.process.core,org.jbpm.process.
  instance,org.jbpm.workflow.core,org.jbpm.workflow.instance,org.kie.api.
  definition.process,org.kie.api.runtime.process,org.kie.api.runtime.rule
  ,org.kie.internal.process",org.jbpm.process.instance.timer;version="6.0
- .0.20140411-1001";uses:="org.drools.core.common,org.drools.core.marshal
+ .0.20131120-0620";uses:="org.drools.core.common,org.drools.core.marshal
  ling.impl,org.jbpm.process.instance",org.jbpm.ruleflow.core;version="6.
- 0.0.20140411-1001";uses:="org.drools.core.process.core.datatype,org.jbp
+ 0.0.20131120-0620";uses:="org.drools.core.process.core.datatype,org.jbp
  m.process.core.context.exception,org.jbpm.process.core.context.variable
  ,org.jbpm.workflow.core,org.jbpm.workflow.core.impl,org.jbpm.workflow.c
  ore.node,org.kie.api.definition.process",org.jbpm.ruleflow.instance;ver
- sion="6.0.0.20140411-1001";uses:="org.jbpm.process.instance,org.jbpm.ru
+ sion="6.0.0.20131120-0620";uses:="org.jbpm.process.instance,org.jbpm.ru
  leflow.core,org.jbpm.workflow.instance.impl",org.jbpm.runtime.manager.i
  mpl;version="6.0.0.20131120-0620";uses:="javax.persistence,org.drools.p
  ersistence,org.jbpm.process.core.timer,org.kie.api,org.kie.api.builder,
@@ -467,26 +468,26 @@ Export-Package: com.thoughtworks.xstream;version="1.4.4",javassist;versi
  vax.persistence,javax.transaction,org.drools.persistence,org.jbpm.share
  d.services.api",org.jbpm.shared.services.impl.events;version="6.0.0.201
  31216-1645";uses:="javax.enterprise.event,javax.enterprise.util",org.jb
- pm.workflow.core;version="6.0.0.20140411-1001";uses:="org.drools.core.s
+ pm.workflow.core;version="6.0.0.20131120-0620";uses:="org.drools.core.s
  pi,org.jbpm.process.core,org.kie.api.definition.process",org.jbpm.workf
- low.core.impl;version="6.0.0.20140411-1001";uses:="org.jbpm.process.cor
+ low.core.impl;version="6.0.0.20131120-0620";uses:="org.jbpm.process.cor
  e,org.jbpm.process.core.impl,org.jbpm.workflow.core,org.kie.api.definit
- ion.process",org.jbpm.workflow.core.node;version="6.0.0.20140411-1001";
+ ion.process",org.jbpm.workflow.core.node;version="6.0.0.20131120-0620";
  uses:="org.drools.core.process.core,org.drools.core.process.core.dataty
  pe,org.jbpm.process.core,org.jbpm.process.core.context.variable,org.jbp
  m.process.core.event,org.jbpm.process.core.timer,org.jbpm.workflow.core
  ,org.jbpm.workflow.core.impl,org.kie.api.definition.process",org.jbpm.w
- orkflow.instance;version="6.0.0.20140411-1001";uses:="org.jbpm.process.
+ orkflow.instance;version="6.0.0.20131120-0620";uses:="org.jbpm.process.
  instance,org.kie.api.definition.process,org.kie.api.runtime,org.kie.api
- .runtime.process",org.jbpm.workflow.instance.impl;version="6.0.0.201404
- 11-1001";uses:="org.jbpm.process.core,org.jbpm.process.instance,org.jbp
+ .runtime.process",org.jbpm.workflow.instance.impl;version="6.0.0.201311
+ 20-0620";uses:="org.jbpm.process.core,org.jbpm.process.instance,org.jbp
  m.process.instance.context.variable,org.jbpm.process.instance.impl,org.
  jbpm.workflow.core.impl,org.jbpm.workflow.instance,org.kie.api.definiti
  on.process,org.kie.api.runtime,org.kie.api.runtime.process",org.jbpm.wo
- rkflow.instance.impl.factory;version="6.0.0.20140411-1001";uses:="org.j
+ rkflow.instance.impl.factory;version="6.0.0.20131120-0620";uses:="org.j
  bpm.workflow.instance,org.jbpm.workflow.instance.impl,org.kie.api.defin
  ition.process,org.kie.api.runtime.process",org.jbpm.workflow.instance.n
- ode;version="6.0.0.20140411-1001";uses:="org.drools.core.common,org.dro
+ ode;version="6.0.0.20131120-0620";uses:="org.drools.core.common,org.dro
  ols.core.process.instance,org.drools.core.spi,org.jbpm.process.core,org
  .jbpm.process.core.timer,org.jbpm.process.instance,org.jbpm.process.ins
  tance.context.exception,org.jbpm.process.instance.timer,org.jbpm.workfl
@@ -542,14 +543,14 @@ Export-Package: com.thoughtworks.xstream;version="1.4.4",javassist;versi
  ework.beans.factory;version="3.2.8",org.springframework.core.io;version
  ="3.2.8",org.springframework.transaction;version="3.2.8",org.springfram
  ework.transaction.support;version="3.2.8";uses:="org.springframework.be
- ans.factory,org.springframework.transaction",org.springframework.cor.e.
- io;version="3.2.8",org.hibernate.annotations.common;version="4.0.2.Fina
- l",javax.inject;version="1.0.0",net.sf.cglib.asm;version="2.2.2",net.sf
+ ans.factory,org.springframework.transaction",javax.inject;version="1.0.
+ 0",org.springframework.cor.e.io;version="3.2.8",org.hibernate.annotatio
+ ns.common;version="4.0.2.Final",net.sf.cglib.asm;version="2.2.2",net.sf
  .cglib.asm.signature;version="2.2.2"
-Import-Package: org.xml.sax.helpers,org.w3c.dom,javax.imageio.spi,org.sl
- f4j;version="[1.1.6,2)",javax.xml.transform,javax.security.auth.login,j
- avax.xml.transform.dom,javax.security.auth.callback,javax.security.auth
- ,org.xml.sax,javax.xml.parsers,javax.sql,javax.security.auth.spi,javax.
- xml.transform.stream,javax.naming
+Import-Package: javax.imageio.spi,javax.xml.transform.dom,javax.sql,org.
+ xml.sax,org.slf4j;version="[1.1.6,2)",javax.xml.transform.stream,javax.
+ naming,javax.xml.transform,javax.security.auth,javax.security.auth.spi,
+ org.xml.sax.helpers,javax.security.auth.login,javax.security.auth.callb
+ ack,org.w3c.dom,javax.xml.parsers
 JBOSS_HOME: /opt/jboss-5.1.0.GA
 Tool: Bnd-2.1.0.20130426-122213

@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1404465535711
+Bnd-LastModified: 1407477862442
 Build-Jdk: 1.7.0_55
 Built-By: ampie
 Bundle-ManifestVersion: 2
@@ -22,13 +22,11 @@ Import-Package: org.drools.compiler.compiler;version="[6.0,7)",org.drool
  ocess.core;version="[6.0,7)",org.jbpm.process.core.context.variable;ver
  sion="[6.0,7)",org.jbpm.process.instance.impl;version="[6.0,7)",org.kie
  .api.definition.process;version="[6.0,7)",org.kie.api.io;version="[6.0,
- 7)",org.pavanecce.cmmn.jbpm.flow;version="[0.0,1)",org.pavanecce.cmmn.j
- bpm.xml.handler;version="[0.0,1)",org.pavanecce.common.code.metamodel;v
- ersion="[0.0,1)",org.pavanecce.uml.common.ocl;version="[0.0,1)",org.pav
- anecce.uml.common.util;version="[0.0,1)",org.pavanecce.uml.common.util.
- emulated;version="[0.0,1)",org.pavanecce.uml.ocl2code.common;version="[
- 0.0,1)",org.pavanecce.uml.ocl2code.creators;version="[0.0,1)",org.pavan
- ecce.uml.uml2code.java;version="[0.0,1)",org.xml.sax,org.eclipse.ocl.um
- l,org.pavanecce.uml.uml2code;version="[0.0,1)"
+ 7)",org.pavanecce.cmmn.jbpm.flow,org.pavanecce.cmmn.jbpm.xml.handler,or
+ g.pavanecce.common.code.metamodel,org.pavanecce.uml.common.ocl,org.pava
+ necce.uml.common.util,org.pavanecce.uml.common.util.emulated,org.pavane
+ cce.uml.ocl2code.common,org.pavanecce.uml.ocl2code.creators,org.pavanec
+ ce.uml.uml2code.java,org.xml.sax,org.pavanecce.uml.uml2code,org.eclipse
+ .ocl.uml
 JBOSS_HOME: /opt/jboss-5.1.0.GA
 Tool: Bnd-2.1.0.20130426-122213

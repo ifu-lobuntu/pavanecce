@@ -162,9 +162,6 @@ public class EmfPropertyUtil {
 		}
 		for (Association a : c.getAssociations()) {
 			for (Property end : a.getMemberEnds()) {
-				if(end.getName().equals("emsEmailAddress") && c.getName().equals("EmsEmail")){
-					System.out.println();
-				}
 				if (end.getOtherEnd() != null && end.getOtherEnd().getType() != null
 						&& EmfClassifierUtil.conformsTo(c, (Classifier) end.getOtherEnd().getType()) && end.isNavigable() && end.getOwner() == a) {
 					maybeAddProperty(c, nameMap, result, end);

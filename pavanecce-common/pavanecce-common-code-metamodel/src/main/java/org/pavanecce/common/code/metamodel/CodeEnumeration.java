@@ -32,4 +32,8 @@ public class CodeEnumeration extends CodeClassifier {
 		return constructors;
 	}
 
+	public void setName(String string) {
+		super.name=string;
+	}
+
 }

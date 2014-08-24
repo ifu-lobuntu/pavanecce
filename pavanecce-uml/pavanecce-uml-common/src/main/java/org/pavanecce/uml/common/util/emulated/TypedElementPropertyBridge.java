@@ -63,11 +63,6 @@ public class TypedElementPropertyBridge extends AbstractEmulatedProperty {
 	}
 
 	@Override
-	public boolean includesCardinality(int C) {
-		return getMultiplicityElement().includesCardinality(C);
-	}
-
-	@Override
 	public boolean includesMultiplicity(MultiplicityElement M) {
 		return getMultiplicityElement().includesMultiplicity(M);
 	}

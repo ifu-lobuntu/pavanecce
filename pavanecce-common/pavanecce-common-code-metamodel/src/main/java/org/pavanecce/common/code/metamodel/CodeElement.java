@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CodeElement implements Comparable<CodeElement> {
-	private String name;
+	protected String name;
 	private String comment;
 	private Map<Class<?>, Object> data;
 

@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1404465534054
+Bnd-LastModified: 1406961927561
 Build-Jdk: 1.7.0_55
 Built-By: ampie
 Bundle-ManifestVersion: 2
@@ -23,12 +23,10 @@ Export-Package: org.pavanecce.uml.ocl2code;uses:="org.eclipse.uml2.uml,o
 Import-Package: org.eclipse.emf.common.util,org.eclipse.emf.ecore,org.ec
  lipse.emf.ecore.resource,org.eclipse.ocl,org.eclipse.ocl.expressions,or
  g.eclipse.ocl.types,org.eclipse.ocl.uml,org.eclipse.uml2.uml,org.pavane
- cce.common.code.metamodel;version="[0.0,1)",org.pavanecce.common.code.m
- etamodel.expressions;version="[0.0,1)",org.pavanecce.common.code.metamo
- del.statements;version="[0.0,1)",org.pavanecce.common.util;version="[0.
- 0,1)",org.pavanecce.uml.common.ocl;version="[0.0,1)",org.pavanecce.uml.
- common.util;version="[0.0,1)",org.pavanecce.uml.common.util.emulated;ve
- rsion="[0.0,1)",org.pavanecce.uml.uml2code;version="[0.0,1)",org.pavane
- cce.uml.uml2code.codemodel;version="[0.0,1)",org.eclipse.ocl.utilities
+ cce.common.code.metamodel,org.pavanecce.common.code.metamodel.expressio
+ ns,org.pavanecce.common.code.metamodel.statements,org.pavanecce.common.
+ util,org.pavanecce.uml.common.ocl,org.pavanecce.uml.common.util,org.pav
+ anecce.uml.common.util.emulated,org.pavanecce.uml.uml2code,org.pavanecc
+ e.uml.uml2code.codemodel,org.eclipse.ocl.utilities
 JBOSS_HOME: /opt/jboss-5.1.0.GA
 Tool: Bnd-2.1.0.20130426-122213

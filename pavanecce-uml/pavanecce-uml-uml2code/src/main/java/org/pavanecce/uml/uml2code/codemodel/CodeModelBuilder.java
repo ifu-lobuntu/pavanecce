@@ -275,9 +275,6 @@ public class CodeModelBuilder extends DefaultCodeModelBuilder {
 	}
 
 	private String toCodeLiteral(EnumerationLiteral lit) {
-		if(lit.getName().isEmpty()){
-			System.out.println();
-		}
 		return NameConverter.toUnderscoreStyle(toValidVariableName(lit.getName())).toUpperCase();
 	}
 

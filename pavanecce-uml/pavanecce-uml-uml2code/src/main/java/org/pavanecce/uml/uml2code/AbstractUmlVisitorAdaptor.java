@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -22,6 +23,7 @@ import org.eclipse.uml2.uml.Operation;
 import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Type;
+import org.pavanecce.uml.common.util.EmfAssociationUtil;
 import org.pavanecce.uml.common.util.EmfOperationUtil;
 import org.pavanecce.uml.common.util.EmfParameterUtil;
 import org.pavanecce.uml.common.util.EmfPropertyUtil;
@@ -150,13 +152,18 @@ public abstract class AbstractUmlVisitorAdaptor<PACKAGE, CLASSIFIER, BUILDER ext
 		Set<String> implementedProps = new HashSet<String>();
 		for (Property property : EmfPropertyUtil.getDirectlyImplementedAttributes(cls)) {
 			if (property.getAssociation() instanceof AssociationClass) {
-				EndToAssociationClass etac = new EndToAssociationClass(property);
-				etac.setOtherEnd(new AssociationClassToEnd(property.getOtherEnd()));
-				builder.visitProperty(etac, codeClass);
+				//Do nothing
 			} else {
 				builder.visitProperty(property, codeClass);
 			}
 			implementedProps.add(property.getName());
+		}
+		Set<Entry<AssociationClass, Property>> entrySet = EmfAssociationUtil.getEffectiveAssociationClasses(cls).entrySet();
+		for (Entry<AssociationClass, Property> entry : entrySet) {
+			EndToAssociationClass etac = new EndToAssociationClass(entry.getValue());
+			etac.setOtherEnd(new AssociationClassToEnd(entry.getValue().getOtherEnd()));
+			builder.visitProperty(etac, codeClass);
+			//TODO implement the actual property too
 		}
 		return implementedProps;
 	}
