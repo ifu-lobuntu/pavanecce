@@ -12,8 +12,8 @@ public class CodeEnumeration extends CodeClassifier {
 	private SortedSet<CodeTypeReference> implementedInterfaces = new TreeSet<CodeTypeReference>();
 	private Map<String, CodeConstructor> constructors = new HashMap<String, CodeConstructor>();
 
-	public CodeEnumeration(String name, CodePackage _package) {
-		super(name, _package);
+	public CodeEnumeration(String name, CodePackage p) {
+		super(name, p);
 	}
 
 	public List<CodeEnumerationLiteral> getLiterals() {
@@ -33,7 +33,7 @@ public class CodeEnumeration extends CodeClassifier {
 	}
 
 	public void setName(String string) {
-		super.name=string;
+		super.name = string;
 	}
 
 }
