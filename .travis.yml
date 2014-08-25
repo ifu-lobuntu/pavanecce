@@ -1,3 +1,3 @@
 language: java
-install: mvn install -DskipTests=true
-script: mvn verify
+install: mvn install -DskipTests=true -q
+script: mvn verify -q
