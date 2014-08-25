@@ -3,15 +3,16 @@ package org.pavanecce.uml.test.uml2code.test;
 import java.io.IOException;
 import java.net.URL;
 
+import org.eclipse.core.internal.runtime.PlatformURLConverter;
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.internal.adaptor.URLConverterImpl;
+import org.eclipse.osgi.service.urlconversion.URLConverter;
 import org.pavanecce.uml.common.util.IFileLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AdaptableFileLocator implements IFileLocator {
 	Logger logger = LoggerFactory.getLogger(getClass());
-	URLConverterImpl uci = new URLConverterImpl();
+	URLConverter uci = new PlatformURLConverter();
 
 	@Override
 	public URL resolve(URL url) {

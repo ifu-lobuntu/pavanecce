@@ -44,7 +44,7 @@ public class UmlResourceSetFactory {
 		putPathMap(rst, "libraries/UMLPrimitiveTypes.library.uml", UMLResource.LIBRARIES_PATHMAP);
 		putPathMap(rst, "metamodels/UML.metamodel.uml", UMLResource.METAMODELS_PATHMAP);
 		putPathMap(rst, "profiles/UML2.profile.uml", UMLResource.PROFILES_PATHMAP);
-		UMLResourcesUtil.init(rst);
+		org.eclipse.uml2.uml.profile.standard.StandardPackage.eINSTANCE.getClass();
 		OCL.initialize(rst);
 		// Environment.Registry.INSTANCE.registerEnvironment();
 		return rst;

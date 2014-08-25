@@ -60,6 +60,7 @@
 							org.eclipse.ocl.utilities,
 							org.eclipse.uml2.uml,
 							org.eclipse.uml2.uml.internal.impl,
+							org.eclipse.uml2.uml.profile.standard,
 							org.eclipse.uml2.uml.resource,
 							org.eclipse.uml2.uml.resources.util,
 							org.eclipse.uml2.uml.util,

@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1408900725321
+Bnd-LastModified: 1408985224334
 Build-Jdk: 1.8.0_20
 Built-By: ampie
 Bundle-ManifestVersion: 2

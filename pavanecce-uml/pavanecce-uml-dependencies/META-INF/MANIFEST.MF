@@ -6,6 +6,7 @@ Bundle-Version: 0.0.1.qualifier
 Bundle-ManifestVersion: 2
 Bundle-ClassPath: .
 Import-Package: lpg.runtime,
+ org.eclipse.core.runtime.internal.adaptor,
  org.eclipse.emf.common.notify,
  org.eclipse.emf.common.notify.impl,
  org.eclipse.emf.common.util,

@@ -39,10 +39,10 @@
 				<configuration>
 					<manifestLocation>META-INF</manifestLocation>
 					<instructions>
-						<Import-Package>*,org.jbpm.process.core.context.exception,
+						<!-- Import-Package>*,org.jbpm.process.core.context.exception,
 						org.jbpm.process.core.impl,
 						org.jbpm.process.instance.context
-						</Import-Package>
+						</Import-Package-->
 						<Export-Package>org.pavanecce.cmmn.jbpm.*</Export-Package>
 						<Bundle-SymbolicName>org.pavanecce.cmmn.jbpm</Bundle-SymbolicName>
 						<Bundle-Name>org.pavanecce.cmmn.jbpm</Bundle-Name>
