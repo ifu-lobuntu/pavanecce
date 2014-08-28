@@ -12,7 +12,7 @@
 	<packaging>eclipse-plugin</packaging>
 	<repositories>
 		<repository>
-			<id>kepler</id>
+			<id>luna</id>
 			<layout>p2</layout>
 			<url>http://download.eclipse.org/releases/luna</url>
 		</repository>

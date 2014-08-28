@@ -21,7 +21,7 @@
           "http://jackrabbit.apache.org/dtd/repository-2.0.dtd">
 
 <!-- Example Repository Configuration File
-     Used by
+     Used by 
      - org.apache.jackrabbit.core.config.RepositoryConfigTest.java
      -
 -->
