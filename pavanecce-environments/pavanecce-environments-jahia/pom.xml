@@ -42,7 +42,7 @@
 				<configuration>
 					<manifestLocation>META-INF</manifestLocation>
 					<instructions>
-						<Embed-Dependency>groupId=${embeddedGroupIds}</Embed-Dependency>
+						<Embed-Dependency>groupId=${embeddedGroupIds};artifactId=!kie-bom</Embed-Dependency>
 						<Embed-Transitive>true</Embed-Transitive>
 						<Embed-Directory>libs</Embed-Directory>
 						<Embed-StripGroup>true</Embed-StripGroup>
@@ -260,30 +260,11 @@
 					</instructions>
 				</configuration>
 			</plugin>
-			<plugin>
+			<!-- plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
 				<inherited>false</inherited>
 				<executions>
-					<execution>
-						<id>copy-dependencies</id>
-						<phase>generate-resources</phase>
-						<goals>
-							<goal>copy-dependencies</goal>
-						</goals>
-						<configuration>
-							<silent>true</silent>
-							<outputDirectory>${project.basedir}/libs</outputDirectory>
-							<stripVersion>false</stripVersion>
-							<failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
-							<overWriteReleases>false</overWriteReleases>
-							<overWriteSnapshots>false</overWriteSnapshots>
-							<overWriteIfNewer>true</overWriteIfNewer>
-							<includeGroupIds>${commaSeparatedembeddedGroupIds}</includeGroupIds>
-							<excludeTransitive>false</excludeTransitive>
-							<excludeScope>provided</excludeScope>
-						</configuration>
-					</execution>
 					<execution>
 						<id>copy-dependencies-sources</id>
 						<phase>generate-sources</phase>
@@ -305,7 +286,7 @@
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
+			</plugin-->
 		</plugins>
 	</build>
 	<dependencies>
