@@ -4,3 +4,6 @@ pom.xml.releaseBackup
 pom.xml.next
 release.properties
 .*.md.html
+.settings
+.project
+.classpath
