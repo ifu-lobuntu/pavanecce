@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bookmarks>
+   <site url="http://eclipse-cs.sf.net/update" selected="true" name="Checkstyle"/>
+   <site url="http://update.eclemma.org" selected="true" name="Eclemma"/>
+   <site url="https://raw.github.com/satyagraha/gfm_viewer/master/p2-composite/" selected="true" name="Github MD Viewer"/>
+   <site url="http://dl.bintray.com/evra/eclipse" selected="true" name="Jackrabbit"/>
+   <site url="http://repo1.maven.org/maven2/.m2e/connectors/m2eclipse-tycho/0.7.0/N/0.7.0.201309291400/" selected="true" name="org.sonatype.tycho.update"/>
+   <site url="http://rlogiacco.github.com/Natural" selected="true" name="BDDNatural"/>
+</bookmarks>

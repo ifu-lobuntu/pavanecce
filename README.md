@@ -13,19 +13,8 @@ A this point, the project consists of the following subprojectssupport for the f
 
 #Build instructions and project configurations
 ##Background:
-Most Pavanecce projects need to build and execute consistently in both OSGi environments as well as non-OSGi (standalone) environments. 
-The structure of Pavanecce's deployment artifacts is dependent on the target execution environment which can be OSGi, OSGi in JEE, JEE alone or standalone.
-There are therefore two different build profiles
-
-##Standalone:
-
-mvn clean install -P standalone
-The standalone profile is active by default, so strictly speaking there is no need to invoke this profile. The generated artifacts would not work in an OSGi environment.
-
-##'Eclipse'
-We use Tycho inside Maven to build OSGi- compliant bundles. This profile can be activated thus:
-
-mvn clean install -P eclipse 
+Most Pavanecce projects need to build and execute consistently in various execution environments. Currently the OSGi environments of Jahia CMS and Eclipse are supported. Support for the CDI based environment of jBPM's KIE Workbench is being implemented. A different Maven profile representing each execution environment is available in the [![root pom file](pom.xml). Currently, the default is "jahia". The active profile will
+select a subproject from the [![pavanecce-environments](pavanecce-environments/readme.md)] project that brings in the dependencies of the chosen environment. 
 
 #Project structures
 Only Eclipse can be used as an IDE for the various Pavanecce projects. In addition to being Maven projects, each project is also an Eclipse plugin project which gives us a bit more control over dependencies amongst projeccts.
