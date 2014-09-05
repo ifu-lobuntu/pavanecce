@@ -1,0 +1,69 @@
+
+In the online world today, the concept of "reputation" has become central to websites where web users offer their services and expertise. This is particularly true in the IT sector, where websites like StackExchange systematically builds up a single reputation score. The websites of most open source projects do exactly the same, with the reputation score in this case pertaining specifically to the open soruce software in question. Elance allows paid services to be offered, where potential consumers of these service get to choose the provider based on reputation. 
+
+At first glance, one may be comfortable that this is a valid concept. It is understandable that the OVNI team also want to cater for this. Future users would definitely understand what "reputation" means, and will expect something like this to be available for decision making. This document will explore the implications of VDML and Value Networks for the concept of reputation as it could feature in an open value network.
+
+Unfortunately, things are seldom as simple as they seem. Systems theory, especially the more constructivist incarnations, first of all highlights the the contextuality of all social constructs. Reputation is no different. However, when looking at the Merriam -Dexter definition of "reputation", the constructivist warning lights start flashing:
+"1. a) overall quality or character as seen or judged by people in general"
+
+Three problem areas emerge:
+1. How useful is an judgment regarding an "overall quality or character" in a highly contextual world?
+The problem here is one of reductionism. How on earth can a participant's potential in a system such as value network be reduced to a single number, such as on StackExchange. Maybe we can add another number, two or three, but does this really give us a fair picture of what the participant can contribute? Are all aspects of reputation quantifiable? Does this "overall quality or character" of the participant remain absolute, consistent across time and contexts? 
+
+2. How useful is the judgment of "people in general" in a highly contextual world?
+The problem here is that "people in general" does not qualify the relationship from which the judgment is made. How qualified is the person behind "people in general"? What is the understanding the "people in general" have of the quality being judged? How does the quality being judged feature, or what does it mean in the relationship it is being judged from. How important is the quality being judged for the one judging it?
+
+3. "Judged" by whose criteria?
+We know how preconceptions can influence judgments, sometimes at a level that the judger is not even aware of. These preconceptions are sometimes so subtle, so deeply ingrained that the judger may even react with aggression when they are pointed out. The danger is of these preconceptions undermining the very goal of openness, which is to give everyone a chance to show their worth. Should the judgment be quantified, as it tends to be in online communities? Does the range across which we judge follow the laws of linear mathematics at all?
+
+It is easy to glibly work over these issues by falling back on the typical democratic argument: if the people say so it must be so. Judgment by concensus. This simply won't do. Even if one admits that reputation is a subjective judgment, leaving the generalizations and assumptions unchallenged simply puts the onus of "responsible" judgment on the people. And most people, we know, are not constructivists.
+
+Where does reputation become an issue.
+It is best to understand where the concept of reputation becomes an issue in a value network. It becomes an issue when a decision needs to be made which participant(s) to collaborate with. There are many different contexts where this decision needs to be made, but three distinct contexts seem to come to the fore:
+
+1. Long term relationships:
+Who do I partner with? Who do I engage with in a long term relationship with the hope that we can benefit from each other in a sustainable way across multiple interactions.
+
+2. Short term relationships:
+Here the duration is usually for as long as it takes to achieve a specific goal collaboratively. Who do we want to work with on the project? Who can help me fulfill this particular request from a customer.
+
+3. Responsibility for a single activity:
+Sometimes it makes sense to nominate/select a participant for a specific, atomic activity. Here the goal is not as much collaborating as it is to receive one or more deliverables from the participants as one can usually expect from the activity in question.
+
+Overview:
+Collaboration, BusinessNetwork, CapabilityMethod, ValueDefinition, ValueAdd, ValueProposition, ValuePropositionComponent, Activity, Participant, Role, OutputPort, BusinessItem, Store, Pool
+
+Once we understand these contexts, we can start asking more specific questions about the participant to be used. Let's look at how VDML can help us refine these questions in each context.
+
+1. Long term relationships
+In VDML, the place where long term relationships feature most prominently is in a Business Network. ... In a Business Network, as in any Collaboration in VDML, one would find different Roles. These Roles are defined in relation to each other. One Role is expected to offer a certain ValueProposition to another. Component,ValueAdd, perceived value, weight.
+We are therefor not judging some general quality, some intrinsic quality of the participant in the Role, but rather the Value that one role offers to another. We are not reducing this value to a number, but enriching it by providing the context from which this value is produced and perceived. The ValueProposition itself is already a very rich construct, but is be decomposed even further by into ValuePropositionComponents. The relative importance of a specific quality is highlighted in the weight of the component. The places where this Value is introduced into the Business Network is defined as ValueAdds produced as outputs from ACtivities, Stores and other Collaborations. The definition of Value is established by in the definition of the Business Network. In a Business Network with a focal business, the business under discussion defines the meaning of Value, but in an Open Value Network, we would expect this definition of Value to emerge collaboratively. (Taxonomy of Value, Characteristics to be measured. Would include more involved discussions. Really forms part of the contract, the constitution of the ValueNetwork. Also at a lower defines the value system. Could be that this does not appeal to certain participants. Each participant could also decide on how to "play" a Role's ValuePropositions. May focus on some, ignore others "reading the field". If they're right, they thrived. If they're wrong, they will self-correct. But they have to agree in principle on the definition of Value, and the composition of the ValueProposition. There is a marketing aspect to this. Creating Value in specific areas. But in an OVN it is marketing with a twist. Instead of taking your word for it, participants can actually go and look at your performance. This gives them the opportunity to self-correct as well. )
+
+2. Short term relationships
+In VDML, short term relationships are typically found in CapabilityMethods. These are the projects, processes or cases where participants collaborate to produce one or more deliverable in the short term. But the difference between CapabilityMethods and BusinessNetworks is not merely one of duration. A BusinessNetwork is assumed to exist as a set of enduring relationships. There is only one instance of a BusinessNetwork. Rather than having an finite punctuation where it starts and ends, value "streams" through a BusinessNetwork. Almost like a conveyor belt in a factory, with every set of hands adding more value. Except that in stead of a single "belt" we have a intricately intertwined network of belts, and instead of a belt going linearly in one direction, it feed backs onto itself. In fact, forget about the conveyor belt.
+
+A CapabilityMethod however is instantiated as a need arises to produce the required set of deliverables. Participants are assumed to get together and collaborate to achieve this goal. Each Participant could fulfill one or more roles. Multiple Participants could fulfill the same role. VDML does not make any assumptions on how this works. It could be a voluntary, participants could be nominated, some custiodian may have to make a call. It could be based on Pools of resources with specific characteristics and business calendars. A Participant could be assigned based on the flow of a resource (BusinessItem) in the CapabilityMethod itself. The more information the modeler provides the better VDML can simulate the CapabilityMethod, but VDML does not require any specific assignment mechanism
+
+The underlying principle however is that, once a participant assumes a Role, it potentially assumes the responsibility for all the Activities in the CapabilityMethod the Role performs. 
+
+One option in this context would be to analyse the potential participant's performance against ValueProposition's in the BusinessNetwork. It is possible that at least some of the ValueComponents of this ValueProposition was be derived from the Participants performance in the type of CapabilityMethod in question. 
+
+It is also possible, although conceptually a bit more involved, to define ValuePropositions within a CapabilityMethod. It would still be possible the assess the suitability of a potential participant based on how it has delivered on the promised ValuePropositions as one would do in a BusinessNetwork. This option would make sense if the CapabilityMethod in question is more structured and predictable.
+
+However, at this point, it may also make sense to start looking for the participants ability to perform the Activities in question in the CapabilityMethod. It is may be known up front that certain Activities may not be required, or that certain Activities would be more important than others. In this case, one would like to form a decision based on the Activities rather than the ValuePropositions, and this brings us to our next context.
+
+3. Responsibility for a single Activity.
+An Activity often requires a specific Capability, and one can choose a participant for the Activity based on their how sucessfully they have delivered on the Capability the have offered by means of a CapabilityOffer (Only OrgUnits can have CapabilityOffers. In OVN "ORgUnit is a bit of a misnomer, as every business entity is in fact an ORgUnit). Capability in VDML is more than just "skill". There is a skill element to it, but it also has to do with access to resources and the ability to leverage resources and relationships to deliver on the promise of the Capability. There are similarities to a ValueProposition here. This is an indication of potential value that the participant can produce. But it does not imply any specific direct recipient as beneficiary of this offering. Instead it implies a set of Activities in the broader context that could be performed by the Participant should the need arise.
+Once again, an OVN would have a taxonomy of Capabilities. There would be an agreement on what these mean, and what MeausredCharatecteristics they have. At the most fine grained level we get a CapabilityDefinition which can be categorized under a hierarchy of CapabilityCategories, but essentially these are all still Capabilities at.
+In the performance of Activities, the MeasuredCharacteristics of the Activities will be closely related to the MeasuredCharacteristics of the required Capability. The performance of the Participant offering the Capability can be seen from the CapabilityOffer. This is not quite as rich as a ValuePropositionComponent hierarchy, but at least it does not reduce the Capability to a single number. Some MC could be qualititative, some could be quantitative. And again we can refer back to the previously, richly defined taxonomy of ValueDefinitions.
+
+
+
+
+
+
+
+
+
+
+
