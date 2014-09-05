@@ -54,6 +54,6 @@ public class DependenciesTest {
 				mavenBundle("org.pavanecce", "pavanecce-common-jcr", "0.0.1-SNAPSHOT"), mavenBundle("org.pavanecce", "pavanecce-common-jpa", "0.0.1-SNAPSHOT"),
 				mavenBundle("org.pavanecce", "pavanecce-common-ocm", "0.0.1-SNAPSHOT"), mavenBundle("org.pavanecce", "pavanecce-cmmn-jbpm", "0.0.1-SNAPSHOT"),
 				mavenBundle("org.pavanecce", "pavanecce-cmmn-jahia", "0.0.1-SNAPSHOT"),
-				mavenBundle("org.pavanecce", "pavanecce-cmmn-extensions", "0.0.1-SNAPSHOT"), junitBundles());
+				mavenBundle("org.pavanecce", "pavanecce-cmmn-cfa", "0.0.1-SNAPSHOT"), junitBundles());
 	}
 }

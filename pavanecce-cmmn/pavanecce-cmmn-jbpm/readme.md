@@ -151,7 +151,7 @@ not a requirement per se, but it could reduce the risk of other user activity po
 - Overriding the actualOwner of a Task
 - Overriding the input parameters of a Task.
 
-In a concurrent project, we are implementing a couple of interesting [extensions](../pavanecce-cmmn-extensions/readme.md) to the Planning process. For instance, the planning process can be extended to await 
+In a concurrent project, we are implementing a couple of interesting [extensions](../pavanecce-cmmn-cfa/readme.md) to the Planning process. For instance, the planning process can be extended to await 
 confirmation from the performer of a Task whether the changed state of the task is acceptable. During planning, a task can also be instantiated based on an input that is offered by a potential participant, 
 but which the participant still has to commit to. The Pavanecce platform will use these extensions to facilitate business collaborations that extend beyond organizational boundaries.
 

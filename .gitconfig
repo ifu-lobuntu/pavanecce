@@ -1,4 +1,8 @@
 [user]
 	name = Ampie Barnard
 	email = ampieb@gmail.com
+[http]
+    proxy = http://F4673522:Ainnikki0914@proxyo.fnb.co.za:8080/
 
+[https]
+    proxy = http://F4673522:Ainnikki0914@proxyo.fnb.co.za:8080/
