@@ -1,1 +1,0 @@
-This project defines the dependencies for the scenario where Pavanecce is deployed to the Jahia content management system.

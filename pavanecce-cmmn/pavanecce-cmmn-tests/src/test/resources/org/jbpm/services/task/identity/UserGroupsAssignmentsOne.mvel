@@ -1,3 +1,0 @@
-usersgroups = [ new User('Darth Vader') : [new Group( "Knights Templer" ),  new Group( "Crusaders" )]
-              ];       
-return usersgroups;

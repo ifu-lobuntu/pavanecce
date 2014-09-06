@@ -1,6 +1,0 @@
-*Put all idElements in maps to ease with resolution
-Clean up all the validPeers and validParents
-Then get rid of the PlanItem subclasses and thus the PlanInfo class  (requires a bit of thinking around StagePlanItem)
-Consider using the visitor pattern for stages and planningTables
-PlanItemBuilder hacks around to get to all expression. See if there is a better way of doing it. It was too difficult to override ProcessBuilderImpl. Also check that we use the planItemDefinitions in the Case rather than via the Plan
-
