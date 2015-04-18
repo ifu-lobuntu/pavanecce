@@ -1,3 +1,8 @@
+jbpm-form-modeler
+jbpm-designer
+jbpm-console-ng
+jbpm-cmmn
+jbpm-designer-extensions
 pavanecce-build
 pavanecce-environments
 pavanecce-common
