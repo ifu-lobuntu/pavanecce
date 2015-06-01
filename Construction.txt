@@ -1,0 +1,6 @@
+This project is an initial exploration of how to structure a collaboration amongst construction workers, a customer  and a building material supplier using VDML and CMMN. The aim is NOT to reflect traditional building process, but to establish a new, peer-to-peer process that effectively "replaces" the perceived middleman, i.e. the building contractor, with a platform that can efficiently co-ordinate the work and payments.  The following assumptions are made
+1. The providing platform will be used by everyone.
+2. It will co-ordinate payments.
+
+Scope:
+Currently the model just looks at the construction of a wall.

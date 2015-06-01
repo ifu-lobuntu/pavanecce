@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# Clones all the Pavanecce repositories
+# Runs a git command on all Pavanecce repositories.
+
 initializeWorkingDirAndScriptDir() {
     # Set working directory and remove all symbolic links
     workingDir=`pwd -P`
@@ -19,25 +20,44 @@ initializeWorkingDirAndScriptDir() {
     scriptDir=`pwd -P`
 }
 initializeWorkingDirAndScriptDir
-pavanecceRootDir="$scriptDir/.."
+pavanecceRootDir="$scriptDir/../"
+
+if [ $# = 0 ] ; then
+    echo
+    echo "Usage:"
+    echo "  $0 [arguments of git]"
+    echo "For example:"
+    echo "  $0 fetch"
+    echo "  $0 pull --rebase"
+    echo "  $0 commit -m\"JIRAKEY-1 Fix typo\""
+    echo
+    exit 1
+fi
+
 startDateTime=`date +%s`
+
 cd "$pavanecceRootDir"
-for repository in `cat "${scriptDir}/repository-list.txt"` ; do
+
+for repository in `cat "${scriptDir}/forked-repository-list.txt"` ; do
     echo
     if [ ! -d "$pavanecceRootDir/$repository" ]; then
         echo "==============================================================================="
-        echo "Cloning repository: $repository"
+        echo "Missing Repository: $repository. SKIPPING!"
         echo "==============================================================================="
-        git clone https://github.com/ifu-lobuntu/$repository.git
-        returnCode=$?
-        if [ $returnCode != 0 ] ; then
-            echo -n "Error cloning repository ${repository}. Continue? (Hit control-c to stop or enter to continue): "
-            read ok
-        fi
     else
         echo "==============================================================================="
-        echo "Repository: $repository already cloned. Skipping..."
+        echo "Repository: $repository"
         echo "==============================================================================="
+        cd $repository
+
+        git "$@"
+
+        returnCode=$?
+        cd ..
+        if [ $returnCode != 0 ] ; then
+            echo -n "Error executing command for repository ${repository}. Continue? (Hit control-c to stop or enter to continue): "
+            read ok
+        fi
     fi
 done
 
