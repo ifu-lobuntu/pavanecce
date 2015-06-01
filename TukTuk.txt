@@ -1,0 +1,47 @@
+Online, mobile offering to allow customers to easily find a Tuk Tuk driver that, given a specific location and time, identify available tuk tuks to transport either goods or people. 
+
+Process 1: Transport Parcel
+This process focuses only on the transportation of a parcel.
+
+Participants are:
+1. Tuk Tuk Owner:
+Actual small business that own a fleet of tuk tuks. This participant will receive a payment for the transportation of the parcel, and will in turn be responsible for paying the driver, and any operational cost associated with running the tuk tuk service.
+
+2. Driver
+Drivers may or may not be an employee of the tuk tuk owner. 
+
+3. Customer
+The participant that has a requirement for a parcel to be transported from one location to another. This is the participant that is responsible for paying the Tuk Tuk owner for the service.
+
+4. Sender
+The participant from which the parcel to be transported will be picked up. May or may not be the Customer too.
+
+5. Recipient
+The participant to which the parcel will be delivered. May or may not be the customer too.
+ 
+Parcel process
+1. Customer provides sender location, sender cell number, pickup time, recipient location, delivery time, recipient cell number.
+2. System lists the tuk tuks best suited to perform the transportation.
+3. Customer selects one tuk tuk.
+4. System sends the driver of the selected tuk tuk a notification
+5. Driver confirms availability for the specific request.
+6. Customer commits to transaction and funds are made available/set aside for the request. This is now legally binding.
+7. System issues a tracking number and sends confirmation code to sender and recipient.
+8. At the specified pickup time, the driver arrives at the pick up location and collects the parcel.
+9. Sender confirms details of driver and vehicle and captures confirmation code on the system (the drivers device?).
+10. System sends a confirmation to customer that parcel has been picked up.
+11. When the driver gets within a certain distance of the destination, the recipient receives a notification that delivery is imminent
+12. On arrival the recipient confirms the receipt of the parcel and captures the confirmation code on the system (again, the drivers's device?)
+13. The customer receives a notification that the transaction has completed successfully and is given an opportunity to rate the service.
+14. Payment is automatically effected.
+
+Metrics:
+On Time Delivery
+Damage to parcels
+CustomerSatisfaction
+Breakdowns
+Lost parcels
+Distance Traveled
+Fuel Consumption
+Tuk Tuk Depreciation
+

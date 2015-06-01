@@ -1,0 +1,5 @@
+jbpm
+jbpm-designer
+jbpm-console-ng
+jbpm-form-modeler
+
