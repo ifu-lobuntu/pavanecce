@@ -1,7 +1,7 @@
 jbpm
 jbpm-cmmn
+jbpm-form-modeler
 jbpm-designer
 jbpm-designer-extensions
-jbpm-form-modeler
 jbpm-console-ng
 jbpm-console-ng-cmmn
